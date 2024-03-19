@@ -26,5 +26,5 @@ interface AuthenticationService {
      *
      * @return The current user's ID, or null if the user is not signed in.
      */
-    fun getCurrentUserID(): String?
+    suspend fun getCurrentUserID(): String?
 }
