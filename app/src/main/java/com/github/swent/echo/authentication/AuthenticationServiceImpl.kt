@@ -1,19 +1,18 @@
 package com.github.swent.echo.authentication
 
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 
 /**
  * Implementation of [AuthenticationService] using Supabase.
  *
- * @param supabase The Supabase client to use for authentication.
+ * @param auth The Supabase authentication plugin.
  */
-class AuthenticationServiceImpl(private val supabase: SupabaseClient) : AuthenticationService {
+class AuthenticationServiceImpl(private val auth: Auth) : AuthenticationService {
 
     override suspend fun signIn(email: String, password: String): AuthenticationResult {
         try {
-            supabase.auth.signInWith(Email) {
+            auth.signInWith(Email) {
                 this.email = email
                 this.password = password
             }
@@ -26,7 +25,7 @@ class AuthenticationServiceImpl(private val supabase: SupabaseClient) : Authenti
 
     override suspend fun signUp(email: String, password: String): AuthenticationResult {
         try {
-            supabase.auth.signUpWith(Email) {
+            auth.signUpWith(Email) {
                 this.email = email
                 this.password = password
             }
@@ -39,7 +38,7 @@ class AuthenticationServiceImpl(private val supabase: SupabaseClient) : Authenti
 
     override suspend fun signOut(): AuthenticationResult {
         try {
-            supabase.auth.signOut()
+            auth.signOut()
         } catch (e: Exception) {
             return AuthenticationResult.Error("Failed to sign out", e)
         }
@@ -48,6 +47,6 @@ class AuthenticationServiceImpl(private val supabase: SupabaseClient) : Authenti
     }
 
     override suspend fun getCurrentUserID(): String? {
-        return supabase.auth.currentSessionOrNull()?.user?.id
+        return auth.currentSessionOrNull()?.user?.id
     }
 }
