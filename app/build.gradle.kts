@@ -4,6 +4,7 @@ plugins {
     id("com.ncorti.ktfmt.gradle") version "0.16.0"
     id("org.sonarqube") version "4.4.1.3373"
     kotlin("plugin.serialization") version "1.9.22"
+    id("jacoco")
 }
 
 android {
@@ -144,14 +145,15 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         "**/*_Factory.class2",
         "**/*_MembersInjector.class",
     )
-    val debugTree = fileTree("${project.buildDir}/tmp/kotlin-classes/debug") {
+
+    val debugTree = fileTree("${project.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
         exclude(fileFilter)
     }
 
     val mainSrc = "${project.layout.projectDirectory}/src/main/java"
     sourceDirectories.setFrom(files(mainSrc))
     classDirectories.setFrom(files(debugTree))
-    executionData.setFrom(fileTree(project.buildDir) {
+    executionData.setFrom(fileTree(project.layout.buildDirectory.get()) {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
