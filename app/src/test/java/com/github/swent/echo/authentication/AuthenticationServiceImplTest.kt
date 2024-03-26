@@ -80,7 +80,7 @@ class AuthenticationServiceImplTest {
     @Test
     fun `getCurrentUserID should return user id when user is signed in`() {
         val service = AuthenticationServiceImpl(authMock)
-        coEvery { authMock.currentSessionOrNull() } returns
+        every { authMock.currentSessionOrNull() } returns
             mockk { every { user } returns mockk { every { id } returns USER_ID } }
         val result = runBlocking { service.getCurrentUserID() }
         assertEquals(USER_ID, result)

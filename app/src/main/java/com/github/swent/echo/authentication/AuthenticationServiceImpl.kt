@@ -46,7 +46,7 @@ class AuthenticationServiceImpl(private val auth: Auth) : AuthenticationService 
         return AuthenticationResult.Success
     }
 
-    override suspend fun getCurrentUserID(): String? {
+    override fun getCurrentUserID(): String? {
         return auth.currentSessionOrNull()?.user?.id
     }
 }
