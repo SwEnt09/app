@@ -60,6 +60,15 @@ android {
     testCoverage {
         jacocoVersion = "0.8.8"
     }
+
+    // Necessary to make mockk work on integration tests
+    testOptions {
+        packaging {
+            jniLibs {
+                useLegacyPackaging = true
+            }
+        }
+    }
 }
 
 dependencies {
