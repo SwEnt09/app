@@ -1,7 +1,7 @@
 package com.github.swent.echo.compose.authentication
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -41,33 +41,57 @@ fun AuthenticationForm(
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        Text(
+            "Email",
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(modifier = Modifier.padding(4.dp))
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth().testTag("email-field"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("email-field"),
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
         )
+        Spacer(modifier = Modifier.padding(16.dp))
+        Text(
+            "Password",
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(modifier = Modifier.padding(4.dp))
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth().testTag("password-field"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("password-field"),
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                ),
         )
+        Spacer(modifier = Modifier.padding(16.dp))
         ElevatedButton(
-            modifier = Modifier.fillMaxWidth().testTag("action-button"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("action-button"),
             onClick = { onAuthenticate(email, password) },
         ) {
             Text(action)
         }
+        Spacer(modifier = Modifier.padding(12.dp))
         error?.let {
             Text(
                 text = it,
                 modifier =
-                    Modifier.fillMaxWidth().padding(horizontal = 16.dp).testTag("error-message"),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .testTag("error-message"),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
             )
