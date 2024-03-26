@@ -49,9 +49,7 @@ fun AuthenticationForm(
         )
         Spacer(modifier = Modifier.padding(4.dp))
         OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("email-field"),
+            modifier = Modifier.fillMaxWidth().testTag("email-field"),
             value = email,
             onValueChange = { email = it },
         )
@@ -63,9 +61,7 @@ fun AuthenticationForm(
         )
         Spacer(modifier = Modifier.padding(4.dp))
         OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("password-field"),
+            modifier = Modifier.fillMaxWidth().testTag("password-field"),
             value = password,
             onValueChange = { password = it },
             visualTransformation = PasswordVisualTransformation(),
@@ -76,9 +72,7 @@ fun AuthenticationForm(
         )
         Spacer(modifier = Modifier.padding(16.dp))
         ElevatedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("action-button"),
+            modifier = Modifier.fillMaxWidth().testTag("action-button"),
             onClick = { onAuthenticate(email, password) },
         ) {
             Text(action)
@@ -88,10 +82,7 @@ fun AuthenticationForm(
             Text(
                 text = it,
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .testTag("error-message"),
+                    Modifier.fillMaxWidth().padding(horizontal = 16.dp).testTag("error-message"),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
             )
