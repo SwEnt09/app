@@ -20,44 +20,30 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
+
 val LAUSANNE_GEO_POINT: GeoPoint = GeoPoint(46.5197, 6.6323)
+const val ZOOM_DEFAULT = 15.0
 @Preview
 @Composable
 fun MapDrawer(modifier: Modifier = Modifier) {
-    var mapCenter by remember {
-        mutableStateOf(LAUSANNE_GEO_POINT)
-    }
-    Column (modifier = modifier){
-        Configuration.getInstance().userAgentValue = LocalContext.current.packageName
-        Configuration.getInstance().osmdroidBasePath = LocalContext.current.cacheDir
-        Text(text = "base path" + Configuration.getInstance().osmdroidBasePath.absolutePath)
-        Text(text = "tile cache" + Configuration.getInstance().osmdroidTileCache.absolutePath)
-        AndroidView(
-            modifier = modifier, // Occupy the max size in the Compose UI tree
-            factory = { context ->
-                // Sets tile cache directory. May be needed in case the app doesn't have access to external storage.
-                // See the permissions section in https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Kotlin).
-                // Also see https://stackoverflow.com/questions/39019687/using-osmdroid-without-getting-access-to-external-storage
-                // It's possible that this is not the place to do this tough.
-
-                //Configuration.getInstance().osmdroidTileCache = context.cacheDir
-
-
-                // Creates view
-                MapView(context, MapTileProviderBasic(context)).apply{
-                    setTileSource(TileSourceFactory.MAPNIK)
-                    setOnClickListener {
-                        mapCenter = mapCenter.destinationPoint(100.0, 0.0)
-                    }
-                    controller.setZoom(15.0)
-                }
-            },
-            update = { view ->
-                // View has been inflated or state read in this block has been updated
-
-                // AndroidView will recompose whenever the state changes given that the mapCenter variable is read here
-                view.controller.setCenter(mapCenter)
+    // var trigger by remember { mutableStateOf(...) }
+    Configuration.getInstance().userAgentValue = LocalContext.current.packageName
+    Configuration.getInstance().osmdroidBasePath = LocalContext.current.cacheDir
+    AndroidView(
+        modifier = modifier,
+        factory = { context ->
+            // Creates view
+            MapView(context, MapTileProviderBasic(context)).apply{
+                setTileSource(TileSourceFactory.MAPNIK)
+                // setOnClickListener { ... }
+                controller.setZoom(ZOOM_DEFAULT)
+                controller.setCenter(LAUSANNE_GEO_POINT)
             }
-        )
-    }
+        },
+        update = { view ->
+            // View has been inflated or state read in this block has been updated
+            // AndroidView will recompose whenever the state changes
+            view.controller.setCenter(LAUSANNE_GEO_POINT)
+        }
+    )
 }
