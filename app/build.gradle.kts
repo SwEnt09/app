@@ -5,6 +5,9 @@ plugins {
     id("org.sonarqube") version "4.4.1.3373"
     kotlin("plugin.serialization") version "1.9.22"
     id("jacoco")
+    // Hilt
+    kotlin("kapt")
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -89,6 +92,11 @@ dependencies {
     implementation(libs.ktor.client.android)
     implementation(libs.kotlinx.serialization.json)
 
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
@@ -121,6 +129,12 @@ ktfmt {
     // KotlinLang style - 4 space indentation - From kotlinlang.org/docs/coding-conventions.html
     kotlinLangStyle()
 }
+
+// Hilt: Allow references to generated code
+kapt {
+    correctErrorTypes = true
+}
+
 
 // Jacoco configuration
 tasks.withType<Test> {
