@@ -67,6 +67,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(ACTION, AuthenticationState.SigningIn, this::onAuthenticate)
         }
         composeTestRule.onNodeWithText("Signing in...").assertExists()
+        assertEquals(0, authenticationCount)
     }
 
     @Test
@@ -75,6 +76,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(ACTION, AuthenticationState.SignedIn, this::onAuthenticate)
         }
         composeTestRule.onNodeWithText("Signed in").assertExists()
+        assertEquals(0, authenticationCount)
     }
 
     @Test
