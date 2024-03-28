@@ -1,8 +1,8 @@
 package com.github.swent.echo.classes_tests
 
+import com.github.swent.echo.classes.User_Profile
 import org.junit.Assert.*
 import org.junit.Test
-import com.github.swent.echo.classes.User_Profile
 
 class User_ProfileTest {
     @Test
