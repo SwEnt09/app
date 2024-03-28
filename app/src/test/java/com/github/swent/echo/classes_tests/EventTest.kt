@@ -17,15 +17,16 @@ class EventTest {
         val expectedEndDate = "testEndDate"
 
         // Act
-        val event = Event(
-            expectedEventId,
-            expectedOrganizerId,
-            expectedTitle,
-            expectedDescription,
-            expectedLocation,
-            expectedStartDate,
-            expectedEndDate
-        )
+        val event =
+            Event(
+                expectedEventId,
+                expectedOrganizerId,
+                expectedTitle,
+                expectedDescription,
+                expectedLocation,
+                expectedStartDate,
+                expectedEndDate
+            )
 
         // Assert
         assertEquals(expectedEventId, event.eventId)
