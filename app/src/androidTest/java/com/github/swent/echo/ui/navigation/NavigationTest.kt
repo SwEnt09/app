@@ -50,8 +50,18 @@ class NavigationTest {
 
     // test the start route is displayed
     @Test
-    fun testAppNavHostComposable() {
+    fun testAppNavHostComposableStartRoute() {
         composeTestRule.setContent { EchoTheme { appNavigationHost() } }
         composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
+    }
+
+    @Test
+    fun testAppNavHostComposableMapRoute() {
+        composeTestRule.setContent {
+            val navController = rememberNavController()
+            appNavigationHost(navController)
+            navController.navigate(Routes.MAP.name)
+        }
+        composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
     }
 }
