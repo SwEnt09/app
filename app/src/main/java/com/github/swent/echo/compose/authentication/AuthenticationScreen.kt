@@ -27,24 +27,20 @@ fun AuthenticationScreen(
     onAuthenticate: (email: String, password: String) -> Unit,
 ) {
     Box(modifier = Modifier.padding(24.dp)) {
-        // This would be much cleaner, but jacoco doesn't like it
-        /*
         when (state) {
-            is AuthenticationState.SignedOut -> AuthenticationForm(action, onAuthenticate)
+            is AuthenticationState.SignedOut ->
+                AuthenticationForm(
+                    action = action,
+                    onAuthenticate = onAuthenticate,
+                )
             is AuthenticationState.SigningIn -> Text("Signing in...")
             is AuthenticationState.SignedIn -> Text("Signed in")
             is AuthenticationState.Error ->
-                AuthenticationForm(action, onAuthenticate, error = state.message)
-        }
-        */
-        if (state is AuthenticationState.SignedOut) {
-            AuthenticationForm(action, onAuthenticate)
-        } else if (state is AuthenticationState.SigningIn) {
-            Text("Signing in...")
-        } else if (state is AuthenticationState.Error) {
-            AuthenticationForm(action, onAuthenticate, error = state.message)
-        } else {
-            Text("Signed in")
+                AuthenticationForm(
+                    action = action,
+                    onAuthenticate = onAuthenticate,
+                    error = state.message,
+                )
         }
     }
 }
