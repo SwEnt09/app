@@ -7,7 +7,7 @@ data class Event(
     val organizerId: String,
     val title: String,
     val description: String,
-    val location: String, // TODO: Change to Location object, once it is implemented
+    val location: Location,
     val startDate: Date,
     val endDate: Date
 )
