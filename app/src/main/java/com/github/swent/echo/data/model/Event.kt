@@ -1,4 +1,4 @@
-package com.github.swent.echo.classes
+package com.github.swent.echo.data.model
 
 data class Event(
     val eventId: String,
