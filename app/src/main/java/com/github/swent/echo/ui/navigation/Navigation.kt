@@ -13,9 +13,6 @@ import androidx.navigation.compose.rememberNavController
 enum class Routes {
     SIGN_IN,
     MAP,
-    SEARCH,
-    EVENT_DETAIL,
-    EVENT_EDIT
 }
 
 /**
@@ -55,12 +52,9 @@ fun appNavigationHost(
             Text("sign in screen", modifier = Modifier.testTag("signInScreen"))
         }
 
-        composable(Routes.MAP.name) {}
-
-        composable(Routes.SEARCH.name) {}
-
-        composable(Routes.EVENT_DETAIL.name) {}
-
-        composable(Routes.EVENT_EDIT.name) {}
+        composable(Routes.MAP.name) {
+            // placeholder for the map composable
+            Text("map screen", modifier = Modifier.testTag("mapScreen"))
+        }
     }
 }
