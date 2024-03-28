@@ -55,6 +55,7 @@ class AuthenticationScreenTest {
         }
         composeTestRule.onNodeWithTag("email-field").performTextInput("test@test.test")
         composeTestRule.onNodeWithTag("password-field").performTextInput("password")
+        assertEquals(0, authenticationCount)
         composeTestRule.onNodeWithTag("action-button").performClick()
         assertEquals(1, authenticationCount)
         assertEquals("test@test.test", email)
