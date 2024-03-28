@@ -9,8 +9,8 @@ class AssociationTest {
     fun testUser_Profile() {
         // Arrange
         val expectedAssociationId = "testId"
-        var expectedName = "testName"
-        var expectedDescription = "testDescription"
+        val expectedName = "testName"
+        val expectedDescription = "testDescription"
 
         // Act
         val association = Association(expectedAssociationId, expectedName, expectedDescription)
