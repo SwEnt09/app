@@ -55,6 +55,7 @@ class NavigationTest {
         composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
     }
 
+    // test the map route is displayed
     @Test
     fun testAppNavHostComposableMapRoute() {
         composeTestRule.setContent {
