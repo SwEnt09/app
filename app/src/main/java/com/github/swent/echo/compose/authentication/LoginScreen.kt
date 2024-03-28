@@ -8,5 +8,9 @@ import com.github.swent.echo.viewmodels.authentication.LoginViewModel
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel) {
     val state by loginViewModel.state.collectAsState()
-    AuthenticationScreen(action = "Login", state = state, onAuthenticate = loginViewModel::login)
+    AuthenticationScreen(
+        action = "Login",
+        state = state,
+        onAuthenticate = loginViewModel::login,
+    )
 }
