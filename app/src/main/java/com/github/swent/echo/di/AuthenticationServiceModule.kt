@@ -11,7 +11,7 @@ import io.github.jan.supabase.gotrue.auth
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AuthenticationServiceModule {
+object AuthenticationServiceModule {
 
     @Provides
     fun provideAuthenticationService(supabaseClient: SupabaseClient): AuthenticationService {
