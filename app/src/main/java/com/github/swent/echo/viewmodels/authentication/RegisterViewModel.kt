@@ -16,11 +16,7 @@ import kotlinx.coroutines.launch
  * @param auth The authentication service to use.
  */
 @HiltViewModel
-class RegisterViewModel
-@Inject
-constructor(
-    private val auth: AuthenticationService,
-) : ViewModel() {
+class RegisterViewModel @Inject constructor(private val auth: AuthenticationService) : ViewModel() {
 
     private val _state = MutableStateFlow<AuthenticationState>(AuthenticationState.SignedOut)
 
