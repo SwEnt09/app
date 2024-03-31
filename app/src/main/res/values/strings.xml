@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">echo</string>
+    <string name="supabase_url">https://ulejnivguxeiibkbpwnb.supabase.co</string>
+    <string name="supabase_public_key">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZWpuaXZndXhlaWlia2Jwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA4MzgxODQsImV4cCI6MjAyNjQxNDE4NH0.9Hkj-Gox2XHcHfs_U2GyQFc9sZ_nu2Xs16-KYBri32g</string>
 </resources>

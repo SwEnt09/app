@@ -1,5 +1,7 @@
 package com.github.swent.echo.di
 
+import android.app.Application
+import com.github.swent.echo.R
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,13 +15,11 @@ import io.github.jan.supabase.postgrest.Postgrest
 @InstallIn(SingletonComponent::class)
 object SupabaseClientModule {
 
-    private const val SUPABASE_URL = "https://ulejnivguxeiibkbpwnb.supabase.co"
-    private const val SUPABASE_PUBLIC_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZWpuaXZndXhlaWlia2Jwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA4MzgxODQsImV4cCI6MjAyNjQxNDE4NH0.9Hkj-Gox2XHcHfs_U2GyQFc9sZ_nu2Xs16-KYBri32g"
-
     @Provides
-    fun provideSupabaseClient(): SupabaseClient {
-        return createSupabaseClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY) {
+    fun provideSupabaseClient(application: Application): SupabaseClient {
+        val supabaseUrl = application.resources.getString(R.string.supabase_url)
+        val supabasePublicKey = application.resources.getString(R.string.supabase_public_key)
+        return createSupabaseClient(supabaseUrl, supabasePublicKey) {
             install(Auth)
             install(Postgrest)
         }
