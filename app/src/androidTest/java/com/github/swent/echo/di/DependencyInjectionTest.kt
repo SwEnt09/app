@@ -1,6 +1,5 @@
 package com.github.swent.echo.di
 
-import android.util.Log
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.authentication.AuthenticationServiceImpl
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -17,6 +16,8 @@ import org.junit.Test
 @HiltAndroidTest
 class DependencyInjectionTest {
 
+    // Keeping those constants hardcoded (and not taking them from the resources) is intentional.
+    // If we accidentally change the values in the resources, it would break the tests (good).
     companion object {
         private const val SUPABASE_URL = "ulejnivguxeiibkbpwnb.supabase.co"
         private const val SUPABASE_PUBLIC_KEY =
@@ -39,10 +40,6 @@ class DependencyInjectionTest {
 
     @Test
     fun testSupabaseClientInjection() {
-        Log.d(
-            "ExampleHiltTest",
-            "URL: ${supabaseClient.supabaseUrl} KEY: ${supabaseClient.supabaseKey}"
-        )
         assertEquals(SUPABASE_URL, supabaseClient.supabaseUrl)
         assertEquals(SUPABASE_PUBLIC_KEY, supabaseClient.supabaseKey)
         assertEquals(2, supabaseClient.pluginManager.installedPlugins.size)
