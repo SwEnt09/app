@@ -2,6 +2,7 @@ package com.github.swent.echo.di
 
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.authentication.AuthenticationServiceImpl
+import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.jan.supabase.SupabaseClient
@@ -30,6 +31,8 @@ class DependencyInjectionTest {
 
     @Inject lateinit var authenticationService: AuthenticationService
 
+    @Inject lateinit var repository: Repository
+
     @Before
     fun setUp() {
         // This tells Hilt to inject the [supabaseClient] and [authenticationService] fields.
@@ -48,5 +51,10 @@ class DependencyInjectionTest {
     @Test
     fun testAuthenticationServiceInjection() {
         assertEquals(AuthenticationServiceImpl::class.java, authenticationService::class.java)
+    }
+
+    @Test
+    fun testRepositoryInjection() {
+        assertEquals(Repository::class.java, repository::class.java)
     }
 }
