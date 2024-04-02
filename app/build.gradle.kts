@@ -71,6 +71,9 @@ android {
                 useLegacyPackaging = true
             }
         }
+	}
+    installation {
+        installOptions.addAll(listOf("-g", "-r"))
     }
 }
 
@@ -92,10 +95,15 @@ dependencies {
     implementation(libs.ktor.client.android)
     implementation(libs.kotlinx.serialization.json)
 
+<<<<<<< HEAD
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
+=======
+    // Open Street Map
+    implementation(libs.osmdroid.android)
+>>>>>>> 9b29d9a (Add tests for the `MapDrawer` composable.)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
@@ -114,7 +122,6 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.osmdroid.android)
 }
 
 sonar {
