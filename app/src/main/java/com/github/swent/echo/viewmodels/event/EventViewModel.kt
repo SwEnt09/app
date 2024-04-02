@@ -18,6 +18,7 @@ class EventViewModel() : ViewModel() {
             "",
             "",
             "",
+            "",
             Location("", 0.0, 0.0),
             Date.from(Instant.now()),
             Date.from(Instant.now()),

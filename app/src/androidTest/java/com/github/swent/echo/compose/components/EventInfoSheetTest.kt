@@ -30,6 +30,7 @@ class EventInfoSheetTest {
             val event =
                 Event(
                     eventId = "1",
+                    creatorId = "1",
                     organizerId = "1",
                     title = "Event Title",
                     description = "Event Description",

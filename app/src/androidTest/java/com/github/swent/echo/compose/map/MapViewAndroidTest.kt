@@ -34,6 +34,7 @@ class MapViewAndroidTest {
             listOf(
                 Event(
                     eventId = "a",
+                    creatorId = "a",
                     organizerId = "a",
                     title = "Bowling Event",
                     description = "",
@@ -44,6 +45,7 @@ class MapViewAndroidTest {
                 ),
                 Event(
                     eventId = "b",
+                    creatorId = "a",
                     organizerId = "a",
                     title = "Swimming Event",
                     description = "",
