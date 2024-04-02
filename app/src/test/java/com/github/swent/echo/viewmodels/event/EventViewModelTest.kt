@@ -19,6 +19,7 @@ class EventViewModelTest {
     private val TEST_EVENT =
         Event(
             eventId = "testid",
+            "testid",
             organizerId = "testid",
             title = "test title",
             description = "test description",
