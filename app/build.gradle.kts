@@ -132,6 +132,9 @@ sonar {
         property("sonar.androidLint.reportPaths", "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml")
         // Paths to JaCoCo XML coverage report files.
         property("sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
+	// To prevent sonar depending on compile tasks, which will be removed in version 5.x. As a consequence, we will need to make sure that
+	// the project is compiled before running checks.
+	property("sonar.gradle.skipCompile", "true")
     }
 }
 
