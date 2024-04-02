@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.compose.map.configureOsmdroid
 import com.github.swent.echo.ui.theme.EchoTheme
 import dagger.hilt.android.AndroidEntryPoint

@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
@@ -38,9 +37,7 @@ fun createMapView(context: Context, tileSource: ITileSource): MapView =
     }
 
 fun updateMapView(view: MapView, newCenter: GeoPoint) {
-    view.apply {
-        controller.setCenter(newCenter)
-    }
+    view.apply { controller.setCenter(newCenter) }
 }
 
 @Preview
@@ -57,8 +54,6 @@ fun MapDrawer(
         // Function that will be called when the view has been
         // inflated or state read in this function has been updated
         // AndroidView will recompose whenever said state changes
-        update = {
-            updateMapView(it, LAUSANNE_GEO_POINT)
-        }
+        update = { updateMapView(it, LAUSANNE_GEO_POINT) }
     )
 }
