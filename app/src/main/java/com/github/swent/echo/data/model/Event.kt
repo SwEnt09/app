@@ -9,5 +9,6 @@ data class Event(
     val description: String,
     val location: Location,
     val startDate: Date,
-    val endDate: Date
+    val endDate: Date,
+    val tags: Set<Tag>
 )
