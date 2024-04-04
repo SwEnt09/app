@@ -1,13 +1,20 @@
 package com.github.swent.echo.compose.map
 
 import android.content.Context
+import com.github.swent.echo.data.model.Event
+import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
-open class OsmdroidMapViewProvider(context: Context) : IMapViewProvider<MapView> {
+open class OsmdroidMapViewProvider(
+    private val initContext: Context,
+    private val markers: List<Event> = emptyList(),
+    private val callback: (Event) -> Unit = {}
+) : IMapViewProvider<MapView> {
 
     companion object {
         private val tileSource = TileSourceFactory.MAPNIK
@@ -20,9 +27,36 @@ open class OsmdroidMapViewProvider(context: Context) : IMapViewProvider<MapView>
 
     init {
         Configuration.getInstance().apply {
-            userAgentValue = context.packageName
-            osmdroidBasePath = context.cacheDir
+            userAgentValue = initContext.packageName
+            osmdroidBasePath = initContext.cacheDir
         }
+    }
+
+    fun getCenter(): IGeoPoint = mapView.mapCenter
+
+    fun getZoom() = mapView.zoomLevelDouble
+
+    fun getClipToOutline() = mapView.clipToOutline
+
+    private fun drawMarker(e: Event) {
+        val marker = Marker(mapView)
+        marker.apply {
+            setAnchor(Marker.ANCHOR_BOTTOM, Marker.ANCHOR_CENTER)
+            icon = null // initContext.getDrawable(R.drawable.test_pin)
+            title = e.title
+            position = GeoPoint(e.location.lat, e.location.long)
+            setOnMarkerClickListener { _, _ ->
+                // Shows marker title by default
+                callback(e)
+                true
+            }
+        }
+        mapView.overlays.add(marker)
+    }
+
+    private fun drawAllMarkers() {
+        markers.forEach { drawMarker(it) }
+        mapView.invalidate()
     }
 
     override fun factory(context: Context): MapView {
@@ -35,16 +69,11 @@ open class OsmdroidMapViewProvider(context: Context) : IMapViewProvider<MapView>
                 controller.setZoom(ZOOM_DEFAULT)
                 controller.setCenter(LAUSANNE_GEO_POINT)
             }
+        drawAllMarkers()
         return mapView
     }
 
     override fun update(view: MapView) {
         // view.controller.setCenter(LAUSANNE_GEO_POINT)
     }
-
-    fun getCenter() = mapView.mapCenter
-
-    fun getZoom() = mapView.zoomLevelDouble
-
-    fun getClipToOutline() = mapView.clipToOutline
 }
