@@ -26,22 +26,25 @@ open class OsmdroidMapViewProvider(context: Context) : IMapViewProvider<MapView>
     }
 
     override fun factory(context: Context): MapView {
-        mapView = MapView(context, MapTileProviderBasic(context)).apply {
-            setTileSource(tileSource)
-            setMultiTouchControls(true)
-            clipToOutline = true
-            // setOnClickListener { ... }
-            controller.setZoom(ZOOM_DEFAULT)
-            controller.setCenter(LAUSANNE_GEO_POINT)
-        }
+        mapView =
+            MapView(context, MapTileProviderBasic(context)).apply {
+                setTileSource(tileSource)
+                setMultiTouchControls(true)
+                clipToOutline = true
+                // setOnClickListener { ... }
+                controller.setZoom(ZOOM_DEFAULT)
+                controller.setCenter(LAUSANNE_GEO_POINT)
+            }
         return mapView
     }
 
     override fun update(view: MapView) {
-        //view.controller.setCenter(LAUSANNE_GEO_POINT)
+        // view.controller.setCenter(LAUSANNE_GEO_POINT)
     }
 
     fun getCenter() = mapView.mapCenter
+
     fun getZoom() = mapView.zoomLevelDouble
+
     fun getClipToOutline() = mapView.clipToOutline
 }

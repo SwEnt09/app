@@ -2,19 +2,13 @@ package com.github.swent.echo.compose.map
 
 // osmdroid libraries
 
-import android.content.Context
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
-import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.MapTileProviderBasic
-import org.osmdroid.tileprovider.tilesource.ITileSource
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
@@ -23,10 +17,7 @@ fun updateMapView(view: MapView, newCenter: GeoPoint) {
 }
 
 @Composable
-fun <T: View> MapDrawer(
-    modifier: Modifier = Modifier,
-    provider: IMapViewProvider<T>
-) {
+fun <T : View> MapDrawer(modifier: Modifier = Modifier, provider: IMapViewProvider<T>) {
     // var trigger by remember { mutableStateOf(...) }
     AndroidView(
         modifier = modifier.testTag("mapViewWrapper"),

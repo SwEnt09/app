@@ -1,6 +1,5 @@
 package com.github.swent.echo.compose.map
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
@@ -8,16 +7,12 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.ITileSource
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 
 @RunWith(AndroidJUnit4::class)
 class MapViewAndroidTest {
@@ -50,33 +45,21 @@ class MapViewAndroidTest {
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectZoom() {
         val p = OsmdroidMapViewProvider(context)
-        composeTestRule.setContent {
-            MapDrawer(
-                provider = p
-            )
-        }
+        composeTestRule.setContent { MapDrawer(provider = p) }
         assert(p.getZoom() == OsmdroidMapViewProvider.ZOOM_DEFAULT)
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectCenter() {
         val p = OsmdroidMapViewProvider(context)
-        composeTestRule.setContent {
-            MapDrawer(
-                provider = p
-            )
-        }
+        composeTestRule.setContent { MapDrawer(provider = p) }
         assert(closeEnough(OsmdroidMapViewProvider.LAUSANNE_GEO_POINT, p.getCenter()))
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectOutlineClip() {
         val p = OsmdroidMapViewProvider(context)
-        composeTestRule.setContent {
-            MapDrawer(
-                provider = p
-            )
-        }
+        composeTestRule.setContent { MapDrawer(provider = p) }
         assert(p.getClipToOutline())
     }
 }
