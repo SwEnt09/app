@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.map
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
@@ -29,66 +30,53 @@ class MapViewAndroidTest {
     }
 
     @get:Rule val composeTestRule = createComposeRule()
-    private val tileSource: ITileSource = TileSourceFactory.MAPNIK
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
-
-    @Before
-    fun setUp() {
-        configureOsmdroid(context)
-    }
 
     @Test
     fun osmdroidConfigurationShouldHaveTheCorrectValues() {
-
+        val p = OsmdroidMapViewProvider(context)
+        composeTestRule.setContent { MapDrawer(provider = p) }
         assert(Configuration.getInstance().osmdroidBasePath == context.cacheDir)
         assert(Configuration.getInstance().userAgentValue == context.packageName)
     }
 
     @Test
     fun mapDrawerShouldDisplayAndroidView() {
-        composeTestRule.setContent { MapDrawer() }
+        val p = OsmdroidMapViewProvider(context)
+        composeTestRule.setContent { MapDrawer(provider = p) }
         composeTestRule.onNodeWithTag("mapViewWrapper").assertIsDisplayed()
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectZoom() {
-        lateinit var mapView: MapView
+        val p = OsmdroidMapViewProvider(context)
         composeTestRule.setContent {
             MapDrawer(
-                mapViewFactory = {
-                    mapView = createMapView(it, tileSource)
-                    mapView
-                }
+                provider = p
             )
         }
-        assert(mapView.zoomLevelDouble == ZOOM_DEFAULT)
+        assert(p.getZoom() == OsmdroidMapViewProvider.ZOOM_DEFAULT)
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectCenter() {
-        lateinit var mapView: MapView
+        val p = OsmdroidMapViewProvider(context)
         composeTestRule.setContent {
             MapDrawer(
-                mapViewFactory = {
-                    mapView = createMapView(it, tileSource)
-                    mapView
-                }
+                provider = p
             )
         }
-        assert(closeEnough(LAUSANNE_GEO_POINT, mapView.mapCenter))
+        assert(closeEnough(OsmdroidMapViewProvider.LAUSANNE_GEO_POINT, p.getCenter()))
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectOutlineClip() {
-        lateinit var mapView: MapView
+        val p = OsmdroidMapViewProvider(context)
         composeTestRule.setContent {
             MapDrawer(
-                mapViewFactory = {
-                    mapView = createMapView(it, tileSource)
-                    mapView
-                }
+                provider = p
             )
         }
-        assert(mapView.clipToOutline)
+        assert(p.getClipToOutline())
     }
 }
