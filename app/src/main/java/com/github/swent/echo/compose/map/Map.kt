@@ -3,6 +3,7 @@ package com.github.swent.echo.compose.map
 // osmdroid libraries
 
 import android.content.Context
+import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -17,43 +18,22 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
-val LAUSANNE_GEO_POINT: GeoPoint = GeoPoint(46.5197, 6.6323)
-const val ZOOM_DEFAULT = 15.0
-
-fun configureOsmdroid(context: Context) {
-    Configuration.getInstance().apply {
-        userAgentValue = context.packageName
-        osmdroidBasePath = context.cacheDir
-    }
-}
-
-fun createMapView(context: Context, tileSource: ITileSource): MapView =
-    MapView(context, MapTileProviderBasic(context)).apply {
-        setTileSource(tileSource)
-        // setOnClickListener { ... }
-        controller.setZoom(ZOOM_DEFAULT)
-        controller.setCenter(LAUSANNE_GEO_POINT)
-        clipToOutline = true
-    }
-
 fun updateMapView(view: MapView, newCenter: GeoPoint) {
     view.apply { controller.setCenter(newCenter) }
 }
 
-@Preview
 @Composable
-fun MapDrawer(
+fun <T: View> MapDrawer(
     modifier: Modifier = Modifier,
-    mapViewFactory: (Context) -> MapView = { createMapView(it, TileSourceFactory.MAPNIK) },
-    update: (MapView) -> Unit = { updateMapView(it, LAUSANNE_GEO_POINT) }
+    provider: IMapViewProvider<T>
 ) {
     // var trigger by remember { mutableStateOf(...) }
     AndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
-        factory = mapViewFactory,
+        factory = { provider.factory(it) },
         // Function that will be called when the view has been
         // inflated or state read in this function has been updated
         // AndroidView will recompose whenever said state changes
-        update = { updateMapView(it, LAUSANNE_GEO_POINT) }
+        update = { provider.update(it) }
     )
 }
