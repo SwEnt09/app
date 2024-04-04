@@ -42,9 +42,11 @@ open class OsmdroidMapViewProvider(
         val marker = Marker(mapView)
         marker.apply {
             setAnchor(Marker.ANCHOR_BOTTOM, Marker.ANCHOR_CENTER)
-            icon = null // initContext.getDrawable(R.drawable.test_pin)
+            // To get an custom marker, use initContext.getDrawable(R.drawable.test_pin)
+            // 'R' refers to com.github.swent.echo.R
+            icon = null
             title = e.title
-            position = GeoPoint(e.location.lat, e.location.long)
+            position = e.location.toGeoPoint()
             setOnMarkerClickListener { _, _ ->
                 // Shows marker title by default
                 callback(e)
