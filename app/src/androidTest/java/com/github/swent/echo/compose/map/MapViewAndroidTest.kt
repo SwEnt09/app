@@ -1,7 +1,5 @@
 package com.github.swent.echo.compose.map
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -11,6 +9,8 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import java.time.Instant
 import java.util.Date
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -69,8 +69,10 @@ class MapViewAndroidTest {
     fun osmdroidConfigurationShouldHaveTheCorrectValues() {
         val p = provider()
         composeTestRule.setContent { MapDrawer(provider = p) }
-        assert(Configuration.getInstance().osmdroidBasePath == context.cacheDir)
-        assert(Configuration.getInstance().userAgentValue == context.packageName)
+        Configuration.getInstance().apply {
+            assertEquals(osmdroidBasePath, context.cacheDir)
+            assertEquals(userAgentValue, context.packageName)
+        }
     }
 
     @Test
@@ -84,20 +86,20 @@ class MapViewAndroidTest {
     fun mapViewCreatorShouldCreateViewWithCorrectZoom() {
         val p = provider()
         composeTestRule.setContent { MapDrawer(provider = p) }
-        assert(p.getZoom() == OsmdroidMapViewProvider.ZOOM_DEFAULT)
+        assertEquals(p.getZoom(), OsmdroidMapViewProvider.ZOOM_DEFAULT, 0.0)
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectCenter() {
         val p = provider()
         composeTestRule.setContent { MapDrawer(provider = p) }
-        assert(closeEnough(OsmdroidMapViewProvider.LAUSANNE_GEO_POINT, p.getCenter()))
+        assertTrue(closeEnough(OsmdroidMapViewProvider.LAUSANNE_GEO_POINT, p.getCenter()))
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectOutlineClip() {
         val p = provider()
         composeTestRule.setContent { MapDrawer(provider = p) }
-        assert(p.getClipToOutline())
+        assertTrue(p.getClipToOutline())
     }
 }
