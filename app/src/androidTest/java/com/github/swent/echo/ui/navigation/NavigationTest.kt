@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.compose.navigation.AppNavigationHost
 import com.github.swent.echo.ui.theme.EchoTheme
 import io.mockk.every
 import io.mockk.mockk
@@ -24,8 +25,8 @@ class NavigationTest {
     fun testNavigationActionsNavigateTo() {
         composeTestRule.setContent {
             val navController = rememberNavController()
-            appNavigationHost(navController)
-            val navigationActions = navigationActions(navController)
+            AppNavigationHost(navController)
+            val navigationActions = NavigationActions(navController)
             for (route in Routes.entries) {
                 navigationActions.navigateTo(route)
                 assert(navController.currentDestination?.route == route.name)
@@ -43,7 +44,7 @@ class NavigationTest {
     fun testNavigationActionsGoBack() {
         val mockedNavController = mockk<NavHostController>(relaxed = true)
         every { mockedNavController.navigateUp() } returns true
-        val navigationActions = navigationActions(mockedNavController)
+        val navigationActions = NavigationActions(mockedNavController)
         navigationActions.goBack()
         verify { mockedNavController.navigateUp() }
     }
@@ -51,7 +52,7 @@ class NavigationTest {
     // test the start route is displayed
     @Test
     fun testAppNavHostComposableStartRoute() {
-        composeTestRule.setContent { EchoTheme { appNavigationHost() } }
+        composeTestRule.setContent { EchoTheme { AppNavigationHost() } }
         composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
     }
 
@@ -60,7 +61,7 @@ class NavigationTest {
     fun testAppNavHostComposableMapRoute() {
         composeTestRule.setContent {
             val navController = rememberNavController()
-            appNavigationHost(navController)
+            AppNavigationHost(navController)
             navController.navigate(Routes.MAP.name)
         }
         composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
