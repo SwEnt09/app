@@ -1,5 +1,10 @@
 package com.github.swent.echo.compose.map
 
+import android.view.View
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -60,15 +65,26 @@ class MapViewAndroidTest {
         fun closeEnough(p1: GeoPoint, p2: IGeoPoint) =
             p1.distanceToAsDouble(p2) < ERROR_MARGIN_IN_METERS
 
-        fun provider(): OsmdroidMapViewProvider = OsmdroidMapViewProvider(context, events)
+        @Composable
+        private fun DummyMapDrawer() {
+            val e = remember { mutableStateOf(events) }
+            MapDrawer(context = context, events = e)
+        }
+
+        @Composable
+        private fun <T : View> DummyMapDrawer(p: IMapViewProvider<T>) {
+            val e = remember { mutableStateOf(events) }
+            EchoAndroidView(factory = p::factory, update = p::update, events = e)
+        }
+
+        private fun provider() = OsmdroidMapViewProvider(context)
     }
 
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun osmdroidConfigurationShouldHaveTheCorrectValues() {
-        val p = provider()
-        composeTestRule.setContent { MapDrawer(provider = p) }
+        composeTestRule.setContent { DummyMapDrawer() }
         Configuration.getInstance().apply {
             assertEquals(osmdroidBasePath, context.cacheDir)
             assertEquals(userAgentValue, context.packageName)
@@ -77,29 +93,28 @@ class MapViewAndroidTest {
 
     @Test
     fun mapDrawerShouldDisplayAndroidView() {
-        val p = provider()
-        composeTestRule.setContent { MapDrawer(provider = p) }
+        composeTestRule.setContent { DummyMapDrawer() }
         composeTestRule.onNodeWithTag("mapViewWrapper").assertIsDisplayed()
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectZoom() {
         val p = provider()
-        composeTestRule.setContent { MapDrawer(provider = p) }
+        composeTestRule.setContent { DummyMapDrawer(p) }
         assertEquals(p.getZoom(), OsmdroidMapViewProvider.ZOOM_DEFAULT, 0.0)
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectCenter() {
         val p = provider()
-        composeTestRule.setContent { MapDrawer(provider = p) }
+        composeTestRule.setContent { DummyMapDrawer(p) }
         assertTrue(closeEnough(OsmdroidMapViewProvider.LAUSANNE_GEO_POINT, p.getCenter()))
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectOutlineClip() {
         val p = provider()
-        composeTestRule.setContent { MapDrawer(provider = p) }
+        composeTestRule.setContent { DummyMapDrawer(p) }
         assertTrue(p.getClipToOutline())
     }
 }

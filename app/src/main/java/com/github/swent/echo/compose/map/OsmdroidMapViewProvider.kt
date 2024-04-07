@@ -10,10 +10,17 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
+/**
+ * Provides a [MapView] to be displayed by an
+ * [AndroidView][androidx.compose.ui.viewinterop.AndroidView].
+ *
+ * @param initContext An initial [Context] is needed to properly initialize the `osmdroid`
+ *   [Configuration]. This can simply be the activity itself if this constructor is called from an
+ *   activity, or the [LocalContext][androidx.compose.ui.platform.LocalContext]`.current` if it is
+ *   called from a composable.
+ */
 open class OsmdroidMapViewProvider(
     private val initContext: Context,
-    private val markers: List<Event> = emptyList(),
-    private val callback: (Event) -> Unit = {}
 ) : IMapViewProvider<MapView> {
 
     companion object {
@@ -38,8 +45,8 @@ open class OsmdroidMapViewProvider(
 
     fun getClipToOutline() = mapView.clipToOutline
 
-    private fun drawMarker(e: Event) {
-        val marker = Marker(mapView)
+    private fun MapView.drawMarker(e: Event, callback: (Event) -> Unit) {
+        val marker = Marker(this)
         marker.apply {
             setAnchor(Marker.ANCHOR_BOTTOM, Marker.ANCHOR_CENTER)
             // To get an custom marker, use initContext.getDrawable(R.drawable.test_pin)
@@ -53,12 +60,12 @@ open class OsmdroidMapViewProvider(
                 true
             }
         }
-        mapView.overlays.add(marker)
+        overlays.add(marker)
     }
 
-    private fun drawAllMarkers() {
-        markers.forEach { drawMarker(it) }
-        mapView.invalidate()
+    private fun MapView.drawAllMarkers(events: List<Event>, callback: (Event) -> Unit) {
+        events.forEach { drawMarker(it, callback) }
+        invalidate()
     }
 
     override fun factory(context: Context): MapView {
@@ -71,11 +78,10 @@ open class OsmdroidMapViewProvider(
                 controller.setZoom(ZOOM_DEFAULT)
                 controller.setCenter(LAUSANNE_GEO_POINT)
             }
-        drawAllMarkers()
         return mapView
     }
 
-    override fun update(view: MapView) {
-        // view.controller.setCenter(LAUSANNE_GEO_POINT)
+    override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
+        mapView.apply { drawAllMarkers(events, callback) }
     }
 }
