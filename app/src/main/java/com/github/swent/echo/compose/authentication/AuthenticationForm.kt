@@ -42,26 +42,16 @@ fun AuthenticationForm(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            "Email",
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.bodySmall,
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().testTag("email-field"),
+            label = { Text("Email") },
             value = email,
             onValueChange = { email = it },
         )
         Spacer(modifier = Modifier.padding(16.dp))
-        Text(
-            "Password",
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.bodySmall,
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().testTag("password-field"),
+            label = { Text("Password") },
             value = password,
             onValueChange = { password = it },
             visualTransformation = PasswordVisualTransformation(),
