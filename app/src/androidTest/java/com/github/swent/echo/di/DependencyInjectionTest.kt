@@ -1,7 +1,6 @@
 package com.github.swent.echo.di
 
 import com.github.swent.echo.authentication.AuthenticationService
-import com.github.swent.echo.authentication.AuthenticationServiceImpl
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.jan.supabase.SupabaseClient
@@ -47,6 +46,6 @@ class DependencyInjectionTest {
 
     @Test
     fun testAuthenticationServiceInjection() {
-        assertEquals(AuthenticationServiceImpl::class.java, authenticationService::class.java)
+        assertEquals(SimpleAuthenticationService::class.java, authenticationService::class.java)
     }
 }
