@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.github.swent.echo.R
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.AuthenticationState
@@ -26,7 +28,12 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
 
     if (state is AuthenticationState.SignedIn) {
         LaunchedEffect(state) {
-            Toast.makeText(context, "Confirm your email to continue", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                    context,
+                    context.getString(R.string.register_screen_confirm_your_email),
+                    Toast.LENGTH_LONG
+                )
+                .show()
             navActions.navigateTo(Routes.LOGIN)
         }
     }
@@ -36,15 +43,15 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AuthenticationScreen(
-            action = "Register",
+            action = stringResource(R.string.register_screen_action_button),
             state = state,
             onAuthenticate = registerViewModel::register,
         )
         if (state is AuthenticationState.SignedOut || state is AuthenticationState.Error) {
             Row {
-                Text("Do you have an account? ")
+                Text(stringResource(R.string.register_screen_do_you_have_an_account) + " ")
                 Text(
-                    "Login",
+                    stringResource(R.string.register_screen_login_link),
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
                         Modifier.clickable { navActions.navigateTo(Routes.LOGIN) }

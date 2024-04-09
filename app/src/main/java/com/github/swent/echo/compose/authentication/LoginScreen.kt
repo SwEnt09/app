@@ -12,6 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.github.swent.echo.R
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.AuthenticationState
@@ -30,15 +32,15 @@ fun LoginScreen(loginViewModel: LoginViewModel, navActions: NavigationActions) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AuthenticationScreen(
-            action = "Login",
+            action = stringResource(R.string.login_screen_action_button),
             state = state,
             onAuthenticate = loginViewModel::login,
         )
         if (state is AuthenticationState.SignedOut || state is AuthenticationState.Error) {
             Row {
-                Text("Don't have an account? ")
+                Text(stringResource(R.string.login_screen_don_t_have_an_account) + " ")
                 Text(
-                    "Register",
+                    stringResource(R.string.login_screen_register_link),
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
                         Modifier.clickable { navActions.navigateTo(Routes.REGISTER) }

@@ -17,9 +17,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.github.swent.echo.R
 
 /**
  * A form for authenticating a user. It contains fields for the user's email and password.
@@ -44,14 +46,14 @@ fun AuthenticationForm(
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().testTag("email-field"),
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.authentication_form_email_label)) },
             value = email,
             onValueChange = { email = it },
         )
         Spacer(modifier = Modifier.padding(16.dp))
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().testTag("password-field"),
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.authentication_form_password_label)) },
             value = password,
             onValueChange = { password = it },
             visualTransformation = PasswordVisualTransformation(),

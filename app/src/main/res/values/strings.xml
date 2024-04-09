@@ -2,4 +2,13 @@
     <string name="app_name">echo</string>
     <string name="supabase_url">https://ulejnivguxeiibkbpwnb.supabase.co</string>
     <string name="supabase_public_key">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZWpuaXZndXhlaWlia2Jwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA4MzgxODQsImV4cCI6MjAyNjQxNDE4NH0.9Hkj-Gox2XHcHfs_U2GyQFc9sZ_nu2Xs16-KYBri32g</string>
+    <string name="authentication_form_email_label">Email</string>
+    <string name="authentication_form_password_label">Password</string>
+    <string name="login_screen_don_t_have_an_account">Don\'t have an account?</string>
+    <string name="login_screen_action_button">Login</string>
+    <string name="login_screen_register_link">Register</string>
+    <string name="register_screen_confirm_your_email">Confirm your email to continue</string>
+    <string name="register_screen_action_button">Register</string>
+    <string name="register_screen_do_you_have_an_account">Do you have an account?</string>
+    <string name="register_screen_login_link">Login</string>
 </resources>
