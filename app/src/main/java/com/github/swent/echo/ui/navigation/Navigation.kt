@@ -4,7 +4,8 @@ import androidx.navigation.NavHostController
 
 /** The routes to the screens of the app */
 enum class Routes {
-    SIGN_IN,
+    LOGIN,
+    REGISTER,
     MAP,
 }
 
