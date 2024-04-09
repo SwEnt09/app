@@ -4,10 +4,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.swent.echo.compose.authentication.LoginScreen
+import com.github.swent.echo.compose.authentication.RegisterScreen
+import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 
 /**
@@ -20,13 +24,18 @@ import com.github.swent.echo.ui.navigation.Routes
 fun AppNavigationHost(
     navController: NavHostController = rememberNavController(),
 ) {
+    val navActions = NavigationActions(navController)
+
     NavHost(
         navController = navController,
-        startDestination = Routes.SIGN_IN.name,
+        startDestination = Routes.REGISTER.name,
     ) {
-        composable(Routes.SIGN_IN.name) {
-            // placeholder for the sign in composable to test it's displayed
-            Text("sign in screen", modifier = Modifier.testTag("signInScreen"))
+        composable(Routes.LOGIN.name) {
+            LoginScreen(loginViewModel = hiltViewModel(), navActions = navActions)
+        }
+
+        composable(Routes.REGISTER.name) {
+            RegisterScreen(registerViewModel = hiltViewModel(), navActions = navActions)
         }
 
         composable(Routes.MAP.name) {
