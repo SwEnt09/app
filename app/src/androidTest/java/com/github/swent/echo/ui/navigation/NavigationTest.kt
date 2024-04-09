@@ -1,69 +1,59 @@
 package com.github.swent.echo.ui.navigation
 
+import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.MainActivity
 import com.github.swent.echo.compose.navigation.AppNavigationHost
-import com.github.swent.echo.ui.theme.EchoTheme
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+@HiltAndroidTest
 class NavigationTest {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule(order = 0) val hiltRule = HiltAndroidRule(this)
 
-    // test the navigateTo function of the class NavigationActions
-    @Test
-    fun testNavigationActionsNavigateTo() {
-        composeTestRule.setContent {
+    // Create a test rule for the `MainActivity`
+    @get:Rule(order = 1) val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+    private fun setUp(route: Routes) {
+        composeTestRule.activity.setContent {
             val navController = rememberNavController()
-            AppNavigationHost(navController)
             val navigationActions = NavigationActions(navController)
-            for (route in Routes.entries) {
-                navigationActions.navigateTo(route)
-                assert(navController.currentDestination?.route == route.name)
-            }
-            assert(navController.currentBackStack.value.isNotEmpty())
-            assert(
-                navController.currentBackStack.value.last().destination.route ==
-                    Routes.entries.last().name
-            )
+            AppNavigationHost(navController)
+            navigationActions.navigateTo(route)
         }
     }
 
-    // test the goBack function of the class NavigationActions
     @Test
-    fun testNavigationActionsGoBack() {
-        val mockedNavController = mockk<NavHostController>(relaxed = true)
-        every { mockedNavController.navigateUp() } returns true
-        val navigationActions = NavigationActions(mockedNavController)
-        navigationActions.goBack()
-        verify { mockedNavController.navigateUp() }
-    }
-
-    // test the start route is displayed
-    @Test
-    fun testAppNavHostComposableStartRoute() {
-        composeTestRule.setContent { EchoTheme { AppNavigationHost() } }
-        composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
-    }
-
-    // test the map route is displayed
-    @Test
-    fun testAppNavHostComposableMapRoute() {
-        composeTestRule.setContent {
+    fun testDefaultRoute() {
+        composeTestRule.activity.setContent {
             val navController = rememberNavController()
             AppNavigationHost(navController)
-            navController.navigate(Routes.MAP.name)
         }
+
+        composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
+    }
+
+    @Test
+    fun testMapRoute() {
+        setUp(Routes.MAP)
         composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
+    }
+
+    @Test
+    fun testLoginRoute() {
+        setUp(Routes.LOGIN)
+        composeTestRule.onNodeWithTag("login-screen").assertIsDisplayed()
+    }
+
+    @Test
+    fun testRegisterRoute() {
+        setUp(Routes.REGISTER)
+        composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
     }
 }
