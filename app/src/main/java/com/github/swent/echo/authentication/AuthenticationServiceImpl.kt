@@ -1,5 +1,6 @@
 package com.github.swent.echo.authentication
 
+import android.util.Log
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 
@@ -10,6 +11,10 @@ import io.github.jan.supabase.gotrue.providers.builtin.Email
  */
 class AuthenticationServiceImpl(private val auth: Auth) : AuthenticationService {
 
+    companion object {
+        private const val TAG = "AuthenticationServiceImpl"
+    }
+
     override suspend fun signIn(email: String, password: String): AuthenticationResult {
         try {
             auth.signInWith(Email) {
@@ -17,6 +22,7 @@ class AuthenticationServiceImpl(private val auth: Auth) : AuthenticationService 
                 this.password = password
             }
         } catch (e: Exception) {
+            Log.e(TAG, "Failed to sign in", e)
             return AuthenticationResult.Error("Failed to sign in", e)
         }
 
@@ -30,6 +36,7 @@ class AuthenticationServiceImpl(private val auth: Auth) : AuthenticationService 
                 this.password = password
             }
         } catch (e: Exception) {
+            Log.e(TAG, "Failed to sign up", e)
             return AuthenticationResult.Error("Failed to sign up", e)
         }
 
@@ -40,6 +47,7 @@ class AuthenticationServiceImpl(private val auth: Auth) : AuthenticationService 
         try {
             auth.signOut()
         } catch (e: Exception) {
+            Log.e(TAG, "Failed to sign out", e)
             return AuthenticationResult.Error("Failed to sign out", e)
         }
 
