@@ -1,12 +1,16 @@
 package com.github.swent.echo.authentication
 
+import android.util.Log
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -25,6 +29,15 @@ class AuthenticationServiceImplTest {
     @Before
     fun setUp() {
         authMock = mockk(relaxed = true)
+
+        // Mocking error logging done by the `AuthenticationServiceImpl` class
+        mockkStatic(Log::class)
+        every { Log.e(any(), any(), any()) } returns 0
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(Log::class)
     }
 
     @Test
