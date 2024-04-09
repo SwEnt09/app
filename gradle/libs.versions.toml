@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.1"
+hiltNavigationCompose = "1.2.0"
 kotlinxSerializationJson = "1.6.3"
 ktorClientAndroid = "2.3.9"
 supabase = "2.2.2"
@@ -21,6 +22,7 @@ osmdroidAndroid = "6.1.18"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "navigationTesting" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
