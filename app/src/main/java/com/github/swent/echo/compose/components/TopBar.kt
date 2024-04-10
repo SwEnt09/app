@@ -89,44 +89,6 @@ data class NavigationItem(
 fun TopBar(navActions: NavigationActions? = null, onOpenSearch: () -> Unit) {
     // Scroll behavior for the top app bar, makes it pinned
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    // Top app bar with title, navigation icon, and actions
-    CenterAlignedTopAppBar(
-        modifier = Modifier.testTag("top_bar"),
-        colors =
-            TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            ),
-        title = {
-            Text(
-                "Echo",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis, // should not happen
-                fontWeight = FontWeight.SemiBold
-            )
-        },
-        navigationIcon = { // hamburger menu
-            IconButton(onClick = onOpenMenu, modifier = Modifier.testTag("menu_button")) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Menu to access all subpages"
-                )
-            }
-        },
-        actions = { // search icon
-            IconButton(
-                onClick = onOpenSearch,
-                modifier = Modifier.testTag("list_map_mode_button")
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "Search icon to access the search screen"
-                )
-            }
-        },
-        scrollBehavior = scrollBehavior,
-    )
-}
 
     // Drawer state to open and close the hamburger menu
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
