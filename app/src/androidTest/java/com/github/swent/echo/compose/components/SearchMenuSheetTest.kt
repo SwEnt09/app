@@ -14,7 +14,7 @@ class SearchMenuSheetTest {
     private var extended = 0
 
     @Before
-    fun setUp(): Unit {
+    fun setUp() {
         composeTestRule.setContent {
             dismissed = 0
             extended = 0
@@ -23,7 +23,7 @@ class SearchMenuSheetTest {
     }
 
     @Test
-    fun shouldShowSearchMenuSheet(): Unit {
+    fun shouldShowSearchMenuSheet() {
         composeTestRule.onNodeWithTag("search_menu_sheet").assertExists()
     }
 }
