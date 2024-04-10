@@ -32,7 +32,7 @@ enum class MapOrListMode {
  * view, and the map.
  */
 @Composable
-fun HomeScreen(navActions: NavigationActions? = null) {
+fun HomeScreen(navActions: NavigationActions) {
     val overlay = remember { mutableStateOf(Overlay.NONE) }
     val mode = remember { mutableStateOf(MapOrListMode.MAP) }
     Scaffold(
@@ -59,7 +59,7 @@ private fun Content(
     paddingValues: PaddingValues,
     overlay: MutableState<Overlay>,
     mode: MutableState<MapOrListMode>,
-    navActions: NavigationActions?
+    navActions: NavigationActions
 ) {
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode.value == MapOrListMode.LIST) {
