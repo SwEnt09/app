@@ -30,7 +30,7 @@ class NavigationTest {
     }
 
     @Test
-    fun testDefaultRoute() {
+    fun shouldShowRegisterScreenAsDefaultRoute() {
         composeTestRule.activity.setContent {
             val navController = rememberNavController()
             AppNavigationHost(navController)
@@ -40,19 +40,19 @@ class NavigationTest {
     }
 
     @Test
-    fun testMapRoute() {
+    fun shouldShowTheMapScreenWhenNavigatingToTheMapRoute() {
         setUp(Routes.MAP)
         composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
     }
 
     @Test
-    fun testLoginRoute() {
+    fun shouldShowTheLoginScreenWhenNavigatingToTheLoginRoute() {
         setUp(Routes.LOGIN)
         composeTestRule.onNodeWithTag("login-screen").assertIsDisplayed()
     }
 
     @Test
-    fun testRegisterRoute() {
+    fun shouldShowTheRegisterScreenWhenNavigatingToTheRegisterRoute() {
         setUp(Routes.REGISTER)
         composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
     }
