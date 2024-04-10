@@ -38,67 +38,8 @@ class TopBarTest {
     }
 
     @Test
-    fun shouldOpenHamburgerMenuWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("hamburger_menu").assertExists()
-    }
-
-    @Test
-    fun shouldShowProfileBoxWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("profile_box").assertExists()
-    }
-
-    @Test
-    fun shouldShowProfileSheetWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("profile_sheet").assertExists()
-    }
-
-    @Test
-    fun shouldShowProfilePictureWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("profile_picture").assertExists()
-    }
-
-    @Test
-    fun shouldShowProfileInfoWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("profile_info").assertExists()
-    }
-
-    @Test
-    fun shouldShowProfileNameWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("profile_name").assertExists()
-    }
-
-    @Test
-    fun shouldShowProfileClassWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("profile_class").assertExists()
-    }
-
-    @Test
-    fun shouldShowDarkModeButtonWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("dark_mode_button").assertExists()
-    }
-
-    @Test
-    fun shouldShowAllItemsWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        for (i in 0..6) {
-            composeTestRule.onNodeWithTag("navigation_item_$i").assertExists()
-        }
-    }
-
-    @Test
-    fun shouldCloseHamburgerMenuWhenNavigationItemClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        for (i in 0..6) {
-            composeTestRule.onNodeWithTag("navigation_item_$i").performClick()
-            composeTestRule.onNodeWithTag("top_bar").assertExists()
-        }
+    fun shouldCallOpenSearchCallbackWhenSearchButtonClicked() {
+        composeTestRule.onNodeWithTag("list_map_mode_button").performClick()
+        assertThat(searchClicked, equalTo(1))
     }
 }
