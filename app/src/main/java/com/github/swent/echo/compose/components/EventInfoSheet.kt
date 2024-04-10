@@ -79,7 +79,7 @@ fun EventInfoSheet(
     val displayDate = "$day/$displayMonth\n$hour:$minute"
 
     ModalBottomSheet(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().testTag("event_info_sheet"),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.primaryContainer

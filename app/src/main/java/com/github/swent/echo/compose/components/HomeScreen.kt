@@ -9,6 +9,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
@@ -36,6 +37,7 @@ fun HomeScreen(navActions: NavigationActions) {
     val overlay = remember { mutableStateOf(Overlay.NONE) }
     val mode = remember { mutableStateOf(MapOrListMode.MAP) }
     Scaffold(
+        modifier = Modifier.testTag("home_screen"),
         topBar = {
             TopBar(
                 {},
