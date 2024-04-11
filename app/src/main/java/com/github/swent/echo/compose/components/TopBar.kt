@@ -267,6 +267,7 @@ fun TopBar(navActions: NavigationActions? = null, onOpenSearch: () -> Unit) {
                 }
             },
             scrollBehavior = scrollBehavior,
+            modifier = Modifier.testTag("top_bar")
         )
     }
 }
