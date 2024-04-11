@@ -50,16 +50,13 @@ fun HomeScreen(navActions: NavigationActions) {
     Scaffold(
         modifier = Modifier.testTag("home_screen"),
         topBar = {
-            TopBar(
-                {},
-                {
-                    if (mode.value == MapOrListMode.MAP) {
-                        mode.value = MapOrListMode.LIST
-                    } else {
-                        mode.value = MapOrListMode.MAP
-                    }
+            TopBar(navActions) {
+                if (mode.value == MapOrListMode.MAP) {
+                    mode.value = MapOrListMode.LIST
+                } else {
+                    mode.value = MapOrListMode.MAP
                 }
-            )
+            }
         },
         floatingActionButton = { SearchButton(onClick = { overlay.value = Overlay.SEARCH_SHEET }) }
     ) { paddingValues ->
