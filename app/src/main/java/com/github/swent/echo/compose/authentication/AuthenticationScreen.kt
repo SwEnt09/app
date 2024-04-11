@@ -1,11 +1,28 @@
 package com.github.swent.echo.compose.authentication
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.github.swent.echo.R
 import com.github.swent.echo.viewmodels.authentication.AuthenticationState
 
 /**
@@ -25,22 +42,78 @@ fun AuthenticationScreen(
     action: String,
     state: AuthenticationState,
     onAuthenticate: (email: String, password: String) -> Unit,
+    onStartGoogleSignIn: () -> Unit
 ) {
     Box(modifier = Modifier.padding(24.dp)) {
         when (state) {
-            is AuthenticationState.SignedOut ->
-                AuthenticationForm(
-                    action = action,
-                    onAuthenticate = onAuthenticate,
-                )
-            is AuthenticationState.SigningIn -> Text("Signing in...")
-            is AuthenticationState.SignedIn -> Text("Signed in")
-            is AuthenticationState.Error ->
-                AuthenticationForm(
-                    action = action,
-                    onAuthenticate = onAuthenticate,
-                    error = state.message,
-                )
+            is AuthenticationState.SignedOut,
+            is AuthenticationState.Error -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    AuthenticationForm(
+                        action = action,
+                        onAuthenticate = onAuthenticate,
+                    )
+                    AuthenticationMethodSeparator()
+                    GoogleSignInButton(onStartGoogleSignIn)
+                    if (state is AuthenticationState.Error) {
+                        Spacer(modifier = Modifier.padding(12.dp))
+                        Text(
+                            text = state.message,
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .testTag("error-message"),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                }
+            }
+            is AuthenticationState.SigningIn,
+            is AuthenticationState.SignedIn -> SigningInScreen()
         }
+    }
+}
+
+@Composable
+fun GoogleSignInButton(onClick: () -> Unit) {
+    return OutlinedButton(onClick = onClick) {
+        Image(
+            painter = painterResource(R.drawable.google_logo),
+            contentDescription =
+                stringResource(R.string.authentication_screen_google_logo_description),
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(stringResource(R.string.authentication_screen_sign_in_with_google))
+    }
+}
+
+@Composable
+fun AuthenticationMethodSeparator() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Divider(modifier = Modifier.weight(1f), thickness = 1.dp)
+        Text(
+            stringResource(R.string.authentication_screen_sign_in_method_separator),
+            modifier = Modifier.padding(vertical = 16.dp),
+        )
+        Divider(modifier = Modifier.weight(1f), thickness = 1.dp)
+    }
+}
+
+@Composable
+fun SigningInScreen() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text("Signing in...")
     }
 }
