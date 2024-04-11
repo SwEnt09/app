@@ -20,7 +20,11 @@ fun <T : View> EchoAndroidView(
     events: List<Event>,
     callback: (Event) -> Unit = {}
 ) {
-    AndroidView(modifier = modifier, factory = factory, update = { update(it, events, callback) })
+    AndroidView(
+        modifier = modifier.testTag("mapViewWrapper"),
+        factory = factory,
+        update = { update(it, events, callback) }
+    )
 }
 
 /**
@@ -33,9 +37,9 @@ fun <T : View> EchoAndroidView(
  */
 @Composable
 fun MapDrawer(modifier: Modifier = Modifier, events: List<Event>, callback: (Event) -> Unit = {}) {
-    val provider = MapLibreMapViewProvider()
+    val provider = OsmdroidMapViewProvider()
     EchoAndroidView(
-        modifier = modifier.testTag("mapViewWrapper"),
+        modifier = modifier,
         factory = provider::factory,
         // Function that will be called when the view has been
         // inflated or state read in this function has been updated
