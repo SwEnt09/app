@@ -1,5 +1,7 @@
 [versions]
 agp = "8.3.1"
+credentials = "1.2.2"
+googleid = "1.1.0"
 hiltNavigationCompose = "1.2.0"
 androidSdk = "11.0.0-pre4"
 kotlinxSerializationJson = "1.6.3"
@@ -25,8 +27,10 @@ osmdroidAndroid = "6.1.18"
 [libraries]
 android-sdk = { module = "org.maplibre.gl:android-sdk", version.ref = "androidSdk" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "navigationTesting" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
@@ -35,6 +39,7 @@ ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "k
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
 supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabase" }
+supabase-compose-auth = { module = "io.github.jan-tennert.supabase:compose-auth" }
 supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 supabase-gotrue = { module = "io.github.jan-tennert.supabase:gotrue-kt"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }
