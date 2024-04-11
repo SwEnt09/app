@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,13 +28,11 @@ import com.github.swent.echo.R
  * @param action The text to be displayed on the action button.
  * @param onAuthenticate The callback to be invoked when the user clicks the action button. It
  *   receives the user's email and password as parameters.
- * @param error The error message to be displayed, if any.
  */
 @Composable
 fun AuthenticationForm(
     action: String,
     onAuthenticate: (email: String, password: String) -> Unit,
-    error: String? = null,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -68,16 +65,6 @@ fun AuthenticationForm(
             onClick = { onAuthenticate(email, password) },
         ) {
             Text(action)
-        }
-        Spacer(modifier = Modifier.padding(12.dp))
-        error?.let {
-            Text(
-                text = it,
-                modifier =
-                    Modifier.fillMaxWidth().padding(horizontal = 16.dp).testTag("error-message"),
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-            )
         }
     }
 }
