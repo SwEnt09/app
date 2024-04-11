@@ -12,9 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
-import java.util.Date
 
 enum class Overlay {
     NONE,
@@ -27,6 +25,14 @@ enum class MapOrListMode {
     LIST
 }
 
+data class DisplayEventInfo(
+    val event: Event,
+    val eventImage: Int,
+    val eventPeople: Int,
+    val eventPeopleMax: Int,
+    val hostName: String
+)
+
 /**
  * The scaffold for the home screen. contains the top bar, the bottom sheet if an event is selected,
  * the hamburger menu when the button is clicked on the top bar, the search bottom sheet, the list
@@ -36,6 +42,7 @@ enum class MapOrListMode {
 fun HomeScreen(navActions: NavigationActions) {
     val overlay = remember { mutableStateOf(Overlay.NONE) }
     val mode = remember { mutableStateOf(MapOrListMode.MAP) }
+    val displayEventInfo = remember { mutableStateOf<DisplayEventInfo?>(null) }
     Scaffold(
         modifier = Modifier.testTag("home_screen"),
         topBar = {
@@ -52,7 +59,7 @@ fun HomeScreen(navActions: NavigationActions) {
         },
         floatingActionButton = { SearchButton(onClick = { overlay.value = Overlay.SEARCH_SHEET }) }
     ) { paddingValues ->
-        Content(paddingValues, overlay, mode, navActions)
+        Content(paddingValues, overlay, mode, navActions, displayEventInfo)
     }
 }
 
@@ -61,8 +68,23 @@ private fun Content(
     paddingValues: PaddingValues,
     overlay: MutableState<Overlay>,
     mode: MutableState<MapOrListMode>,
-    navActions: NavigationActions
+    navActions: NavigationActions,
+    displayEventInfo: MutableState<DisplayEventInfo?>
 ) {
+    /* for the callback of the map when we have it
+    fun onEventSelected(
+        event: Event,
+        eventImage: Int = 0,
+        eventPeople: Int = 0,
+        eventPeopleMax: Int = 0,
+        hostName: String = ""
+    ) {
+        displayEventInfo.value =
+            DisplayEventInfo(event, eventImage, eventPeople, eventPeopleMax, hostName)
+        overlay.value = Overlay.EVENT_INFO_SHEET
+    }
+    */
+
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode.value == MapOrListMode.LIST) {
             // TODO add the list view
@@ -70,25 +92,13 @@ private fun Content(
             MapDrawer()
         }
         // add the tag filtering here
-        if (overlay.value == Overlay.EVENT_INFO_SHEET) {
-            // TODO get the event from the repository
-            val event =
-                Event(
-                    eventId = "1",
-                    organizerId = "1",
-                    title = "Event Title",
-                    description = "Event Description",
-                    location = Location("", 0.0, 0.0),
-                    startDate = Date(2024, 5, 18, 18, 15),
-                    endDate = Date(2024, 1, 1, 22, 0),
-                    tags = setOf()
-                )
+        if (overlay.value == Overlay.EVENT_INFO_SHEET && displayEventInfo.value != null) {
             EventInfoSheet(
-                eventImage = 0 /* TODO get the image from the repository*/,
-                eventPeople = 2 /* TODO get the number of people from the repository */,
-                eventPeopleMax = 4 /* TODO get the max number of people from the repository */,
-                hostName = "Bowling club" /* TODO get the host name from the repository */,
-                event = event /* TODO get the event from the repository */,
+                eventImage = displayEventInfo.value!!.eventImage,
+                eventPeople = displayEventInfo.value!!.eventPeople,
+                eventPeopleMax = displayEventInfo.value!!.eventPeopleMax,
+                hostName = displayEventInfo.value!!.hostName,
+                event = displayEventInfo.value!!.event,
                 onJoinButtonPressed = {},
                 onShowPeopleButtonPressed = {},
                 onDismiss = { overlay.value = Overlay.NONE },
