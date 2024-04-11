@@ -27,8 +27,6 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     override fun factory(context: Context): MapView {
         MapLibre.getInstance(context)
         mapView = MapView(context)
-        // val styleUrl =
-        // "https://api.maptiler.com/maps/streets-v2/style.json?key=8tGwLwPFCHwJ5D8g7pic "
         val styleUrl =
             context.getString(R.string.maptiler_base_style_url) +
                 context.getString(R.string.maptiler_api_key)
