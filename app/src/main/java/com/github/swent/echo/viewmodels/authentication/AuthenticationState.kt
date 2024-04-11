@@ -9,4 +9,8 @@ sealed class AuthenticationState {
     data object SignedIn : AuthenticationState()
 
     data class Error(val message: String) : AuthenticationState()
+
+    fun isSignedOutOrError(): Boolean {
+        return this is SignedOut || this is Error
+    }
 }
