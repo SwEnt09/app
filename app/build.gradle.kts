@@ -98,6 +98,9 @@ dependencies {
     // Open Street Map
     implementation(libs.osmdroid.android)
 
+    // Map Libre
+    implementation(libs.android.sdk)
+    
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)

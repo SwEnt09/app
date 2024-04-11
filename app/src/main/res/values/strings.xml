@@ -11,4 +11,6 @@
     <string name="register_screen_action_button">Register</string>
     <string name="register_screen_do_you_have_an_account">Do you have an account?</string>
     <string name="register_screen_login_link">Login</string>
+    <string name="maptiler_api_key">8tGwLwPFCHwJ5D8g7pic</string>
+    <string name="maptiler_base_style_url">https://api.maptiler.com/maps/streets-v2/style.json?key=</string>
 </resources>
