@@ -46,7 +46,7 @@ private val DarkColorScheme =
         surfaceTint = md_theme_dark_surfaceTint,
         outlineVariant = md_theme_dark_outlineVariant,
         scrim = md_theme_dark_scrim,
-        )
+    )
 
 private val LightColorScheme =
     lightColorScheme(
@@ -79,7 +79,7 @@ private val LightColorScheme =
         surfaceTint = md_theme_light_surfaceTint,
         outlineVariant = md_theme_light_outlineVariant,
         scrim = md_theme_light_scrim,
-        )
+    )
 
 @Composable
 fun EchoTheme(
