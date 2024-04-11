@@ -1,6 +1,7 @@
 package com.github.swent.echo.authentication
 
 import android.util.Log
+import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 
@@ -9,7 +10,10 @@ import io.github.jan.supabase.gotrue.providers.builtin.Email
  *
  * @param auth The Supabase authentication plugin.
  */
-class AuthenticationServiceImpl(private val auth: Auth) : AuthenticationService {
+class AuthenticationServiceImpl(
+    private val auth: Auth,
+    override val composeAuth: ComposeAuth,
+) : AuthenticationService {
 
     companion object {
         private const val TAG = "AuthenticationServiceImpl"

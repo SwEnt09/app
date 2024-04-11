@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.compose.auth.composeAuth
 import io.github.jan.supabase.gotrue.auth
 
 @Module
@@ -15,6 +16,6 @@ object AuthenticationServiceModule {
 
     @Provides
     fun provideAuthenticationService(supabaseClient: SupabaseClient): AuthenticationService {
-        return AuthenticationServiceImpl(supabaseClient.auth)
+        return AuthenticationServiceImpl(supabaseClient.auth, supabaseClient.composeAuth)
     }
 }

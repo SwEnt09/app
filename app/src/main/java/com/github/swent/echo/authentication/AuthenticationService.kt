@@ -1,7 +1,13 @@
 package com.github.swent.echo.authentication
 
+import io.github.jan.supabase.compose.auth.ComposeAuth
+
 /** Service to handle user authentication. */
 interface AuthenticationService {
+
+    /** Supabase's compose auth plugin to make the sign in with Google easy. */
+    val composeAuth: ComposeAuth
+
     /**
      * Sign in with email and password.
      *
