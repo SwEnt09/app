@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.github.swent.echo.compose.map.MapDrawer
-import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.ui.navigation.NavigationActions
 
 enum class Overlay {
@@ -24,7 +23,7 @@ enum class MapOrListMode {
     MAP,
     LIST
 }
-
+/*
 data class DisplayEventInfo(
     val event: Event,
     val eventImage: Int,
@@ -32,6 +31,7 @@ data class DisplayEventInfo(
     val eventPeopleMax: Int,
     val hostName: String
 )
+*/
 
 /**
  * The scaffold for the home screen. contains the top bar, the bottom sheet if an event is selected,
@@ -42,7 +42,7 @@ data class DisplayEventInfo(
 fun HomeScreen(navActions: NavigationActions) {
     val overlay = remember { mutableStateOf(Overlay.NONE) }
     val mode = remember { mutableStateOf(MapOrListMode.MAP) }
-    val displayEventInfo = remember { mutableStateOf<DisplayEventInfo?>(null) }
+    // val displayEventInfo = remember { mutableStateOf<DisplayEventInfo?>(null) }
     Scaffold(
         modifier = Modifier.testTag("home_screen"),
         topBar = {
@@ -59,7 +59,7 @@ fun HomeScreen(navActions: NavigationActions) {
         },
         floatingActionButton = { SearchButton(onClick = { overlay.value = Overlay.SEARCH_SHEET }) }
     ) { paddingValues ->
-        Content(paddingValues, overlay, mode, navActions, displayEventInfo)
+        Content(paddingValues, overlay, mode, navActions /*, displayEventInfo*/)
     }
 }
 
@@ -69,7 +69,7 @@ private fun Content(
     overlay: MutableState<Overlay>,
     mode: MutableState<MapOrListMode>,
     navActions: NavigationActions,
-    displayEventInfo: MutableState<DisplayEventInfo?>
+    // displayEventInfo: MutableState<DisplayEventInfo?>
 ) {
     /* for the callback of the map when we have it
     fun onEventSelected(
@@ -92,7 +92,8 @@ private fun Content(
             MapDrawer()
         }
         // add the tag filtering here
-        if (overlay.value == Overlay.EVENT_INFO_SHEET && displayEventInfo.value != null) {
+        if (overlay.value == Overlay.EVENT_INFO_SHEET /* && displayEventInfo.value != null*/) {
+            /*
             EventInfoSheet(
                 eventImage = displayEventInfo.value!!.eventImage,
                 eventPeople = displayEventInfo.value!!.eventPeople,
@@ -104,6 +105,7 @@ private fun Content(
                 onDismiss = { overlay.value = Overlay.NONE },
                 onFullyExtended = {}
             )
+            */
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info
         }
