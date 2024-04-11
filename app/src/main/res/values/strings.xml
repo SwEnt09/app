@@ -2,6 +2,7 @@
     <string name="app_name">echo</string>
     <string name="supabase_url">https://ulejnivguxeiibkbpwnb.supabase.co</string>
     <string name="supabase_public_key">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZWpuaXZndXhlaWlia2Jwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA4MzgxODQsImV4cCI6MjAyNjQxNDE4NH0.9Hkj-Gox2XHcHfs_U2GyQFc9sZ_nu2Xs16-KYBri32g</string>
+    <string name="google_web_client_id">442952145416-mfuc6f0h27oa7efapkrto4veguk0e62u.apps.googleusercontent.com</string>
     <string name="authentication_form_email_label">Email</string>
     <string name="authentication_form_password_label">Password</string>
     <string name="login_screen_don_t_have_an_account">Don\'t have an account?</string>
