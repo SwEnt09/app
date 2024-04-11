@@ -148,25 +148,42 @@ fun TopBar(navActions: NavigationActions? = null, onOpenSearch: () -> Unit) {
                         Modifier.background(MaterialTheme.colorScheme.primaryContainer)
                             .fillMaxWidth()
                             .padding(NavigationDrawerItemDefaults.ItemPadding)
+                            .testTag("profile_box")
                 ) {
-                    Column(modifier = Modifier.align(Alignment.TopStart).padding(8.dp)) {
+                    Column(
+                        modifier =
+                            Modifier.align(Alignment.TopStart)
+                                .padding(8.dp)
+                                .testTag("profile_sheet")
+                    ) {
                         // TODO: Replace with actual profile picture
                         Image(
+                            modifier = Modifier.testTag("profile_picture"),
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
                             contentDescription = "profile picture"
                         )
-                        Row(modifier = Modifier.padding(8.dp)) {
+                        Row(modifier = Modifier.padding(8.dp).testTag("profile_info")) {
                             // TODO: Replace with actual name and class
-                            Text(text = "John Doe")
+                            Text(
+                                text = "John Doe",
+                                modifier = Modifier.testTag("profile_name"),
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "IN - BA6", color = Color.White.copy(alpha = 0.5f))
+                            Text(
+                                text = "IN - BA6",
+                                color = Color.White.copy(alpha = 0.5f),
+                                modifier = Modifier.testTag("profile_class")
+                            )
                         }
                     }
                     // TODO: complete the onClick action in order to switch between dark and light
                     // mode
                     IconButton(
                         onClick = {},
-                        modifier = Modifier.align(Alignment.TopEnd).padding(8.dp)
+                        modifier =
+                            Modifier.align(Alignment.TopEnd)
+                                .padding(8.dp)
+                                .testTag("dark_mode_button")
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Star,
@@ -199,12 +216,15 @@ fun TopBar(navActions: NavigationActions? = null, onOpenSearch: () -> Unit) {
                         badge = {
                             item.badgeCount?.let { Text(text = item.badgeCount.toString()) }
                         },
-                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                        modifier =
+                            Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                                .testTag("navigation_item_$index")
                     )
                 }
             }
         },
-        drawerState = drawerState
+        drawerState = drawerState,
+        modifier = Modifier.testTag("hamburger_menu")
     ) {
         // Top app bar with title, navigation icon, and actions
         /* Implemented inside the content of the ModalNavigationDrawer because
