@@ -88,9 +88,31 @@ class EventViewModel() : ViewModel() {
         } else if (_status.value == EventStatus.Saved) {
             Log.w("save event", "trying to save the event but it's already saved")
         } else {
-            _status.value = EventStatus.Saving
-            // TODO: save in repository
+            if(eventIsValid()){
+                _status.value = EventStatus.Saving
+                // TODO: save in repository
+            }
         }
+    }
+
+    // return the status of the event
+    fun getStatus(): EventStatus {
+        return _status.asStateFlow().value
+    }
+
+    /**
+     * check the current event has valid data
+     * if not return false and set _status to Error
+     */
+    private fun eventIsValid(): Boolean {
+        val event  = _event.value
+        if(event.startDate.after(event.endDate)){
+            _status.value = EventStatus.Error("end date before start date")
+        }
+        if(event.title.isBlank()){
+            _status.value = EventStatus.Error("title is empty")
+        }
+        return _status.value is EventStatus.Error
     }
 }
 
