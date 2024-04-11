@@ -92,4 +92,13 @@ class TopBarTest {
             composeTestRule.onNodeWithTag("navigation_item_$i").assertExists()
         }
     }
+
+    @Test
+    fun shouldCloseHamburgerMenuWhenNavigationItemClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        for (i in 0..6) {
+            composeTestRule.onNodeWithTag("navigation_item_$i").performClick()
+            composeTestRule.onNodeWithTag("top_bar").assertExists()
+        }
+    }
 }
