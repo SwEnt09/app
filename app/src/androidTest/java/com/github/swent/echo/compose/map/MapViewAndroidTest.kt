@@ -2,6 +2,7 @@ package com.github.swent.echo.compose.map
 
 import android.view.View
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,7 +37,7 @@ class MapViewAndroidTest {
                     organizerId = "a",
                     title = "Bowling Event",
                     description = "",
-                    location = Location("Location 1", OsmdroidMapViewProvider.LAUSANNE_GEO_POINT),
+                    location = Location("Location 1", MAP_CENTER.toGeoPoint()),
                     startDate = Date.from(Instant.now()),
                     endDate = Date.from(Instant.now()),
                     tags = emptySet(),
@@ -49,10 +50,7 @@ class MapViewAndroidTest {
                     location =
                         Location(
                             "Location 2",
-                            OsmdroidMapViewProvider.LAUSANNE_GEO_POINT.destinationPoint(
-                                1000.0,
-                                90.0
-                            )
+                            MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 90.0)
                         ),
                     startDate = Date.from(Instant.now()),
                     endDate = Date.from(Instant.now()),
@@ -67,17 +65,17 @@ class MapViewAndroidTest {
 
         @Composable
         private fun DummyMapDrawer() {
-            val e = remember { mutableStateOf(events) }
-            MapDrawer(context = context, events = e)
+            val e by remember { mutableStateOf(events) }
+            MapDrawer(events = e)
         }
 
         @Composable
         private fun <T : View> DummyMapDrawer(p: IMapViewProvider<T>) {
-            val e = remember { mutableStateOf(events) }
+            val e by remember { mutableStateOf(events) }
             EchoAndroidView(factory = p::factory, update = p::update, events = e)
         }
 
-        private fun provider() = OsmdroidMapViewProvider(context)
+        private fun provider() = OsmdroidMapViewProvider()
     }
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -101,14 +99,14 @@ class MapViewAndroidTest {
     fun mapViewCreatorShouldCreateViewWithCorrectZoom() {
         val p = provider()
         composeTestRule.setContent { DummyMapDrawer(p) }
-        assertEquals(p.getZoom(), OsmdroidMapViewProvider.ZOOM_DEFAULT, 0.0)
+        assertEquals(p.getZoom(), DEFAULT_ZOOM, 0.0)
     }
 
     @Test
     fun mapViewCreatorShouldCreateViewWithCorrectCenter() {
         val p = provider()
         composeTestRule.setContent { DummyMapDrawer(p) }
-        assertTrue(closeEnough(OsmdroidMapViewProvider.LAUSANNE_GEO_POINT, p.getCenter()))
+        assertTrue(closeEnough(MAP_CENTER.toGeoPoint(), p.getCenter()))
     }
 
     @Test

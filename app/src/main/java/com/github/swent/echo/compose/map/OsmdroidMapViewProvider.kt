@@ -6,38 +6,20 @@ import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
 /**
  * Provides a [MapView] to be displayed by an
  * [AndroidView][androidx.compose.ui.viewinterop.AndroidView].
- *
- * @param initContext An initial [Context] is needed to properly initialize the `osmdroid`
- *   [Configuration]. This can simply be the activity itself if this constructor is called from an
- *   activity, or the [LocalContext][androidx.compose.ui.platform.LocalContext]`.current` if it is
- *   called from a composable.
  */
-open class OsmdroidMapViewProvider(
-    private val initContext: Context,
-) : IMapViewProvider<MapView> {
+class OsmdroidMapViewProvider() : IMapViewProvider<MapView> {
 
     companion object {
         private val tileSource = TileSourceFactory.MAPNIK
-
-        const val ZOOM_DEFAULT = 15.0
-        val LAUSANNE_GEO_POINT = GeoPoint(46.5197, 6.6323)
     }
 
     private lateinit var mapView: MapView
-
-    init {
-        Configuration.getInstance().apply {
-            userAgentValue = initContext.packageName
-            osmdroidBasePath = initContext.cacheDir
-        }
-    }
 
     fun getCenter(): IGeoPoint = mapView.mapCenter
 
@@ -69,19 +51,23 @@ open class OsmdroidMapViewProvider(
     }
 
     override fun factory(context: Context): MapView {
+        Configuration.getInstance().apply {
+            userAgentValue = context.packageName
+            osmdroidBasePath = context.cacheDir
+        }
         mapView =
             MapView(context, MapTileProviderBasic(context)).apply {
                 setTileSource(tileSource)
                 setMultiTouchControls(true)
                 clipToOutline = true
                 // setOnClickListener { ... }
-                controller.setZoom(ZOOM_DEFAULT)
-                controller.setCenter(LAUSANNE_GEO_POINT)
+                controller.setZoom(DEFAULT_ZOOM)
+                controller.setCenter(MAP_CENTER.toGeoPoint())
             }
         return mapView
     }
 
     override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
-        mapView.apply { drawAllMarkers(events, callback) }
+        view.apply { drawAllMarkers(events, callback) }
     }
 }

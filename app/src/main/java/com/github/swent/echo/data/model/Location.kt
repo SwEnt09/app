@@ -5,6 +5,7 @@ import org.osmdroid.util.GeoPoint
 
 data class Location(val name: String, val lat: Double, val long: Double) {
     constructor(name: String, point: GeoPoint) : this(name, point.latitude, point.longitude)
+
     constructor(name: String, point: LatLng) : this(name, point.latitude, point.longitude)
     /**
      * Transform this location into a [GeoPoint].
