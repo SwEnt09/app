@@ -1,13 +1,10 @@
 package com.github.swent.echo.viewmodels.authentication
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationResult
 import com.github.swent.echo.authentication.AuthenticationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -16,12 +13,11 @@ import kotlinx.coroutines.launch
  * @param auth The authentication service to use.
  */
 @HiltViewModel
-class RegisterViewModel @Inject constructor(private val auth: AuthenticationService) : ViewModel() {
-
-    private val _state = MutableStateFlow<AuthenticationState>(AuthenticationState.SignedOut)
-
-    /** The current state of the view model. */
-    val state = _state.asStateFlow()
+class RegisterViewModel
+@Inject
+constructor(
+    override val auth: AuthenticationService,
+) : AbstractAuthenticationViewModel() {
 
     /**
      * Sign up with email and password.
