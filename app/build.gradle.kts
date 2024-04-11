@@ -95,6 +95,11 @@ dependencies {
     implementation(libs.ktor.client.android)
     implementation(libs.kotlinx.serialization.json)
 
+    // Google Authentication
+    implementation(libs.androidx.credentials)
+    implementation (libs.googleid)
+    implementation(libs.supabase.compose.auth)
+
     // Open Street Map
     implementation(libs.osmdroid.android)
 
