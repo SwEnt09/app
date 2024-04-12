@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import com.github.swent.echo.authentication.AuthenticationService
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
-import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -24,11 +23,11 @@ abstract class AbstractAuthenticationViewModel : ViewModel() {
      */
     @Composable
     fun startGoogleSignInCallback(): () -> Unit {
-        val action = auth.composeAuth.rememberSignInWithGoogle(this::onGoogleSignInResult)
+        val startGoogleSignIn = auth.startGoogleSignInCallback(this::onGoogleSignInResult)
 
         return {
             _state.value = AuthenticationState.SigningIn
-            action.startFlow()
+            startGoogleSignIn()
         }
     }
 
