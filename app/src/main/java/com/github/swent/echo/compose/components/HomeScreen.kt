@@ -78,13 +78,8 @@ private fun Content(
 
     fun onEventSelected(
         event: Event,
-        eventImage: Int = 0,
-        eventPeople: Int = 0,
-        eventPeopleMax: Int = 0,
-        hostName: String = ""
     ) {
-        displayEventInfo.value =
-            DisplayEventInfo(event, eventImage, eventPeople, eventPeopleMax, hostName)
+        displayEventInfo.value = DisplayEventInfo(event, 0, 0, 0, "")
         overlay.value = Overlay.EVENT_INFO_SHEET
     }
 
@@ -95,9 +90,19 @@ private fun Content(
                 organizerId = "a",
                 title = "Bowling Event",
                 description = "",
-                location = Location("Location 1", MAP_CENTER.toGeoPoint()),
-                startDate = Date.from(Instant.now()),
-                endDate = Date.from(Instant.now()),
+                location =
+                    Location(
+                        "Location 1",
+                        MAP_CENTER.toGeoPoint(),
+                    ),
+                startDate =
+                    Date.from(
+                        Instant.now(),
+                    ),
+                endDate =
+                    Date.from(
+                        Instant.now(),
+                    ),
                 tags = emptySet(),
             ),
             Event(
@@ -106,9 +111,22 @@ private fun Content(
                 title = "Swimming Event",
                 description = "",
                 location =
-                    Location("Location 2", MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 90.0)),
-                startDate = Date.from(Instant.now()),
-                endDate = Date.from(Instant.now()),
+                    Location(
+                        "Location 2",
+                        MAP_CENTER.toGeoPoint()
+                            .destinationPoint(
+                                1000.0,
+                                90.0,
+                            ),
+                    ),
+                startDate =
+                    Date.from(
+                        Instant.now(),
+                    ),
+                endDate =
+                    Date.from(
+                        Instant.now(),
+                    ),
                 tags = emptySet(),
             )
         )
@@ -117,7 +135,10 @@ private fun Content(
         if (mode.value == MapOrListMode.LIST) {
             // TODO add the list view
         } else {
-            MapDrawer(events = events, callback = { event -> onEventSelected(event) })
+            MapDrawer(
+                events = events,
+                callback = { event -> onEventSelected(event) },
+            )
         }
         // add the tag filtering here
         if (overlay.value == Overlay.EVENT_INFO_SHEET && displayEventInfo.value != null) {
