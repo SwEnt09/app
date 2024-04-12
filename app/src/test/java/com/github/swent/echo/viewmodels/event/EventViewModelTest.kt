@@ -55,7 +55,7 @@ class EventViewModelTest {
     }
 
     @Test
-    fun deleteTagOfEventTest() {
+    fun deleteTagFromEventTest() {
         val event = TEST_EVENT
         val eventViewModel = EventViewModel()
         eventViewModel.setEvent(event)
