@@ -14,13 +14,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Build
@@ -211,18 +211,20 @@ fun HomeScreen(navActions: NavigationActions) {
                             )
                         }
                     }
-                    // TODO: complete the onClick action in order to switch between dark and light
-                    // mode
+                    // Close button for the hamburger menu
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            selectedItemIndex = 0
+                            scope.launch { drawerState.close() }
+                        },
                         modifier =
                         Modifier.align(Alignment.TopEnd)
                             .padding(8.dp)
-                            .testTag("dark_mode_button")
+                            .testTag("close_button_hamburger_menu")
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "Switch dark/light mode"
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close button hamburger menu"
                         )
                     }
                 }
