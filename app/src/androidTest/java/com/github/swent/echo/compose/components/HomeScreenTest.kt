@@ -76,6 +76,7 @@ class HomeScreenTest {
                 startDate = Date.from(Instant.now()),
                 endDate = Date.from(Instant.now()),
                 tags = emptySet(),
+                creatorId = "d"
             )
         val obj = DisplayEventInfo(event, 0, 0, 0, "")
     }
