@@ -38,19 +38,6 @@ class AuthenticationFormTest {
     }
 
     @Test
-    fun shouldNotDisplayErrorWhenErrorIsNull() {
-        composeTestRule.setContent { AuthenticationForm(ACTION, this::onAuthenticate, null) }
-        composeTestRule.onNodeWithTag("error-message").assertDoesNotExist()
-    }
-
-    @Test
-    fun shouldDisplayErrorMessageWhenErrorIsNotNull() {
-        val error = "An error occurred"
-        composeTestRule.setContent { AuthenticationForm(ACTION, this::onAuthenticate, error) }
-        composeTestRule.onNodeWithTag("error-message").assertExists()
-    }
-
-    @Test
     fun shouldDisplayLabelsAndActionButton() {
         composeTestRule.setContent { AuthenticationForm(ACTION, this::onAuthenticate) }
         composeTestRule.onNodeWithTag("action-button").assertExists()

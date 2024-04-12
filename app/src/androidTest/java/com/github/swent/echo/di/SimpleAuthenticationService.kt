@@ -1,7 +1,9 @@
 package com.github.swent.echo.di
 
+import androidx.compose.runtime.Composable
 import com.github.swent.echo.authentication.AuthenticationResult
 import com.github.swent.echo.authentication.AuthenticationService
+import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 import javax.inject.Inject
 
 /** A simple implementation of [AuthenticationService] which will be injected in android tests. */
@@ -14,6 +16,11 @@ class SimpleAuthenticationService @Inject constructor() : AuthenticationService 
     private var userId: String? = null
     private var email: String? = null
     private var password: String? = null
+
+    @Composable
+    override fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit {
+        return { onResult(NativeSignInResult.Success) }
+    }
 
     override suspend fun signIn(email: String, password: String): AuthenticationResult {
         return if (this.email == email && this.password == password) {
