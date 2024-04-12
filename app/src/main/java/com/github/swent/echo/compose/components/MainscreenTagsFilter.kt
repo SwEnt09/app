@@ -35,7 +35,7 @@ fun TagUI(tags: List<Tag>, selectedTagId: String?, onTagClick: (Tag) -> Unit) {
     val lazyListState = rememberLazyListState()
     var selectTag by remember { mutableStateOf(selectedTagId) }
 
-    Column(modifier = Modifier.padding(top = 65.dp)) {
+    Column(modifier = Modifier) {
         LazyRow(
             modifier = Modifier.padding(8.dp),
             state = lazyListState,
