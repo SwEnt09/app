@@ -68,8 +68,8 @@ class EventViewModel() : ViewModel() {
      * if the string match its name or null otherwise
      */
     fun getAndAddTagFromString(tagName: String): Tag? {
-        val tag = allTagsList.filter { (_, name) -> name == tagName }
-        if (tag.isNotEmpty()) {
+        if (allTagsList.any { (_, name) -> name == tagName }) {
+            val tag = allTagsList.filter { (_, name) -> name == tagName }
             setEvent(_event.value.copy(tags = _event.value.tags + tag.first()))
             return tag.first()
         }
