@@ -30,6 +30,10 @@ class AuthenticationScreenTest {
         authenticationCount++
     }
 
+    private fun onStartGoogleSignIn() {
+        // Not implemented
+    }
+
     @Before
     fun setUp() {
         authenticationCount = 0
@@ -40,7 +44,12 @@ class AuthenticationScreenTest {
     @Test
     fun shouldHaveLoginButtonAndInputFieldsWhenIsSignedOut() {
         composeTestRule.setContent {
-            AuthenticationScreen(ACTION, AuthenticationState.SignedOut, this::onAuthenticate)
+            AuthenticationScreen(
+                ACTION,
+                AuthenticationState.SignedOut,
+                this::onAuthenticate,
+                this::onStartGoogleSignIn
+            )
         }
         composeTestRule.onNodeWithText(ACTION).assertExists().assertHasClickAction()
         composeTestRule.onNodeWithTag("email-field").assertExists()
@@ -51,7 +60,12 @@ class AuthenticationScreenTest {
     @Test
     fun shouldCallOnAuthenticateWithCorrectParametersWhenActionButtonIsPressedInSignedOutState() {
         composeTestRule.setContent {
-            AuthenticationScreen(ACTION, AuthenticationState.SignedOut, this::onAuthenticate)
+            AuthenticationScreen(
+                ACTION,
+                AuthenticationState.SignedOut,
+                this::onAuthenticate,
+                this::onStartGoogleSignIn
+            )
         }
         composeTestRule.onNodeWithTag("email-field").performTextInput("test@test.test")
         composeTestRule.onNodeWithTag("password-field").performTextInput("password")
@@ -65,7 +79,12 @@ class AuthenticationScreenTest {
     @Test
     fun shouldHaveSigningInTextWhenIsSigningIn() {
         composeTestRule.setContent {
-            AuthenticationScreen(ACTION, AuthenticationState.SigningIn, this::onAuthenticate)
+            AuthenticationScreen(
+                ACTION,
+                AuthenticationState.SigningIn,
+                this::onAuthenticate,
+                this::shouldHaveSignedInTextWhenIsSignedIn
+            )
         }
         composeTestRule.onNodeWithText("Signing in...").assertExists()
         assertEquals(0, authenticationCount)
@@ -74,9 +93,14 @@ class AuthenticationScreenTest {
     @Test
     fun shouldHaveSignedInTextWhenIsSignedIn() {
         composeTestRule.setContent {
-            AuthenticationScreen(ACTION, AuthenticationState.SignedIn, this::onAuthenticate)
+            AuthenticationScreen(
+                ACTION,
+                AuthenticationState.SignedIn,
+                this::onAuthenticate,
+                this::shouldHaveSigningInTextWhenIsSigningIn
+            )
         }
-        composeTestRule.onNodeWithText("Signed in").assertExists()
+        composeTestRule.onNodeWithText("Signing in...").assertExists()
         assertEquals(0, authenticationCount)
     }
 
@@ -84,7 +108,12 @@ class AuthenticationScreenTest {
     fun shouldHaveErrorTextWhenIsError() {
         val message = "Error message"
         composeTestRule.setContent {
-            AuthenticationScreen(ACTION, AuthenticationState.Error(message), this::onAuthenticate)
+            AuthenticationScreen(
+                ACTION,
+                AuthenticationState.Error(message),
+                this::onAuthenticate,
+                this::onStartGoogleSignIn
+            )
         }
         composeTestRule.onNodeWithText(message).assertExists()
     }
@@ -93,7 +122,12 @@ class AuthenticationScreenTest {
     fun shouldHaveLoginButtonAndInputFieldsWhenIsError() {
         val message = "Error message"
         composeTestRule.setContent {
-            AuthenticationScreen(ACTION, AuthenticationState.Error(message), this::onAuthenticate)
+            AuthenticationScreen(
+                ACTION,
+                AuthenticationState.Error(message),
+                this::onAuthenticate,
+                this::onStartGoogleSignIn
+            )
         }
         composeTestRule.onNodeWithText(ACTION).assertExists().assertHasClickAction()
         composeTestRule.onNodeWithTag("email-field").assertExists()
@@ -104,7 +138,12 @@ class AuthenticationScreenTest {
     @Test
     fun shouldCallOnAuthenticateWithCorrectParametersWhenActionButtonIsPressedInErrorState() {
         composeTestRule.setContent {
-            AuthenticationScreen(ACTION, AuthenticationState.Error("Error"), this::onAuthenticate)
+            AuthenticationScreen(
+                ACTION,
+                AuthenticationState.Error("Error"),
+                this::onAuthenticate,
+                this::onStartGoogleSignIn
+            )
         }
         composeTestRule.onNodeWithTag("email-field").performTextInput("test@test.test")
         composeTestRule.onNodeWithTag("password-field").performTextInput("password")
