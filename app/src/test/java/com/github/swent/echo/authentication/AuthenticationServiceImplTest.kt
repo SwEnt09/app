@@ -1,6 +1,7 @@
 package com.github.swent.echo.authentication
 
 import android.util.Log
+import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.mockk.coEvery
@@ -19,6 +20,7 @@ import org.junit.Test
 class AuthenticationServiceImplTest {
 
     private lateinit var authMock: Auth
+    private lateinit var composeAuthMock: ComposeAuth
 
     companion object {
         private const val EMAIL = "test@email.com"
@@ -29,6 +31,7 @@ class AuthenticationServiceImplTest {
     @Before
     fun setUp() {
         authMock = mockk(relaxed = true)
+        composeAuthMock = mockk(relaxed = true)
 
         // Mocking error logging done by the `AuthenticationServiceImpl` class
         mockkStatic(Log::class)
@@ -42,7 +45,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     fun `signIn should return success when successful`() {
-        val service = AuthenticationServiceImpl(authMock)
+        val service = AuthenticationServiceImpl(authMock, composeAuthMock)
         coEvery { authMock.signInWith(Email, config = any()) } returns Unit
         val result = runBlocking { service.signIn(EMAIL, PASSWORD) }
         assertEquals(AuthenticationResult.Success, result)
@@ -50,7 +53,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     fun `signIn should return error when failed`() {
-        val service = AuthenticationServiceImpl(authMock)
+        val service = AuthenticationServiceImpl(authMock, composeAuthMock)
         coEvery { authMock.signInWith(Email, config = any()) } throws Exception()
         val result = runBlocking { service.signIn(EMAIL, PASSWORD) }
         assertTrue(result is AuthenticationResult.Error)
@@ -58,7 +61,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     fun `signUp should return success when successful`() {
-        val service = AuthenticationServiceImpl(authMock)
+        val service = AuthenticationServiceImpl(authMock, composeAuthMock)
         coEvery { authMock.signUpWith(Email, config = any()) } returns mockk()
         val result = runBlocking { service.signUp(EMAIL, PASSWORD) }
         assertEquals(AuthenticationResult.Success, result)
@@ -66,7 +69,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     fun `signUp should return error when failed`() {
-        val service = AuthenticationServiceImpl(authMock)
+        val service = AuthenticationServiceImpl(authMock, composeAuthMock)
         coEvery { authMock.signUpWith(Email, config = any()) } throws Exception()
         val result = runBlocking { service.signUp(EMAIL, PASSWORD) }
         assertTrue(result is AuthenticationResult.Error)
@@ -74,7 +77,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     fun `signOut should return success when successful`() {
-        val service = AuthenticationServiceImpl(authMock)
+        val service = AuthenticationServiceImpl(authMock, composeAuthMock)
         coEvery { authMock.signOut() } returns Unit
         val result = runBlocking { service.signOut() }
         coVerify { authMock.signOut() }
@@ -83,7 +86,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     fun `signOut should return error when failed`() {
-        val service = AuthenticationServiceImpl(authMock)
+        val service = AuthenticationServiceImpl(authMock, composeAuthMock)
         coEvery { authMock.signOut() } throws Exception()
         val result = runBlocking { service.signOut() }
         coVerify { authMock.signOut() }
@@ -92,7 +95,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     fun `getCurrentUserID should return user id when user is signed in`() {
-        val service = AuthenticationServiceImpl(authMock)
+        val service = AuthenticationServiceImpl(authMock, composeAuthMock)
         coEvery { authMock.currentSessionOrNull() } returns
             mockk { every { user } returns mockk { every { id } returns USER_ID } }
         val result = runBlocking { service.getCurrentUserID() }
