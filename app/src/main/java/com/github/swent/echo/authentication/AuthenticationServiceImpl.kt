@@ -26,9 +26,7 @@ class AuthenticationServiceImpl(
     override fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit {
         val action = composeAuth.rememberSignInWithGoogle(onResult)
 
-        return {
-            action.startFlow()
-        }
+        return { action.startFlow() }
     }
 
     override suspend fun signIn(email: String, password: String): AuthenticationResult {

@@ -1,7 +1,6 @@
 package com.github.swent.echo.authentication
 
 import androidx.compose.runtime.Composable
-import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 
 /** Service to handle user authentication. */
@@ -11,10 +10,9 @@ interface AuthenticationService {
      * Creates a callback to start the Google sign in flow.
      *
      * @param onResult The callback to be invoked when the sign in flow finishes. It receives the
-     *  result of the sign in flow.
+     *   result of the sign in flow.
      */
-    @Composable
-    fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit
+    @Composable fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit
 
     /**
      * Sign in with email and password.
