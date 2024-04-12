@@ -3,7 +3,6 @@ package com.github.swent.echo.compose.authentication
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.github.swent.echo.ui.navigation.NavigationActions
@@ -39,7 +38,7 @@ class LoginScreenTest {
     @Test
     fun shouldHaveLoginButtonAndInputFieldsWhenIsSignedOut() {
         state.value = AuthenticationState.SignedOut
-        composeTestRule.onNodeWithText("Login").assertExists().assertHasClickAction()
+        composeTestRule.onNodeWithTag("action-button").assertExists().assertHasClickAction()
     }
 
     @Test

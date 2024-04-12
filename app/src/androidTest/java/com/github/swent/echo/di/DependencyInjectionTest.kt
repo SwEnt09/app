@@ -45,7 +45,7 @@ class DependencyInjectionTest {
     fun testSupabaseClientInjection() {
         assertEquals(SUPABASE_URL, supabaseClient.supabaseUrl)
         assertEquals(SUPABASE_PUBLIC_KEY, supabaseClient.supabaseKey)
-        assertEquals(2, supabaseClient.pluginManager.installedPlugins.size)
+        assertEquals(3, supabaseClient.pluginManager.installedPlugins.size)
     }
 
     @Test
