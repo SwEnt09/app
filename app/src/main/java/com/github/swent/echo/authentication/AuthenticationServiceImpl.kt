@@ -1,7 +1,10 @@
 package com.github.swent.echo.authentication
 
 import android.util.Log
+import androidx.compose.runtime.Composable
 import io.github.jan.supabase.compose.auth.ComposeAuth
+import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
+import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 
@@ -12,11 +15,18 @@ import io.github.jan.supabase.gotrue.providers.builtin.Email
  */
 class AuthenticationServiceImpl(
     private val auth: Auth,
-    override val composeAuth: ComposeAuth,
+    private val composeAuth: ComposeAuth,
 ) : AuthenticationService {
 
     companion object {
         private const val TAG = "AuthenticationServiceImpl"
+    }
+
+    @Composable
+    override fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit {
+        val action = composeAuth.rememberSignInWithGoogle(onResult)
+
+        return { action.startFlow() }
     }
 
     override suspend fun signIn(email: String, password: String): AuthenticationResult {
