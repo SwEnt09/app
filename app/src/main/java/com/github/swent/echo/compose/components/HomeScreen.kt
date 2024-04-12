@@ -360,6 +360,7 @@ private fun Content(
                         Instant.now(),
                     ),
                 tags = emptySet(),
+                creatorId = "d"
             ),
             Event(
                 eventId = "b",
@@ -384,6 +385,7 @@ private fun Content(
                         Instant.now(),
                     ),
                 tags = emptySet(),
+                creatorId = "e"
             )
         )
 
