@@ -57,7 +57,7 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("action-button").performClick()
 
         // The map screen should be displayed
-        composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
     }
 
     @Test
@@ -67,6 +67,6 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("google-sign-in-button").performClick()
 
         // The map screen should be displayed
-        composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
     }
 }
