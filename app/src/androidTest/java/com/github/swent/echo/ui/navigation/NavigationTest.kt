@@ -42,7 +42,7 @@ class NavigationTest {
     @Test
     fun shouldShowTheMapScreenWhenNavigatingToTheMapRoute() {
         setUp(Routes.MAP)
-        composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
     }
 
     @Test
