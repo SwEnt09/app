@@ -79,7 +79,10 @@ fun AuthenticationScreen(
 
 @Composable
 fun GoogleSignInButton(onClick: () -> Unit) {
-    return OutlinedButton(onClick = onClick) {
+    return OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.testTag("google-sign-in-button"),
+    ) {
         Image(
             painter = painterResource(R.drawable.google_logo),
             contentDescription =

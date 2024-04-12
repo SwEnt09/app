@@ -59,4 +59,14 @@ class MainActivityTest {
         // The map screen should be displayed
         composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
     }
+
+    @Test
+    fun testGoogleSignInProcess() {
+        // Perform the Google sign-in process
+        composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("google-sign-in-button").performClick()
+
+        // The map screen should be displayed
+        composeTestRule.onNodeWithTag("mapScreen").assertIsDisplayed()
+    }
 }
