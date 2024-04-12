@@ -71,9 +71,7 @@
     <string name="profile_creation_last_name">Last name</string>
     <string name="profile_creation_save_button">Save</string>
     <string name="profile_creation_section">Section</string>
-    <string name="profile_creation_section_desc">Section description</string>
     <string name="profile_creation_semester">Semester</string>
-    <string name="profile_creation_semester_desc">Semester description</string>
     <string name="profile_creation_tags">Tags</string>
 </resources>
 
