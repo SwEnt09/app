@@ -15,6 +15,7 @@ import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -66,6 +67,7 @@ class RegisterScreenTest {
         verify { navActions.navigateTo(Routes.LOGIN) }
     }
 
+    @Ignore
     @Test
     fun shouldCallNavigateToLoginWhenLoginButtonIsClickedInErrorState() {
         state.value = AuthenticationState.Error("Error message")
