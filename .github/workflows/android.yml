@@ -35,19 +35,13 @@ jobs:
         run: |
           chmod +x ./gradlew
 
-      - name: Generate Debug Keystore
+      - name: Build APK
         run: |
-          mkdir -p ~/.config/.android
-          keytool -genkey -v -keystore ~/.config/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "C=US, O=Android, CN=Android Debug"
-          echo $DEBUG_KEYSTORE > ~/.config/.android/debug.keystore
+          ./gradlew build
 
       - name: Signing Report
         run: |
           ./gradlew signingReport
-
-      - name: Build APK
-        run: |
-          ./gradlew build
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
