@@ -4,7 +4,6 @@ import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
-import com.github.swent.echo.data.model.User
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import io.mockk.every
@@ -36,7 +35,6 @@ class RepositoryImplTest {
             HashSet<Tag>(Arrays.asList(tag))
         )
     private val userProfile = UserProfile("testUser", "Dummy User")
-    private val user = User("testUser", userProfile)
 
     @Before
     fun setUp() {
@@ -104,19 +102,6 @@ class RepositoryImplTest {
         every { runBlocking { mockedRemoteDataSource.getAllTags() } } returns Arrays.asList(tag)
         val tagsResult = runBlocking { repositoryImpl.getAllTags() }
         assertEquals(Arrays.asList(tag), tagsResult)
-    }
-
-    @Test
-    fun getUserTest() {
-        every { runBlocking { mockedRemoteDataSource.getUser("testUser") } } returns user
-        val userResult = runBlocking { repositoryImpl.getUser("testUser") }
-        assertEquals(user, userResult)
-    }
-
-    @Test
-    fun setUserTest() {
-        runBlocking { repositoryImpl.setUser(user) }
-        verify { runBlocking { repositoryImpl.setUser(user) } }
     }
 
     @Test

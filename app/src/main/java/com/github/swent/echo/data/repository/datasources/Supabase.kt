@@ -3,7 +3,6 @@ package com.github.swent.echo.data.repository.datasources
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
-import com.github.swent.echo.data.model.User
 import com.github.swent.echo.data.model.UserProfile
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
@@ -49,14 +48,6 @@ class Supabase(supabaseClient: SupabaseClient) : RemoteDataSource {
 
     override suspend fun getAllTags(): List<Tag> {
         return supabase.from("tags").select().decodeList<Tag>()
-    }
-
-    override suspend fun getUser(userId: String): User {
-        return supabase.from("users").select() { filter { eq("userId", userId) } }.decodeSingle()
-    }
-
-    override suspend fun setUser(user: User) {
-        supabase.from("users").upsert(user, onConflict = "userId")
     }
 
     override suspend fun getUserProfile(userId: String): UserProfile {
