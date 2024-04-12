@@ -8,12 +8,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,7 +45,7 @@ import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Tag
 
 @Composable
-fun ProfileCreationUI(saveOnClick: () -> Unit, sectionList: List<String>, semList: List<String>, tagList: List<Tag>) {
+fun ProfileCreationUI(saveOnClick: () -> Unit, addTagOnClick: () -> Unit, sectionList: List<String>, semList: List<String>, tagList: List<Tag>) {
   Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
       var firstName by remember { mutableStateOf("") }
@@ -70,13 +80,11 @@ fun ProfileCreationUI(saveOnClick: () -> Unit, sectionList: List<String>, semLis
             onValueChange = { selectedSection = it },
             modifier = Modifier
                 .onGloballyPositioned { coordinates ->
-                    // This value is used to assign to
-                    // the DropDown the same width
                     sectionFieldSize = coordinates.size.toSize()
                 },
             label = {Text(stringResource (id = R.string.profile_creation_section))},
             trailingIcon = {
-                Icon(icon,stringResource (id = R.string.profile_creation_section_desc),
+                Icon(icon,"section dropdown",
                     Modifier.clickable { showDropdown = !showDropdown})
             }
         )
@@ -94,7 +102,7 @@ fun ProfileCreationUI(saveOnClick: () -> Unit, sectionList: List<String>, semLis
                 },
             label = {Text(stringResource (id = R.string.profile_creation_semester))},
             trailingIcon = {
-                Icon(icon,stringResource (id = R.string.profile_creation_semester_desc),
+                Icon(icon,"semester dropdown",
                     Modifier.clickable { showDropdown = !showDropdown})
             }
         )
@@ -106,8 +114,17 @@ fun ProfileCreationUI(saveOnClick: () -> Unit, sectionList: List<String>, semLis
 
         Spacer(modifier = Modifier.height(10.dp))
 
+
         for (tag in tagList){
-            Text(text = tag.name)
+            InputChipFun(tag.name) {}
+        }
+
+        SmallFloatingActionButton(
+            onClick = { addTagOnClick() },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.secondary
+        ) {
+            Icon(Icons.Filled.Add, "Small floating action button.")
         }
 
         OutlinedButton(
@@ -116,13 +133,45 @@ fun ProfileCreationUI(saveOnClick: () -> Unit, sectionList: List<String>, semLis
           ) {
           Text(text = stringResource (id = R.string.profile_creation_save_button))
           }
-
     }
   }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun InputChipFun(
+    text: String,
+    onDismiss: () -> Unit,
+) {
+    var enabled by remember { mutableStateOf(true) }
+    if (!enabled) return
+
+    InputChip(
+        onClick = {
+            onDismiss()
+            enabled = !enabled
+        },
+        label = { Text(text) },
+        selected = enabled,
+        avatar = {
+            Icon(
+                Icons.Filled.Person,
+                contentDescription = "Localized description",
+                Modifier.size(InputChipDefaults.AvatarSize)
+            )
+        },
+        trailingIcon = {
+            Icon(
+                Icons.Default.Close,
+                contentDescription = "Localized description",
+                Modifier.size(InputChipDefaults.AvatarSize)
+            )
+        },
+    )
 }
 
 @Preview
 @Composable
 fun ProfileCreationPreview() {
-  ProfileCreationUI({}, listOf("Section 1", "Section 2"), listOf("Semester 1", "Semester 2"), listOf())
+  ProfileCreationUI({},{}, listOf("Section 1", "Section 2"), listOf("Semester 1", "Semester 2"), listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2")))
 }
