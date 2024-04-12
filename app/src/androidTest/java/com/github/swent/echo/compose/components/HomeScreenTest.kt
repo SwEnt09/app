@@ -2,6 +2,7 @@ package com.github.swent.echo.compose.components
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.data.model.Event
@@ -75,7 +76,78 @@ class HomeScreenTest {
                 startDate = Date.from(Instant.now()),
                 endDate = Date.from(Instant.now()),
                 tags = emptySet(),
+                creatorId = "d"
             )
         val obj = DisplayEventInfo(event, 0, 0, 0, "")
+    }
+
+    @Test
+    fun shouldShowEcho() {
+        composeTestRule.onNodeWithText("Echo").assertExists()
+    }
+
+    @Test
+    fun shouldOpenHamburgerMenuWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        composeTestRule.onNodeWithTag("hamburger_menu").assertExists()
+    }
+
+    @Test
+    fun shouldShowProfileBoxWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        composeTestRule.onNodeWithTag("profile_box").assertExists()
+    }
+
+    @Test
+    fun shouldShowProfileSheetWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        composeTestRule.onNodeWithTag("profile_sheet").assertExists()
+    }
+
+    @Test
+    fun shouldShowProfilePictureWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        composeTestRule.onNodeWithTag("profile_picture").assertExists()
+    }
+
+    @Test
+    fun shouldShowProfileInfoWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        composeTestRule.onNodeWithTag("profile_info").assertExists()
+    }
+
+    @Test
+    fun shouldShowProfileNameWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        composeTestRule.onNodeWithTag("profile_name").assertExists()
+    }
+
+    @Test
+    fun shouldShowProfileClassWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        composeTestRule.onNodeWithTag("profile_class").assertExists()
+    }
+
+    @Test
+    fun shouldShowCloseButtonWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        composeTestRule.onNodeWithTag("close_button_hamburger_menu").assertExists()
+    }
+
+    @Test
+    fun shouldShowAllItemsWhenMenuButtonClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        for (i in 0..6) {
+            composeTestRule.onNodeWithTag("navigation_item_$i").assertExists()
+        }
+    }
+
+    @Test
+    fun shouldCloseHamburgerMenuWhenNavigationItemClicked() {
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+        for (i in 0..6) {
+            composeTestRule.onNodeWithTag("navigation_item_$i").performClick()
+            composeTestRule.onNodeWithTag("mapViewWrapper").assertExists()
+        }
     }
 }
