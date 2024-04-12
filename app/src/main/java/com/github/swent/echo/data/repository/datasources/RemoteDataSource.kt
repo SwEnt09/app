@@ -3,7 +3,6 @@ package com.github.swent.echo.data.repository.datasources
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
-import com.github.swent.echo.data.model.User
 import com.github.swent.echo.data.model.UserProfile
 
 interface RemoteDataSource {
@@ -24,10 +23,6 @@ interface RemoteDataSource {
     suspend fun setTag(tag: Tag)
 
     suspend fun getAllTags(): List<Tag>
-
-    suspend fun getUser(userId: String): User
-
-    suspend fun setUser(user: User)
 
     suspend fun getUserProfile(userId: String): UserProfile
 
