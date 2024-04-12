@@ -68,9 +68,9 @@ import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
-import kotlinx.coroutines.launch
 import java.time.Instant
 import java.util.Date
+import kotlinx.coroutines.launch
 
 /**
  * data class to display the navigation items in the hamburger menu.
@@ -131,7 +131,8 @@ fun HomeScreen(navActions: NavigationActions) {
 
     // List of navigation items to display in the hamburger menu
     // TODO: Change the icons to be more meaningful when we have the google icons
-    // TODO: Add a navOnClick to the item to navigate to the corresponding screen as soon as you implement it
+    // TODO: Add a navOnClick to the item to navigate to the corresponding screen as soon as you
+    // implement it
     val items =
         listOf(
             NavigationItem(
@@ -180,16 +181,16 @@ fun HomeScreen(navActions: NavigationActions) {
                 // Profile picture, name and class
                 Box(
                     modifier =
-                    Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-                        .fillMaxWidth()
-                        .padding(NavigationDrawerItemDefaults.ItemPadding)
-                        .testTag("profile_box")
+                        Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+                            .fillMaxWidth()
+                            .padding(NavigationDrawerItemDefaults.ItemPadding)
+                            .testTag("profile_box")
                 ) {
                     Column(
                         modifier =
-                        Modifier.align(Alignment.TopStart)
-                            .padding(8.dp)
-                            .testTag("profile_sheet")
+                            Modifier.align(Alignment.TopStart)
+                                .padding(8.dp)
+                                .testTag("profile_sheet")
                     ) {
                         // TODO: Replace with actual profile picture
                         Image(
@@ -218,9 +219,9 @@ fun HomeScreen(navActions: NavigationActions) {
                             scope.launch { drawerState.close() }
                         },
                         modifier =
-                        Modifier.align(Alignment.TopEnd)
-                            .padding(8.dp)
-                            .testTag("close_button_hamburger_menu")
+                            Modifier.align(Alignment.TopEnd)
+                                .padding(8.dp)
+                                .testTag("close_button_hamburger_menu")
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Close,
@@ -242,11 +243,11 @@ fun HomeScreen(navActions: NavigationActions) {
                         icon = {
                             Icon(
                                 imageVector =
-                                if (index == selectedItemIndex) {
-                                    item.selectedIcon
-                                } else {
-                                    item.unselectedIcon
-                                },
+                                    if (index == selectedItemIndex) {
+                                        item.selectedIcon
+                                    } else {
+                                        item.unselectedIcon
+                                    },
                                 contentDescription = item.title
                             )
                         },
@@ -254,8 +255,8 @@ fun HomeScreen(navActions: NavigationActions) {
                             item.badgeCount?.let { Text(text = item.badgeCount.toString()) }
                         },
                         modifier =
-                        Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                            .testTag("navigation_item_$index")
+                            Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                                .testTag("navigation_item_$index")
                     )
                 }
             }
@@ -269,10 +270,10 @@ fun HomeScreen(navActions: NavigationActions) {
             topBar = {
                 CenterAlignedTopAppBar(
                     colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
                     title = {
                         Text(
                             "Echo",
@@ -314,9 +315,7 @@ fun HomeScreen(navActions: NavigationActions) {
                 )
             },
             floatingActionButton = {
-                SearchButton(onClick = {
-                    overlay.value = Overlay.SEARCH_SHEET
-                })
+                SearchButton(onClick = { overlay.value = Overlay.SEARCH_SHEET })
             }
         ) { paddingValues ->
             Content(paddingValues, overlay, mode, navActions, displayEventInfo)
