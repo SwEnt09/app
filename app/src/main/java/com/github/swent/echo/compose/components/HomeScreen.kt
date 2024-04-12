@@ -10,8 +10,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.compose.map.MapDrawer
+import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
+import java.time.Instant
+import java.util.Date
 
 enum class Overlay {
     NONE,
@@ -23,7 +28,7 @@ enum class MapOrListMode {
     MAP,
     LIST
 }
-/*
+
 data class DisplayEventInfo(
     val event: Event,
     val eventImage: Int,
@@ -31,7 +36,6 @@ data class DisplayEventInfo(
     val eventPeopleMax: Int,
     val hostName: String
 )
-*/
 
 /**
  * The scaffold for the home screen. contains the top bar, the bottom sheet if an event is selected,
@@ -42,7 +46,7 @@ data class DisplayEventInfo(
 fun HomeScreen(navActions: NavigationActions) {
     val overlay = remember { mutableStateOf(Overlay.NONE) }
     val mode = remember { mutableStateOf(MapOrListMode.MAP) }
-    // val displayEventInfo = remember { mutableStateOf<DisplayEventInfo?>(null) }
+    val displayEventInfo = remember { mutableStateOf<DisplayEventInfo?>(null) }
     Scaffold(
         modifier = Modifier.testTag("home_screen"),
         topBar = {
@@ -59,7 +63,7 @@ fun HomeScreen(navActions: NavigationActions) {
         },
         floatingActionButton = { SearchButton(onClick = { overlay.value = Overlay.SEARCH_SHEET }) }
     ) { paddingValues ->
-        Content(paddingValues, overlay, mode, navActions /*, displayEventInfo*/)
+        Content(paddingValues, overlay, mode, navActions, displayEventInfo)
     }
 }
 
@@ -69,9 +73,9 @@ private fun Content(
     overlay: MutableState<Overlay>,
     mode: MutableState<MapOrListMode>,
     navActions: NavigationActions,
-    // displayEventInfo: MutableState<DisplayEventInfo?>
+    displayEventInfo: MutableState<DisplayEventInfo?>
 ) {
-    /* for the callback of the map when we have it
+
     fun onEventSelected(
         event: Event,
         eventImage: Int = 0,
@@ -83,17 +87,41 @@ private fun Content(
             DisplayEventInfo(event, eventImage, eventPeople, eventPeopleMax, hostName)
         overlay.value = Overlay.EVENT_INFO_SHEET
     }
-    */
+
+    val events =
+        listOf(
+            Event(
+                eventId = "a",
+                organizerId = "a",
+                title = "Bowling Event",
+                description = "",
+                location = Location("Location 1", MAP_CENTER.toGeoPoint()),
+                startDate = Date.from(Instant.now()),
+                endDate = Date.from(Instant.now()),
+                tags = emptySet(),
+            ),
+            Event(
+                eventId = "b",
+                organizerId = "a",
+                title = "Swimming Event",
+                description = "",
+                location =
+                    Location("Location 2", MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 90.0)),
+                startDate = Date.from(Instant.now()),
+                endDate = Date.from(Instant.now()),
+                tags = emptySet(),
+            )
+        )
 
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode.value == MapOrListMode.LIST) {
             // TODO add the list view
         } else {
-            MapDrawer()
+            MapDrawer(events = events, callback = { event -> onEventSelected(event) })
         }
         // add the tag filtering here
-        if (overlay.value == Overlay.EVENT_INFO_SHEET /* && displayEventInfo.value != null*/) {
-            /*
+        if (overlay.value == Overlay.EVENT_INFO_SHEET && displayEventInfo.value != null) {
+
             EventInfoSheet(
                 eventImage = displayEventInfo.value!!.eventImage,
                 eventPeople = displayEventInfo.value!!.eventPeople,
@@ -105,7 +133,7 @@ private fun Content(
                 onDismiss = { overlay.value = Overlay.NONE },
                 onFullyExtended = {}
             )
-            */
+
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info
         }
