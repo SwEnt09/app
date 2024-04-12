@@ -1,7 +1,9 @@
 package com.github.swent.echo.fakes
 
+import androidx.compose.runtime.Composable
 import com.github.swent.echo.authentication.AuthenticationResult
 import com.github.swent.echo.authentication.AuthenticationService
+import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.future.await
 
@@ -20,6 +22,11 @@ class FakeAuthenticationService : AuthenticationService {
      */
     fun completeSigningOperation(result: AuthenticationResult) {
         signedInResult.complete(result)
+    }
+
+    @Composable
+    override fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit {
+        return { onResult(NativeSignInResult.Success) }
     }
 
     override suspend fun signIn(email: String, password: String): AuthenticationResult {
