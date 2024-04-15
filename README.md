@@ -16,4 +16,4 @@ If you have trouble logging in, please use the following test credentials:
 
 ## Architecture
 
-![Architecture](architecture.png)
+![Architecture](docs/architecture.png)
