@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
-import java.time.Instant
-import java.util.Date
+import java.time.ZonedDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -19,10 +18,14 @@ class EventViewModel() : ViewModel() {
             "",
             "",
             "",
+            "",
             Location("", 0.0, 0.0),
-            Date.from(Instant.now()),
-            Date.from(Instant.now()),
-            setOf()
+            ZonedDateTime.now(),
+            ZonedDateTime.now(),
+            emptySet(),
+            0,
+            0,
+            0
         )
     private val _event = MutableStateFlow<Event>(emptyEvent)
     private val _status = MutableStateFlow<EventStatus>(EventStatus.New)
@@ -104,7 +107,7 @@ class EventViewModel() : ViewModel() {
     /** check the current event has valid data if not return false and set _status to Error */
     private fun eventIsValid(): Boolean {
         val event = _event.value
-        if (event.startDate.after(event.endDate)) {
+        if (event.startDate.isAfter(event.endDate)) {
             _status.value = EventStatus.Error("end date before start date")
         }
         if (event.title.isBlank()) {
