@@ -68,8 +68,7 @@ import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
-import java.time.Instant
-import java.util.Date
+import java.time.ZonedDateTime
 import kotlinx.coroutines.launch
 
 /**
@@ -100,14 +99,6 @@ enum class MapOrListMode {
     LIST
 }
 
-data class DisplayEventInfo(
-    val event: Event,
-    val eventImage: Int,
-    val eventPeople: Int,
-    val eventPeopleMax: Int,
-    val hostName: String
-)
-
 /**
  * The scaffold for the home screen. contains the top bar, the bottom sheet if an event is selected,
  * the hamburger menu when the button is clicked on the top bar, the search bottom sheet, the list
@@ -119,7 +110,7 @@ fun HomeScreen(navActions: NavigationActions) {
     // State for the MapOrListMode
     val overlay = remember { mutableStateOf(Overlay.NONE) }
     val mode = remember { mutableStateOf(MapOrListMode.MAP) }
-    val displayEventInfo = remember { mutableStateOf<DisplayEventInfo?>(null) }
+    val displayEventInfo = remember { mutableStateOf<Event?>(null) }
 
     // Scroll behavior for the top app bar, makes it pinned
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -329,13 +320,13 @@ private fun Content(
     overlay: MutableState<Overlay>,
     mode: MutableState<MapOrListMode>,
     navActions: NavigationActions,
-    displayEventInfo: MutableState<DisplayEventInfo?>
+    displayEventInfo: MutableState<Event?>
 ) {
 
     fun onEventSelected(
         event: Event,
     ) {
-        displayEventInfo.value = DisplayEventInfo(event, 0, 0, 0, "")
+        displayEventInfo.value = event
         overlay.value = Overlay.EVENT_INFO_SHEET
     }
 
@@ -344,6 +335,8 @@ private fun Content(
             Event(
                 eventId = "a",
                 organizerId = "a",
+                organizerName = "a",
+                creatorId = "d",
                 title = "Bowling Event",
                 description = "",
                 location =
@@ -351,20 +344,18 @@ private fun Content(
                         "Location 1",
                         MAP_CENTER.toGeoPoint(),
                     ),
-                startDate =
-                    Date.from(
-                        Instant.now(),
-                    ),
-                endDate =
-                    Date.from(
-                        Instant.now(),
-                    ),
+                startDate = ZonedDateTime.now(),
+                endDate = ZonedDateTime.now(),
                 tags = emptySet(),
-                creatorId = "d"
+                participantCount = 0,
+                maxParticipants = 0,
+                imageId = 0
             ),
             Event(
                 eventId = "b",
                 organizerId = "a",
+                organizerName = "a",
+                creatorId = "e",
                 title = "Swimming Event",
                 description = "",
                 location =
@@ -376,16 +367,12 @@ private fun Content(
                                 90.0,
                             ),
                     ),
-                startDate =
-                    Date.from(
-                        Instant.now(),
-                    ),
-                endDate =
-                    Date.from(
-                        Instant.now(),
-                    ),
+                startDate = ZonedDateTime.now(),
+                endDate = ZonedDateTime.now(),
                 tags = emptySet(),
-                creatorId = "e"
+                participantCount = 0,
+                maxParticipants = 0,
+                imageId = 0
             )
         )
 
@@ -402,11 +389,7 @@ private fun Content(
         if (overlay.value == Overlay.EVENT_INFO_SHEET && displayEventInfo.value != null) {
 
             EventInfoSheet(
-                eventImage = displayEventInfo.value!!.eventImage,
-                eventPeople = displayEventInfo.value!!.eventPeople,
-                eventPeopleMax = displayEventInfo.value!!.eventPeopleMax,
-                hostName = displayEventInfo.value!!.hostName,
-                event = displayEventInfo.value!!.event,
+                event = displayEventInfo.value!!,
                 onJoinButtonPressed = {},
                 onShowPeopleButtonPressed = {},
                 onDismiss = { overlay.value = Overlay.NONE },

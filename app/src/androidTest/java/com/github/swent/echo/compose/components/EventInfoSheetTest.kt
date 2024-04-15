@@ -6,7 +6,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
-import java.util.Date
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Rule
@@ -32,20 +33,20 @@ class EventInfoSheetTest {
                     eventId = "1",
                     creatorId = "1",
                     organizerId = "1",
+                    organizerName = "Event Organization",
                     title = "Event Title",
                     description = "Event Description",
                     location = Location("", 0.0, 0.0),
-                    startDate = Date(2024, 5, 18, 18, 15),
-                    endDate = Date(2024, 1, 1, 22, 0),
-                    tags = setOf()
+                    startDate = ZonedDateTime.of(2024, 6, 18, 18, 15, 0, 0, ZoneId.systemDefault()),
+                    endDate = ZonedDateTime.of(2024, 1, 1, 22, 0, 0, 0, ZoneId.systemDefault()),
+                    tags = setOf(),
+                    participantCount = 0,
+                    maxParticipants = peopleMax,
+                    imageId = android.R.drawable.ic_menu_help
                 )
 
             EventInfoSheet(
                 event = event,
-                hostName = "Event Organization",
-                eventImage = android.R.drawable.ic_menu_help,
-                eventPeople = 0,
-                eventPeopleMax = peopleMax,
                 onJoinButtonPressed = { joinClicked++ },
                 onShowPeopleButtonPressed = { peopleClicked++ },
                 onDismiss = { dismissed++ },

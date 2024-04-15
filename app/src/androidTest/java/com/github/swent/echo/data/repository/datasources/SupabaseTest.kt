@@ -11,8 +11,8 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.exceptions.UnauthorizedRestException
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
+import java.time.ZonedDateTime
 import java.util.Arrays
-import java.util.Date
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import org.junit.Assert.*
@@ -39,12 +39,16 @@ class SupabaseTest {
             "3bcf6f25-81d4-4a14-9caa-c05feb593da0",
             "e65e9435-a9f2-4474-be11-9054305f1a54",
             "b0122e3e-82ed-4409-83f9-dbfb9761db20",
+            "Dummy Organizer",
             "Dummy Event",
             "blabla description",
             Location("testLocation", 0.0, 0.0),
-            Date(0),
-            Date(1),
-            HashSet<Tag>(Arrays.asList(tag))
+            ZonedDateTime.now(),
+            ZonedDateTime.now(),
+            HashSet<Tag>(Arrays.asList(tag)),
+            0,
+            0,
+            0
         )
     private val userProfile = UserProfile("b0122e3e-82ed-4409-83f9-dbfb9761db20", "Dummy User")
 

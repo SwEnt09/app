@@ -9,8 +9,8 @@ import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.ZonedDateTime
 import java.util.Arrays
-import java.util.Date
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
@@ -27,12 +27,16 @@ class RepositoryImplTest {
             "testEvent",
             "testCreator",
             "testOrganizer",
+            "testOrganizerName",
             "Dummy Event",
             "blabla description",
             Location("testLocation", 0.0, 0.0),
-            Date(0),
-            Date(1),
-            HashSet<Tag>(Arrays.asList(tag))
+            ZonedDateTime.now(),
+            ZonedDateTime.now(),
+            HashSet<Tag>(Arrays.asList(tag)),
+            0,
+            0,
+            0
         )
     private val userProfile = UserProfile("testUser", "Dummy User")
 

@@ -9,8 +9,7 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
 import io.mockk.mockk
-import java.time.Instant
-import java.util.Date
+import java.time.ZonedDateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -70,15 +69,18 @@ class HomeScreenTest {
             Event(
                 eventId = "a",
                 organizerId = "a",
+                organizerName = "",
+                creatorId = "d",
                 title = "Bowling Event",
                 description = "",
                 location = Location("Location 1", MAP_CENTER.toGeoPoint()),
-                startDate = Date.from(Instant.now()),
-                endDate = Date.from(Instant.now()),
+                startDate = ZonedDateTime.now(),
+                endDate = ZonedDateTime.now(),
                 tags = emptySet(),
-                creatorId = "d"
+                participantCount = 0,
+                maxParticipants = 0,
+                imageId = 0
             )
-        val obj = DisplayEventInfo(event, 0, 0, 0, "")
     }
 
     @Test

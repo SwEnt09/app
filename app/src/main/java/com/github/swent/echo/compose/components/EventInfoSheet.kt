@@ -31,17 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.swent.echo.data.model.Event
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 /**
  * Bottom sheet that shows the details of an event.
  *
  * @param event the event to show
- * @param hostName the name of the host of the event
- * @param eventImage image id of the event
- * @param eventPeople number of people who joined the event
- * @param eventPeopleMax maximum number of people who can join the event
  * @param onJoinButtonPressed callback to join the event
  * @param onShowPeopleButtonPressed callback to show people who joined the event
  * @param onDismiss callback to dismiss the sheet
@@ -50,10 +44,6 @@ import java.time.ZoneId
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventInfoSheet(
-    eventImage: Int,
-    eventPeople: Int,
-    eventPeopleMax: Int,
-    hostName: String,
     event: Event,
     onJoinButtonPressed: () -> Unit,
     onShowPeopleButtonPressed: () -> Unit,
@@ -69,12 +59,10 @@ fun EventInfoSheet(
         }
 
     // handle the display of the date and time
-    val startDate = event.startDate.toInstant()
-    val localDateTime = LocalDateTime.ofInstant(startDate, ZoneId.systemDefault())
-    val day = localDateTime.dayOfMonth
-    val month = localDateTime.monthValue
-    val hour = localDateTime.hour
-    val minute = localDateTime.minute
+    val day = event.startDate.dayOfMonth
+    val month = event.startDate.monthValue
+    val hour = event.startDate.hour
+    val minute = event.startDate.minute
     val displayMonth = if (month < 10) "0$month" else month.toString()
     val displayDate = "$day/$displayMonth\n$hour:$minute"
 
@@ -102,7 +90,7 @@ fun EventInfoSheet(
             )
             Text(
                 modifier = Modifier.padding(top = 24.dp),
-                text = hostName,
+                text = event.organizerName,
                 style =
                     TextStyle(
                         fontSize = 20.sp,
@@ -155,15 +143,15 @@ fun EventInfoSheet(
             Box(modifier = Modifier.align(Alignment.CenterEnd).width(150.dp).height(200.dp)) {
                 // image of the event
                 val buttonAlignment =
-                    if (eventImage > 0) {
+                    if (event.imageId > 0) {
                         Alignment.BottomEnd
                     } else {
                         Alignment.TopEnd
                     }
 
-                if (eventImage > 0) { // if the id is zero or negative, then there is no image
+                if (event.imageId > 0) { // if the id is zero or negative, then there is no image
                     Image(
-                        painter = painterResource(id = eventImage), // replace with actual image
+                        painter = painterResource(id = event.imageId), // replace with actual image
                         contentDescription = event.title,
                         modifier =
                             Modifier.width(135.dp)
@@ -193,10 +181,10 @@ fun EventInfoSheet(
                     // text to show the number of people who joined the event
                     Text(
                         text =
-                            if (eventPeopleMax <= 0) {
-                                "$eventPeople"
+                            if (event.maxParticipants <= 0) {
+                                "${event.participantCount}"
                             } else {
-                                "$eventPeople/$eventPeopleMax"
+                                "${event.participantCount}/${event.maxParticipants}"
                             },
                         style =
                             TextStyle(

@@ -13,8 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
-import java.time.Instant
-import java.util.Date
+import java.time.ZonedDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -36,17 +35,22 @@ class MapViewAndroidTest {
                     eventId = "a",
                     creatorId = "a",
                     organizerId = "a",
+                    organizerName = "a",
                     title = "Bowling Event",
                     description = "",
                     location = Location("Location 1", MAP_CENTER.toGeoPoint()),
-                    startDate = Date.from(Instant.now()),
-                    endDate = Date.from(Instant.now()),
+                    startDate = ZonedDateTime.now(),
+                    endDate = ZonedDateTime.now(),
                     tags = emptySet(),
+                    participantCount = 5,
+                    maxParticipants = 8,
+                    imageId = 0
                 ),
                 Event(
                     eventId = "b",
                     creatorId = "a",
                     organizerId = "a",
+                    organizerName = "a",
                     title = "Swimming Event",
                     description = "",
                     location =
@@ -54,9 +58,12 @@ class MapViewAndroidTest {
                             "Location 2",
                             MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 90.0)
                         ),
-                    startDate = Date.from(Instant.now()),
-                    endDate = Date.from(Instant.now()),
+                    startDate = ZonedDateTime.now(),
+                    endDate = ZonedDateTime.now(),
                     tags = emptySet(),
+                    participantCount = 4,
+                    maxParticipants = 30,
+                    imageId = 0
                 )
             )
 

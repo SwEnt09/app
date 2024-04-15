@@ -7,8 +7,7 @@ import com.github.swent.echo.data.model.Tag
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.verify
-import java.time.Instant
-import java.util.Date
+import java.time.ZonedDateTime
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
@@ -19,14 +18,18 @@ class EventViewModelTest {
     private val TEST_EVENT =
         Event(
             eventId = "testid",
-            "testid",
+            creatorId = "testid",
             organizerId = "testid",
+            organizerName = "testname",
             title = "test title",
             description = "test description",
             location = Location("test location", 100.0, 100.0),
-            startDate = Date.from(Instant.now()),
-            endDate = Date.from(Instant.now()),
-            tags = setOf(Tag("1", "tag1"))
+            startDate = ZonedDateTime.now(),
+            endDate = ZonedDateTime.now(),
+            tags = setOf(Tag("1", "tag1")),
+            0,
+            0,
+            0
         )
 
     private fun mockLog() {
@@ -99,8 +102,8 @@ class EventViewModelTest {
     fun saveWithEndDateBeforeStartDateChangeStatusToError() {
         val event =
             TEST_EVENT.copy(
-                startDate = Date.from(Instant.now()),
-                endDate = Date.from(Instant.EPOCH)
+                startDate = ZonedDateTime.now(),
+                endDate = ZonedDateTime.now().minusDays(1)
             )
         val eventViewModel = EventViewModel()
         eventViewModel.setEvent(event)
