@@ -45,7 +45,7 @@ class SimpleAuthenticationService @Inject constructor() : AuthenticationService 
         return AuthenticationResult.Success
     }
 
-    override suspend fun getCurrentUserID(): String? {
+    override fun getCurrentUserID(): String? {
         return userId
     }
 }
