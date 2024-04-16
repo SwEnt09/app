@@ -14,6 +14,7 @@ import io.mockk.unmockkStatic
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -49,6 +50,12 @@ class AuthenticationServiceImplTest {
     @After
     fun tearDown() {
         unmockkStatic(Log::class)
+    }
+
+    @Test
+    fun `initialize should call awaitInitialization`() {
+        runBlocking { service.initialize() }
+        coVerify { authMock.awaitInitialization() }
     }
 
     @Test
@@ -122,5 +129,18 @@ class AuthenticationServiceImplTest {
             mockk { every { user } returns mockk { every { id } returns USER_ID } }
         val result = service.getCurrentUserID()
         assertEquals(USER_ID, result)
+    }
+
+    @Test
+    fun `userIsLoggedIn should return true when user is signed in`() {
+        every { authMock.currentSessionOrNull() } returns
+            mockk { every { user } returns mockk { every { id } returns USER_ID } }
+        assertTrue(service.userIsLoggedIn())
+    }
+
+    @Test
+    fun `userIsLoggedIn should return false when user is not signed in`() {
+        every { authMock.currentSessionOrNull() } returns null
+        assertFalse(service.userIsLoggedIn())
     }
 }

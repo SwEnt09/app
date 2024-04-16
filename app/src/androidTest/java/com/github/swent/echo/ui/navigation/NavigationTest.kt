@@ -24,19 +24,23 @@ class NavigationTest {
         composeTestRule.activity.setContent {
             val navController = rememberNavController()
             val navigationActions = NavigationActions(navController)
-            AppNavigationHost(navController)
+            AppNavigationHost(userIsLoggedIn = false, navController = navController)
             navigationActions.navigateTo(route)
         }
     }
 
     @Test
-    fun shouldShowRegisterScreenAsDefaultRoute() {
-        composeTestRule.activity.setContent {
-            val navController = rememberNavController()
-            AppNavigationHost(navController)
-        }
+    fun shouldShowRegisterScreenWhenTheUserIsNotLoggedIn() {
+        composeTestRule.activity.setContent { AppNavigationHost(userIsLoggedIn = false) }
 
         composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
+    }
+
+    @Test
+    fun shouldShowMapScreenWhenTheUserIsLoggedIn() {
+        composeTestRule.activity.setContent { AppNavigationHost(userIsLoggedIn = true) }
+
+        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
     }
 
     @Test
