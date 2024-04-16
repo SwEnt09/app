@@ -44,7 +44,7 @@ class FakeAuthenticationService : AuthenticationService {
         return signedInResult.await()
     }
 
-    override suspend fun getCurrentUserID(): String? {
+    override fun getCurrentUserID(): String? {
         return userID
     }
 }

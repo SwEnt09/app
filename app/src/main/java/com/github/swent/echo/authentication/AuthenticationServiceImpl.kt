@@ -54,7 +54,7 @@ class AuthenticationServiceImpl(
         return supabaseAuthOperation("log out") { auth.signOut() }
     }
 
-    override suspend fun getCurrentUserID(): String? {
+    override fun getCurrentUserID(): String? {
         return auth.currentSessionOrNull()?.user?.id
     }
 
