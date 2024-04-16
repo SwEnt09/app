@@ -45,4 +45,13 @@ interface AuthenticationService {
      * @return The current user's ID, or null if the user is not signed in.
      */
     fun getCurrentUserID(): String?
+
+    /**
+     * Check if the user is logged in.
+     *
+     * @return True if the user is logged in, false otherwise.
+     */
+    fun userIsLoggedIn(): Boolean {
+        return getCurrentUserID() != null
+    }
 }
