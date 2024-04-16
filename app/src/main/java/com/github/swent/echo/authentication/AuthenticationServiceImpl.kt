@@ -2,9 +2,12 @@ package com.github.swent.echo.authentication
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
 import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
+import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 
@@ -30,45 +33,57 @@ class AuthenticationServiceImpl(
     }
 
     override suspend fun signIn(email: String, password: String): AuthenticationResult {
-        try {
+        return supabaseAuthOperation("log in") {
             auth.signInWith(Email) {
                 this.email = email
                 this.password = password
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to sign in", e)
-            return AuthenticationResult.Error("Failed to sign in", e)
         }
-
-        return AuthenticationResult.Success
     }
 
     override suspend fun signUp(email: String, password: String): AuthenticationResult {
-        try {
+        return supabaseAuthOperation("register") {
             auth.signUpWith(Email) {
                 this.email = email
                 this.password = password
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to sign up", e)
-            return AuthenticationResult.Error("Failed to sign up", e)
         }
-
-        return AuthenticationResult.Success
     }
 
     override suspend fun signOut(): AuthenticationResult {
-        try {
-            auth.signOut()
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to sign out", e)
-            return AuthenticationResult.Error("Failed to sign out", e)
-        }
-
-        return AuthenticationResult.Success
+        return supabaseAuthOperation("log out") { auth.signOut() }
     }
 
     override suspend fun getCurrentUserID(): String? {
         return auth.currentSessionOrNull()?.user?.id
+    }
+
+    /**
+     * Wraps a Supabase authentication operation in a try-catch block. If the operation fails, logs
+     * the error and returns an [AuthenticationResult.Error] with an appropriate error message.
+     * Otherwise, returns [AuthenticationResult.Success].
+     *
+     * @param name The name of the operation.
+     * @param operation The operation to execute.
+     * @return The result of the operation.
+     */
+    private suspend fun supabaseAuthOperation(
+        name: String,
+        operation: suspend () -> Unit,
+    ): AuthenticationResult {
+        try {
+            operation()
+        } catch (e: RestException) {
+            // Convert the error code to a human-readable message.
+            val message = e.error.replace('_', ' ').capitalize(Locale.current)
+            Log.e(TAG, message, e)
+            return AuthenticationResult.Error(message, e)
+        } catch (e: Exception) {
+            val message = "Unknown Exception: Failed to $name"
+            Log.e(TAG, message, e)
+            return AuthenticationResult.Error(message, e)
+        }
+
+        return AuthenticationResult.Success
     }
 }
