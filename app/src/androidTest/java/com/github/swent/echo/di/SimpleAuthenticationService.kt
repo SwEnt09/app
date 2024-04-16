@@ -17,6 +17,8 @@ class SimpleAuthenticationService @Inject constructor() : AuthenticationService 
     private var email: String? = null
     private var password: String? = null
 
+    override suspend fun initialize() {}
+
     @Composable
     override fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit {
         return { onResult(NativeSignInResult.Success) }

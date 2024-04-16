@@ -6,6 +6,9 @@ import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 /** Service to handle user authentication. */
 interface AuthenticationService {
 
+    /** Initialize the authentication service. */
+    suspend fun initialize()
+
     /**
      * Creates a callback to start the Google sign in flow.
      *
@@ -35,6 +38,9 @@ interface AuthenticationService {
 
     /**
      * Get the current user's ID.
+     *
+     * Should be called after [initialize], otherwise might return null even if there exists an
+     * authenticated user.
      *
      * @return The current user's ID, or null if the user is not signed in.
      */
