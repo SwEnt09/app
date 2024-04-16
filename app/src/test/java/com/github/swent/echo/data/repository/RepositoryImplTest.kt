@@ -25,15 +25,14 @@ class RepositoryImplTest {
     private val event =
         Event(
             "testEvent",
-            "testCreator",
-            "testOrganizer",
-            "testOrganizerName",
+            UserProfile("testCreator", ""),
+            association,
             "Dummy Event",
             "blabla description",
             Location("testLocation", 0.0, 0.0),
             ZonedDateTime.now(),
             ZonedDateTime.now(),
-            HashSet<Tag>(Arrays.asList(tag)),
+            setOf(tag),
             0,
             0,
             0

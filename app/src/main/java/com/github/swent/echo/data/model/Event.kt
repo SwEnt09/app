@@ -8,9 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Event(
     @SerialName("event_id") val eventId: String,
-    @SerialName("creator_id") val creatorId: String,
-    @SerialName("organizer_id") val organizerId: String,
-    @SerialName("organizer_name") val organizerName: String,
+    val creator: UserProfile,
+    val organizer: Association?,
     val title: String,
     val description: String,
     val location: Location,

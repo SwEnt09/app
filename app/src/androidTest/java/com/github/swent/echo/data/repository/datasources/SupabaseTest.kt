@@ -45,9 +45,8 @@ class SupabaseTest {
     private val event =
         Event(
             "3bcf6f25-81d4-4a14-9caa-c05feb593da0",
-            "e65e9435-a9f2-4474-be11-9054305f1a54",
-            "b0122e3e-82ed-4409-83f9-dbfb9761db20",
-            "Dummy Organizer",
+            UserProfile("e65e9435-a9f2-4474-be11-9054305f1a54", ""),
+            association,
             "Dummy Event",
             "blabla description",
             Location("testLocation", 0.0, 0.0),
