@@ -4,12 +4,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.github.swent.echo.compose.map.MAP_CENTER
-import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.data.model.Location
+import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.ui.navigation.NavigationActions
 import io.mockk.mockk
-import java.time.ZonedDateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -65,22 +62,7 @@ class HomeScreenTest {
 
     @Test
     fun shouldShowEventInfoDataClass() {
-        val event =
-            Event(
-                eventId = "a",
-                organizerId = "a",
-                organizerName = "",
-                creatorId = "d",
-                title = "Bowling Event",
-                description = "",
-                location = Location("Location 1", MAP_CENTER.toGeoPoint()),
-                startDate = ZonedDateTime.now(),
-                endDate = ZonedDateTime.now(),
-                tags = emptySet(),
-                participantCount = 0,
-                maxParticipants = 0,
-                imageId = 0
-            )
+        val event = SAMPLE_EVENTS[0]
     }
 
     @Test

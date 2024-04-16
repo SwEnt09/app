@@ -2,9 +2,11 @@ package com.github.swent.echo.viewmodels.event
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
+import com.github.swent.echo.data.model.UserProfile
 import java.time.ZonedDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,9 +16,8 @@ class EventViewModel() : ViewModel() {
     private val emptyEvent =
         Event(
             "",
-            "",
-            "",
-            "",
+            UserProfile("", ""),
+            Association("", "", ""),
             "",
             "",
             Location("", 0.0, 0.0),

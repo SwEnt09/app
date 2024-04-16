@@ -64,12 +64,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
-import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.compose.map.MapDrawer
+import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
-import java.time.ZonedDateTime
 import kotlinx.coroutines.launch
 
 /**
@@ -331,58 +329,12 @@ private fun Content(
         overlay.value = Overlay.EVENT_INFO_SHEET
     }
 
-    val events =
-        listOf(
-            Event(
-                eventId = "a",
-                organizerId = "a",
-                organizerName = "a",
-                creatorId = "d",
-                title = "Bowling Event",
-                description = "",
-                location =
-                    Location(
-                        "Location 1",
-                        MAP_CENTER.toGeoPoint(),
-                    ),
-                startDate = ZonedDateTime.now(),
-                endDate = ZonedDateTime.now(),
-                tags = emptySet(),
-                participantCount = 0,
-                maxParticipants = 0,
-                imageId = 0
-            ),
-            Event(
-                eventId = "b",
-                organizerId = "a",
-                organizerName = "a",
-                creatorId = "e",
-                title = "Swimming Event",
-                description = "",
-                location =
-                    Location(
-                        "Location 2",
-                        MAP_CENTER.toGeoPoint()
-                            .destinationPoint(
-                                1000.0,
-                                90.0,
-                            ),
-                    ),
-                startDate = ZonedDateTime.now(),
-                endDate = ZonedDateTime.now(),
-                tags = emptySet(),
-                participantCount = 0,
-                maxParticipants = 0,
-                imageId = 0
-            )
-        )
-
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode.value == MapOrListMode.LIST) {
             // TODO add the list view
         } else {
             MapDrawer(
-                events = events,
+                events = SAMPLE_EVENTS,
                 callback = { event -> onEventSelected(event) },
             )
         }
