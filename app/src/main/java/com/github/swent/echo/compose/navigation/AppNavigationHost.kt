@@ -20,13 +20,14 @@ import com.github.swent.echo.ui.navigation.Routes
  */
 @Composable
 fun AppNavigationHost(
+    userIsLoggedIn: Boolean,
     navController: NavHostController = rememberNavController(),
 ) {
     val navActions = NavigationActions(navController)
 
     NavHost(
         navController = navController,
-        startDestination = Routes.REGISTER.name,
+        startDestination = if (userIsLoggedIn) Routes.MAP.name else Routes.REGISTER.name,
     ) {
         composable(Routes.LOGIN.name) {
             LoginScreen(loginViewModel = hiltViewModel(), navActions = navActions)
