@@ -24,6 +24,8 @@ class FakeAuthenticationService : AuthenticationService {
         signedInResult.complete(result)
     }
 
+    override suspend fun initialize() {}
+
     @Composable
     override fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit {
         return { onResult(NativeSignInResult.Success) }

@@ -25,6 +25,10 @@ class AuthenticationServiceImpl(
         private const val TAG = "AuthenticationServiceImpl"
     }
 
+    override suspend fun initialize() {
+        auth.awaitInitialization()
+    }
+
     @Composable
     override fun startGoogleSignInCallback(onResult: (NativeSignInResult) -> Unit): () -> Unit {
         val action = composeAuth.rememberSignInWithGoogle(onResult)
