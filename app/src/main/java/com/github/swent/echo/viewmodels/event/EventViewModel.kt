@@ -10,6 +10,8 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.repository.Repository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.ZonedDateTime
 import com.github.swent.echo.data.repository.Repository
 import javax.inject.Inject
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /** represents an event, used in the event screens */
+@HiltViewModel
 class EventViewModel
 @Inject
 constructor(
