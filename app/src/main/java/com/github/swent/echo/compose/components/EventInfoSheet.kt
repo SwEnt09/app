@@ -67,19 +67,16 @@ fun EventInfoSheet(
     val displayDate = "$day/$displayMonth\n$hour:$minute"
 
     ModalBottomSheet(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("event_info_sheet"),
+        modifier = Modifier.fillMaxSize().testTag("event_info_sheet"),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
     ) {
         // Sheet content
         Box(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f)
-                .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 32.dp)
+                Modifier.fillMaxWidth()
+                    .fillMaxHeight(0.5f)
+                    .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 32.dp)
         ) {
             Text(
                 text = event.title,
@@ -102,10 +99,10 @@ fun EventInfoSheet(
                 modifier = Modifier.padding(top = 48.dp),
                 text = event.location.name,
                 style =
-                TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight(600),
-                )
+                    TextStyle(
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight(600),
+                    )
             )
             Text(
                 modifier = Modifier.align(Alignment.TopEnd),
@@ -117,9 +114,7 @@ fun EventInfoSheet(
                     )
             )
             Text(
-                modifier = Modifier
-                    .padding(top = 100.dp)
-                    .width(185.dp),
+                modifier = Modifier.padding(top = 100.dp).width(185.dp),
                 text = event.description,
                 style =
                     TextStyle(
@@ -131,10 +126,7 @@ fun EventInfoSheet(
             Button(
                 onClick = onJoinButtonPressed,
                 modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .width(165.dp)
-                    .testTag("join_button"),
+                    Modifier.align(Alignment.BottomCenter).width(165.dp).testTag("join_button"),
             ) {
                 Text(
                     text = stringResource(R.string.event_info_sheet_join_event_button_text),
@@ -146,10 +138,7 @@ fun EventInfoSheet(
                 )
             }
             // contains the image and the button to show people who have joined the event
-            Box(modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .width(150.dp)
-                .height(200.dp)) {
+            Box(modifier = Modifier.align(Alignment.CenterEnd).width(150.dp).height(200.dp)) {
                 // image of the event
                 val buttonAlignment =
                     if (event.imageId > 0) {
@@ -163,22 +152,18 @@ fun EventInfoSheet(
                         painter = painterResource(id = event.imageId), // replace with actual image
                         contentDescription = event.title,
                         modifier =
-                        Modifier
-                            .width(135.dp)
-                            .height(135.dp)
-                            .align(Alignment.TopEnd)
-                            .clip(RoundedCornerShape(8.dp))
-                            .testTag("event_image")
+                            Modifier.width(135.dp)
+                                .height(135.dp)
+                                .align(Alignment.TopEnd)
+                                .clip(RoundedCornerShape(8.dp))
+                                .testTag("event_image")
                     )
                 }
                 // button to show people who joined the event
                 Button(
                     onClick = onShowPeopleButtonPressed,
                     modifier =
-                    Modifier
-                        .align(buttonAlignment)
-                        .width(135.dp)
-                        .testTag("people_button"),
+                        Modifier.align(buttonAlignment).width(135.dp).testTag("people_button"),
                 ) {
                     // icon of a person
                     Icon(
