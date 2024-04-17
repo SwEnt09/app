@@ -30,7 +30,6 @@ fun SearchMenuSheet(onFullyExtended: () -> Unit, onDismiss: () -> Unit) {
         modifier = Modifier.fillMaxSize().testTag("search_menu_sheet"),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
         Box(
             modifier =
