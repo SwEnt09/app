@@ -2,17 +2,30 @@ package com.github.swent.echo.viewmodels.event
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import java.time.ZonedDateTime
+import com.github.swent.echo.data.repository.Repository
+import java.time.Instant
+import java.util.Date
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 /** represents an event, used in the event screens */
-class EventViewModel() : ViewModel() {
+class EventViewModel
+@Inject
+constructor(
+    private val repository: Repository,
+    private val authenticationService: AuthenticationService
+) : ViewModel() {
     private val emptyEvent =
         Event(
             "",
@@ -30,30 +43,95 @@ class EventViewModel() : ViewModel() {
         )
     private val _event = MutableStateFlow<Event>(emptyEvent)
     private val _status = MutableStateFlow<EventStatus>(EventStatus.New)
-
     // placeholder for the list of all tags
-    private val allTagsList = listOf(Tag("1", "tag1"), Tag("2", "tag2"), Tag("3", "tag3"))
+    private val allTagsList =
+        MutableStateFlow<List<Tag>>(listOf(Tag("1", "tag1"), Tag("2", "tag2"), Tag("3", "tag3")))
+
+    // initialize async values
+    init {
+        _status.value = EventStatus.Saving // avoid saving before initialization
+        viewModelScope.launch {
+            val userid = authenticationService.getCurrentUserID()
+            if (userid == null) {
+                _status.value = EventStatus.Error("you are not logged in")
+            } else {
+                _event.value = _event.value.copy(creatorId = userid, organizerId = userid)
+                _status.value = EventStatus.New
+            }
+            allTagsList.value = repository.getAllTags()
+        }
+    }
+
+    // constructor for an already existing event
+    constructor(
+        repository: Repository,
+        authenticationService: AuthenticationService,
+        eventId: String
+    ) : this(repository, authenticationService) {
+        _status.value = EventStatus.Saving // avoid saving before initialization
+        viewModelScope.launch {
+            _event.value = repository.getEvent(eventId)
+            _status.value = EventStatus.Saved
+        }
+    }
 
     // return the event
-    fun getEvent(): Event {
-        return _event.asStateFlow().value
+    fun getEvent(): StateFlow<Event> {
+        return _event.asStateFlow()
     }
 
     // return the organizer name of the event
-    fun getOrganizerName(): String {
-        // TODO: get organizer name from repository
-        return ""
+    fun getOrganizerName(): StateFlow<String> {
+        val organizerName = MutableStateFlow<String>("")
+        viewModelScope.launch {
+            var res = repository.getUserProfile(_event.value.organizerId).name
+            if (res == "") { // if not a user check if it's an association
+                res = repository.getAssociation(_event.value.organizerId).name
+            }
+            if (res == "") { // organizer not found
+                Log.e("get event organizer", "organizer not found in the repository")
+            }
+            organizerName.value = res
+        }
+        return organizerName.asStateFlow()
     }
 
     // return the list of possible organizer for the user
-    fun getOrganizerList(): List<String> {
-        // placeholder until we get organizer list from repository
-        return listOf("testOrganizer", "anotherTestOrganizer")
+    fun getOrganizerList(): StateFlow<List<String>> {
+        // TODO: also return the associations linked to the user (not implemented yet in the
+        // repository)
+        val organizerList = MutableStateFlow(listOf<String>())
+        viewModelScope.launch {
+            val res = repository.getUserProfile(_event.value.organizerId).name
+            if (res == "") {
+                Log.e("get event organizer", "organizer not found in the repository")
+            } else {
+                organizerList.value = listOf(res)
+            }
+        }
+        return organizerList
     }
 
     // set the organizer of the event
-    fun setOrganizer(organizer: String) {
-        // TODO: set organizer of the event (need repository)
+    fun setOrganizer(organizerName: String) {
+        viewModelScope.launch {
+            var organizerId = ""
+            val creatorName = repository.getUserProfile(_event.value.creatorId).name
+            if (creatorName == organizerName) {
+                organizerId = _event.value.creatorId
+            } else {
+                val association =
+                    repository.getAllAssociations().find { a -> a.name == organizerName }
+                if (association != null) {
+                    organizerId = association.associationId
+                }
+            }
+            if (organizerId != "") {
+                setEvent(_event.value.copy(organizerId = organizerId))
+            } else {
+                Log.e("set event organizer", "organizer not found in the repository")
+            }
+        }
     }
 
     // update the event in the ViewModel
@@ -73,8 +151,8 @@ class EventViewModel() : ViewModel() {
      * if the string match its name or null otherwise
      */
     fun getAndAddTagFromString(tagName: String): Tag? {
-        if (allTagsList.any { (_, name) -> name == tagName }) {
-            val tag = allTagsList.filter { (_, name) -> name == tagName }
+        if (allTagsList.value.any { (_, name) -> name == tagName }) {
+            val tag = allTagsList.value.filter { (_, name) -> name == tagName }
             setEvent(_event.value.copy(tags = _event.value.tags + tag.first()))
             return tag.first()
         }
@@ -94,22 +172,31 @@ class EventViewModel() : ViewModel() {
             Log.w("save event", "trying to save the event but it's already saved")
         } else {
             if (eventIsValid()) {
+                val oldStatus = _status.value
                 _status.value = EventStatus.Saving
-                // TODO: save in repository
+                viewModelScope.launch {
+                    if (oldStatus == EventStatus.New) {
+                        // TODO: get new eventId for new events (not implemented yet in the
+                        // repository)
+                    } else {
+                        repository.setEvent(_event.value)
+                    }
+                    _status.value = EventStatus.Saved
+                }
             }
         }
     }
 
     // return the status of the event
-    fun getStatus(): EventStatus {
-        return _status.asStateFlow().value
+    fun getStatus(): StateFlow<EventStatus> {
+        return _status.asStateFlow()
     }
 
     /** check the current event has valid data if not return false and set _status to Error */
     private fun eventIsValid(): Boolean {
         val event = _event.value
         if (event.startDate.isAfter(event.endDate)) {
-            _status.value = EventStatus.Error("end date before start date")
+            _status.value = EventStatus.Error("end date before start date") // TODO: use error code from R
         }
         if (event.title.isBlank()) {
             _status.value = EventStatus.Error("title is empty")
