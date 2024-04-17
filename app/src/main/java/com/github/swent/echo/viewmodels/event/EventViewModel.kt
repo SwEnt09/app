@@ -3,6 +3,7 @@ package com.github.swent.echo.viewmodels.event
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
@@ -49,7 +50,8 @@ constructor(
         viewModelScope.launch {
             val userid = authenticationService.getCurrentUserID()
             if (userid == null) {
-                _status.value = EventStatus.Error("you are not logged in")
+                _status.value = EventStatus.Error(R.string.event_creation_error_not_logged_in)
+                Log.e("create event", "the user is not logged in")
             } else {
                 _event.value =
                     _event.value.copy(
@@ -176,10 +178,10 @@ constructor(
         val event = _event.value
         if (event.startDate.isAfter(event.endDate)) {
             _status.value =
-                EventStatus.Error("end date before start date") // TODO: use error code from R
+                EventStatus.Error(R.string.event_creation_error_end_date_before_start_date)
         }
         if (event.title.isBlank()) {
-            _status.value = EventStatus.Error("title is empty")
+            _status.value = EventStatus.Error(R.string.event_creation_error_empty_title)
         }
         return _status.value !is EventStatus.Error
     }
@@ -196,5 +198,5 @@ sealed class EventStatus {
     // syncing with the version in the repository
     data object Saving : EventStatus()
 
-    data class Error(val error: String) : EventStatus()
+    data class Error(val errorRef: Int) : EventStatus()
 }
