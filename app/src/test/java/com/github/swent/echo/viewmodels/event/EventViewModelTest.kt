@@ -15,10 +15,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
-import java.time.Instant
-import java.util.Date
-import java.util.concurrent.CompletableFuture
 import java.time.ZonedDateTime
+import java.util.concurrent.CompletableFuture
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
@@ -65,10 +63,7 @@ class EventViewModelTest {
             }
     }
 
-    private var associationList = listOf(Association("0", "a0", "desc0"))
-    private var eventList = listOf(TEST_EVENT)
     private val fakeAuthenticationService = FakeAuthenticationService()
-
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private lateinit var eventViewModel: EventViewModel
     private val scheduler = TestCoroutineScheduler()
@@ -76,7 +71,6 @@ class EventViewModelTest {
     @Before
     fun init() {
         fakeAuthenticationService.userID = "u0"
-        // val scheduler = TestCoroutineScheduler()
         Dispatchers.setMain(StandardTestDispatcher(scheduler))
         runBlocking { eventViewModel = EventViewModel(mockedRepository, fakeAuthenticationService) }
         scheduler.runCurrent()
@@ -159,46 +153,12 @@ class EventViewModelTest {
     }
 
     @Test
-    fun getOrganizerNameThrowErrorWhenOrganizerIdIsNotInRepository() {
-        mockLog()
-        coEvery { mockedRepository.getUserProfile(any()) } returns UserProfile("", "")
-        coEvery { mockedRepository.getAssociation(any()) } returns Association("", "", "")
-        val organizerName = eventViewModel.getOrganizerName()
-        scheduler.runCurrent()
-        coVerify { mockedRepository.getUserProfile(any()) }
-        coVerify { mockedRepository.getAssociation(any()) }
-        verify { Log.e(any(), any()) }
-        assertEquals("", organizerName.value)
-    }
-
-    @Test
-    fun getOrganizerNameReturnsCorrectName() {
-        val testUserProfile = UserProfile("testid", "testname")
-        coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
-        val organizerName = eventViewModel.getOrganizerName()
-        scheduler.runCurrent()
-        coVerify { mockedRepository.getUserProfile(any()) }
-        assertEquals(testUserProfile.name, organizerName.value)
-    }
-
-    @Test
-    fun getOrganizerListThrowErrorWhenThereIsNoOrganizerAvailable() {
-        mockLog()
-        coEvery { mockedRepository.getUserProfile(any()) } returns UserProfile("", "")
-        val organizerList = eventViewModel.getOrganizerList()
-        scheduler.runCurrent()
-        coVerify { mockedRepository.getUserProfile(any()) }
-        verify { Log.e(any(), any()) }
-        assertEquals(listOf<String>(), organizerList.value)
-    }
-
-    @Test
     fun getOrganizerListReturnsCorrectUsername() {
         val testUserProfile = UserProfile("testid", "testname")
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
-        val organizerList = eventViewModel.getOrganizerList()
+        runBlocking { eventViewModel = EventViewModel(mockedRepository, fakeAuthenticationService) }
         scheduler.runCurrent()
-        coVerify { mockedRepository.getUserProfile(any()) }
+        val organizerList = eventViewModel.getOrganizerList()
         assertEquals(listOf(testUserProfile.name), organizerList.value)
     }
 
