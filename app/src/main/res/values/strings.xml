@@ -24,4 +24,5 @@
     <string name="hamburger_create_event">Create Event</string>
     <string name="hamburger_add_friends">Add Friends</string>
     <string name="hamburger_help">Help</string>
+    <string name="app_title">Echo</string>
 </resources>
