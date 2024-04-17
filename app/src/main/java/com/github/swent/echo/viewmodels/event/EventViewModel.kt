@@ -11,8 +11,6 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import java.time.ZonedDateTime
 import com.github.swent.echo.data.repository.Repository
-import java.time.Instant
-import java.util.Date
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,9 +41,7 @@ constructor(
         )
     private val _event = MutableStateFlow<Event>(emptyEvent)
     private val _status = MutableStateFlow<EventStatus>(EventStatus.New)
-    // placeholder for the list of all tags
-    private val allTagsList =
-        MutableStateFlow<List<Tag>>(listOf(Tag("1", "tag1"), Tag("2", "tag2"), Tag("3", "tag3")))
+    private val allTagsList = MutableStateFlow<List<Tag>>(listOf())
 
     // initialize async values
     init {
@@ -55,7 +51,12 @@ constructor(
             if (userid == null) {
                 _status.value = EventStatus.Error("you are not logged in")
             } else {
-                _event.value = _event.value.copy(creatorId = userid, organizerId = userid)
+                _event.value =
+                    _event.value.copy(
+                        creatorId = userid,
+                        organizerId = userid,
+                        organizerName = repository.getUserProfile(userid).name
+                    )
                 _status.value = EventStatus.New
             }
             allTagsList.value = repository.getAllTags()
@@ -80,35 +81,11 @@ constructor(
         return _event.asStateFlow()
     }
 
-    // return the organizer name of the event
-    fun getOrganizerName(): StateFlow<String> {
-        val organizerName = MutableStateFlow<String>("")
-        viewModelScope.launch {
-            var res = repository.getUserProfile(_event.value.organizerId).name
-            if (res == "") { // if not a user check if it's an association
-                res = repository.getAssociation(_event.value.organizerId).name
-            }
-            if (res == "") { // organizer not found
-                Log.e("get event organizer", "organizer not found in the repository")
-            }
-            organizerName.value = res
-        }
-        return organizerName.asStateFlow()
-    }
-
     // return the list of possible organizer for the user
     fun getOrganizerList(): StateFlow<List<String>> {
         // TODO: also return the associations linked to the user (not implemented yet in the
         // repository)
-        val organizerList = MutableStateFlow(listOf<String>())
-        viewModelScope.launch {
-            val res = repository.getUserProfile(_event.value.organizerId).name
-            if (res == "") {
-                Log.e("get event organizer", "organizer not found in the repository")
-            } else {
-                organizerList.value = listOf(res)
-            }
-        }
+        val organizerList = MutableStateFlow(listOf(_event.value.organizerName))
         return organizerList
     }
 
@@ -127,7 +104,9 @@ constructor(
                 }
             }
             if (organizerId != "") {
-                setEvent(_event.value.copy(organizerId = organizerId))
+                setEvent(
+                    _event.value.copy(organizerId = organizerId, organizerName = organizerName)
+                )
             } else {
                 Log.e("set event organizer", "organizer not found in the repository")
             }
@@ -196,7 +175,8 @@ constructor(
     private fun eventIsValid(): Boolean {
         val event = _event.value
         if (event.startDate.isAfter(event.endDate)) {
-            _status.value = EventStatus.Error("end date before start date") // TODO: use error code from R
+            _status.value =
+                EventStatus.Error("end date before start date") // TODO: use error code from R
         }
         if (event.title.isBlank()) {
             _status.value = EventStatus.Error("title is empty")
