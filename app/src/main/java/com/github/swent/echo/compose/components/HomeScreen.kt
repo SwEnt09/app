@@ -254,7 +254,7 @@ fun HomeScreen(navActions: NavigationActions) {
         },
         drawerState = drawerState,
         modifier = Modifier.testTag("hamburger_menu"),
-        gesturesEnabled = false
+        gesturesEnabled = drawerState.isOpen
     ) {
         Scaffold(
             modifier = Modifier.testTag("home_screen"),
