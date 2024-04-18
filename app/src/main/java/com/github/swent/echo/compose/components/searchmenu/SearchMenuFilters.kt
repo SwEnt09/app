@@ -1,13 +1,14 @@
 package com.github.swent.echo.compose.components.searchmenu
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,14 +21,59 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+
+/** Composable to display the filters sheet */
+@Composable
+fun SearchMenuFilters(filters: FiltersContainer) {
+    // Content of the Events for filters
+    val eventsForItems =
+        listOf(
+            CheckBoxItems(Icons.Filled.Face, "EPFL", filters.epflChecked),
+            CheckBoxItems(Icons.Filled.Face, "Section", filters.sectionChecked),
+            CheckBoxItems(Icons.Filled.Face, "Class", filters.classChecked)
+        )
+
+    // Content of the Events Status filters
+    val eventsStatusItems =
+        listOf(
+            CheckBoxItems(Icons.Filled.Person, "Pending", filters.pendingChecked),
+            CheckBoxItems(Icons.Filled.Person, "Confirmed", filters.confirmedChecked),
+            CheckBoxItems(Icons.Filled.Person, "Full", filters.fullChecked)
+        )
+
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+        // Sort by filter
+        Row(modifier = Modifier.align(Alignment.TopStart).fillMaxWidth().zIndex(1f)) {
+            SortByDisplayer()
+        }
+        // Tick-box filters
+        Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 50.dp)) {
+            // Events for Tick-boxes
+            CheckBoxesDisplayer("Events For:", checkBoxItems = eventsForItems)
+            Spacer(modifier = Modifier.width(100.dp))
+            // Events Status Tick-boxes
+            CheckBoxesDisplayer("Events Status:", checkBoxItems = eventsStatusItems)
+        }
+        Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 170.dp)) {
+            DateInputSample()
+            DateInputSample()
+        }
+    }
+}
+// TODO : Implement it, but I spend a bit too much time
+// on non-working solution so leaving it for next sprint
+@Composable fun DateInputSample() {}
 
 // Enum class for the different states of the sort by filter
 enum class SortBy(val value: String) {
@@ -38,125 +84,66 @@ enum class SortBy(val value: String) {
     DISTANCE_DESC("Distance (Desc)"),
 }
 
+/** Data class for the checkboxes */
+data class CheckBoxItems(
+    val icon: ImageVector,
+    val contentDescription: String,
+    var checked: MutableState<Boolean>
+)
+
+/** Composable to display the checkboxes in the correct format */
 @Composable
-fun SearchMenuFilters() {
-    // Content of the Events for filters
-    var epflChecked by remember { mutableStateOf(false) }
-    var sectionChecked by remember { mutableStateOf(false) }
-    var classChecked by remember { mutableStateOf(false) }
+fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
+    Column {
+        Text(title)
+        Spacer(modifier = Modifier.height(10.dp))
+        checkBoxItems.forEach { checkBoxItem ->
+            Row {
+                Icon(checkBoxItem.icon, contentDescription = checkBoxItem.contentDescription)
+                Checkbox(
+                    checked = checkBoxItem.checked.value,
+                    onCheckedChange = { checkBoxItem.checked.value = !checkBoxItem.checked.value },
+                    modifier = Modifier.height(25.dp).width(25.dp)
+                )
+                Text(checkBoxItem.contentDescription)
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+        }
+    }
+}
 
-    // Content of the Events Status filters
-    var pendingChecked by remember { mutableStateOf(false) }
-    var confirmedChecked by remember { mutableStateOf(false) }
-    var fullChecked by remember { mutableStateOf(false) }
-
-    // Content of the sort by filter
+/** Composable to display the dropdown menu for the sort by filter */
+@Composable
+fun SortByDisplayer() {
     var expanded by remember { mutableStateOf(false) }
     var sortBy by remember { mutableStateOf(SortBy.NONE) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Sort by filter
-        Column(modifier = Modifier.align(Alignment.TopStart).padding(0.dp).zIndex(1f)) {
-            Button(
-                onClick = { expanded = !expanded },
-                shape = RoundedCornerShape(10),
-                modifier = Modifier.width(170.dp)
-            ) {
-                Text(if (sortBy == SortBy.NONE) "Sort by..." else sortBy.value)
-                Icon(
-                    if (!expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
-                    contentDescription = "Sort by"
-                )
-            }
-            // Check if the sort by filter is expanded
-            if (expanded) {
-                SortBy.entries.forEach {
-                    Button(
-                        onClick = {
-                            sortBy = it
-                            expanded = false
-                        },
-                        shape = RoundedCornerShape(5),
-                        modifier = Modifier.width(170.dp).height(35.dp)
-                    ) {
-                        Text(it.value)
-                    }
+    Column {
+        Button(
+            onClick = { expanded = !expanded },
+            shape = RoundedCornerShape(10),
+            modifier = Modifier.width(170.dp)
+        ) {
+            Text(if (sortBy == SortBy.NONE) "Sort by..." else sortBy.value)
+            Icon(
+                if (!expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                contentDescription = "Sort by"
+            )
+        }
+        // Check if the sort by filter is expanded
+        if (expanded) {
+            SortBy.entries.forEach {
+                Button(
+                    onClick = {
+                        sortBy = it
+                        expanded = false
+                    },
+                    shape = RoundedCornerShape(5),
+                    modifier = Modifier.width(170.dp).height(35.dp)
+                ) {
+                    Text(it.value)
                 }
             }
         }
-        // Tickbox filters
-        Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 50.dp)) {
-            // Events for Tickboxes
-            Column {
-                Text("Events for:")
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    Icon(Icons.Filled.Face, contentDescription = "EPFL")
-                    Checkbox(
-                        checked = epflChecked,
-                        onCheckedChange = { epflChecked = !epflChecked },
-                        modifier = Modifier.height(25.dp).width(25.dp)
-                    )
-                    Text("EPFL")
-                }
-                Spacer(modifier = Modifier.height(5.dp))
-                Row {
-                    Icon(Icons.Filled.Face, contentDescription = "Section")
-                    Checkbox(
-                        checked = sectionChecked,
-                        onCheckedChange = { sectionChecked = !sectionChecked },
-                        modifier = Modifier.height(25.dp).width(25.dp)
-                    )
-                    Text("Section")
-                }
-                Spacer(modifier = Modifier.height(5.dp))
-                Row {
-                    Icon(Icons.Filled.Face, contentDescription = "Class")
-                    Checkbox(
-                        checked = classChecked,
-                        onCheckedChange = { classChecked = !classChecked },
-                        modifier = Modifier.height(25.dp).width(25.dp)
-                    )
-                    Text("Class")
-                }
-            }
-            Spacer(modifier = Modifier.width(100.dp))
-            // Events Status Tickboxes
-            Column {
-                Text("Events Status:")
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    Icon(Icons.Filled.Person, contentDescription = "Pending")
-                    Checkbox(
-                        checked = pendingChecked,
-                        onCheckedChange = { pendingChecked = !pendingChecked },
-                        modifier = Modifier.height(25.dp).width(25.dp)
-                    )
-                    Text("Pending")
-                }
-                Spacer(modifier = Modifier.height(5.dp))
-                Row {
-                    Icon(Icons.Filled.Person, contentDescription = "Confirmed")
-                    Checkbox(
-                        checked = confirmedChecked,
-                        onCheckedChange = { confirmedChecked = !confirmedChecked },
-                        modifier = Modifier.height(25.dp).width(25.dp)
-                    )
-                    Text("Confirmed")
-                }
-                Spacer(modifier = Modifier.height(5.dp))
-                Row {
-                    Icon(Icons.Filled.Person, contentDescription = "Full")
-                    Checkbox(
-                        checked = fullChecked,
-                        onCheckedChange = { fullChecked = !fullChecked },
-                        modifier = Modifier.height(25.dp).width(25.dp)
-                    )
-                    Text("Full")
-                }
-            }
-        }
-        // TODO : Date selection, need to see with Yoan if already implemented
-        // in create event because the one drawed on the figma is maybe not optimal
     }
 }
