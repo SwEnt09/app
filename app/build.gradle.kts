@@ -64,12 +64,16 @@ android {
         jacocoVersion = "0.8.8"
     }
 
-    // Necessary to make mockk work on integration tests
     testOptions {
+        // Necessary to make mockk work on integration tests
         packaging {
             jniLibs {
                 useLegacyPackaging = true
             }
+        }
+        // Necessary for Robolectric to work
+        unitTests {
+            isIncludeAndroidResources = true
         }
     }
     installation {
@@ -119,6 +123,8 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.slf4j.simple)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.ui.test.junit4)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
