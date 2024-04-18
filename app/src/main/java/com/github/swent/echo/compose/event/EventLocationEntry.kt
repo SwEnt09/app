@@ -1,15 +1,19 @@
 package com.github.swent.echo.compose.event
 
+import android.util.Log
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -72,11 +77,58 @@ fun SelectLocationDialog(
     onDismissRequest: () -> Unit,
     onSelectLocation: (newLocation: Location) -> Unit
 ) {
+    var lat by remember { mutableStateOf(currentLocation.lat.toString()) }
+    var long by remember { mutableStateOf(currentLocation.long.toString()) }
 
     Dialog(onDismissRequest = { onDismissRequest() }, properties = DialogProperties()) {
-        Card(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f).testTag("Location-dialog")) {
-            Text("map implementation placeholder")
-            // TODO: implement map to choose location
+        Card(modifier = Modifier.fillMaxWidth().testTag("Location-dialog")) {
+            Column {
+                EventEntryName(
+                    name = stringResource(R.string.event_location_latitude),
+                    modifier = Modifier
+                )
+                TextField(
+                    value = lat,
+                    onValueChange = { lat = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.testTag("event_latitude_text_field")
+                )
+                EventEntryName(
+                    name = stringResource(R.string.event_location_longitude),
+                    modifier = Modifier
+                )
+                TextField(
+                    value = long,
+                    onValueChange = { long = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.testTag("event_longitude_text_field")
+                )
+                Row {
+                    OutlinedButton(onClick = { onDismissRequest() }) {
+                        Text(stringResource(R.string.edit_event_screen_cancel))
+                    }
+                    OutlinedButton(
+                        modifier = Modifier.testTag("event_location_confirm_button"),
+                        onClick = {
+                            var newLocation = currentLocation
+                            try {
+                                newLocation =
+                                    currentLocation.copy(
+                                        lat = lat.toDouble(),
+                                        long = long.toDouble()
+                                    )
+                            } catch (e: Exception) {
+                                // doesn't change location
+                                Log.w("edit event select location", e)
+                            }
+                            onSelectLocation(newLocation)
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(stringResource(R.string.edit_event_screen_confirm_location))
+                    }
+                }
+            }
         }
     }
 }
