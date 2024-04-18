@@ -53,68 +53,58 @@ fun EventScreen(
  */
 @Composable
 fun EventPropertiesFields(modifier: Modifier, eventViewModel: EventViewModel) {
-    val eventState = eventViewModel.getEvent().collectAsState()
-    val event = eventState.value
-    var title by remember { mutableStateOf(event.title) }
-    var description by remember { mutableStateOf(event.description) }
-    var tags by remember { mutableStateOf(event.tags) }
+    val event by eventViewModel.event.collectAsState()
     var tagText by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf(event.location) }
-    var startDate by remember { mutableStateOf(event.startDate) }
-    var endDate by remember { mutableStateOf(event.endDate) }
-    var organizer by remember { mutableStateOf(event.organizerName) }
-    val organizerList by remember {
-        mutableStateOf(eventViewModel.getOrganizerList().value)
-    } // avoid recomputation
+    val organizerListState = eventViewModel.organizerList.collectAsState()
 
     Column(modifier = modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        EventTextEntry(name = stringResource(R.string.edit_event_screen_title), value = title) {
-            title = it
-            eventViewModel.setEvent(event.copy(title = title))
+        EventTextEntry(
+            name = stringResource(R.string.edit_event_screen_title),
+            value = event.title
+        ) {
+            eventViewModel.setEvent(event.copy(title = it))
         }
         EventTextEntry(
             name = stringResource(R.string.edit_event_screen_description),
-            value = description
+            value = event.description
         ) {
-            description = it
-            eventViewModel.setEvent(event.copy(description = description))
+            eventViewModel.setEvent(event.copy(description = it))
         }
 
         EventTagEntry(
             modifier = modifier,
-            tags = tags,
+            tags = event.tags,
             tagText = tagText,
             onTagFieldChanged = {
                 tagText = it
                 val tag = eventViewModel.getAndAddTagFromString(tagText)
                 if (tag != null) {
-                    tags += tag
                     tagText = ""
                 }
             },
-            onTagPressed = {
-                tags = tags.filter { t -> t != it }.toSet()
-                eventViewModel.deleteTag(it)
-            }
+            onTagPressed = { eventViewModel.deleteTag(it) }
         )
-
+        var organizerName = event.creator.name
+        if (event.organizer != null) {
+            organizerName = event.organizer!!.name
+        }
         EventDropDownSelectOrganizer(
-            organizerName = organizer,
-            organizerList = organizerList,
+            organizerName = organizerName,
+            organizerList = organizerListState.value,
             modifier = modifier,
-            onOrganizerSelected = {
-                organizer = it
-                eventViewModel.setOrganizer(it)
-            }
+            onOrganizerSelected = { eventViewModel.setOrganizer(it) }
         )
         EventLocationEntry(
             modifier = modifier,
-            location = location,
-            onLocationChanged = {
-                location = it
-                eventViewModel.setEvent(event.copy(location = location))
-            }
+            location = event.location,
+            onLocationChanged = { eventViewModel.setEvent(event.copy(location = it)) }
         )
-        EventDateEntry(startDate, endDate, modifier, { startDate = it }, { endDate = it })
+        EventDateEntry(
+            event.startDate,
+            event.endDate,
+            modifier,
+            { eventViewModel.setEvent(event.copy(startDate = it)) },
+            { eventViewModel.setEvent(event.copy(endDate = it)) }
+        )
     }
 }

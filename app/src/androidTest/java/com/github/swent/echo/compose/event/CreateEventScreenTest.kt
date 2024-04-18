@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.NavigationActions
@@ -23,10 +24,11 @@ class CreateEventScreenTest {
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private val mockedAuthenticationService = mockk<AuthenticationService>(relaxed = true)
     private lateinit var eventViewModel: EventViewModel
+    private val savedEventId = SavedStateHandle(mapOf())
 
     @Before
     fun init() {
-        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService)
+        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService, savedEventId)
     }
 
     @Test
