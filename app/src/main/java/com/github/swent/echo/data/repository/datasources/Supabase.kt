@@ -18,10 +18,6 @@ class Supabase(supabaseClient: SupabaseClient) : RemoteDataSource {
             .decodeSingle()
     }
 
-    override suspend fun setAssociation(association: Association) {
-        supabase.from("associations").upsert(association, onConflict = "association_id")
-    }
-
     override suspend fun getAllAssociations(): List<Association> {
         return supabase.from("associations").select().decodeList<Association>()
     }
@@ -43,10 +39,6 @@ class Supabase(supabaseClient: SupabaseClient) : RemoteDataSource {
 
     override suspend fun getTag(tagId: String): Tag {
         return supabase.from("tags").select() { filter { eq("tag_id", tagId) } }.decodeSingle()
-    }
-
-    override suspend fun setTag(tag: Tag) {
-        supabase.from("tags").upsert(tag, onConflict = "tag_id")
     }
 
     override suspend fun getAllTags(): List<Tag> {

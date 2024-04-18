@@ -55,12 +55,6 @@ class RepositoryImplTest {
     }
 
     @Test
-    fun setAssociationTest() {
-        runBlocking { repositoryImpl.setAssociation(association) }
-        verify { runBlocking { repositoryImpl.setAssociation(association) } }
-    }
-
-    @Test
     fun getAllAssociationsTest() {
         every { runBlocking { mockedRemoteDataSource.getAllAssociations() } } returns
             Arrays.asList(association)
@@ -93,12 +87,6 @@ class RepositoryImplTest {
         every { runBlocking { mockedRemoteDataSource.getTag("testTag") } } returns tag
         val tagResult = runBlocking { repositoryImpl.getTag("testTag") }
         assertEquals(tag, tagResult)
-    }
-
-    @Test
-    fun setTagTest() {
-        runBlocking { repositoryImpl.setTag(tag) }
-        verify { runBlocking { repositoryImpl.setTag(tag) } }
     }
 
     @Test
