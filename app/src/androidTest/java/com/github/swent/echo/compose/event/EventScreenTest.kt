@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.repository.Repository
@@ -103,5 +104,19 @@ class EventScreenTest {
         Assert.assertTrue(event.value.title == STRING_1)
         Assert.assertTrue(event.value.description == STRING_2)
         Assert.assertTrue(event.value.location.name == STRING_3)
+    }
+
+    @Test
+    fun changeEventLocationDialogValueChangeItInViewModel() {
+        setCompose(eventViewModel)
+        val testLocation = eventViewModel.getEvent().value.location.copy(lat = 15.5, long = 15.5)
+        composeTestRule.onNodeWithTag("Location-button").performClick()
+        val latInput = composeTestRule.onNodeWithTag("event_latitude_text_field")
+        val longInput = composeTestRule.onNodeWithTag("event_longitude_text_field")
+        val okButton = composeTestRule.onNodeWithTag("event_location_confirm_button")
+        latInput.performTextReplacement(testLocation.lat.toString())
+        longInput.performTextReplacement(testLocation.long.toString())
+        okButton.performClick()
+        Assert.assertTrue(eventViewModel.getEvent().value.location == testLocation)
     }
 }
