@@ -12,7 +12,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.compose.auth.composeAuth
-import io.github.jan.supabase.exceptions.UnauthorizedRestException
 import io.github.jan.supabase.gotrue.auth
 import java.time.ZonedDateTime
 import java.util.Arrays
@@ -121,20 +120,8 @@ class SupabaseTest {
 
     @Test
     fun getTagTest() {
-        assertThrows(
-            NoSuchElementException::class.java,
-            ThrowingRunnable {
-                runBlocking { source.getTag("daba142a-a276-4b7e-824d-43ca088633ff") }
-            }
-        )
-    }
-
-    @Test
-    fun setTagTest() {
-        assertThrows(
-            UnauthorizedRestException::class.java,
-            ThrowingRunnable { runBlocking { source.setTag(tag) } }
-        )
+        val tagFetched = runBlocking { source.getTag("daba142a-a276-4b7e-824d-43ca088633ff") }
+        assertEquals(tag, tagFetched)
     }
 
     @Test

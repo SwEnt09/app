@@ -11,10 +11,6 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
         return remoteDataSource.getAssociation(associationId)
     }
 
-    override suspend fun setAssociation(association: Association) {
-        return remoteDataSource.setAssociation(association)
-    }
-
     override suspend fun getAllAssociations(): List<Association> {
         return remoteDataSource.getAllAssociations()
     }
@@ -33,10 +29,6 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
 
     override suspend fun getTag(tagId: String): Tag {
         return remoteDataSource.getTag(tagId)
-    }
-
-    override suspend fun setTag(tag: Tag) {
-        return remoteDataSource.setTag(tag)
     }
 
     override suspend fun getAllTags(): List<Tag> {
