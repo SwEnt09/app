@@ -54,13 +54,27 @@ fun SearchMenuFilters(filters: FiltersContainer) {
             CheckBoxItems(Icons.Filled.Person, "Full", filters.fullChecked)
         )
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.White).testTag("search_menu_filters_content")) {
+    Box(
+        modifier =
+            Modifier.fillMaxSize().background(Color.White).testTag("search_menu_filters_content")
+    ) {
         // Sort by filter
-        Row(modifier = Modifier.align(Alignment.TopStart).fillMaxWidth().zIndex(1f).testTag("sort_by_displayer_container")) {
+        Row(
+            modifier =
+                Modifier.align(Alignment.TopStart)
+                    .fillMaxWidth()
+                    .zIndex(1f)
+                    .testTag("sort_by_displayer_container")
+        ) {
             SortByDisplayer()
         }
         // Checkbox filters
-        Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 50.dp).testTag("checkboxes_container")){
+        Row(
+            modifier =
+                Modifier.align(Alignment.TopCenter)
+                    .absoluteOffset(y = 50.dp)
+                    .testTag("checkboxes_container")
+        ) {
             // Events for Checkboxes
             CheckBoxesDisplayer("Events For:", checkBoxItems = eventsForItems)
             Spacer(modifier = Modifier.width(100.dp))
@@ -97,12 +111,15 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
         Text(title, modifier = Modifier.testTag("checkboxes_title"))
         Spacer(modifier = Modifier.height(10.dp))
         checkBoxItems.forEach { checkBoxItem ->
-            Row(modifier = Modifier.testTag("${checkBoxItem.contentDescription}_checkbox_row")){
+            Row(modifier = Modifier.testTag("${checkBoxItem.contentDescription}_checkbox_row")) {
                 Icon(checkBoxItem.icon, contentDescription = checkBoxItem.contentDescription)
                 Checkbox(
                     checked = checkBoxItem.checked.value,
                     onCheckedChange = { checkBoxItem.checked.value = !checkBoxItem.checked.value },
-                    modifier = Modifier.height(25.dp).width(25.dp).testTag("${checkBoxItem.contentDescription}_checkbox")
+                    modifier =
+                        Modifier.height(25.dp)
+                            .width(25.dp)
+                            .testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
                 Text(checkBoxItem.contentDescription)
             }
@@ -148,8 +165,8 @@ fun SortByDisplayer() {
 }
 
 /*
-    * Composable to get a date from the user.
-    * TODO : Implement it, but I spend a bit too much time
-    *   on non-working solution so leaving it for next sprint
+ * Composable to get a date from the user.
+ * TODO : Implement it, but I spend a bit too much time
+ *   on non-working solution so leaving it for next sprint
  */
 @Composable fun DateInputSample(dateOutput: MutableState<ZonedDateTime>) {}

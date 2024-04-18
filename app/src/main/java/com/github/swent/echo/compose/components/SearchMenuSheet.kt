@@ -70,7 +70,10 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
             // Display filters or discover according to the selected mode
             Box(
                 modifier =
-                    Modifier.align(Alignment.TopCenter).fillMaxWidth().absoluteOffset(y = 70.dp).testTag("search_menu_second_layer")
+                    Modifier.align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .absoluteOffset(y = 70.dp)
+                        .testTag("search_menu_second_layer")
             ) {
                 if (searchMode.value == SearchMode.FILTERS) {
                     SearchMenuFilters(filters)
@@ -81,7 +84,10 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
             // Close Search Button
             Row(
                 modifier =
-                    Modifier.align(Alignment.TopCenter).fillMaxWidth().absoluteOffset(y = 300.dp).testTag("search_menu_third_layer")
+                    Modifier.align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .absoluteOffset(y = 300.dp)
+                        .testTag("search_menu_third_layer")
             ) {
                 ResetFiltersButton()
             }
@@ -120,8 +126,15 @@ fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
         },
         modifier = Modifier.fillMaxWidth().height(40.dp).testTag("search_menu_switch_mode_button")
     ) {
-        Icon(searchMode.value.switchToIcon, contentDescription = searchMode.value.switchToName, modifier = Modifier.testTag("search_menu_switch_mode_button_icon"))
-        Text(searchMode.value.switchToName, modifier = Modifier.testTag("search_menu_switch_mode_button_text"))
+        Icon(
+            searchMode.value.switchToIcon,
+            contentDescription = searchMode.value.switchToName,
+            modifier = Modifier.testTag("search_menu_switch_mode_button_icon")
+        )
+        Text(
+            searchMode.value.switchToName,
+            modifier = Modifier.testTag("search_menu_switch_mode_button_text")
+        )
     }
 }
 
