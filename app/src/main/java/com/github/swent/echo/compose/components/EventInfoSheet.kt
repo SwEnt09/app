@@ -88,7 +88,7 @@ fun EventInfoSheet(
             )
             Text(
                 modifier = Modifier.padding(top = 24.dp),
-                text = event.organizer.name,
+                text = event.organizer!!.name,
                 style =
                     TextStyle(
                         fontSize = 20.sp,
