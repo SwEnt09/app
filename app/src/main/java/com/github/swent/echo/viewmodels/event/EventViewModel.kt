@@ -6,18 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
-import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
-import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.ZonedDateTime
-import com.github.swent.echo.data.repository.Repository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -38,6 +32,8 @@ constructor(
     private val allTagsList = MutableStateFlow<List<Tag>>(listOf())
     private val _isEventNew = MutableStateFlow(true)
     val isEventNew = _isEventNew.asStateFlow()
+    private val _organizerList = MutableStateFlow<List<String>>(listOf())
+    val organizerList = _organizerList.asStateFlow()
 
     // initialize async values
     init {
@@ -48,6 +44,7 @@ constructor(
                 _status.value = EventStatus.Error(R.string.event_creation_error_not_logged_in)
                 Log.e("create event", "the user is not logged in")
             } else {
+                val username = repository.getUserProfile(userid).name
                 if (savedEventId.contains("eventId")) {
                     _isEventNew.value = false
                     _event.value = repository.getEvent(savedEventId.get<String>("eventId")!!)
@@ -55,45 +52,28 @@ constructor(
                 } else {
                     _event.value =
                         _event.value.copy(
-                            creatorId = userid,
-                            organizerId = userid,
-                            organizerName = repository.getUserProfile(userid).name
+                            creator = repository.getUserProfile(userid),
+                            organizer = null
                         )
                     _status.value = EventStatus.Modified
                 }
+                // TODO: also add the associations linked to the user to the organizerList (not
+                // in repository yet)
+                _organizerList.value = listOf(username)
             }
             allTagsList.value = repository.getAllTags()
         }
     }
 
-    // return the list of possible organizer for the user
-    fun getOrganizerList(): StateFlow<List<String>> {
-        // TODO: also return the associations linked to the user (not implemented yet in the
-        // repository)
-        val organizerList = MutableStateFlow(listOf(_event.value.organizerName))
-        return organizerList
-    }
-
     // set the organizer of the event
     fun setOrganizer(organizerName: String) {
         viewModelScope.launch {
-            var organizerId = ""
-            val creatorName = repository.getUserProfile(_event.value.creatorId).name
-            if (creatorName == organizerName) {
-                organizerId = _event.value.creatorId
+            if (organizerName == _event.value.creator.name) {
+                setEvent(event.value.copy(organizer = null))
             } else {
-                val association =
-                    repository.getAllAssociations().find { a -> a.name == organizerName }
-                if (association != null) {
-                    organizerId = association.associationId
-                }
-            }
-            if (organizerId != "") {
-                setEvent(
-                    _event.value.copy(organizerId = organizerId, organizerName = organizerName)
-                )
-            } else {
-                Log.e("set event organizer", "organizer not found in the repository")
+                // TODO: check if it's an association linked to the user (no method or attribute
+                // available)
+                TODO("Set organizer as association not implemented")
             }
         }
     }
