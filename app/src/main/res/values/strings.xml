@@ -41,4 +41,8 @@
     <string name="event_creation_error_not_logged_in">You are not logged in</string>
     <string name="event_creation_error_end_date_before_start_date">The end date is before the start date</string>
     <string name="event_creation_error_empty_title">The title is empty</string>
+    <string name="event_location_latitude">Latitude</string>
+    <string name="event_location_longitude">Longitude</string>
+    <string name="edit_event_screen_cancel">Cancel</string>
+    <string name="edit_event_screen_confirm_location">OK</string>
 </resources>
