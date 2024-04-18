@@ -1,31 +1,38 @@
 package com.github.swent.echo.data.repository.datasources
 
+import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.authentication.AuthenticationServiceImpl
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.Supabase as SupabaseSource
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.compose.auth.composeAuth
 import io.github.jan.supabase.exceptions.UnauthorizedRestException
-import io.github.jan.supabase.gotrue.Auth
-import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.gotrue.auth
 import java.time.ZonedDateTime
 import java.util.Arrays
+import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.function.ThrowingRunnable
 
+@HiltAndroidTest
 class SupabaseTest {
-    private val supabaseUrl = "ulejnivguxeiibkbpwnb.supabase.co"
-    private val supabasePublicKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZWpuaXZndXhlaWlia2Jwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA4MzgxODQsImV4cCI6MjAyNjQxNDE4NH0.9Hkj-Gox2XHcHfs_U2GyQFc9sZ_nu2Xs16-KYBri32g"
-    private lateinit var supabaseClient: SupabaseClient
-    private lateinit var source: SupabaseSource
+    @get:Rule val hiltRule = HiltAndroidRule(this)
+    @Inject lateinit var supabaseClient: SupabaseClient
+
+    lateinit var authenticationService: AuthenticationService
+
+    lateinit var source: SupabaseSource
 
     private val association =
         Association(
@@ -53,12 +60,14 @@ class SupabaseTest {
     private val userProfile = UserProfile("b0122e3e-82ed-4409-83f9-dbfb9761db20", "Dummy User")
 
     @Before
-    fun setUp() {
-        supabaseClient =
-            createSupabaseClient(supabaseUrl, supabasePublicKey) {
-                install(Auth)
-                install(Postgrest)
-            }
+    fun instanciate() {
+        hiltRule.inject()
+
+        authenticationService =
+            AuthenticationServiceImpl(supabaseClient.auth, supabaseClient.composeAuth)
+
+        runBlocking { authenticationService.signIn("test@example.com", "123456") }
+
         source = SupabaseSource(supabaseClient)
     }
 
