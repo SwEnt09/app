@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
+import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.repository.Repository
@@ -30,10 +31,11 @@ class EventScreenTest {
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private val mockedAuthenticationService = mockk<AuthenticationService>(relaxed = true)
     private lateinit var eventViewModel: EventViewModel
+    private val savedEventId = SavedStateHandle(mapOf())
 
     @Before
     fun init() {
-        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService)
+        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService, savedEventId)
     }
 
     private fun setCompose(eventViewModel: EventViewModel) {
@@ -53,7 +55,7 @@ class EventScreenTest {
         val node = composeTestRule.onNodeWithTag("Title-field")
         node.performTextInput(STRING_1)
         node.assertTextContains(STRING_1)
-        node.assertTextEquals(eventViewModel.getEvent().value.title)
+        node.assertTextEquals(eventViewModel.event.value.title)
     }
 
     @Test
@@ -62,7 +64,7 @@ class EventScreenTest {
         val node = composeTestRule.onNodeWithTag("Description-field")
         node.performTextInput(STRING_1)
         node.assertTextContains(STRING_1)
-        node.assertTextEquals(eventViewModel.getEvent().value.description)
+        node.assertTextEquals(eventViewModel.event.value.description)
     }
 
     @Test
@@ -71,7 +73,7 @@ class EventScreenTest {
         val node = composeTestRule.onNodeWithTag("Location-field")
         node.performTextInput(STRING_1)
         node.assertTextContains(STRING_1)
-        node.assertTextEquals(eventViewModel.getEvent().value.location.name)
+        node.assertTextEquals(eventViewModel.event.value.location.name)
     }
 
     @Test
@@ -100,7 +102,7 @@ class EventScreenTest {
         composeTestRule.onNodeWithTag("Title-field").performTextInput(STRING_1)
         composeTestRule.onNodeWithTag("Description-field").performTextInput(STRING_2)
         composeTestRule.onNodeWithTag("Location-field").performTextInput(STRING_3)
-        val event = eventViewModel.getEvent()
+        val event = eventViewModel.event
         Assert.assertTrue(event.value.title == STRING_1)
         Assert.assertTrue(event.value.description == STRING_2)
         Assert.assertTrue(event.value.location.name == STRING_3)
@@ -109,7 +111,7 @@ class EventScreenTest {
     @Test
     fun changeEventLocationDialogValueChangeItInViewModel() {
         setCompose(eventViewModel)
-        val testLocation = eventViewModel.getEvent().value.location.copy(lat = 15.5, long = 15.5)
+        val testLocation = eventViewModel.event.value.location.copy(lat = 15.5, long = 15.5)
         composeTestRule.onNodeWithTag("Location-button").performClick()
         val latInput = composeTestRule.onNodeWithTag("event_latitude_text_field")
         val longInput = composeTestRule.onNodeWithTag("event_longitude_text_field")
@@ -117,6 +119,6 @@ class EventScreenTest {
         latInput.performTextReplacement(testLocation.lat.toString())
         longInput.performTextReplacement(testLocation.long.toString())
         okButton.performClick()
-        Assert.assertTrue(eventViewModel.getEvent().value.location == testLocation)
+        Assert.assertTrue(eventViewModel.event.value.location == testLocation)
     }
 }
