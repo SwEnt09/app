@@ -14,12 +14,8 @@ class Supabase(supabaseClient: SupabaseClient) : RemoteDataSource {
     override suspend fun getAssociation(associationId: String): Association {
         return supabase
             .from("associations")
-            .select() { filter { eq("associationId", associationId) } }
+            .select() { filter { eq("association_id", associationId) } }
             .decodeSingle()
-    }
-
-    override suspend fun setAssociation(association: Association) {
-        supabase.from("associations").upsert(association, onConflict = "associationId")
     }
 
     override suspend fun getAllAssociations(): List<Association> {
@@ -27,11 +23,14 @@ class Supabase(supabaseClient: SupabaseClient) : RemoteDataSource {
     }
 
     override suspend fun getEvent(eventId: String): Event {
-        return supabase.from("events").select() { filter { eq("eventId", eventId) } }.decodeSingle()
+        return supabase
+            .from("events")
+            .select() { filter { eq("event_id", eventId) } }
+            .decodeSingle()
     }
 
     override suspend fun setEvent(event: Event) {
-        supabase.from("events").upsert(event, onConflict = "eventId")
+        supabase.from("events").upsert(event, onConflict = "event_id")
     }
 
     override suspend fun getAllEvents(): List<Event> {
@@ -39,11 +38,7 @@ class Supabase(supabaseClient: SupabaseClient) : RemoteDataSource {
     }
 
     override suspend fun getTag(tagId: String): Tag {
-        return supabase.from("tags").select() { filter { eq("tagId", tagId) } }.decodeSingle()
-    }
-
-    override suspend fun setTag(tag: Tag) {
-        supabase.from("tags").upsert(tag, onConflict = "tagId")
+        return supabase.from("tags").select() { filter { eq("tag_id", tagId) } }.decodeSingle()
     }
 
     override suspend fun getAllTags(): List<Tag> {
@@ -52,12 +47,12 @@ class Supabase(supabaseClient: SupabaseClient) : RemoteDataSource {
 
     override suspend fun getUserProfile(userId: String): UserProfile {
         return supabase
-            .from("userProfiles")
-            .select() { filter { eq("userId", userId) } }
+            .from("user_profiles")
+            .select() { filter { eq("user_id", userId) } }
             .decodeSingle()
     }
 
     override suspend fun setUserProfile(userProfile: UserProfile) {
-        supabase.from("userProfiles").upsert(userProfile, onConflict = "userId")
+        supabase.from("user_profiles").upsert(userProfile, onConflict = "user_id")
     }
 }
