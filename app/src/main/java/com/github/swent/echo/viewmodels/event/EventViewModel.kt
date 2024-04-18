@@ -45,6 +45,8 @@ constructor(
         )
     private val _event = MutableStateFlow<Event>(emptyEvent)
     private val _status = MutableStateFlow<EventStatus>(EventStatus.New)
+    val event = _event.asStateFlow()
+    val status = _status.asStateFlow()
     private val allTagsList = MutableStateFlow<List<Tag>>(listOf())
 
     // initialize async values
@@ -81,10 +83,6 @@ constructor(
         }
     }
 
-    // return the event
-    fun getEvent(): StateFlow<Event> {
-        return _event.asStateFlow()
-    }
 
     // return the list of possible organizer for the user
     fun getOrganizerList(): StateFlow<List<String>> {
@@ -169,11 +167,6 @@ constructor(
                 }
             }
         }
-    }
-
-    // return the status of the event
-    fun getStatus(): StateFlow<EventStatus> {
-        return _status.asStateFlow()
     }
 
     /** check the current event has valid data if not return false and set _status to Error */

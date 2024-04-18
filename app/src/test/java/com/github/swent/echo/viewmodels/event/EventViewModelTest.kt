@@ -80,7 +80,7 @@ class EventViewModelTest {
     fun modifyEventTest() {
         val event = TEST_EVENT
         eventViewModel.setEvent(event)
-        assertEquals(eventViewModel.getEvent().value, event)
+        assertEquals(eventViewModel.event.value, event)
     }
 
     @Test
@@ -91,7 +91,7 @@ class EventViewModelTest {
         scheduler.runCurrent()
         val addedTag = eventViewModel.getAndAddTagFromString(newTag.name)
         assertEquals(addedTag, newTag)
-        assertEquals(eventViewModel.getEvent().value.tags, setOf(newTag))
+        assertEquals(eventViewModel.event.value.tags, setOf(newTag))
     }
 
     @Test
@@ -99,7 +99,7 @@ class EventViewModelTest {
         val event = TEST_EVENT
         eventViewModel.setEvent(event)
         eventViewModel.deleteTag(Tag("1", "tag1"))
-        assertEquals(eventViewModel.getEvent().value.tags, setOf<Tag>())
+        assertEquals(eventViewModel.event.value.tags, setOf<Tag>())
     }
 
     @Test
@@ -112,7 +112,7 @@ class EventViewModelTest {
         eventViewModel.saveEvent()
         eventViewModel.setEvent(eventModified)
         verify { Log.w(any(), any() as String) }
-        assertEquals(event, eventViewModel.getEvent().value)
+        assertEquals(event, eventViewModel.event.value)
     }
 
     @Test
@@ -141,7 +141,7 @@ class EventViewModelTest {
             )
         eventViewModel.setEvent(event)
         eventViewModel.saveEvent()
-        assertTrue(eventViewModel.getStatus().value is EventStatus.Error)
+        assertTrue(eventViewModel.status.value is EventStatus.Error)
     }
 
     @Test
@@ -149,7 +149,7 @@ class EventViewModelTest {
         val event = TEST_EVENT.copy(title = " ")
         eventViewModel.setEvent(event)
         eventViewModel.saveEvent()
-        assertTrue(eventViewModel.getStatus().value is EventStatus.Error)
+        assertTrue(eventViewModel.status.value is EventStatus.Error)
     }
 
     @Test
@@ -169,7 +169,7 @@ class EventViewModelTest {
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
         eventViewModel.setOrganizer(testUserProfile.name)
         scheduler.runCurrent()
-        assertEquals(TEST_EVENT.organizerId, eventViewModel.getEvent().value.organizerId)
+        assertEquals(TEST_EVENT.organizerId, eventViewModel.event.value.organizerId)
     }
 
     @Test
@@ -190,7 +190,7 @@ class EventViewModelTest {
         coEvery { mockedRepository.getAllAssociations() } returns listOf(testAssociation)
         eventViewModel.setOrganizer(testAssociation.name)
         scheduler.runCurrent()
-        assertEquals(testAssociation.associationId, eventViewModel.getEvent().value.organizerId)
+        assertEquals(testAssociation.associationId, eventViewModel.event.value.organizerId)
     }
 
     @Test
@@ -202,14 +202,14 @@ class EventViewModelTest {
                 EventViewModel(mockedRepository, fakeAuthenticationService, existingEvent.eventId)
         }
         scheduler.runCurrent()
-        assertEquals(EventStatus.Saved, eventViewModel.getStatus().value)
+        assertEquals(EventStatus.Saved, eventViewModel.status.value)
         val modifiedExistingEvent = existingEvent.copy(title = "another title")
         eventViewModel.setEvent(modifiedExistingEvent)
-        assertEquals(EventStatus.Modified, eventViewModel.getStatus().value)
+        assertEquals(EventStatus.Modified, eventViewModel.status.value)
         eventViewModel.saveEvent()
-        assertEquals(EventStatus.Saving, eventViewModel.getStatus().value)
+        assertEquals(EventStatus.Saving, eventViewModel.status.value)
         scheduler.runCurrent()
-        assertEquals(EventStatus.Saved, eventViewModel.getStatus().value)
+        assertEquals(EventStatus.Saved, eventViewModel.status.value)
         coVerify { mockedRepository.setEvent(modifiedExistingEvent) }
     }
 }
