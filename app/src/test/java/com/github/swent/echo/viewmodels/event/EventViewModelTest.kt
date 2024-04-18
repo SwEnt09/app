@@ -1,6 +1,7 @@
 package com.github.swent.echo.viewmodels.event
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
@@ -18,6 +19,7 @@ import io.mockk.verify
 import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
@@ -67,27 +69,35 @@ class EventViewModelTest {
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private lateinit var eventViewModel: EventViewModel
     private val scheduler = TestCoroutineScheduler()
+    private val savedEventId = SavedStateHandle(mapOf())
 
     @Before
     fun init() {
         fakeAuthenticationService.userID = "u0"
         Dispatchers.setMain(StandardTestDispatcher(scheduler))
-        runBlocking { eventViewModel = EventViewModel(mockedRepository, fakeAuthenticationService) }
+        runBlocking {
+            eventViewModel =
+                EventViewModel(mockedRepository, fakeAuthenticationService, savedEventId)
+        }
         scheduler.runCurrent()
     }
 
     @Test
-    fun modifyEventTest() {
+    fun modifyNewEventTest() {
         val event = TEST_EVENT
         eventViewModel.setEvent(event)
         assertEquals(eventViewModel.event.value, event)
+        assertTrue(eventViewModel.isEventNew.value)
     }
 
     @Test
     fun addTagToEventTest() {
         val newTag = Tag("2", "tag2")
         coEvery { mockedRepository.getAllTags() } returns listOf(newTag)
-        runBlocking { eventViewModel = EventViewModel(mockedRepository, fakeAuthenticationService) }
+        runBlocking {
+            eventViewModel =
+                EventViewModel(mockedRepository, fakeAuthenticationService, savedEventId)
+        }
         scheduler.runCurrent()
         val addedTag = eventViewModel.getAndAddTagFromString(newTag.name)
         assertEquals(addedTag, newTag)
@@ -156,7 +166,10 @@ class EventViewModelTest {
     fun getOrganizerListReturnsCorrectUsername() {
         val testUserProfile = UserProfile("testid", "testname")
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
-        runBlocking { eventViewModel = EventViewModel(mockedRepository, fakeAuthenticationService) }
+        runBlocking {
+            eventViewModel =
+                EventViewModel(mockedRepository, fakeAuthenticationService, savedEventId)
+        }
         scheduler.runCurrent()
         val organizerList = eventViewModel.getOrganizerList()
         assertEquals(listOf(testUserProfile.name), organizerList.value)
@@ -196,13 +209,15 @@ class EventViewModelTest {
     @Test
     fun modifyExistingEventUpdateItInTheRepository() {
         val existingEvent = TEST_EVENT
+        val testEventId = SavedStateHandle(mapOf("eventId" to TEST_EVENT.creatorId))
         coEvery { mockedRepository.getEvent(any()) } returns existingEvent
         runBlocking {
             eventViewModel =
-                EventViewModel(mockedRepository, fakeAuthenticationService, existingEvent.eventId)
+                EventViewModel(mockedRepository, fakeAuthenticationService, testEventId)
         }
         scheduler.runCurrent()
         assertEquals(EventStatus.Saved, eventViewModel.status.value)
+        assertFalse(eventViewModel.isEventNew.value)
         val modifiedExistingEvent = existingEvent.copy(title = "another title")
         eventViewModel.setEvent(modifiedExistingEvent)
         assertEquals(EventStatus.Modified, eventViewModel.status.value)

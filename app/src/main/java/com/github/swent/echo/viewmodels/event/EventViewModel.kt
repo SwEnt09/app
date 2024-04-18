@@ -1,6 +1,7 @@
 package com.github.swent.echo.viewmodels.event
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.R
@@ -26,7 +27,8 @@ class EventViewModel
 @Inject
 constructor(
     private val repository: Repository,
-    private val authenticationService: AuthenticationService
+    private val authenticationService: AuthenticationService,
+    private val savedEventId: SavedStateHandle
 ) : ViewModel() {
     private val emptyEvent =
         Event(
@@ -44,10 +46,12 @@ constructor(
             0
         )
     private val _event = MutableStateFlow<Event>(emptyEvent)
-    private val _status = MutableStateFlow<EventStatus>(EventStatus.New)
+    private val _status = MutableStateFlow<EventStatus>(EventStatus.Modified)
     val event = _event.asStateFlow()
     val status = _status.asStateFlow()
     private val allTagsList = MutableStateFlow<List<Tag>>(listOf())
+    private val _isEventNew = MutableStateFlow(true)
+    val isEventNew = _isEventNew.asStateFlow()
 
     // initialize async values
     init {
@@ -58,31 +62,23 @@ constructor(
                 _status.value = EventStatus.Error(R.string.event_creation_error_not_logged_in)
                 Log.e("create event", "the user is not logged in")
             } else {
-                _event.value =
-                    _event.value.copy(
-                        creatorId = userid,
-                        organizerId = userid,
-                        organizerName = repository.getUserProfile(userid).name
-                    )
-                _status.value = EventStatus.New
+                if (savedEventId.contains("eventId")) {
+                    _isEventNew.value = false
+                    _event.value = repository.getEvent(savedEventId.get<String>("eventId")!!)
+                    _status.value = EventStatus.Saved
+                } else {
+                    _event.value =
+                        _event.value.copy(
+                            creatorId = userid,
+                            organizerId = userid,
+                            organizerName = repository.getUserProfile(userid).name
+                        )
+                    _status.value = EventStatus.Modified
+                }
             }
             allTagsList.value = repository.getAllTags()
         }
     }
-
-    // constructor for an already existing event
-    constructor(
-        repository: Repository,
-        authenticationService: AuthenticationService,
-        eventId: String
-    ) : this(repository, authenticationService) {
-        _status.value = EventStatus.Saving // avoid saving before initialization
-        viewModelScope.launch {
-            _event.value = repository.getEvent(eventId)
-            _status.value = EventStatus.Saved
-        }
-    }
-
 
     // return the list of possible organizer for the user
     fun getOrganizerList(): StateFlow<List<String>> {
@@ -122,9 +118,7 @@ constructor(
             Log.w("set event", "trying to update the event but it's not saved yet")
         } else if (_status.value !is EventStatus.Error) {
             _event.value = newEvent
-            if (_status.value != EventStatus.New) {
-                _status.value = EventStatus.Modified
-            }
+            _status.value = EventStatus.Modified
         }
     }
 
@@ -154,15 +148,15 @@ constructor(
             Log.w("save event", "trying to save the event but it's already saved")
         } else {
             if (eventIsValid()) {
-                val oldStatus = _status.value
                 _status.value = EventStatus.Saving
                 viewModelScope.launch {
-                    if (oldStatus == EventStatus.New) {
+                    if (isEventNew.value) {
                         // TODO: get new eventId for new events (not implemented yet in the
                         // repository)
                     } else {
                         repository.setEvent(_event.value)
                     }
+                    _isEventNew.value = false
                     _status.value = EventStatus.Saved
                 }
             }
@@ -185,8 +179,6 @@ constructor(
 
 /** the different status of an event */
 sealed class EventStatus {
-    // new event not in the repository
-    data object New : EventStatus()
     // same as in the repository
     data object Saved : EventStatus()
     // different from the version in the repository
