@@ -55,11 +55,11 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
-        Box(modifier = Modifier.fillMaxSize().padding(5.dp)) {
+        Box(modifier = Modifier.fillMaxSize().padding(5.dp).testTag("search_menu_sheet_content")) {
             // Sheet content
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.align(Alignment.TopCenter)
+                modifier = Modifier.align(Alignment.TopCenter).testTag("search_menu_first_layer")
             ) {
                 // Search bar
                 SearchBarTags(filters.tagId)
@@ -70,7 +70,7 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
             // Display filters or discover according to the selected mode
             Box(
                 modifier =
-                    Modifier.align(Alignment.TopCenter).fillMaxWidth().absoluteOffset(y = 70.dp)
+                    Modifier.align(Alignment.TopCenter).fillMaxWidth().absoluteOffset(y = 70.dp).testTag("search_menu_second_layer")
             ) {
                 if (searchMode.value == SearchMode.FILTERS) {
                     SearchMenuFilters(filters)
@@ -81,7 +81,7 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
             // Close Search Button
             Row(
                 modifier =
-                    Modifier.align(Alignment.TopCenter).fillMaxWidth().absoluteOffset(y = 300.dp)
+                    Modifier.align(Alignment.TopCenter).fillMaxWidth().absoluteOffset(y = 300.dp).testTag("search_menu_third_layer")
             ) {
                 ResetFiltersButton()
             }
@@ -102,7 +102,7 @@ fun SearchBarTags(searched: MutableState<String>) {
         label = { Text("Search hobby/categorie...") },
         value = searched.value,
         onValueChange = { searched.value = it },
-        modifier = Modifier.width(240.dp)
+        modifier = Modifier.width(240.dp).testTag("search_menu_search_bar_tags")
     )
 }
 
@@ -118,10 +118,10 @@ fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
                     SearchMode.FILTERS
                 }
         },
-        modifier = Modifier.fillMaxWidth().height(40.dp)
+        modifier = Modifier.fillMaxWidth().height(40.dp).testTag("search_menu_switch_mode_button")
     ) {
-        Icon(searchMode.value.switchToIcon, contentDescription = searchMode.value.switchToName)
-        Text(searchMode.value.switchToName)
+        Icon(searchMode.value.switchToIcon, contentDescription = searchMode.value.switchToName, modifier = Modifier.testTag("search_menu_switch_mode_button_icon"))
+        Text(searchMode.value.switchToName, modifier = Modifier.testTag("search_menu_switch_mode_button_text"))
     }
 }
 
@@ -132,7 +132,7 @@ fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
 // Todo : see how we want to handle this reset filters button
 @Composable
 fun ResetFiltersButton() {
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(modifier = Modifier.fillMaxWidth().testTag("search_menu_reset_filters_button")) {
         Button(onClick = {}, modifier = Modifier.align(Alignment.Center)) { Text("Reset Filters") }
     }
 }

@@ -30,8 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import java.time.ZonedDateTime
 
 /** Composable to display the filters sheet */
 @Composable
@@ -52,28 +54,25 @@ fun SearchMenuFilters(filters: FiltersContainer) {
             CheckBoxItems(Icons.Filled.Person, "Full", filters.fullChecked)
         )
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.White).testTag("search_menu_filters_content")) {
         // Sort by filter
-        Row(modifier = Modifier.align(Alignment.TopStart).fillMaxWidth().zIndex(1f)) {
+        Row(modifier = Modifier.align(Alignment.TopStart).fillMaxWidth().zIndex(1f).testTag("sort_by_displayer_container")) {
             SortByDisplayer()
         }
-        // Tick-box filters
-        Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 50.dp)) {
-            // Events for Tick-boxes
+        // Checkbox filters
+        Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 50.dp).testTag("checkboxes_container")){
+            // Events for Checkboxes
             CheckBoxesDisplayer("Events For:", checkBoxItems = eventsForItems)
             Spacer(modifier = Modifier.width(100.dp))
-            // Events Status Tick-boxes
+            // Events Status Checkboxes
             CheckBoxesDisplayer("Events Status:", checkBoxItems = eventsStatusItems)
         }
         Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 170.dp)) {
-            DateInputSample()
-            DateInputSample()
+            DateInputSample(filters.from)
+            DateInputSample(filters.to)
         }
     }
 }
-// TODO : Implement it, but I spend a bit too much time
-// on non-working solution so leaving it for next sprint
-@Composable fun DateInputSample() {}
 
 // Enum class for the different states of the sort by filter
 enum class SortBy(val value: String) {
@@ -95,15 +94,15 @@ data class CheckBoxItems(
 @Composable
 fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
     Column {
-        Text(title)
+        Text(title, modifier = Modifier.testTag("checkboxes_title"))
         Spacer(modifier = Modifier.height(10.dp))
         checkBoxItems.forEach { checkBoxItem ->
-            Row {
+            Row(modifier = Modifier.testTag("${checkBoxItem.contentDescription}_checkbox_row")){
                 Icon(checkBoxItem.icon, contentDescription = checkBoxItem.contentDescription)
                 Checkbox(
                     checked = checkBoxItem.checked.value,
                     onCheckedChange = { checkBoxItem.checked.value = !checkBoxItem.checked.value },
-                    modifier = Modifier.height(25.dp).width(25.dp)
+                    modifier = Modifier.height(25.dp).width(25.dp).testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
                 Text(checkBoxItem.contentDescription)
             }
@@ -122,7 +121,7 @@ fun SortByDisplayer() {
         Button(
             onClick = { expanded = !expanded },
             shape = RoundedCornerShape(10),
-            modifier = Modifier.width(170.dp)
+            modifier = Modifier.width(170.dp).testTag("sort_by_button")
         ) {
             Text(if (sortBy == SortBy.NONE) "Sort by..." else sortBy.value)
             Icon(
@@ -139,7 +138,7 @@ fun SortByDisplayer() {
                         expanded = false
                     },
                     shape = RoundedCornerShape(5),
-                    modifier = Modifier.width(170.dp).height(35.dp)
+                    modifier = Modifier.width(170.dp).height(35.dp).testTag(it.value)
                 ) {
                     Text(it.value)
                 }
@@ -147,3 +146,10 @@ fun SortByDisplayer() {
         }
     }
 }
+
+/*
+    * Composable to get a date from the user.
+    * TODO : Implement it, but I spend a bit too much time
+    *   on non-working solution so leaving it for next sprint
+ */
+@Composable fun DateInputSample(dateOutput: MutableState<ZonedDateTime>) {}
