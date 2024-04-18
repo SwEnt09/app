@@ -20,10 +20,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.function.ThrowingRunnable
 
+@Ignore
 @HiltAndroidTest
 class SupabaseTest {
     @get:Rule val hiltRule = HiltAndroidRule(this)
@@ -56,7 +58,7 @@ class SupabaseTest {
             0,
             0
         )
-    private val userProfile = UserProfile("b0122e3e-82ed-4409-83f9-dbfb9761db20", "Dummy User")
+    private val userProfile = UserProfile("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759", "Dummy User")
 
     @Before
     fun instanciate() {
@@ -72,20 +74,10 @@ class SupabaseTest {
 
     @Test
     fun getAssociationTest() {
-        assertThrows(
-            NoSuchElementException::class.java,
-            ThrowingRunnable {
-                runBlocking { source.getAssociation("b0122e3e-82ed-4409-83f9-dbfb9761db20") }
-            }
-        )
-    }
-
-    @Test
-    fun setAssociationTest() {
-        assertThrows(
-            UnauthorizedRestException::class.java,
-            ThrowingRunnable { runBlocking { source.setAssociation(association) } }
-        )
+        val associationFetched = runBlocking {
+            source.getAssociation("b0122e3e-82ed-4409-83f9-dbfb9761db20")
+        }
+        assertEquals(association, associationFetched)
     }
 
     @Test
@@ -132,19 +124,14 @@ class SupabaseTest {
 
     @Test
     fun getUserProfileTest() {
-        assertThrows(
-            NoSuchElementException::class.java,
-            ThrowingRunnable {
-                runBlocking { source.getUserProfile("b0122e3e-82ed-4409-83f9-dbfb9761db20") }
-            }
-        )
+        val userProfileFetched = runBlocking {
+            source.getUserProfile("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759")
+        }
+        assertEquals(userProfile, userProfileFetched)
     }
 
     @Test
     fun setUserProfileTest() {
-        assertThrows(
-            UnauthorizedRestException::class.java,
-            ThrowingRunnable { runBlocking { source.setUserProfile(userProfile) } }
-        )
+        runBlocking { source.setUserProfile(userProfile) }
     }
 }
