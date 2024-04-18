@@ -30,22 +30,8 @@ constructor(
     private val authenticationService: AuthenticationService,
     private val savedEventId: SavedStateHandle
 ) : ViewModel() {
-    private val emptyEvent =
-        Event(
-            "",
-            UserProfile("", "", null, null, emptySet()),
-            Association("", "", ""),
-            "",
-            "",
-            Location("", 0.0, 0.0),
-            ZonedDateTime.now(),
-            ZonedDateTime.now(),
-            emptySet(),
-            0,
-            0,
-            0
-        )
-    private val _event = MutableStateFlow<Event>(emptyEvent)
+
+    private val _event = MutableStateFlow<Event>(Event.EMPTY)
     private val _status = MutableStateFlow<EventStatus>(EventStatus.Modified)
     val event = _event.asStateFlow()
     val status = _status.asStateFlow()

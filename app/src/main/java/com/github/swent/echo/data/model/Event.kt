@@ -19,4 +19,22 @@ data class Event(
     @SerialName("participant_count") val participantCount: Int,
     @SerialName("max_participants") val maxParticipants: Int,
     @SerialName("image_id") val imageId: Int
-)
+) {
+    companion object {
+        val EMPTY =
+            Event(
+                "",
+                UserProfile("", "", null, null, setOf()),
+                null,
+                "",
+                "",
+                Location("", 0.0, 0.0),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
+                emptySet(),
+                0,
+                0,
+                0
+            )
+    }
+}
