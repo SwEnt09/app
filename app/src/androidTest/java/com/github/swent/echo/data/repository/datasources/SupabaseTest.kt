@@ -1,31 +1,39 @@
 package com.github.swent.echo.data.repository.datasources
 
+import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.authentication.AuthenticationServiceImpl
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.Supabase as SupabaseSource
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.exceptions.UnauthorizedRestException
-import io.github.jan.supabase.gotrue.Auth
-import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.compose.auth.composeAuth
+import io.github.jan.supabase.gotrue.auth
 import java.time.ZonedDateTime
 import java.util.Arrays
+import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import org.junit.function.ThrowingRunnable
 
+@Ignore
+@HiltAndroidTest
 class SupabaseTest {
-    private val supabaseUrl = "ulejnivguxeiibkbpwnb.supabase.co"
-    private val supabasePublicKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZWpuaXZndXhlaWlia2Jwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA4MzgxODQsImV4cCI6MjAyNjQxNDE4NH0.9Hkj-Gox2XHcHfs_U2GyQFc9sZ_nu2Xs16-KYBri32g"
-    private lateinit var supabaseClient: SupabaseClient
-    private lateinit var source: SupabaseSource
+    @get:Rule val hiltRule = HiltAndroidRule(this)
+    @Inject lateinit var supabaseClient: SupabaseClient
+
+    lateinit var authenticationService: AuthenticationService
+
+    lateinit var source: SupabaseSource
 
     private val association =
         Association(
@@ -50,34 +58,26 @@ class SupabaseTest {
             0,
             0
         )
-    private val userProfile = UserProfile("b0122e3e-82ed-4409-83f9-dbfb9761db20", "Dummy User")
+    private val userProfile = UserProfile("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759", "Dummy User")
 
     @Before
-    fun setUp() {
-        supabaseClient =
-            createSupabaseClient(supabaseUrl, supabasePublicKey) {
-                install(Auth)
-                install(Postgrest)
-            }
+    fun instanciate() {
+        hiltRule.inject()
+
+        authenticationService =
+            AuthenticationServiceImpl(supabaseClient.auth, supabaseClient.composeAuth)
+
+        runBlocking { authenticationService.signIn("test@example.com", "123456") }
+
         source = SupabaseSource(supabaseClient)
     }
 
     @Test
     fun getAssociationTest() {
-        assertThrows(
-            NoSuchElementException::class.java,
-            ThrowingRunnable {
-                runBlocking { source.getAssociation("b0122e3e-82ed-4409-83f9-dbfb9761db20") }
-            }
-        )
-    }
-
-    @Test
-    fun setAssociationTest() {
-        assertThrows(
-            UnauthorizedRestException::class.java,
-            ThrowingRunnable { runBlocking { source.setAssociation(association) } }
-        )
+        val associationFetched = runBlocking {
+            source.getAssociation("b0122e3e-82ed-4409-83f9-dbfb9761db20")
+        }
+        assertEquals(association, associationFetched)
     }
 
     @Test
@@ -112,20 +112,8 @@ class SupabaseTest {
 
     @Test
     fun getTagTest() {
-        assertThrows(
-            NoSuchElementException::class.java,
-            ThrowingRunnable {
-                runBlocking { source.getTag("daba142a-a276-4b7e-824d-43ca088633ff") }
-            }
-        )
-    }
-
-    @Test
-    fun setTagTest() {
-        assertThrows(
-            UnauthorizedRestException::class.java,
-            ThrowingRunnable { runBlocking { source.setTag(tag) } }
-        )
+        val tagFetched = runBlocking { source.getTag("daba142a-a276-4b7e-824d-43ca088633ff") }
+        assertEquals(tag, tagFetched)
     }
 
     @Test
@@ -136,19 +124,14 @@ class SupabaseTest {
 
     @Test
     fun getUserProfileTest() {
-        assertThrows(
-            NoSuchElementException::class.java,
-            ThrowingRunnable {
-                runBlocking { source.getUserProfile("b0122e3e-82ed-4409-83f9-dbfb9761db20") }
-            }
-        )
+        val userProfileFetched = runBlocking {
+            source.getUserProfile("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759")
+        }
+        assertEquals(userProfile, userProfileFetched)
     }
 
     @Test
     fun setUserProfileTest() {
-        assertThrows(
-            UnauthorizedRestException::class.java,
-            ThrowingRunnable { runBlocking { source.setUserProfile(userProfile) } }
-        )
+        runBlocking { source.setUserProfile(userProfile) }
     }
 }

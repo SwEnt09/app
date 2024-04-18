@@ -8,8 +8,6 @@ import com.github.swent.echo.data.model.UserProfile
 interface RemoteDataSource {
     suspend fun getAssociation(associationId: String): Association
 
-    suspend fun setAssociation(association: Association)
-
     suspend fun getAllAssociations(): List<Association>
 
     suspend fun getEvent(eventId: String): Event
@@ -19,8 +17,6 @@ interface RemoteDataSource {
     suspend fun getAllEvents(): List<Event>
 
     suspend fun getTag(tagId: String): Tag
-
-    suspend fun setTag(tag: Tag)
 
     suspend fun getAllTags(): List<Tag>
 
