@@ -26,10 +26,10 @@ constructor(
 ) : ViewModel() {
 
     private val _event = MutableStateFlow<Event>(Event.EMPTY)
-    private val _status = MutableStateFlow<EventStatus>(EventStatus.Modified)
+    private val _status = MutableStateFlow<EventStatus>(EventStatus.Saving)
     val event = _event.asStateFlow()
     val status = _status.asStateFlow()
-    private val allTagsList = MutableStateFlow<List<Tag>>(listOf())
+    private lateinit var allTagsList: List<Tag>
     private val _isEventNew = MutableStateFlow(true)
     val isEventNew = _isEventNew.asStateFlow()
     private val _organizerList = MutableStateFlow<List<String>>(listOf())
@@ -37,7 +37,6 @@ constructor(
 
     // initialize async values
     init {
-        _status.value = EventStatus.Saving // avoid saving before initialization
         viewModelScope.launch {
             val userid = authenticationService.getCurrentUserID()
             if (userid == null) {
@@ -61,7 +60,7 @@ constructor(
                 // in repository yet)
                 _organizerList.value = listOf(username)
             }
-            allTagsList.value = repository.getAllTags()
+            allTagsList = repository.getAllTags()
         }
     }
 
@@ -93,8 +92,8 @@ constructor(
      * if the string match its name or null otherwise
      */
     fun getAndAddTagFromString(tagName: String): Tag? {
-        if (allTagsList.value.any { (_, name) -> name == tagName }) {
-            val tag = allTagsList.value.filter { (_, name) -> name == tagName }
+        if (allTagsList.any { (_, name) -> name == tagName }) {
+            val tag = allTagsList.filter { (_, name) -> name == tagName }
             setEvent(_event.value.copy(tags = _event.value.tags + tag.first()))
             return tag.first()
         }
