@@ -64,11 +64,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
+import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
+import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
+import java.time.ZonedDateTime
 import kotlinx.coroutines.launch
 
 /**
@@ -331,6 +334,20 @@ private fun Content(
         overlay.value = Overlay.EVENT_INFO_SHEET
     }
 
+    val filters =
+        FiltersContainer(
+            tagId = remember { mutableStateOf("") },
+            epflChecked = remember { mutableStateOf(true) },
+            sectionChecked = remember { mutableStateOf(true) },
+            classChecked = remember { mutableStateOf(true) },
+            pendingChecked = remember { mutableStateOf(true) },
+            confirmedChecked = remember { mutableStateOf(true) },
+            fullChecked = remember { mutableStateOf(true) },
+            from = remember { mutableStateOf(ZonedDateTime.now()) },
+            to = remember { mutableStateOf(ZonedDateTime.now()) },
+            sortBy = remember { mutableStateOf(SortBy.NONE) }
+        )
+
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode.value == MapOrListMode.LIST) {
             // TODO add the list view
@@ -356,7 +373,11 @@ private fun Content(
         }
 
         if (overlay.value == Overlay.SEARCH_SHEET) {
-            SearchMenuSheet(onFullyExtended = {}, onDismiss = { overlay.value = Overlay.NONE })
+            SearchMenuSheet(
+                filters,
+                onFullyExtended = {},
+                onDismiss = { overlay.value = Overlay.NONE }
+            )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu
         }
