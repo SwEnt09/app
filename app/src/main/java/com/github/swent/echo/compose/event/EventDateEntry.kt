@@ -127,15 +127,25 @@ fun EventDateEntryUnit(
         val timePickerState by remember {
             mutableStateOf(TimePickerState(time.hour, time.minute, true))
         }
-        ElevatedButton(onClick = { showTimePicker = true }) {
+        ElevatedButton(
+            modifier = modifier.testTag("$label-time-button"),
+            onClick = { showTimePicker = true }
+        ) {
             if (showTimePicker) {
                 Dialog(
                     onDismissRequest = { showTimePicker = false },
                 ) {
                     Card {
-                        TimePicker(state = timePickerState)
+                        TimePicker(
+                            modifier = modifier.testTag("$label-time-dialog"),
+                            state = timePickerState
+                        )
                         Button(
-                            modifier = modifier.align(Alignment.End).padding(5.dp),
+                            modifier =
+                                modifier
+                                    .align(Alignment.End)
+                                    .padding(5.dp)
+                                    .testTag("$label-time-dialog-button"),
                             onClick = {
                                 time = LocalTime.of(timePickerState.hour, timePickerState.minute)
                                 showTimePicker = false
