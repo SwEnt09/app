@@ -17,7 +17,7 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideRepository(supabaseClient: SupabaseClient): Repository {
-        val remoteDataSource: RemoteDataSource = Supabase(supabaseClient)
+        val remoteDataSource: RemoteDataSource = SupabaseDataSource(supabaseClient)
 
         return RepositoryImpl(remoteDataSource)
     }

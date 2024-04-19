@@ -1,13 +1,14 @@
-package com.github.swent.echo.data.repository.datasources
+package com.github.swent.echo.data.supabase
 
 import com.github.swent.echo.data.model.Association
-import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.repository.datasources.supabaseEntities.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
 
-class Supabase(supabaseClient: SupabaseClient) : RemoteDataSource {
+class SupabaseDataSource(supabaseClient: SupabaseClient) : RemoteDataSource {
 
     var supabase = supabaseClient
 
