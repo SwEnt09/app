@@ -16,7 +16,7 @@ class EventViewModel() : ViewModel() {
     private val emptyEvent =
         Event(
             "",
-            UserProfile("", ""),
+            UserProfile("", "", null, null, emptySet()),
             Association("", "", ""),
             "",
             "",

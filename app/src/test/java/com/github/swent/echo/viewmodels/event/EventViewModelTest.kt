@@ -20,7 +20,7 @@ class EventViewModelTest {
     private val TEST_EVENT =
         Event(
             eventId = "testid",
-            creator = UserProfile("testid", "testname"),
+            creator = UserProfile("testid", "testname", null, null, emptySet()),
             organizer = Association("testid", "testname", "testdesc"),
             title = "test title",
             description = "test description",
