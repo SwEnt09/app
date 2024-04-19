@@ -53,7 +53,6 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
         modifier = Modifier.fillMaxHeight(1f).fillMaxWidth().testTag("search_menu_sheet"),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
         Box(modifier = Modifier.fillMaxSize().padding(5.dp).testTag("search_menu_sheet_content")) {
             // Sheet content

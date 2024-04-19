@@ -1,9 +1,11 @@
 package com.github.swent.echo.viewmodels.event
 
 import android.util.Log
+import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
+import com.github.swent.echo.data.model.UserProfile
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.verify
@@ -18,9 +20,8 @@ class EventViewModelTest {
     private val TEST_EVENT =
         Event(
             eventId = "testid",
-            creatorId = "testid",
-            organizerId = "testid",
-            organizerName = "testname",
+            creator = UserProfile("testid", "testname", null, null, emptySet()),
+            organizer = Association("testid", "testname", "testdesc"),
             title = "test title",
             description = "test description",
             location = Location("test location", 100.0, 100.0),

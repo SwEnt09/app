@@ -11,9 +11,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.data.model.Location
-import java.time.ZonedDateTime
+import com.github.swent.echo.data.SAMPLE_EVENTS
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -29,44 +27,6 @@ class MapViewAndroidTest {
     companion object {
         private const val ERROR_MARGIN_IN_METERS = 5.0
 
-        private val events =
-            listOf(
-                Event(
-                    eventId = "a",
-                    creatorId = "a",
-                    organizerId = "a",
-                    organizerName = "a",
-                    title = "Bowling Event",
-                    description = "",
-                    location = Location("Location 1", MAP_CENTER.toGeoPoint()),
-                    startDate = ZonedDateTime.now(),
-                    endDate = ZonedDateTime.now(),
-                    tags = emptySet(),
-                    participantCount = 5,
-                    maxParticipants = 8,
-                    imageId = 0
-                ),
-                Event(
-                    eventId = "b",
-                    creatorId = "a",
-                    organizerId = "a",
-                    organizerName = "a",
-                    title = "Swimming Event",
-                    description = "",
-                    location =
-                        Location(
-                            "Location 2",
-                            MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 90.0)
-                        ),
-                    startDate = ZonedDateTime.now(),
-                    endDate = ZonedDateTime.now(),
-                    tags = emptySet(),
-                    participantCount = 4,
-                    maxParticipants = 30,
-                    imageId = 0
-                )
-            )
-
         private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
         fun closeEnough(p1: GeoPoint, p2: IGeoPoint) =
@@ -74,13 +34,13 @@ class MapViewAndroidTest {
 
         @Composable
         private fun DummyMapDrawer() {
-            val e by remember { mutableStateOf(events) }
+            val e by remember { mutableStateOf(SAMPLE_EVENTS) }
             MapDrawer(events = e)
         }
 
         @Composable
         private fun <T : View> DummyMapDrawer(p: IMapViewProvider<T>) {
-            val e by remember { mutableStateOf(events) }
+            val e by remember { mutableStateOf(SAMPLE_EVENTS) }
             EchoAndroidView(
                 factory = p::factory,
                 update = p::update,

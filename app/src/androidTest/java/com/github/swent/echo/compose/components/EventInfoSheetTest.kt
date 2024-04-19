@@ -4,8 +4,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
+import com.github.swent.echo.data.model.UserProfile
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import org.hamcrest.CoreMatchers.equalTo
@@ -31,9 +33,8 @@ class EventInfoSheetTest {
             val event =
                 Event(
                     eventId = "1",
-                    creatorId = "1",
-                    organizerId = "1",
-                    organizerName = "Event Organization",
+                    creator = UserProfile("1", "Event Creator", null, null, emptySet()),
+                    organizer = Association("1", "Event Organization", ""),
                     title = "Event Title",
                     description = "Event Description",
                     location = Location("", 0.0, 0.0),

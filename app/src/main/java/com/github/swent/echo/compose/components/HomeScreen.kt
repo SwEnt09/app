@@ -56,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,10 +68,9 @@ import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.compose.map.MapDrawer
+import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
-import java.time.ZonedDateTime
 import kotlinx.coroutines.launch
 
 /**
@@ -262,14 +262,9 @@ fun HomeScreen(navActions: NavigationActions) {
             modifier = Modifier.testTag("home_screen"),
             topBar = {
                 CenterAlignedTopAppBar(
-                    colors =
-                        TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                        ),
                     title = {
                         Text(
-                            "Echo",
+                            stringResource(R.string.app_title),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis, // should not happen
                             fontWeight = FontWeight.SemiBold
@@ -286,7 +281,7 @@ fun HomeScreen(navActions: NavigationActions) {
                             )
                         }
                     },
-                    actions = { // search icon
+                    actions = { // mode switch icon
                         IconButton(
                             onClick = {
                                 if (mode.value == MapOrListMode.MAP) {
@@ -298,7 +293,12 @@ fun HomeScreen(navActions: NavigationActions) {
                             modifier = Modifier.testTag("list_map_mode_button")
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.List,
+                                painter =
+                                    if (mode.value == MapOrListMode.MAP) {
+                                        rememberVectorPainter(image = Icons.Filled.List)
+                                    } else {
+                                        painterResource(id = R.drawable.map_icon)
+                                    },
                                 contentDescription = "Search icon to access the search screen"
                             )
                         }
@@ -397,7 +397,7 @@ private fun Content(
             // TODO add the list view
         } else {
             MapDrawer(
-                events = events,
+                events = SAMPLE_EVENTS,
                 callback = { event -> onEventSelected(event) },
             )
         }
