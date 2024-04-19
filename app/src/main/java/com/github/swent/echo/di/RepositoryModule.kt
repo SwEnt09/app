@@ -1,6 +1,5 @@
 package com.github.swent.echo.di
 
-import android.app.Application
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.data.repository.RepositoryImpl
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
@@ -18,7 +17,7 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideRepository(application: Application, supabaseClient: SupabaseClient): Repository {
+    fun provideRepository(supabaseClient: SupabaseClient): Repository {
         val remoteDataSource: RemoteDataSource = Supabase(supabaseClient)
 
         return RepositoryImpl(remoteDataSource)
