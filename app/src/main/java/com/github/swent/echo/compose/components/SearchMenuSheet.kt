@@ -160,3 +160,58 @@ fun ResetFiltersButton() {
         }
     }
 }
+
+/** Enum class for the different states of the search mode */
+enum class SearchMode(val switchToName: String, val switchToIcon: ImageVector) {
+    FILTERS("Discover", Icons.Filled.ShoppingCart),
+    DISCOVER("Filters", Icons.Filled.Settings)
+}
+
+/** Composable for the search bar tags TODO : update this with yoan implementation */
+@Composable
+fun SearchBarTags(searched: MutableState<String>) {
+    OutlinedTextField(
+        label = { Text("Search hobby/categorie...") },
+        value = searched.value,
+        onValueChange = { searched.value = it },
+        modifier = Modifier.width(240.dp).testTag("search_menu_search_bar_tags")
+    )
+}
+
+/** Composable for the switch search mode button */
+@Composable
+fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
+    Button(
+        onClick = {
+            searchMode.value =
+                if (searchMode.value == SearchMode.FILTERS) {
+                    SearchMode.DISCOVER
+                } else {
+                    SearchMode.FILTERS
+                }
+        },
+        modifier = Modifier.fillMaxWidth().height(40.dp).testTag("search_menu_switch_mode_button")
+    ) {
+        Icon(
+            searchMode.value.switchToIcon,
+            contentDescription = searchMode.value.switchToName,
+            modifier = Modifier.testTag("search_menu_switch_mode_button_icon")
+        )
+        Text(
+            searchMode.value.switchToName,
+            modifier = Modifier.testTag("search_menu_switch_mode_button_text")
+        )
+    }
+}
+
+/**
+ * Composable for the reset filters button, inside a Box in order to hide content when we will
+ * implement discover mode
+ */
+// Todo : see how we want to handle this reset filters button
+@Composable
+fun ResetFiltersButton() {
+    Box(modifier = Modifier.fillMaxWidth().testTag("search_menu_reset_filters_button")) {
+        Button(onClick = {}, modifier = Modifier.align(Alignment.Center)) { Text("Reset Filters") }
+    }
+}
