@@ -1,5 +1,6 @@
 package com.github.swent.echo.data.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -11,6 +12,6 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class EventCreator(
-    val userId: String,
+    @SerialName("user_id") val userId: String,
     val name: String,
 )
