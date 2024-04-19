@@ -17,7 +17,6 @@ import com.github.swent.echo.data.model.Tag
 /** this composable contains the Tags title, text field and list of tags */
 @Composable
 fun EventTagEntry(
-    modifier: Modifier,
     tags: Set<Tag>,
     tagText: String,
     onTagFieldChanged: (tagText: String) -> Unit,
@@ -26,7 +25,7 @@ fun EventTagEntry(
     EventTextEntry(name = stringResource(R.string.edit_event_screen_tags), value = tagText) {
         onTagFieldChanged(it)
     }
-    Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
+    Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
         tags.forEach {
             TextButton(onClick = { onTagPressed(it) }) {
                 Text(it.name)

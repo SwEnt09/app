@@ -26,7 +26,7 @@ fun EventTextEntry(
     onValueChange: (newValue: String) -> Unit
 ) {
     Column(modifier = modifier.padding(EVENT_PADDING_BETWEEN_INPUTS)) {
-        EventEntryName(name = name, modifier = modifier)
+        EventEntryName(name = name)
         EventEntryField(
             value = value,
             modifier = modifier.testTag("$name-field"),
@@ -37,7 +37,7 @@ fun EventTextEntry(
 
 /** name above an entry field */
 @Composable
-fun EventEntryName(name: String, modifier: Modifier) {
+fun EventEntryName(name: String) {
     Text(
         text = name,
         modifier = Modifier.width(210.dp).height(30.dp),

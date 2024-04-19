@@ -26,21 +26,17 @@ import com.github.swent.echo.R
 fun EventDropDownSelectOrganizer(
     organizerName: String,
     organizerList: List<String>,
-    modifier: Modifier = Modifier,
     onOrganizerSelected: (organizer: String) -> Unit
 ) {
     if (organizerList.size < 1) {
         Log.e("Event Organizer", "the organizer list is too small: < 1")
     }
     var listDisplayed by remember { mutableStateOf(false) }
-    Column(modifier = modifier.padding(EVENT_PADDING_BETWEEN_INPUTS).fillMaxWidth()) {
-        EventEntryName(
-            name = stringResource(R.string.edit_event_screen_organizer),
-            modifier = modifier
-        )
+    Column(modifier = Modifier.padding(EVENT_PADDING_BETWEEN_INPUTS).fillMaxWidth()) {
+        EventEntryName(name = stringResource(R.string.edit_event_screen_organizer))
         TextButton(
             onClick = { listDisplayed = true },
-            modifier = modifier,
+            modifier = Modifier,
         ) {
             Text(text = organizerName, style = MaterialTheme.typography.bodyLarge)
             val icon = Icons.Filled.KeyboardArrowDown

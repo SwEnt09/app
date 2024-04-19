@@ -32,11 +32,7 @@ import com.github.swent.echo.data.model.Location
 
 /** this composable contains the Location title, text field and button */
 @Composable
-fun EventLocationEntry(
-    modifier: Modifier,
-    location: Location,
-    onLocationChanged: (newLocation: Location) -> Unit
-) {
+fun EventLocationEntry(location: Location, onLocationChanged: (newLocation: Location) -> Unit) {
     var showPickLocationDialog by remember { mutableStateOf(false) }
     if (showPickLocationDialog) {
         SelectLocationDialog(
@@ -45,18 +41,17 @@ fun EventLocationEntry(
             onSelectLocation = { onLocationChanged(it) }
         )
     }
-    Row(modifier = modifier.fillMaxWidth(1f)) {
+    Row(modifier = Modifier.fillMaxWidth(1f)) {
         EventTextEntry(
             name = stringResource(R.string.edit_event_screen_location),
             value = location.name,
-            modifier = modifier.fillMaxWidth(0.8f)
+            modifier = Modifier.fillMaxWidth(0.8f)
         ) {
             onLocationChanged(location.copy(name = it))
         }
         FilledIconButton(
             modifier =
-                modifier
-                    .padding(horizontal = 5.dp, vertical = 20.dp)
+                Modifier.padding(horizontal = 5.dp, vertical = 20.dp)
                     .align(Alignment.Bottom)
                     .testTag("Location-button"),
             onClick = { showPickLocationDialog = true }
@@ -83,20 +78,14 @@ fun SelectLocationDialog(
     Dialog(onDismissRequest = { onDismissRequest() }, properties = DialogProperties()) {
         Card(modifier = Modifier.fillMaxWidth().testTag("Location-dialog")) {
             Column {
-                EventEntryName(
-                    name = stringResource(R.string.event_location_latitude),
-                    modifier = Modifier
-                )
+                EventEntryName(name = stringResource(R.string.event_location_latitude))
                 TextField(
                     value = lat,
                     onValueChange = { lat = it },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.testTag("event_latitude_text_field")
                 )
-                EventEntryName(
-                    name = stringResource(R.string.event_location_longitude),
-                    modifier = Modifier
-                )
+                EventEntryName(name = stringResource(R.string.event_location_longitude))
                 TextField(
                     value = long,
                     onValueChange = { long = it },

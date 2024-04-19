@@ -30,13 +30,9 @@ fun EventScreen(
     eventViewModel: EventViewModel
 ) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        EventTitleAndBackButton(
-            modifier = Modifier,
-            title = title,
-            onBackButtonPressed = { onEventBackButtonPressed() }
-        )
+        EventTitleAndBackButton(title = title) { onEventBackButtonPressed() }
         // all the inputs for an event
-        EventPropertiesFields(modifier = Modifier, eventViewModel = eventViewModel)
+        EventPropertiesFields(eventViewModel = eventViewModel)
         // save button
         OutlinedButton(
             modifier =
@@ -52,12 +48,12 @@ fun EventScreen(
  * Modifiable fields of an event: title, description, tags, location, start date, end date, pictures
  */
 @Composable
-fun EventPropertiesFields(modifier: Modifier, eventViewModel: EventViewModel) {
+fun EventPropertiesFields(eventViewModel: EventViewModel) {
     val event by eventViewModel.event.collectAsState()
     var tagText by remember { mutableStateOf("") }
     val organizerListState = eventViewModel.organizerList.collectAsState()
 
-    Column(modifier = modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         EventTextEntry(
             name = stringResource(R.string.edit_event_screen_title),
             value = event.title
@@ -72,7 +68,6 @@ fun EventPropertiesFields(modifier: Modifier, eventViewModel: EventViewModel) {
         }
 
         EventTagEntry(
-            modifier = modifier,
             tags = event.tags,
             tagText = tagText,
             onTagFieldChanged = {
@@ -81,30 +76,29 @@ fun EventPropertiesFields(modifier: Modifier, eventViewModel: EventViewModel) {
                 if (tag != null) {
                     tagText = ""
                 }
-            },
-            onTagPressed = { eventViewModel.deleteTag(it) }
-        )
+            }
+        ) {
+            eventViewModel.deleteTag(it)
+        }
         var organizerName = event.creator.name
         if (event.organizer != null) {
             organizerName = event.organizer!!.name
         }
         EventDropDownSelectOrganizer(
             organizerName = organizerName,
-            organizerList = organizerListState.value,
-            modifier = modifier,
-            onOrganizerSelected = { eventViewModel.setOrganizer(it) }
-        )
-        EventLocationEntry(
-            modifier = modifier,
-            location = event.location,
-            onLocationChanged = { eventViewModel.setEvent(event.copy(location = it)) }
-        )
+            organizerList = organizerListState.value
+        ) {
+            eventViewModel.setOrganizer(it)
+        }
+        EventLocationEntry(location = event.location) {
+            eventViewModel.setEvent(event.copy(location = it))
+        }
         EventDateEntry(
             event.startDate,
             event.endDate,
-            modifier,
-            { eventViewModel.setEvent(event.copy(startDate = it)) },
-            { eventViewModel.setEvent(event.copy(endDate = it)) }
-        )
+            { eventViewModel.setEvent(event.copy(startDate = it)) }
+        ) {
+            eventViewModel.setEvent(event.copy(endDate = it))
+        }
     }
 }
