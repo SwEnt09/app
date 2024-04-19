@@ -28,13 +28,13 @@ fun EventTagEntry(
         onValueChange = onTagFieldChanged
     )
     Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-        tags.forEach {
-            TextButton(onClick = { onTagPressed(it) }) {
-                Text(it.name)
+        tags.forEach { tag ->
+            TextButton(onClick = { onTagPressed(tag) }) {
+                Text(tag.name)
                 Icon(
                     imageVector = Icons.Filled.Clear,
                     contentDescription =
-                        stringResource(R.string.edit_event_screen_delete_tag_button) + it.name
+                        stringResource(R.string.edit_event_screen_delete_tag_button) + tag.name
                 )
             }
         }
