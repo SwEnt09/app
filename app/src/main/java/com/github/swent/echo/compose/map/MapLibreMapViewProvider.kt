@@ -11,8 +11,6 @@ import org.maplibre.android.maps.MapView
 
 class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
-    private lateinit var mapView: MapView
-
     private fun drawMarkers(map: MapLibreMap, events: List<Event>, callback: (Event) -> Unit) {
         events.forEach {
             val markerBuilder = MarkerOptions().setPosition(it.location.toLatLng()).title(it.title)
@@ -27,7 +25,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
     override fun factory(context: Context): MapView {
         MapLibre.getInstance(context)
-        mapView = MapView(context)
+        val mapView = MapView(context)
         val styleUrl =
             context.getString(R.string.maptiler_base_style_url) +
                 context.getString(R.string.maptiler_api_key)

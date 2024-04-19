@@ -21,7 +21,7 @@ fun <T : View> EchoAndroidView(
     callback: (Event) -> Unit = {}
 ) {
     AndroidView(
-        modifier = modifier.testTag("mapViewWrapper"),
+        modifier = modifier.testTag("mapAndroidView"),
         factory = factory,
         update = { update(it, events, callback) }
     )
@@ -39,7 +39,7 @@ fun <T : View> EchoAndroidView(
 fun MapDrawer(modifier: Modifier = Modifier, events: List<Event>, callback: (Event) -> Unit = {}) {
     val provider = MapLibreMapViewProvider()
     EchoAndroidView(
-        modifier = modifier,
+        modifier = modifier.testTag("mapViewWrapper"),
         factory = provider::factory,
         // Function that will be called when the view has been
         // inflated or state read in this function has been updated

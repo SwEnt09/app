@@ -91,6 +91,6 @@ class MapViewAndroidTest {
     fun mapLibreMapViewProviderShouldDisplayView() {
         val p = MapLibreMapViewProvider()
         composeTestRule.setContent { DummyMapDrawer(p) }
-        composeTestRule.onNodeWithTag("mapViewWrapper").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("mapAndroidView").assertIsDisplayed()
     }
 }
