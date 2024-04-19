@@ -22,9 +22,11 @@ fun EventTagEntry(
     onTagFieldChanged: (tagText: String) -> Unit,
     onTagPressed: (tag: Tag) -> Unit
 ) {
-    EventTextEntry(name = stringResource(R.string.edit_event_screen_tags), value = tagText) {
-        onTagFieldChanged(it)
-    }
+    EventTextEntry(
+        name = stringResource(R.string.edit_event_screen_tags),
+        value = tagText,
+        onValueChange = onTagFieldChanged
+    )
     Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
         tags.forEach {
             TextButton(onClick = { onTagPressed(it) }) {

@@ -12,7 +12,7 @@ import com.github.swent.echo.viewmodels.event.EventViewModel
 fun CreateEventScreen(eventViewModel: EventViewModel, navigationActions: NavigationActions) {
     EventScreen(
         title = stringResource(R.string.create_event_screen_title),
-        onEventBackButtonPressed = { navigationActions.goBack() },
+        onEventBackButtonPressed = navigationActions::goBack,
         onEventSaveButtonPressed = {
             eventViewModel.saveEvent()
             navigationActions.navigateTo(Routes.MAP)

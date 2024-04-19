@@ -18,10 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun EventTitleAndBackButton(title: String, onBackButtonPressed: () -> Unit) {
     Row {
-        IconButton(
-            modifier = Modifier.testTag("Back-button"),
-            onClick = { onBackButtonPressed() }
-        ) {
+        IconButton(modifier = Modifier.testTag("Back-button"), onClick = onBackButtonPressed) {
             val icon = Icons.Filled.ArrowBack
             Icon(imageVector = icon, contentDescription = icon.name)
         }

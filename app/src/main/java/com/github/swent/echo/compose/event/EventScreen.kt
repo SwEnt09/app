@@ -30,14 +30,14 @@ fun EventScreen(
     eventViewModel: EventViewModel
 ) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        EventTitleAndBackButton(title = title) { onEventBackButtonPressed() }
+        EventTitleAndBackButton(title = title, onBackButtonPressed = onEventBackButtonPressed)
         // all the inputs for an event
         EventPropertiesFields(eventViewModel = eventViewModel)
         // save button
         OutlinedButton(
             modifier =
                 Modifier.padding(30.dp).align(Alignment.CenterHorizontally).testTag("Save-button"),
-            onClick = { onEventSaveButtonPressed() }
+            onClick = onEventSaveButtonPressed
         ) {
             Text(stringResource(R.string.edit_event_screen_save))
         }

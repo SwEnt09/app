@@ -30,7 +30,7 @@ fun EventTextEntry(
         EventEntryField(
             value = value,
             modifier = modifier.testTag("$name-field"),
-            onValueChange = { onValueChange(it) }
+            onValueChange = onValueChange
         )
     }
 }
@@ -58,9 +58,5 @@ fun EventEntryField(
     modifier: Modifier = Modifier,
     onValueChange: (newValue: String) -> Unit
 ) {
-    TextField(
-        value = value,
-        modifier = modifier.fillMaxWidth(),
-        onValueChange = { onValueChange(it) }
-    )
+    TextField(value = value, modifier = modifier.fillMaxWidth(), onValueChange = onValueChange)
 }
