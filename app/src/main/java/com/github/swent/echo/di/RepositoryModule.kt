@@ -10,11 +10,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.github.jan.supabase.SupabaseClient
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
+    @Singleton
     @Provides
     fun provideRepository(application: Application, supabaseClient: SupabaseClient): Repository {
         val remoteDataSource: RemoteDataSource = Supabase(supabaseClient)
