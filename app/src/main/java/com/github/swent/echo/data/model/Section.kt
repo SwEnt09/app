@@ -1,6 +1,8 @@
 package com.github.swent.echo.data.model
 
-interface EPFLSection
+interface Section
+
+interface EPFLSection : Section
 
 enum class BachelorSection : EPFLSection {
     // School of Basic Sciences

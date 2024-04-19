@@ -1,6 +1,8 @@
 package com.github.swent.echo.data.model
 
-interface EPFLSemester
+interface Semester
+
+interface EPFLSemester : Semester
 
 enum class BachelorSemester : EPFLSemester {
     BA1,

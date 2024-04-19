@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class UserProfile(
     @SerialName("user_id") val userId: String,
     val name: String,
-    val semester: EPFLSemester?,
-    val section: EPFLSection?,
+    val semester: Semester?,
+    val section: Section?,
     val tags: Set<Tag>
 )
