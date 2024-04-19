@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.lifecycle.SavedStateHandle
@@ -92,8 +93,21 @@ class EventScreenTest {
         val button = composeTestRule.onNodeWithTag("Start date-button")
         val dialog = composeTestRule.onNodeWithTag("Start date-dialog")
         dialog.assertDoesNotExist()
-        button.performClick()
+        button.performScrollTo().performClick()
         dialog.assertIsDisplayed()
+    }
+
+    @Test
+    fun startTimeButtonDisplayTimeDialog() {
+        setCompose(eventViewModel)
+        val button = composeTestRule.onNodeWithTag("Start date-time-button")
+        val dialog = composeTestRule.onNodeWithTag("Start date-time-dialog")
+        val dialogButton = composeTestRule.onNodeWithTag("Start date-time-dialog-button")
+        dialog.assertDoesNotExist()
+        button.performScrollTo().performClick()
+        dialog.assertIsDisplayed()
+        dialogButton.performClick()
+        dialog.assertDoesNotExist()
     }
 
     @Test
