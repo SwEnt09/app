@@ -12,11 +12,13 @@ import io.github.jan.supabase.compose.auth.googleNativeLogin
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object SupabaseClientModule {
 
+    @Singleton
     @Provides
     fun provideSupabaseClient(application: Application): SupabaseClient {
         val supabaseUrl = application.resources.getString(R.string.supabase_url)
