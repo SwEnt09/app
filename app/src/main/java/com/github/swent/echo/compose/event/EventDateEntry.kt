@@ -43,13 +43,12 @@ val YEARRANGE = 10
 fun EventDateEntry(
     startDate: ZonedDateTime,
     endDate: ZonedDateTime,
-    modifier: Modifier = Modifier,
     onStartDateChanged: (newStartDate: ZonedDateTime) -> Unit,
     onEndDateChanged: (newEndDate: ZonedDateTime) -> Unit
 ) {
     Row(
         modifier =
-            modifier.padding(
+            Modifier.padding(
                 horizontal = EVENT_PADDING_BETWEEN_INPUTS - 1.dp, // enough space for two buttons
                 vertical = EVENT_PADDING_BETWEEN_INPUTS
             ),
@@ -57,16 +56,16 @@ fun EventDateEntry(
     ) {
         EventDateEntryUnit(
             label = stringResource(R.string.edit_event_screen_start_date),
-            currentDate = startDate,
-            modifier = modifier,
-            onDateChanged = { newDate -> onStartDateChanged(newDate) }
-        )
+            currentDate = startDate
+        ) { newDate ->
+            onStartDateChanged(newDate)
+        }
         EventDateEntryUnit(
             label = stringResource(R.string.edit_event_screen_end_date),
-            currentDate = endDate,
-            modifier = modifier,
-            onDateChanged = { newDate -> onEndDateChanged(newDate) }
-        )
+            currentDate = endDate
+        ) { newDate ->
+            onEndDateChanged(newDate)
+        }
     }
 }
 
@@ -76,7 +75,6 @@ fun EventDateEntry(
 fun EventDateEntryUnit(
     label: String,
     currentDate: ZonedDateTime,
-    modifier: Modifier = Modifier,
     onDateChanged: (newDate: ZonedDateTime) -> Unit
 ) {
     var date by remember { mutableStateOf(currentDate.toLocalDate()) }
@@ -91,9 +89,9 @@ fun EventDateEntryUnit(
     var time by remember { mutableStateOf(currentDate.toLocalTime()) }
     var showTimePicker by remember { mutableStateOf(false) }
     Column {
-        EventEntryName(name = label, modifier = modifier)
+        EventEntryName(name = label)
         ElevatedButton(
-            modifier = modifier.testTag("$label-button"),
+            modifier = Modifier.testTag("$label-button"),
             onClick = { showDatePicker = true }
         ) {
             if (showDatePicker) {
@@ -115,7 +113,7 @@ fun EventDateEntryUnit(
                     }
                 ) {
                     DatePicker(
-                        modifier = modifier.testTag("$label-dialog"),
+                        modifier = Modifier.testTag("$label-dialog"),
                         state = datePickerState
                     )
                 }
@@ -128,7 +126,7 @@ fun EventDateEntryUnit(
             mutableStateOf(TimePickerState(time.hour, time.minute, true))
         }
         ElevatedButton(
-            modifier = modifier.testTag("$label-time-button"),
+            modifier = Modifier.testTag("$label-time-button"),
             onClick = { showTimePicker = true }
         ) {
             if (showTimePicker) {
@@ -137,13 +135,12 @@ fun EventDateEntryUnit(
                 ) {
                     Card {
                         TimePicker(
-                            modifier = modifier.testTag("$label-time-dialog"),
+                            modifier = Modifier.testTag("$label-time-dialog"),
                             state = timePickerState
                         )
                         Button(
                             modifier =
-                                modifier
-                                    .align(Alignment.End)
+                                Modifier.align(Alignment.End)
                                     .padding(5.dp)
                                     .testTag("$label-time-dialog-button"),
                             onClick = {

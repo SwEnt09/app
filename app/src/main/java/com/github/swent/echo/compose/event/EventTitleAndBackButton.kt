@@ -16,10 +16,10 @@ import androidx.compose.ui.unit.dp
 
 /** the top of the screen: a title and a back button */
 @Composable
-fun EventTitleAndBackButton(modifier: Modifier, title: String, onBackButtonPressed: () -> Unit) {
+fun EventTitleAndBackButton(title: String, onBackButtonPressed: () -> Unit) {
     Row {
         IconButton(
-            modifier = modifier.testTag("Back-button"),
+            modifier = Modifier.testTag("Back-button"),
             onClick = { onBackButtonPressed() }
         ) {
             val icon = Icons.Filled.ArrowBack
@@ -27,7 +27,7 @@ fun EventTitleAndBackButton(modifier: Modifier, title: String, onBackButtonPress
         }
         Text(
             text = title,
-            modifier = modifier.padding(5.dp).align(Alignment.CenterVertically),
+            modifier = Modifier.padding(5.dp).align(Alignment.CenterVertically),
             style = MaterialTheme.typography.titleLarge
         )
     }
