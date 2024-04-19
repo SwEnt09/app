@@ -1,23 +1,45 @@
 package com.github.swent.echo.compose.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
+import com.github.swent.echo.compose.components.searchmenu.SearchMenuDiscover
+import com.github.swent.echo.compose.components.searchmenu.SearchMenuFilters
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchMenuSheet(onFullyExtended: () -> Unit, onDismiss: () -> Unit) {
+fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDismiss: () -> Unit) {
+    // Search mode
+    val searchMode = remember { mutableStateOf(SearchMode.FILTERS) }
+
     val sheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = false) { value ->
             if (value == SheetValue.Expanded) {
@@ -26,18 +48,101 @@ fun SearchMenuSheet(onFullyExtended: () -> Unit, onDismiss: () -> Unit) {
             true
         }
     ModalBottomSheet(
-        modifier = Modifier.fillMaxSize().testTag("search_menu_sheet"),
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f).testTag("search_menu_sheet"),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
     ) {
-        Box(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .fillMaxHeight(0.5f)
-                    .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 32.dp)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(5.dp).testTag("search_menu_sheet_content")) {
             // Sheet content
-            Text(text = "Search Menu Sheet") // temporary text to show the sheet is working
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.align(Alignment.TopCenter).testTag("search_menu_first_layer")
+            ) {
+                // Search bar
+                SearchBarTags(filters.tagId)
+                Spacer(modifier = Modifier.width(10.dp))
+                // Switch search mode button
+                SwitchSearchModeButton(searchMode)
+            }
+            // Display filters or discover according to the selected mode
+            Box(
+                modifier =
+                    Modifier.align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .absoluteOffset(y = 70.dp)
+                        .testTag("search_menu_second_layer")
+            ) {
+                if (searchMode.value == SearchMode.FILTERS) {
+                    SearchMenuFilters(filters)
+                } else {
+                    SearchMenuDiscover()
+                }
+            }
+            // Close Search Button
+            Row(
+                modifier =
+                    Modifier.align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .absoluteOffset(y = 300.dp)
+                        .testTag("search_menu_third_layer")
+            ) {
+                ResetFiltersButton()
+            }
         }
+    }
+}
+
+/** Enum class for the different states of the search mode */
+enum class SearchMode(val switchToName: String, val switchToIcon: ImageVector) {
+    FILTERS("Discover", Icons.Filled.ShoppingCart),
+    DISCOVER("Filters", Icons.Filled.Settings)
+}
+
+/** Composable for the search bar tags TODO : update this with yoan implementation */
+@Composable
+fun SearchBarTags(searched: MutableState<String>) {
+    OutlinedTextField(
+        label = { Text("Search hobby/categorie...") },
+        value = searched.value,
+        onValueChange = { searched.value = it },
+        modifier = Modifier.width(240.dp).testTag("search_menu_search_bar_tags")
+    )
+}
+
+/** Composable for the switch search mode button */
+@Composable
+fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
+    Button(
+        onClick = {
+            searchMode.value =
+                if (searchMode.value == SearchMode.FILTERS) {
+                    SearchMode.DISCOVER
+                } else {
+                    SearchMode.FILTERS
+                }
+        },
+        modifier = Modifier.fillMaxWidth().height(40.dp).testTag("search_menu_switch_mode_button")
+    ) {
+        Icon(
+            searchMode.value.switchToIcon,
+            contentDescription = searchMode.value.switchToName,
+            modifier = Modifier.testTag("search_menu_switch_mode_button_icon")
+        )
+        Text(
+            searchMode.value.switchToName,
+            modifier = Modifier.testTag("search_menu_switch_mode_button_text")
+        )
+    }
+}
+
+/**
+ * Composable for the reset filters button, inside a Box in order to hide content when we will
+ * implement discover mode
+ */
+// Todo : see how we want to handle this reset filters button
+@Composable
+fun ResetFiltersButton() {
+    Box(modifier = Modifier.fillMaxWidth().testTag("search_menu_reset_filters_button")) {
+        Button(onClick = {}, modifier = Modifier.align(Alignment.Center)) { Text("Reset Filters") }
     }
 }
