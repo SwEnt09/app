@@ -38,7 +38,7 @@ fun EventLocationEntry(location: Location, onLocationChanged: (newLocation: Loca
         SelectLocationDialog(
             currentLocation = location,
             onDismissRequest = { showPickLocationDialog = false },
-            onSelectLocation = { onLocationChanged(it) }
+            onSelectLocation = onLocationChanged
         )
     }
     Row(modifier = Modifier.fillMaxWidth(1f)) {
@@ -75,7 +75,7 @@ fun SelectLocationDialog(
     var lat by remember { mutableStateOf(currentLocation.lat.toString()) }
     var long by remember { mutableStateOf(currentLocation.long.toString()) }
 
-    Dialog(onDismissRequest = { onDismissRequest() }, properties = DialogProperties()) {
+    Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties()) {
         Card(modifier = Modifier.fillMaxWidth().testTag("Location-dialog")) {
             Column {
                 EventEntryName(name = stringResource(R.string.event_location_latitude))
@@ -93,7 +93,7 @@ fun SelectLocationDialog(
                     modifier = Modifier.testTag("event_longitude_text_field")
                 )
                 Row {
-                    OutlinedButton(onClick = { onDismissRequest() }) {
+                    OutlinedButton(onClick = onDismissRequest) {
                         Text(stringResource(R.string.edit_event_screen_cancel))
                     }
                     OutlinedButton(
