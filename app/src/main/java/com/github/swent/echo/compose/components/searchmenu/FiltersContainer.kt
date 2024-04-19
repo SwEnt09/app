@@ -14,11 +14,11 @@ data class FiltersContainer(
     var fullChecked: MutableState<Boolean>,
     @Contextual var from: MutableState<ZonedDateTime>,
     @Contextual var to: MutableState<ZonedDateTime>,
-    var sortBy: MutableState<SortBy>? = null,
+    var sortBy: MutableState<SortBy>,
 )
 
 // Enum class for the different states of the sort by filter
-enum class SortBy(val value: String) {
+enum class SortBy(val textAttribute: String) {
     NONE("---"),
     DATE_ASC("Date (Asc)"),
     DATE_DESC("Date (Desc)"),
