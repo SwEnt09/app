@@ -7,7 +7,6 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
-import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.fakes.FakeAuthenticationService
 import io.mockk.coEvery
@@ -165,7 +164,8 @@ class EventViewModelTest {
 
     @Test
     fun getOrganizerListReturnsCorrectUsername() {
-        val testUserProfile = UserProfile("testid", "testname")
+        val testUserProfile =
+            UserProfile(TEST_EVENT.creator.userId, "testname", null, null, setOf())
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
         runBlocking {
             eventViewModel =
@@ -178,19 +178,21 @@ class EventViewModelTest {
 
     @Test
     fun setOrganizerNameAsEventCreatorSetTheCorrectValue() {
-        val testUserProfile = UserProfile(TEST_EVENT.creatorId, "testname")
+        val testUserProfile =
+            UserProfile(TEST_EVENT.creator.userId, "testname", null, null, setOf())
         eventViewModel.setEvent(TEST_EVENT)
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
         eventViewModel.setOrganizer(testUserProfile.name)
         scheduler.runCurrent()
-        assertEquals(TEST_EVENT.organizerId, eventViewModel.event.value.organizerId)
+        assertEquals(eventViewModel.event.value.organizer, null)
     }
 
     @Ignore // not implemented
     @Test
     fun setOrganizerNameAsOtherUserThrowError() {
         mockLog()
-        val testUserProfile = UserProfile(TEST_EVENT.creatorId, "testname")
+        val testUserProfile =
+            UserProfile(TEST_EVENT.creator.userId, "testname", null, null, setOf())
         eventViewModel.setEvent(TEST_EVENT)
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
         eventViewModel.setOrganizer("anothername")
@@ -206,13 +208,13 @@ class EventViewModelTest {
         coEvery { mockedRepository.getAllAssociations() } returns listOf(testAssociation)
         eventViewModel.setOrganizer(testAssociation.name)
         scheduler.runCurrent()
-        assertEquals(testAssociation.associationId, eventViewModel.event.value.organizerId)
+        assertEquals(testAssociation, eventViewModel.event.value.organizer)
     }
 
     @Test
     fun modifyExistingEventUpdateItInTheRepository() {
         val existingEvent = TEST_EVENT
-        val testEventId = SavedStateHandle(mapOf("eventId" to TEST_EVENT.creatorId))
+        val testEventId = SavedStateHandle(mapOf("eventId" to TEST_EVENT.creator.userId))
         coEvery { mockedRepository.getEvent(any()) } returns existingEvent
         runBlocking {
             eventViewModel =
