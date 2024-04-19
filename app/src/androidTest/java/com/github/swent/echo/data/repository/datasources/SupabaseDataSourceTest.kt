@@ -14,19 +14,18 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.compose.auth.composeAuth
 import io.github.jan.supabase.gotrue.auth
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Arrays
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.SerializationException
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.junit.function.ThrowingRunnable
 
-//@Ignore
+@Ignore
 @HiltAndroidTest
 class SupabaseDataSourceTest {
     @get:Rule val hiltRule = HiltAndroidRule(this)
@@ -46,13 +45,13 @@ class SupabaseDataSourceTest {
     private val event =
         Event(
             "3bcf6f25-81d4-4a14-9caa-c05feb593da0",
-            EventCreator("e65e9435-a9f2-4474-be11-9054305f1a54", ""),
+            EventCreator("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759", "Dummy User"),
             association,
             "Dummy Event",
             "blabla description",
             Location("testLocation", 0.0, 0.0),
-            ZonedDateTime.now(),
-            ZonedDateTime.now(),
+            ZonedDateTime.of(2024, 4, 25, 14, 54, 51, 0, ZoneId.of("UTC")),
+            ZonedDateTime.of(2024, 4, 25, 14, 54, 51, 0, ZoneId.of("UTC")),
             HashSet<Tag>(Arrays.asList(tag)),
             0,
             0,
@@ -90,16 +89,12 @@ class SupabaseDataSourceTest {
     @Test
     fun getEventTest() {
         val eventFetched = runBlocking { source.getEvent("3bcf6f25-81d4-4a14-9caa-c05feb593da0") }
-
+        assertEquals(event, eventFetched)
     }
 
-    /*
     @Test
     fun setEventTest() {
-        assertThrows(
-            SerializationException::class.java,
-            ThrowingRunnable { runBlocking { source.setEvent(event) } }
-        )
+        val eventFetched = runBlocking { source.setEvent(event) }
     }
 
     @Test
@@ -107,7 +102,6 @@ class SupabaseDataSourceTest {
         val associations = runBlocking { source.getAllEvents() }
         assertNotNull(associations)
     }
-    */
 
     @Test
     fun getTagTest() {
