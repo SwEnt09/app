@@ -33,7 +33,7 @@ class EventInfoSheetTest {
             val event =
                 Event(
                     eventId = "1",
-                    creator = UserProfile("1", "Event Creator"),
+                    creator = UserProfile("1", "Event Creator", null, null, emptySet()),
                     organizer = Association("1", "Event Organization", ""),
                     title = "Event Title",
                     description = "Event Description",
