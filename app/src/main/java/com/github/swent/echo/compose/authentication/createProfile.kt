@@ -44,12 +44,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
-import com.github.swent.echo.ExcludeFromJacocoGeneratedReport
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Tag
 
@@ -246,4 +244,3 @@ fun ProfileCreationPreview() {
 }
 
  */
-
