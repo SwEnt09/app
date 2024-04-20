@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
+import com.github.swent.echo.ExcludeFromJacocoGeneratedReport
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Tag
 
@@ -229,6 +230,7 @@ fun InputChipFun(
     )
 }
 
+@ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
 fun ProfileCreationPreview() {
