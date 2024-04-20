@@ -15,6 +15,18 @@
     <string name="register_screen_action_button">Register</string>
     <string name="register_screen_do_you_have_an_account">Do you have an account?</string>
     <string name="register_screen_login_link">Login</string>
+<<<<<<< HEAD
+=======
+ feature/profile-creation-composable
+    <string name="profile_creation_first_name">First name</string>
+    <string name="profile_creation_last_name">Last name</string>
+    <string name="profile_creation_save_button">Save</string>
+    <string name="profile_creation_section">Section</string>
+    <string name="profile_creation_semester">Semester</string>
+    <string name="profile_creation_tags">Tags</string>
+
+
+>>>>>>> db1529f (strings doc fixed)
     <string name="maptiler_api_key">8tGwLwPFCHwJ5D8g7pic</string>
     <string name="maptiler_base_style_url">https://api.maptiler.com/maps/streets-v2/style.json?key=</string>
     <!--<string name="hamburger_my_profile">My Profile</string>
