@@ -230,6 +230,7 @@ fun InputChipFun(
     )
 }
 
+/*
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
@@ -243,3 +244,6 @@ fun ProfileCreationPreview() {
         listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2"))
     )
 }
+
+ */
+
