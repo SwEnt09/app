@@ -41,6 +41,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +52,16 @@ import androidx.compose.ui.window.PopupProperties
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Tag
 
+/**
+ * A composable function that displays the UI for creating a user profile.
+ *
+ * @param saveOnClick The callback to be invoked when the user clicks the save button.
+ * @param navBack The callback to be invoked when the user clicks the back button.
+ * @param addTagOnClick The callback to be invoked when the user clicks the add tag button.
+ * @param sectionList The list of sections to be displayed in the dropdown menu.
+ * @param semList The list of semesters to be displayed in the dropdown menu.
+ * @param tagList The list of tags to be displayed as chips.
+ */
 @Composable
 fun ProfileCreationUI(
     saveOnClick: () -> Unit,
@@ -65,15 +76,18 @@ fun ProfileCreationUI(
             var firstName by remember { mutableStateOf("") }
             var lastName by remember { mutableStateOf("") }
 
+            // Back button
             Icon(
                 Icons.Default.ArrowBack,
                 contentDescription = "go back",
-                modifier = Modifier.size(35.dp).clickable(onClick = navBack)
+                modifier = Modifier.size(35.dp).clickable(onClick = navBack).testTag("Back")
             )
 
+            // First name and last name fields
             OutlinedTextField(
                 value = firstName,
                 onValueChange = { firstName = it },
+                modifier = Modifier.testTag("FirstName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) }
             )
 
@@ -82,17 +96,20 @@ fun ProfileCreationUI(
             OutlinedTextField(
                 value = lastName,
                 onValueChange = { lastName = it },
+                modifier = Modifier.testTag("LastName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) }
             )
 
             Spacer(modifier = Modifier.height(5.dp))
 
+            // Section and semester dropdown menus
             DropDownListFunctionWrapper(sectionList, R.string.profile_creation_section)
             Spacer(modifier = Modifier.height(5.dp))
             DropDownListFunctionWrapper(semList, R.string.profile_creation_semester)
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            // Tags
             Text(
                 stringResource(id = R.string.profile_creation_tags),
                 fontSize = 20.sp,
@@ -107,10 +124,13 @@ fun ProfileCreationUI(
                     Spacer(modifier = Modifier.width(5.dp))
                 }
                 Spacer(modifier = Modifier.width(5.dp))
+
+                // Add tag button
                 SmallFloatingActionButton(
                     onClick = { addTagOnClick() },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.secondary
+                    contentColor = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.testTag("AddTag")
                 ) {
                     Icon(Icons.Default.Add, "Add tags")
                 }
@@ -118,7 +138,11 @@ fun ProfileCreationUI(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            OutlinedButton(onClick = { saveOnClick() }, modifier = Modifier.fillMaxWidth()) {
+            // Save button
+            OutlinedButton(
+                onClick = { saveOnClick() },
+                modifier = Modifier.fillMaxWidth().testTag("Save")
+            ) {
                 Text(text = stringResource(id = R.string.profile_creation_save_button))
             }
         }
@@ -129,7 +153,7 @@ fun ProfileCreationUI(
 fun DropDownListFunctionWrapper(elementList: List<String>, label: Int) {
     var showDropdown by rememberSaveable { mutableStateOf(false) }
     var selectedField by remember { mutableStateOf("") }
-    var sectionFieldSize by remember { mutableStateOf(Size.Zero) }
+    var selectedFieldSize by remember { mutableStateOf(Size.Zero) }
     val icon = if (showDropdown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
 
     Box() {
@@ -138,11 +162,12 @@ fun DropDownListFunctionWrapper(elementList: List<String>, label: Int) {
             onValueChange = {},
             modifier =
                 Modifier.onGloballyPositioned { coordinates ->
-                    sectionFieldSize = coordinates.size.toSize()
-                },
+                        selectedFieldSize = coordinates.size.toSize()
+                    }
+                    .testTag(stringResource(id = label)),
             label = { Text(stringResource(id = label)) },
             trailingIcon = {
-                Icon(icon, "section dropdown", Modifier.clickable { showDropdown = !showDropdown })
+                Icon(icon, "list dropdown", Modifier.clickable { showDropdown = !showDropdown })
             }
         )
 
@@ -153,15 +178,16 @@ fun DropDownListFunctionWrapper(elementList: List<String>, label: Int) {
             modifier =
                 Modifier.align(Alignment.TopStart)
                     .heightIn(max = 200.dp)
-                    .width(with(LocalDensity.current) { sectionFieldSize.width.toDp() })
+                    .width(with(LocalDensity.current) { selectedFieldSize.width.toDp() })
         ) {
-            elementList.forEach { label ->
+            elementList.forEach { elem ->
                 DropdownMenuItem(
-                    text = { Text(label) },
+                    text = { Text(elem) },
                     onClick = {
-                        selectedField = label
+                        selectedField = elem
                         showDropdown = false
-                    }
+                    },
+                    modifier = Modifier.testTag(elem)
                 )
             }
         }
@@ -183,6 +209,7 @@ fun InputChipFun(
             enabled = !enabled
         },
         label = { Text(text) },
+        modifier = Modifier.testTag(text),
         colors =
             InputChipDefaults.inputChipColors(
                 selectedContainerColor = Color.Transparent,
