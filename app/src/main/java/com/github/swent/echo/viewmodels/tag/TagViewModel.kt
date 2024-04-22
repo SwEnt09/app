@@ -21,9 +21,8 @@ class TagViewModel @Inject constructor(private val repository: Repository) : Vie
 
     // max tag tree depth
     val maxDepth = 3
-    // TODO: hardcode value
     // the root tag is hardcoded here as in the database
-    private val rootTag = Tag("", "") // TODO: hardcode value in database
+    private val rootTag = Tag("1d253a7e-eb8c-4546-bc98-1d3adadcffe8", "ROOT TAG: DO NOT DELETE")
     private val _allTags = MutableStateFlow<List<Tag>>(listOf())
     val allTags = _allTags.asStateFlow()
     private val _tags = MutableStateFlow<List<Tag>>(listOf())
