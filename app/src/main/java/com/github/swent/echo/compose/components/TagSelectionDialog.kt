@@ -40,10 +40,13 @@ fun TagSelectionDialog(
     val currentDepth = tagViewModel.currentDepth.collectAsState()
     val hasSubTags = currentDepth.value < tagViewModel.maxDepth
     Dialog(onDismissRequest = onDismissRequest, properties = dialogProperties) {
-        Card(modifier = Modifier.padding(vertical = 30.dp)) {
+        Card(modifier = Modifier.padding(vertical = 30.dp).testTag("tag-dialog")) {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Row {
-                    IconButton(onClick = tagViewModel::goUp) {
+                    IconButton(
+                        onClick = tagViewModel::goUp,
+                        modifier = Modifier.testTag("tag-back-button")
+                    ) {
                         val icon = Icons.Filled.KeyboardArrowLeft
                         Icon(imageVector = icon, contentDescription = icon.name)
                     }
@@ -77,10 +80,15 @@ fun TagSelectionDialogEntry(
         modifier = Modifier.padding(5.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TextButton(onClick = { onTagClicked(tag) }, modifier = Modifier) { Text(tag.name) }
+        TextButton(
+            onClick = { onTagClicked(tag) },
+            modifier = Modifier.testTag("${tag.name}-select-button")
+        ) {
+            Text(tag.name)
+        }
         if (hasSubTags) {
             IconButton(
-                modifier = Modifier.testTag("${tag.name}-button"),
+                modifier = Modifier.testTag("${tag.name}-subtag-button"),
                 onClick = { onTagArrowClicked(tag) }
             ) {
                 val icon = Icons.Filled.KeyboardArrowRight
