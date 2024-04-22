@@ -31,8 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.github.swent.echo.R
 import java.time.ZonedDateTime
 
 /** Composable to display the filters sheet */
@@ -41,17 +43,41 @@ fun SearchMenuFilters(filters: FiltersContainer) {
     // Content of the Events for filters
     val eventsForItems =
         listOf(
-            CheckBoxItems(Icons.Filled.Face, "EPFL", filters.epflChecked),
-            CheckBoxItems(Icons.Filled.Face, "Section", filters.sectionChecked),
-            CheckBoxItems(Icons.Filled.Face, "Class", filters.classChecked)
+            CheckBoxItems(
+                Icons.Filled.Face,
+                stringResource(id = R.string.search_menu_filters_epfl),
+                filters.epflChecked
+            ),
+            CheckBoxItems(
+                Icons.Filled.Face,
+                stringResource(id = R.string.search_menu_filters_section),
+                filters.sectionChecked
+            ),
+            CheckBoxItems(
+                Icons.Filled.Face,
+                stringResource(id = R.string.search_menu_filters_class),
+                filters.classChecked
+            )
         )
 
     // Content of the Events Status filters
     val eventsStatusItems =
         listOf(
-            CheckBoxItems(Icons.Filled.Person, "Pending", filters.pendingChecked),
-            CheckBoxItems(Icons.Filled.Person, "Confirmed", filters.confirmedChecked),
-            CheckBoxItems(Icons.Filled.Person, "Full", filters.fullChecked)
+            CheckBoxItems(
+                Icons.Filled.Person,
+                stringResource(id = R.string.search_menu_filters_pending),
+                filters.pendingChecked
+            ),
+            CheckBoxItems(
+                Icons.Filled.Person,
+                stringResource(id = R.string.search_menu_filters_confirmed),
+                filters.confirmedChecked
+            ),
+            CheckBoxItems(
+                Icons.Filled.Person,
+                stringResource(id = R.string.search_menu_filters_full),
+                filters.fullChecked
+            )
         )
 
     Box(
@@ -76,10 +102,16 @@ fun SearchMenuFilters(filters: FiltersContainer) {
                     .testTag("checkboxes_container")
         ) {
             // Events for Checkboxes
-            CheckBoxesDisplayer("Events For:", checkBoxItems = eventsForItems)
+            CheckBoxesDisplayer(
+                stringResource(id = R.string.search_menu_filters_events_for),
+                checkBoxItems = eventsForItems
+            )
             Spacer(modifier = Modifier.width(100.dp))
             // Events Status Checkboxes
-            CheckBoxesDisplayer("Events Status:", checkBoxItems = eventsStatusItems)
+            CheckBoxesDisplayer(
+                stringResource(id = R.string.search_menu_filters_events_status),
+                checkBoxItems = eventsStatusItems
+            )
         }
         Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 170.dp)) {
             DateInputSample(filters.from)
@@ -130,10 +162,14 @@ fun SortByDisplayer(sortBy: MutableState<SortBy>) {
             shape = RoundedCornerShape(10),
             modifier = Modifier.width(170.dp).testTag("sort_by_button")
         ) {
-            Text(if (sortBy.value == SortBy.NONE) "Sort by..." else sortBy.value.textAttribute)
+            Text(
+                if (sortBy.value == SortBy.NONE)
+                    stringResource(id = R.string.search_menu_filters_sort_by)
+                else stringResource(id = stringResourceSortBy(sortBy.value.stringKey))
+            )
             Icon(
                 if (!expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
-                contentDescription = "Sort by"
+                contentDescription = stringResource(id = R.string.search_menu_filters_sort_by)
             )
         }
         // Check if the sort by filter is expanded
@@ -145,9 +181,9 @@ fun SortByDisplayer(sortBy: MutableState<SortBy>) {
                         expanded = false
                     },
                     shape = RoundedCornerShape(5),
-                    modifier = Modifier.width(170.dp).height(35.dp).testTag(it.textAttribute)
+                    modifier = Modifier.width(170.dp).height(35.dp).testTag(it.stringKey)
                 ) {
-                    Text(it.textAttribute)
+                    Text(it.stringKey)
                 }
             }
         }

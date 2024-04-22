@@ -31,19 +31,17 @@ class SearchMenuFiltersTest {
     @Before
     fun setUp() {
         composeTestRule.setContent {
-            filters =
-                FiltersContainer(
-                    tagId = remember { mutableStateOf("") },
-                    epflChecked = remember { mutableStateOf(true) },
-                    sectionChecked = remember { mutableStateOf(true) },
-                    classChecked = remember { mutableStateOf(true) },
-                    pendingChecked = remember { mutableStateOf(true) },
-                    confirmedChecked = remember { mutableStateOf(true) },
-                    fullChecked = remember { mutableStateOf(true) },
-                    from = remember { mutableStateOf(ZonedDateTime.now()) },
-                    to = remember { mutableStateOf(ZonedDateTime.now()) },
-                    sortBy = remember { mutableStateOf(SortBy.NONE) }
-                )
+            filters.tagId = remember { mutableStateOf("") }
+            filters.epflChecked = remember { mutableStateOf(true) }
+            filters.sectionChecked = remember { mutableStateOf(true) }
+            filters.classChecked = remember { mutableStateOf(true) }
+            filters.pendingChecked = remember { mutableStateOf(true) }
+            filters.confirmedChecked = remember { mutableStateOf(true) }
+            filters.fullChecked = remember { mutableStateOf(true) }
+            filters.from = remember { mutableStateOf(ZonedDateTime.now()) }
+            filters.to = remember { mutableStateOf(ZonedDateTime.now()) }
+            filters.sortBy = remember { mutableStateOf(SortBy.NONE) }
+
             SearchMenuFilters(filters)
         }
     }
@@ -66,11 +64,9 @@ class SearchMenuFiltersTest {
     @Test
     fun testSortByDisplayerDisplayAndHideItemsWhenClicked() {
         composeTestRule.onNodeWithTag("sort_by_button").performClick()
-        SortBy.entries.forEach { composeTestRule.onNodeWithTag(it.textAttribute).assertExists() }
+        SortBy.entries.forEach { composeTestRule.onNodeWithTag(it.stringKey).assertExists() }
         composeTestRule.onNodeWithTag("sort_by_button").performClick()
-        SortBy.entries.forEach {
-            composeTestRule.onNodeWithTag(it.textAttribute).assertDoesNotExist()
-        }
+        SortBy.entries.forEach { composeTestRule.onNodeWithTag(it.stringKey).assertDoesNotExist() }
     }
 
     @Test
