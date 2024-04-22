@@ -45,4 +45,22 @@
     <string name="event_location_longitude">Longitude</string>
     <string name="edit_event_screen_cancel">Cancel</string>
     <string name="edit_event_screen_confirm_location">OK</string>
+    <string name="search_menu_filters_epfl">EPFL</string>
+    <string name="search_menu_filters_section">Section</string>
+    <string name="search_menu_filters_class">Class</string>
+    <string name="search_menu_filters_pending">Pending</string>
+    <string name="search_menu_filters_confirmed">Confirmed</string>
+    <string name="search_menu_filters_full">Full</string>
+    <string name="search_menu_filters_events_for">Events For:</string>
+    <string name="search_menu_filters_events_status">Events Status:</string>
+    <string name="search_menu_filters_sort_by">Sort By...</string>
+    <string name="search_menu_sheet_search_interests">Search Interests...</string>
+    <string name="search_menu_sheet_reset_filters">Reset Filters</string>
+    <string name="search_menu_sheet_discover">Discover</string>
+    <string name="search_menu_sheet_filters">Filters</string>
+    <string name="filters_container_sort_by_none">---</string>
+    <string name="filters_container_sort_by_date_asc">Date (Asc)</string>
+    <string name="filters_container_sort_by_date_desc">Date (Desc)</string>
+    <string name="filters_container_sort_by_distance_asc">Distance (Asc)</string>
+    <string name="filters_container_sort_by_distance_desc">Distance (Desc)</string>
 </resources>

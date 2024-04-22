@@ -37,19 +37,16 @@ class SearchMenuSheetTest {
         composeTestRule.setContent {
             dismissed = 0
             extended = 0
-            filters =
-                FiltersContainer(
-                    tagId = remember { mutableStateOf("") },
-                    epflChecked = remember { mutableStateOf(true) },
-                    sectionChecked = remember { mutableStateOf(true) },
-                    classChecked = remember { mutableStateOf(true) },
-                    pendingChecked = remember { mutableStateOf(true) },
-                    confirmedChecked = remember { mutableStateOf(true) },
-                    fullChecked = remember { mutableStateOf(true) },
-                    from = remember { mutableStateOf(ZonedDateTime.now()) },
-                    to = remember { mutableStateOf(ZonedDateTime.now()) },
-                    sortBy = remember { mutableStateOf(SortBy.NONE) }
-                )
+            filters.tagId = remember { mutableStateOf("") }
+            filters.epflChecked = remember { mutableStateOf(true) }
+            filters.sectionChecked = remember { mutableStateOf(true) }
+            filters.classChecked = remember { mutableStateOf(true) }
+            filters.pendingChecked = remember { mutableStateOf(true) }
+            filters.confirmedChecked = remember { mutableStateOf(true) }
+            filters.fullChecked = remember { mutableStateOf(true) }
+            filters.from = remember { mutableStateOf(ZonedDateTime.now()) }
+            filters.to = remember { mutableStateOf(ZonedDateTime.now()) }
+            filters.sortBy = remember { mutableStateOf(SortBy.NONE) }
 
             SearchMenuSheet(filters, onDismiss = { dismissed++ }, onFullyExtended = { extended++ })
         }
