@@ -171,7 +171,7 @@ enum class SearchMode(val switchToName: String, val switchToIcon: ImageVector) {
 @Composable
 fun SearchBarTags(searched: MutableState<String>) {
     OutlinedTextField(
-        label = { Text("Search hobby/categorie...") },
+        label = { Text(stringResource(id = R.string.search_menu_sheet_search_interests)) },
         value = searched.value,
         onValueChange = { searched.value = it },
         modifier = Modifier.width(240.dp).testTag("search_menu_search_bar_tags")
@@ -194,11 +194,12 @@ fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
     ) {
         Icon(
             searchMode.value.switchToIcon,
-            contentDescription = searchMode.value.switchToName,
+            contentDescription =
+                stringResource(id = stringResourceSearchMode(searchMode.value.switchToName)),
             modifier = Modifier.testTag("search_menu_switch_mode_button_icon")
         )
         Text(
-            searchMode.value.switchToName,
+            stringResource(id = stringResourceSearchMode(searchMode.value.switchToName)),
             modifier = Modifier.testTag("search_menu_switch_mode_button_text")
         )
     }
@@ -212,6 +213,8 @@ fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
 @Composable
 fun ResetFiltersButton() {
     Box(modifier = Modifier.fillMaxWidth().testTag("search_menu_reset_filters_button")) {
-        Button(onClick = {}, modifier = Modifier.align(Alignment.Center)) { Text("Reset Filters") }
+        Button(onClick = {}, modifier = Modifier.align(Alignment.Center)) {
+            Text(stringResource(id = R.string.search_menu_sheet_reset_filters))
+        }
     }
 }
