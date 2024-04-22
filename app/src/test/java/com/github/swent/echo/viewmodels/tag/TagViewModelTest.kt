@@ -22,7 +22,7 @@ class TagViewModelTest {
     val topTagsList = listOf(Tag("w", "w"), Tag("e", "e"))
     val subTagsList = listOf(Tag("x", "x"), Tag("y", "y"))
     val tagExample = Tag("z", "z")
-    val rootTagId = ""
+    val rootTagId = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
     private val scheduler = TestCoroutineScheduler()
 
     @Before
