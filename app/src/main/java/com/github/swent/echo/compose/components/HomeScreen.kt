@@ -70,8 +70,8 @@ import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.ui.navigation.NavigationActions
-import java.time.ZonedDateTime
 import com.github.swent.echo.ui.navigation.Routes
+import java.time.ZonedDateTime
 import kotlinx.coroutines.launch
 
 /**
