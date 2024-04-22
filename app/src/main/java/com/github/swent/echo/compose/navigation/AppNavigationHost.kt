@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.github.swent.echo.compose.authentication.LoginScreen
 import com.github.swent.echo.compose.authentication.RegisterScreen
 import com.github.swent.echo.compose.components.HomeScreen
+import com.github.swent.echo.compose.event.CreateEventScreen
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 
@@ -40,6 +41,10 @@ fun AppNavigationHost(
         composable(Routes.MAP.name) {
             // placeholder for the map composable
             HomeScreen(navActions)
+        }
+
+        composable(Routes.CREATE_EVENT.name) {
+            CreateEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
         }
     }
 }

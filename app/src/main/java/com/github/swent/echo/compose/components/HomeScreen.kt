@@ -71,6 +71,7 @@ import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.ui.navigation.NavigationActions
 import java.time.ZonedDateTime
+import com.github.swent.echo.ui.navigation.Routes
 import kotlinx.coroutines.launch
 
 /**
@@ -153,6 +154,7 @@ fun HomeScreen(navActions: NavigationActions) {
                 title = stringResource(id = R.string.hamburger_create_event),
                 selectedIcon = Icons.Filled.AddCircle,
                 unselectedIcon = Icons.Outlined.AddCircle,
+                navOnClick = { navActions.navigateTo(Routes.CREATE_EVENT) }
             ),
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_add_friends),
