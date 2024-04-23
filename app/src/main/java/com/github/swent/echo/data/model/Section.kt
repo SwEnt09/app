@@ -1,10 +1,10 @@
 package com.github.swent.echo.data.model
 
-interface Section
+interface Section {
+    val name: String
+}
 
-interface EPFLSection : Section
-
-enum class BachelorSection : EPFLSection {
+enum class SectionEPFL : Section {
     // School of Basic Sciences
     MA,
     CGC,
@@ -26,7 +26,13 @@ enum class BachelorSection : EPFLSection {
     // School of Architecture, Civil and Environmental Engineering
     AR,
     GC,
-    SIE
+    SIE,
 }
 
-enum class MasterSection : EPFLSection
+fun String.toSectionEPFL(): SectionEPFL? {
+    return try {
+        SectionEPFL.valueOf(this)
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+}

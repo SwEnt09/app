@@ -2,10 +2,10 @@ package com.github.swent.echo.data
 
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.data.model.Association
-import com.github.swent.echo.data.model.BachelorSection
-import com.github.swent.echo.data.model.BachelorSemester
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
+import com.github.swent.echo.data.model.SectionEPFL
+import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.UserProfile
 import java.time.ZonedDateTime
 
@@ -44,8 +44,7 @@ val SAMPLE_EVENTS: List<Event> =
         ),
         Event(
             eventId = "c",
-            creator =
-                UserProfile("b", "Chad", BachelorSemester.MAN, BachelorSection.IN, emptySet()),
+            creator = UserProfile("b", "Chad", SemesterEPFL.MAN, SectionEPFL.IN, emptySet()),
             organizer = Association("B", "EPFL Mewing Group", ""),
             title = "Badminton Tournament",
             description = "Only the greatest humans shall participate. Win... or die.",
