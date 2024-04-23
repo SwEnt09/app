@@ -12,9 +12,6 @@ import com.github.swent.echo.data.model.UserProfile
  */
 interface LocalDataSource {
 
-    /** Initialize the local data source. */
-    suspend fun initialize()
-
     suspend fun getAssociation(associationId: String): Association?
 
     suspend fun setAssociation(association: Association)
