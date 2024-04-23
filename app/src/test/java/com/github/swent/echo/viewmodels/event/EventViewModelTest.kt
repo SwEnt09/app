@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
@@ -36,7 +37,7 @@ class EventViewModelTest {
     private val TEST_EVENT =
         Event(
             eventId = "testid",
-            creator = UserProfile("testid", "testname", null, null, emptySet()),
+            creator = EventCreator("testid", "testname"),
             organizer = Association("testid", "testname", "testdesc"),
             title = "test title",
             description = "test description",

@@ -2,6 +2,7 @@ package com.github.swent.echo.data.repository
 
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
@@ -25,7 +26,7 @@ class RepositoryImplTest {
     private val event =
         Event(
             "testEvent",
-            UserProfile("testCreator", "", null, null, emptySet()),
+            EventCreator("testCreator", ""),
             association,
             "Dummy Event",
             "blabla description",
