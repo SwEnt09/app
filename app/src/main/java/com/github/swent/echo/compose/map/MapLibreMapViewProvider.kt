@@ -47,6 +47,6 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     }
 
     override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
-        view.getMapAsync {}
+        view.getMapAsync { drawMarkers(it, events, callback) }
     }
 }

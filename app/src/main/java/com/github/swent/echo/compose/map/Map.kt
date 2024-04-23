@@ -37,7 +37,7 @@ fun <T : View> EchoAndroidView(
  */
 @Composable
 fun MapDrawer(modifier: Modifier = Modifier, events: List<Event>, callback: (Event) -> Unit = {}) {
-    val provider = OsmdroidMapViewProvider()
+    val provider = MapLibreMapViewProvider()
     EchoAndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
         factory = provider::factory,
