@@ -51,7 +51,7 @@ constructor(
                 } else {
                     _event.value =
                         _event.value.copy(
-                            creator = repository.getUserProfile(userid),
+                            creator = repository.getUserProfile(userid).toEventCreator(),
                             organizer = null
                         )
                     _status.value = EventStatus.Modified
