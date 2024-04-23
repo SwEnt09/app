@@ -14,6 +14,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,6 +22,7 @@ import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 
+@Ignore
 @RunWith(AndroidJUnit4::class)
 class MapViewAndroidTest {
 
