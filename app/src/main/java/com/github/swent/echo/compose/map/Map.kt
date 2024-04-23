@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
+import com.github.swent.echo.viewmodels.MapDrawerViewModel
 
 val MAP_CENTER = Location("Lausanne Center", 46.5197, 6.6323)
 const val DEFAULT_ZOOM = 15.0
@@ -37,14 +39,15 @@ fun <T : View> EchoAndroidView(
  */
 @Composable
 fun MapDrawer(modifier: Modifier = Modifier, events: List<Event>, callback: (Event) -> Unit = {}) {
-    val provider = MapLibreMapViewProvider()
+    val mapDrawerViewModel: MapDrawerViewModel = hiltViewModel()
+
     EchoAndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
-        factory = provider::factory,
+        factory = mapDrawerViewModel::factory,
         // Function that will be called when the view has been
         // inflated or state read in this function has been updated
         // AndroidView will recompose whenever said state changes
-        update = provider::update,
+        update = mapDrawerViewModel::update,
         events = events,
         callback = callback
     )
