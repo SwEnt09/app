@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -45,6 +46,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -156,40 +158,43 @@ fun DropDownListFunctionWrapper(elementList: List<String>, label: Int) {
     var selectedField by remember { mutableStateOf("") }
     var selectedFieldSize by remember { mutableStateOf(Size.Zero) }
     val icon = if (showDropdown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
-
-    Box() {
-        OutlinedTextField(
-            value = selectedField,
-            onValueChange = {},
-            modifier =
-                Modifier.onGloballyPositioned { coordinates ->
-                        selectedFieldSize = coordinates.size.toSize()
-                    }
-                    .testTag(stringResource(id = label)),
-            label = { Text(stringResource(id = label)) },
-            trailingIcon = {
-                Icon(icon, "list dropdown", Modifier.clickable { showDropdown = !showDropdown })
-            }
-        )
-
-        DropdownMenu(
-            properties = PopupProperties(focusable = false),
-            expanded = showDropdown,
-            onDismissRequest = { showDropdown = false },
-            modifier =
-                Modifier.align(Alignment.TopStart)
-                    .heightIn(max = 200.dp)
-                    .width(with(LocalDensity.current) { selectedFieldSize.width.toDp() })
-        ) {
-            elementList.forEach { elem ->
-                DropdownMenuItem(
-                    text = { Text(elem) },
-                    onClick = {
-                        selectedField = elem
-                        showDropdown = false
-                    },
-                    modifier = Modifier.testTag(elem)
-                )
+    Column {
+        Box() {
+            OutlinedTextField(
+                value = selectedField,
+                onValueChange = { selectedField = it },
+                modifier =
+                    Modifier.onGloballyPositioned { coordinates ->
+                            selectedFieldSize = coordinates.size.toSize()
+                        }
+                        .clickable { showDropdown = !showDropdown }
+                        .testTag(stringResource(id = label)),
+                readOnly = true,
+                label = { Text(stringResource(id = label)) },
+                trailingIcon = {
+                    Icon(icon, "list dropdown", Modifier.clickable { showDropdown = !showDropdown })
+                }
+            )
+            DropdownMenu(
+                properties = PopupProperties(focusable = false),
+                expanded = showDropdown,
+                onDismissRequest = { showDropdown = false },
+                modifier =
+                    Modifier.align(Alignment.TopStart)
+                        .heightIn(max = 200.dp)
+                        .widthIn(with(LocalDensity.current) { selectedFieldSize.width.toDp() }),
+                offset = DpOffset(0.dp, 0.dp)
+            ) {
+                elementList.forEach { elem ->
+                    DropdownMenuItem(
+                        text = { Text(elem) },
+                        onClick = {
+                            selectedField = elem
+                            showDropdown = false
+                        },
+                        modifier = Modifier.testTag(elem)
+                    )
+                }
             }
         }
     }
