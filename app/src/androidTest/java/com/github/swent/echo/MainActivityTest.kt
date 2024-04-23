@@ -7,6 +7,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 
@@ -58,6 +59,7 @@ class MainActivityTest {
 
         // The map screen should be displayed
         composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+        runBlocking { composeTestRule.awaitIdle() }
     }
 
     @Test
@@ -68,5 +70,6 @@ class MainActivityTest {
 
         // The map screen should be displayed
         composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+        runBlocking { composeTestRule.awaitIdle() }
     }
 }
