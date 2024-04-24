@@ -10,12 +10,13 @@ import com.github.swent.echo.viewmodels.tag.TagViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class TagSelectionDialogTest {
-    private val rootTagId = ""
+    private val rootTagId = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
     private val topTag = listOf(Tag("tag1", "tag1"))
     private val subTag1 = listOf(Tag("tag2", "tag2"), Tag("tag3", "tag3"))
     private val subTag3 = listOf(Tag("tag4", "tag4"))
@@ -25,6 +26,7 @@ class TagSelectionDialogTest {
 
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private lateinit var tagViewModel: TagViewModel
+    private val scheduler = TestCoroutineScheduler()
 
     @Before
     fun init() {
@@ -32,6 +34,7 @@ class TagSelectionDialogTest {
         coEvery { mockedRepository.getSubTags("tag1") } returns subTag1
         coEvery { mockedRepository.getSubTags("tag3") } returns subTag3
         tagViewModel = TagViewModel(mockedRepository)
+        scheduler.runCurrent()
         composeTestRule.setContent {
             TagSelectionDialog(
                 onDismissRequest = {},
