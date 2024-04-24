@@ -121,14 +121,14 @@ fun HamburgerMenuDrawerSheet(
             Column(
                 modifier = Modifier.align(Alignment.TopStart).padding(8.dp).testTag("profile_sheet")
             ) {
-                // TODO: Replace with actual profile picture
+                // TO-DO: Replace with actual profile picture
                 Image(
                     modifier = Modifier.testTag("profile_picture"),
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
                     contentDescription = "profile picture"
                 )
                 Row(modifier = Modifier.padding(8.dp).testTag("profile_info")) {
-                    // TODO: Replace with actual name and class
+                    // TO-DO: Replace with actual name and class
                     Text(
                         text = "John Doe",
                         modifier = Modifier.testTag("profile_name"),
