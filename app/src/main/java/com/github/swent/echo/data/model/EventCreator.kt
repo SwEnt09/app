@@ -14,4 +14,8 @@ import kotlinx.serialization.Serializable
 data class EventCreator(
     @SerialName("user_id") val userId: String,
     val name: String,
-)
+) {
+    companion object {
+        val EMPTY = EventCreator("", "")
+    }
+}

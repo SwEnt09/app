@@ -22,4 +22,8 @@ data class Location(val name: String, val lat: Double, val long: Double) {
      * @return The respective [LatLng].
      */
     fun toLatLng() = LatLng(lat, long)
+
+    companion object {
+        val EMPTY = Location(name = "", lat = 0.0, long = 0.0)
+    }
 }

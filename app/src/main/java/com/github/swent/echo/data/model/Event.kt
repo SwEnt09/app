@@ -21,11 +21,11 @@ data class Event(
         val EMPTY =
             Event(
                 "",
-                EventCreator("", ""),
+                EventCreator.EMPTY,
                 null,
                 "",
                 "",
-                Location("", 0.0, 0.0),
+                Location.EMPTY,
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
                 emptySet(),
