@@ -45,7 +45,8 @@ import kotlinx.coroutines.launch
 fun HamburgerMenuDrawerSheet(
     navActions: NavigationActions,
     drawerState: DrawerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    onSignOutPressed: () -> Unit
 ) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     /**
@@ -106,7 +107,7 @@ fun HamburgerMenuDrawerSheet(
                 title = stringResource(id = R.string.hamburger_log_out),
                 selectedIcon = Icons.Filled.Close,
                 unselectedIcon = Icons.Outlined.Close,
-                navOnClick = { navActions.navigateTo(Routes.REGISTER) }
+                navOnClick = { onSignOutPressed() }
             )
         )
     ModalDrawerSheet {
