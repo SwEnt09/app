@@ -90,11 +90,13 @@ data class NavigationItem(
     val badgeCount: Int? = null,
     val navOnClick: (() -> Unit)? = {}
 )
+
 enum class Overlay {
     NONE,
     EVENT_INFO_SHEET,
     SEARCH_SHEET
 }
+
 enum class MapOrListMode {
     MAP,
     LIST
@@ -148,7 +150,6 @@ fun HomeScreen(navActions: NavigationActions) {
                 title = stringResource(id = R.string.hamburger_create_event),
                 selectedIcon = Icons.Filled.AddCircle,
                 unselectedIcon = Icons.Outlined.AddCircle,
-                //False until rebase
                 navOnClick = { navActions.navigateTo(Routes.CREATE_EVENT) }
             ),
             NavigationItem(
@@ -170,16 +171,16 @@ fun HomeScreen(navActions: NavigationActions) {
                 // Profile picture, name and class
                 Box(
                     modifier =
-                    Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-                        .fillMaxWidth()
-                        .padding(NavigationDrawerItemDefaults.ItemPadding)
-                        .testTag("profile_box")
+                        Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+                            .fillMaxWidth()
+                            .padding(NavigationDrawerItemDefaults.ItemPadding)
+                            .testTag("profile_box")
                 ) {
                     Column(
                         modifier =
-                        Modifier.align(Alignment.TopStart)
-                            .padding(8.dp)
-                            .testTag("profile_sheet")
+                            Modifier.align(Alignment.TopStart)
+                                .padding(8.dp)
+                                .testTag("profile_sheet")
                     ) {
                         // TODO: Replace with actual profile picture
                         Image(
@@ -208,9 +209,9 @@ fun HomeScreen(navActions: NavigationActions) {
                             scope.launch { drawerState.close() }
                         },
                         modifier =
-                        Modifier.align(Alignment.TopEnd)
-                            .padding(8.dp)
-                            .testTag("close_button_hamburger_menu")
+                            Modifier.align(Alignment.TopEnd)
+                                .padding(8.dp)
+                                .testTag("close_button_hamburger_menu")
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Close,
@@ -231,11 +232,11 @@ fun HomeScreen(navActions: NavigationActions) {
                         icon = {
                             Icon(
                                 imageVector =
-                                if (index == selectedItemIndex) {
-                                    item.selectedIcon
-                                } else {
-                                    item.unselectedIcon
-                                },
+                                    if (index == selectedItemIndex) {
+                                        item.selectedIcon
+                                    } else {
+                                        item.unselectedIcon
+                                    },
                                 contentDescription = item.title
                             )
                         },
@@ -243,8 +244,8 @@ fun HomeScreen(navActions: NavigationActions) {
                             item.badgeCount?.let { Text(text = item.badgeCount.toString()) }
                         },
                         modifier =
-                        Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                            .testTag("navigation_item_$index")
+                            Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                                .testTag("navigation_item_$index")
                     )
                 }
             }
@@ -289,11 +290,11 @@ fun HomeScreen(navActions: NavigationActions) {
                         ) {
                             Icon(
                                 painter =
-                                if (mode.value == MapOrListMode.MAP) {
-                                    rememberVectorPainter(image = Icons.Filled.List)
-                                } else {
-                                    painterResource(id = R.drawable.map_icon)
-                                },
+                                    if (mode.value == MapOrListMode.MAP) {
+                                        rememberVectorPainter(image = Icons.Filled.List)
+                                    } else {
+                                        painterResource(id = R.drawable.map_icon)
+                                    },
                                 contentDescription = "Search icon to access the search screen"
                             )
                         }
@@ -310,6 +311,7 @@ fun HomeScreen(navActions: NavigationActions) {
         }
     }
 }
+
 @Composable
 private fun Content(
     paddingValues: PaddingValues,
