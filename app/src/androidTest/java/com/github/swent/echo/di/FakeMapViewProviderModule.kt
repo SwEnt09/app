@@ -2,6 +2,7 @@ package com.github.swent.echo.di
 
 import android.view.View
 import com.github.swent.echo.compose.map.IMapViewProvider
+import com.github.swent.echo.compose.map.SimpleMapViewProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent

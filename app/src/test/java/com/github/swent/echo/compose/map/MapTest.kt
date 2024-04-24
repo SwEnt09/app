@@ -8,7 +8,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.di.SimpleMapViewProvider
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
 import org.junit.Assert.*
 import org.junit.Before
