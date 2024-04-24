@@ -118,18 +118,21 @@ class HomeScreenTest {
         composeTestRule.onNodeWithTag("close_button_hamburger_menu").assertExists()
     }
 
+    // Change number of items to check according to the number of button in hamburger menu
+
     @Test
     fun shouldShowAllItemsWhenMenuButtonClicked() {
         composeTestRule.onNodeWithTag("menu_button").performClick()
-        for (i in 0..6) {
+        for (i in 0..1) {
             composeTestRule.onNodeWithTag("navigation_item_$i").assertExists()
         }
     }
 
+    // Change number of items to check according to the number of button in hamburger menu
     @Test
     fun shouldCloseHamburgerMenuWhenNavigationItemClicked() {
         composeTestRule.onNodeWithTag("menu_button").performClick()
-        for (i in 0..6) {
+        for (i in 0..1) {
             composeTestRule.onNodeWithTag("navigation_item_$i").performClick()
             composeTestRule.onNodeWithTag("mapViewWrapper").assertExists()
         }
