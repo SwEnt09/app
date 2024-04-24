@@ -48,11 +48,15 @@ fun HamburgerMenuDrawerSheet(
     scope: CoroutineScope
 ) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
-    // List of navigation items to display in the hamburger menu
-    // TODO: Add a navOnClick to the item to navigate to the corresponding screen as soon as you
-    // implement it.
-    // If you add new items, make sure to set correct number of items to test in HomeScreenTest.kt
-    // There is two tests to modify, a comment is provided ahead of them
+    /**
+     * List of navigation items to display in the hamburger menu
+     *
+     * Add a navOnClick to the item to navigate to the corresponding screen as soon as you implement
+     * it.
+     *
+     * If you add new items, make sure to set correct number of items to test in HomeScreenTest.kt
+     * There is two tests to modify, a comment is provided ahead of them
+     */
     val items =
         listOf(
             /*
