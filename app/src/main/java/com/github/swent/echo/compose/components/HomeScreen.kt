@@ -51,7 +51,7 @@ fun HomeScreen(navActions: NavigationActions) {
     // Hamburger menu compose
     ModalNavigationDrawer(
         // Content of the hamburger menu
-        drawerContent = { HamburgerMenuDrawerSheet(navActions, drawerState, scope) },
+        drawerContent = { HamburgerMenuDrawerSheet(navActions, drawerState, scope, {}) },
         drawerState = drawerState,
         modifier = Modifier.testTag("hamburger_menu"),
         gesturesEnabled = drawerState.isOpen
