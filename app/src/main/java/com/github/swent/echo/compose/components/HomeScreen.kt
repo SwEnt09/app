@@ -64,11 +64,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
+import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
+import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
+import java.time.ZonedDateTime
 import kotlinx.coroutines.launch
 
 /**
@@ -87,18 +90,15 @@ data class NavigationItem(
     val badgeCount: Int? = null,
     val navOnClick: (() -> Unit)? = {}
 )
-
 enum class Overlay {
     NONE,
     EVENT_INFO_SHEET,
     SEARCH_SHEET
 }
-
 enum class MapOrListMode {
     MAP,
     LIST
 }
-
 /**
  * The scaffold for the home screen. contains the top bar, the bottom sheet if an event is selected,
  * the hamburger menu when the button is clicked on the top bar, the search bottom sheet, the list
@@ -111,15 +111,12 @@ fun HomeScreen(navActions: NavigationActions) {
     val overlay = remember { mutableStateOf(Overlay.NONE) }
     val mode = remember { mutableStateOf(MapOrListMode.MAP) }
     val displayEventInfo = remember { mutableStateOf<Event?>(null) }
-
     // Scroll behavior for the top app bar, makes it pinned
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
     // Drawer state to open and close the hamburger menu
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
-
     // List of navigation items to display in the hamburger menu
     // TODO: Change the icons to be more meaningful when we have the google icons
     // TODO: Add a navOnClick to the item to navigate to the corresponding screen as soon as you
@@ -151,6 +148,7 @@ fun HomeScreen(navActions: NavigationActions) {
                 title = stringResource(id = R.string.hamburger_create_event),
                 selectedIcon = Icons.Filled.AddCircle,
                 unselectedIcon = Icons.Outlined.AddCircle,
+                //False until rebase
                 navOnClick = { navActions.navigateTo(Routes.CREATE_EVENT) }
             ),
             NavigationItem(
@@ -164,7 +162,6 @@ fun HomeScreen(navActions: NavigationActions) {
                 unselectedIcon = Icons.Outlined.Build,
             )
         )
-
     // Hamburger menu compose
     ModalNavigationDrawer(
         // Content of the hamburger menu
@@ -173,16 +170,16 @@ fun HomeScreen(navActions: NavigationActions) {
                 // Profile picture, name and class
                 Box(
                     modifier =
-                        Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-                            .fillMaxWidth()
-                            .padding(NavigationDrawerItemDefaults.ItemPadding)
-                            .testTag("profile_box")
+                    Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+                        .fillMaxWidth()
+                        .padding(NavigationDrawerItemDefaults.ItemPadding)
+                        .testTag("profile_box")
                 ) {
                     Column(
                         modifier =
-                            Modifier.align(Alignment.TopStart)
-                                .padding(8.dp)
-                                .testTag("profile_sheet")
+                        Modifier.align(Alignment.TopStart)
+                            .padding(8.dp)
+                            .testTag("profile_sheet")
                     ) {
                         // TODO: Replace with actual profile picture
                         Image(
@@ -211,9 +208,9 @@ fun HomeScreen(navActions: NavigationActions) {
                             scope.launch { drawerState.close() }
                         },
                         modifier =
-                            Modifier.align(Alignment.TopEnd)
-                                .padding(8.dp)
-                                .testTag("close_button_hamburger_menu")
+                        Modifier.align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .testTag("close_button_hamburger_menu")
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Close,
@@ -221,7 +218,6 @@ fun HomeScreen(navActions: NavigationActions) {
                         )
                     }
                 }
-
                 // Display the navigation items
                 items.forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -235,11 +231,11 @@ fun HomeScreen(navActions: NavigationActions) {
                         icon = {
                             Icon(
                                 imageVector =
-                                    if (index == selectedItemIndex) {
-                                        item.selectedIcon
-                                    } else {
-                                        item.unselectedIcon
-                                    },
+                                if (index == selectedItemIndex) {
+                                    item.selectedIcon
+                                } else {
+                                    item.unselectedIcon
+                                },
                                 contentDescription = item.title
                             )
                         },
@@ -247,15 +243,15 @@ fun HomeScreen(navActions: NavigationActions) {
                             item.badgeCount?.let { Text(text = item.badgeCount.toString()) }
                         },
                         modifier =
-                            Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                                .testTag("navigation_item_$index")
+                        Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                            .testTag("navigation_item_$index")
                     )
                 }
             }
         },
         drawerState = drawerState,
         modifier = Modifier.testTag("hamburger_menu"),
-        gesturesEnabled = false
+        gesturesEnabled = drawerState.isOpen
     ) {
         Scaffold(
             modifier = Modifier.testTag("home_screen"),
@@ -293,11 +289,11 @@ fun HomeScreen(navActions: NavigationActions) {
                         ) {
                             Icon(
                                 painter =
-                                    if (mode.value == MapOrListMode.MAP) {
-                                        rememberVectorPainter(image = Icons.Filled.List)
-                                    } else {
-                                        painterResource(id = R.drawable.map_icon)
-                                    },
+                                if (mode.value == MapOrListMode.MAP) {
+                                    rememberVectorPainter(image = Icons.Filled.List)
+                                } else {
+                                    painterResource(id = R.drawable.map_icon)
+                                },
                                 contentDescription = "Search icon to access the search screen"
                             )
                         }
@@ -314,7 +310,6 @@ fun HomeScreen(navActions: NavigationActions) {
         }
     }
 }
-
 @Composable
 private fun Content(
     paddingValues: PaddingValues,
@@ -323,13 +318,26 @@ private fun Content(
     navActions: NavigationActions,
     displayEventInfo: MutableState<Event?>
 ) {
-
     fun onEventSelected(
         event: Event,
     ) {
         displayEventInfo.value = event
         overlay.value = Overlay.EVENT_INFO_SHEET
     }
+
+    val filters =
+        FiltersContainer(
+            tagId = remember { mutableStateOf("") },
+            epflChecked = remember { mutableStateOf(true) },
+            sectionChecked = remember { mutableStateOf(true) },
+            classChecked = remember { mutableStateOf(true) },
+            pendingChecked = remember { mutableStateOf(true) },
+            confirmedChecked = remember { mutableStateOf(true) },
+            fullChecked = remember { mutableStateOf(true) },
+            from = remember { mutableStateOf(ZonedDateTime.now()) },
+            to = remember { mutableStateOf(ZonedDateTime.now()) },
+            sortBy = remember { mutableStateOf(SortBy.NONE) }
+        )
 
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode.value == MapOrListMode.LIST) {
@@ -342,7 +350,6 @@ private fun Content(
         }
         // add the tag filtering here
         if (overlay.value == Overlay.EVENT_INFO_SHEET && displayEventInfo.value != null) {
-
             EventInfoSheet(
                 event = displayEventInfo.value!!,
                 onJoinButtonPressed = {},
@@ -350,13 +357,16 @@ private fun Content(
                 onDismiss = { overlay.value = Overlay.NONE },
                 onFullyExtended = {}
             )
-
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info
         }
 
         if (overlay.value == Overlay.SEARCH_SHEET) {
-            SearchMenuSheet(onFullyExtended = {}, onDismiss = { overlay.value = Overlay.NONE })
+            SearchMenuSheet(
+                filters,
+                onFullyExtended = {},
+                onDismiss = { overlay.value = Overlay.NONE }
+            )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu
         }
