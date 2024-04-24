@@ -82,24 +82,24 @@ fun SearchMenuFilters(filters: FiltersContainer) {
 
     Box(
         modifier =
-        Modifier.fillMaxSize().background(Color.White).testTag("search_menu_filters_content")
+            Modifier.fillMaxSize().background(Color.White).testTag("search_menu_filters_content")
     ) {
         // Sort by filter
         Row(
             modifier =
-            Modifier.align(Alignment.TopStart)
-                .fillMaxWidth()
-                .zIndex(1f)
-                .testTag("sort_by_displayer_container")
+                Modifier.align(Alignment.TopStart)
+                    .fillMaxWidth()
+                    .zIndex(1f)
+                    .testTag("sort_by_displayer_container")
         ) {
             SortByDisplayer(filters.sortBy)
         }
         // Checkbox filters
         Row(
             modifier =
-            Modifier.align(Alignment.TopCenter)
-                .absoluteOffset(y = 50.dp)
-                .testTag("checkboxes_container")
+                Modifier.align(Alignment.TopCenter)
+                    .absoluteOffset(y = 50.dp)
+                    .testTag("checkboxes_container")
         ) {
             // Events for Checkboxes
             CheckBoxesDisplayer(
@@ -140,9 +140,9 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
                     checked = checkBoxItem.checked.value,
                     onCheckedChange = { checkBoxItem.checked.value = !checkBoxItem.checked.value },
                     modifier =
-                    Modifier.height(25.dp)
-                        .width(25.dp)
-                        .testTag("${checkBoxItem.contentDescription}_checkbox")
+                        Modifier.height(25.dp)
+                            .width(25.dp)
+                            .testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
                 Text(checkBoxItem.contentDescription)
             }
