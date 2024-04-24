@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Person
@@ -60,11 +61,13 @@ fun HamburgerMenuDrawerSheet(
 ) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     // List of navigation items to display in the hamburger menu
-    // TODO: Change the icons to be more meaningful when we have the google icons
     // TODO: Add a navOnClick to the item to navigate to the corresponding screen as soon as you
-    // implement it
+    // implement it.
+    // If you add new items, make sure to set correct number of items to test in HomeScreenTest.kt
+    // There is two tests to modify, a comment is provided ahead of them
     val items =
         listOf(
+            /*
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_my_profile),
                 selectedIcon = Icons.Filled.Person,
@@ -86,12 +89,15 @@ fun HamburgerMenuDrawerSheet(
                 selectedIcon = Icons.Filled.Settings,
                 unselectedIcon = Icons.Outlined.Settings,
             ),
+
+             */
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_create_event),
                 selectedIcon = Icons.Filled.AddCircle,
                 unselectedIcon = Icons.Outlined.AddCircle,
                 navOnClick = { navActions.navigateTo(Routes.CREATE_EVENT) }
             ),
+            /*
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_add_friends),
                 selectedIcon = Icons.Filled.Add,
@@ -101,6 +107,14 @@ fun HamburgerMenuDrawerSheet(
                 title = stringResource(id = R.string.hamburger_help),
                 selectedIcon = Icons.Filled.Build,
                 unselectedIcon = Icons.Outlined.Build,
+            )
+
+             */
+            NavigationItem(
+                title = stringResource(id = R.string.hamburger_log_out),
+                selectedIcon = Icons.Filled.Close,
+                unselectedIcon = Icons.Outlined.Close,
+                navOnClick = { navActions.navigateTo(Routes.REGISTER)}
             )
         )
     ModalDrawerSheet {
