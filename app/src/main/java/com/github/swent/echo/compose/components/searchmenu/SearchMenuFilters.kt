@@ -1,6 +1,5 @@
 package com.github.swent.echo.compose.components.searchmenu
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -80,10 +78,7 @@ fun SearchMenuFilters(filters: FiltersContainer) {
             )
         )
 
-    Box(
-        modifier =
-            Modifier.fillMaxSize().background(Color.White).testTag("search_menu_filters_content")
-    ) {
+    Box(modifier = Modifier.fillMaxSize().testTag("search_menu_filters_content")) {
         // Sort by filter
         Row(
             modifier =
