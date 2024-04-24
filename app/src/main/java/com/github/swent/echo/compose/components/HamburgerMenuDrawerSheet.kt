@@ -10,22 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Face
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -114,7 +102,7 @@ fun HamburgerMenuDrawerSheet(
                 title = stringResource(id = R.string.hamburger_log_out),
                 selectedIcon = Icons.Filled.Close,
                 unselectedIcon = Icons.Outlined.Close,
-                navOnClick = { navActions.navigateTo(Routes.REGISTER)}
+                navOnClick = { navActions.navigateTo(Routes.REGISTER) }
             )
         )
     ModalDrawerSheet {
