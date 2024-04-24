@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.viewmodels.tag.TagViewModel
@@ -14,7 +15,9 @@ import kotlinx.coroutines.test.TestCoroutineScheduler
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class TagSelectionDialogTest {
     private val rootTagId = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
     private val topTag = listOf(Tag("tag1", "tag1"))
