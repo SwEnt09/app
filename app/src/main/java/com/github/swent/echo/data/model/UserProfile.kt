@@ -8,4 +8,9 @@ data class UserProfile(
     val tags: Set<Tag>
 ) {
     fun toEventCreator(): EventCreator = EventCreator(userId, name)
+
+    companion object {
+        val EMPTY =
+            UserProfile(userId = "", name = "", semester = null, section = null, tags = setOf())
+    }
 }
