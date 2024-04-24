@@ -36,11 +36,15 @@ fun <T : View> EchoAndroidView(
  *   event markers in the map will be automatically updated to match the list.
  * @param callback The function to be called when a marker on the map is clicked on. The [Event]
  *   corresponding to the marker will be passed as an argument to this function.
+ * @param mapDrawerViewModel The [MapDrawerViewModel] to be used as view factory.
  */
 @Composable
-fun MapDrawer(modifier: Modifier = Modifier, events: List<Event>, callback: (Event) -> Unit = {}) {
-    val mapDrawerViewModel: MapDrawerViewModel = hiltViewModel()
-
+fun MapDrawer(
+    modifier: Modifier = Modifier,
+    events: List<Event>,
+    callback: (Event) -> Unit = {},
+    mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
+) {
     EchoAndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
         factory = mapDrawerViewModel::factory,
