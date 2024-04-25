@@ -18,38 +18,46 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun ListDrawer(eventsList: List<Event>) {
+    val selectedEvent = remember { mutableStateOf("") }
     LazyColumn(modifier = Modifier.fillMaxSize().background(Color.White).padding(5.dp)) {
         items(eventsList) { event ->
-            EventListItem(event = event)
+            EventListItem(event = event, selectedEvent = selectedEvent)
             Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }
 
 @Composable
-fun EventListItem(event: Event) {
-    var isExpanded by remember { mutableStateOf(false) }
+fun EventListItem(event: Event, selectedEvent: MutableState<String>) {
     Column(
         modifier =
-        Modifier.clip(RoundedCornerShape(5.dp))
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .clickable { isExpanded = !isExpanded }
+            Modifier.clip(RoundedCornerShape(5.dp))
+                .fillMaxWidth()
+                .background(
+                    if (selectedEvent.value == event.eventId)
+                        MaterialTheme.colorScheme.primaryContainer
+                    else MaterialTheme.colorScheme.secondaryContainer
+                )
+                .clickable {
+                    if (selectedEvent.value == event.eventId) selectedEvent.value = ""
+                    else selectedEvent.value = event.eventId
+                }
     ) {
         Row(
             modifier = Modifier.height(60.dp),
@@ -58,10 +66,12 @@ fun EventListItem(event: Event) {
         ) {
             val paddingItems = 3.dp
             val widthSmallItems = 50.dp
-            val widthLargeItems = 80.dp
+            val widthLargeItems = 95.dp
             Text(
+                // We should add a way to get the childest tag from event.tags . For now, I use
+                // eventId
                 text = event.eventId,
-                modifier = Modifier.padding(horizontal = paddingItems).width(widthLargeItems),
+                modifier = Modifier.padding(horizontal = paddingItems).width(widthSmallItems),
                 textAlign = TextAlign.Center
             )
             Text(
@@ -75,6 +85,8 @@ fun EventListItem(event: Event) {
                 textAlign = TextAlign.Center
             )
             Text(
+                // TODO: Add a way to get the distance from the event (when we'll have the user's
+                // location)
                 text = "5km",
                 modifier = Modifier.padding(horizontal = paddingItems).width(widthSmallItems),
                 textAlign = TextAlign.Center
@@ -85,7 +97,7 @@ fun EventListItem(event: Event) {
                 textAlign = TextAlign.Center
             )
         }
-        if (isExpanded) {
+        if (selectedEvent.value == event.eventId) {
             Row {
                 Text(
                     text = event.description,
@@ -99,13 +111,13 @@ fun EventListItem(event: Event) {
                         onClick = { /*TODO*/},
                         modifier = Modifier.width(buttonWidth),
                     ) {
-                        Text("View On Map")
+                        Text(stringResource(id = R.string.list_drawer_view_on_map))
                     }
                     Button(
                         onClick = { /*TODO*/},
                         modifier = Modifier.width(buttonWidth),
                     ) {
-                        Text("Join Event")
+                        Text(stringResource(id = R.string.list_drawer_join_event))
                     }
                 }
             }
