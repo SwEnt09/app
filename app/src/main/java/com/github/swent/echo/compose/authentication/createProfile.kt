@@ -45,34 +45,31 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
-import com.github.swent.echo.ExcludeFromJacocoGeneratedReport
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.R
+import com.github.swent.echo.data.model.Section
+import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.Tag
+import com.github.swent.echo.viewmodels.authentication.createProfileViewModel
 
 /**
  * A composable function that displays the UI for creating a user profile.
  *
- * @param saveOnClick The callback to be invoked when the user clicks the save button.
- * @param navBack The callback to be invoked when the user clicks the back button.
- * @param addTagOnClick The callback to be invoked when the user clicks the add tag button.
  * @param sectionList The list of sections to be displayed in the dropdown menu.
  * @param semList The list of semesters to be displayed in the dropdown menu.
  * @param tagList The list of tags to be displayed as chips.
  */
 @Composable
 fun ProfileCreationUI(
-    saveOnClick: () -> Unit,
-    navBack: () -> Unit,
-    addTagOnClick: () -> Unit,
-    sectionList: List<String>,
-    semList: List<String>,
-    tagList: List<Tag>
+    sectionList: List<Section>,
+    semList: List<Semester>,
+    tagList: List<Tag>,
+    viewModel: createProfileViewModel = hiltViewModel()
 ) {
     Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -83,7 +80,10 @@ fun ProfileCreationUI(
             Icon(
                 Icons.Default.ArrowBack,
                 contentDescription = "go back",
-                modifier = Modifier.size(35.dp).clickable(onClick = navBack).testTag("Back")
+                modifier =
+                    Modifier.size(35.dp)
+                        .clickable(onClick = { viewModel.navigateBack() })
+                        .testTag("Back")
             )
 
             // First name and last name fields
@@ -130,7 +130,7 @@ fun ProfileCreationUI(
 
                 // Add tag button
                 SmallFloatingActionButton(
-                    onClick = { addTagOnClick() },
+                    onClick = {},
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.testTag("AddTag")
@@ -143,7 +143,7 @@ fun ProfileCreationUI(
 
             // Save button
             OutlinedButton(
-                onClick = { saveOnClick() },
+                onClick = { viewModel.profilesave() },
                 modifier = Modifier.fillMaxWidth().testTag("Save")
             ) {
                 Text(text = stringResource(id = R.string.profile_creation_save_button))
@@ -153,7 +153,7 @@ fun ProfileCreationUI(
 }
 
 @Composable
-fun DropDownListFunctionWrapper(elementList: List<String>, label: Int) {
+fun DropDownListFunctionWrapper(elementList: List<Any>, label: Int) {
     var showDropdown by rememberSaveable { mutableStateOf(false) }
     var selectedField by remember { mutableStateOf("") }
     var selectedFieldSize by remember { mutableStateOf(Size.Zero) }
@@ -187,12 +187,12 @@ fun DropDownListFunctionWrapper(elementList: List<String>, label: Int) {
             ) {
                 elementList.forEach { elem ->
                     DropdownMenuItem(
-                        text = { Text(elem) },
+                        text = { Text(elem.toString()) },
                         onClick = {
-                            selectedField = elem
+                            selectedField = elem.toString()
                             showDropdown = false
                         },
-                        modifier = Modifier.testTag(elem)
+                        modifier = Modifier.testTag(elem.toString())
                     )
                 }
             }
@@ -234,17 +234,34 @@ fun InputChipFun(
         }
     )
 }
-
+/*
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
 fun ProfileCreationPreview() {
-    ProfileCreationUI(
-        {},
-        {},
-        {},
-        listOf("CS", "SC", "Math", "SV", "SIE", "Architecture"),
-        listOf("Semester 1", "Semester 2"),
-        listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2"))
-    )
+  ProfileCreationUI(
+
+      sectionList =
+          listOf(
+              BachelorSection.AR,
+              BachelorSection.EL,
+              BachelorSection.GC,
+              BachelorSection.IN,
+              BachelorSection.MA,
+              BachelorSection.MT,
+              BachelorSection.PH,
+              BachelorSection.SV,
+              BachelorSection.SC,
+              BachelorSection.MX),
+      semList =
+          listOf(
+              BachelorSemester.BA1,
+              BachelorSemester.BA2,
+              BachelorSemester.BA3,
+              BachelorSemester.BA4,
+              BachelorSemester.BA5,
+              BachelorSemester.BA6),
+      tagList = listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2")))
 }
+
+ */
