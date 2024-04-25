@@ -87,24 +87,6 @@ constructor(
         }
     }
 
-    /**
-     * if the tagName is in the global tag list, add it as a tag to the event tag list return a tag
-     * if the string match its name or null otherwise
-     */
-    fun getAndAddTagFromString(tagName: String): Tag? {
-        if (allTagsList.any { (_, name) -> name == tagName }) {
-            val tag = allTagsList.filter { (_, name) -> name == tagName }
-            setEvent(_event.value.copy(tags = _event.value.tags + tag.first()))
-            return tag.first()
-        }
-        return null
-    }
-
-    // delete a tag from the tags of the event if present
-    fun deleteTag(tag: Tag) {
-        setEvent(_event.value.copy(tags = _event.value.tags.filter { t -> t != tag }.toSet()))
-    }
-
     // save the current event in the repository
     fun saveEvent() {
         if (_status.value == EventStatus.Saving) {
