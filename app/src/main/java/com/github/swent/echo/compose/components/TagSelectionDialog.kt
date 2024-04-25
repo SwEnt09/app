@@ -1,13 +1,14 @@
 package com.github.swent.echo.compose.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -29,6 +30,7 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
 /** The tag selection dialog */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TagSelectionDialog(
     onDismissRequest: () -> Unit,
@@ -40,19 +42,29 @@ fun TagSelectionDialog(
     val currentDepth = tagViewModel.currentDepth.collectAsState()
     val hasSubTags = currentDepth.value < tagViewModel.maxDepth
     Dialog(onDismissRequest = onDismissRequest, properties = dialogProperties) {
-        Card(modifier = Modifier.padding(vertical = 30.dp).testTag("tag-dialog")) {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                Row {
-                    IconButton(
-                        onClick = tagViewModel::goUp,
-                        modifier = Modifier.testTag("tag-back-button")
-                    ) {
-                        val icon = Icons.Filled.KeyboardArrowLeft
-                        Icon(imageVector = icon, contentDescription = icon.name)
+        Card(
+            modifier =
+                Modifier.width(300.dp)
+                    .height(500.dp)
+                    .padding(vertical = 30.dp)
+                    .testTag("tag-dialog")
+        ) {
+            LazyColumn {
+                stickyHeader {
+                    Card {
+                        Row {
+                            IconButton(
+                                onClick = tagViewModel::goUp,
+                                modifier = Modifier.testTag("tag-back-button")
+                            ) {
+                                val icon = Icons.Filled.KeyboardArrowLeft
+                                Icon(imageVector = icon, contentDescription = icon.name)
+                            }
+                        }
                     }
+                    // Spacer(Modifier.padding(5.dp))
                 }
-                Spacer(Modifier.padding(5.dp))
-                for (tag in tags.value) {
+                items(tags.value) { tag ->
                     TagSelectionDialogEntry(
                         tag = tag,
                         onTagClicked = {
