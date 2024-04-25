@@ -6,27 +6,26 @@ import com.github.swent.echo.data.model.Event
 import org.maplibre.android.MapLibre
 import org.maplibre.android.annotations.MarkerOptions
 import org.maplibre.android.camera.CameraPosition
-import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 
 class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
-    private lateinit var mapView: MapView
-
-    private fun drawMarkers(map: MapLibreMap, events: List<Event>) {
+    private fun drawMarkers(map: MapLibreMap, events: List<Event>, callback: (Event) -> Unit) {
         events.forEach {
-            map.addMarker(
-                MarkerOptions()
-                    .setPosition(LatLng(it.location.lat, it.location.long))
-                    .title(it.title)
-            )
+            val markerBuilder = MarkerOptions().setPosition(it.location.toLatLng()).title(it.title)
+            map.addMarker(markerBuilder)
+        }
+        val h = map.markers.zip(events).toMap()
+        map.setOnMarkerClickListener { marker ->
+            h[marker]?.let { callback(it) }
+            true
         }
     }
 
     override fun factory(context: Context): MapView {
         MapLibre.getInstance(context)
-        mapView = MapView(context)
+        val mapView = MapView(context)
         val styleUrl =
             context.getString(R.string.maptiler_base_style_url) +
                 context.getString(R.string.maptiler_api_key)
@@ -48,6 +47,6 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     }
 
     override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
-        view.getMapAsync { drawMarkers(it, events) }
+        view.getMapAsync { drawMarkers(it, events, callback) }
     }
 }

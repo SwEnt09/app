@@ -1,26 +1,35 @@
 package com.github.swent.echo.compose.components
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.activity.compose.setContent
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.github.swent.echo.MainActivity
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.ui.navigation.NavigationActions
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@HiltAndroidTest
 class HomeScreenTest {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule(order = 0) val hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1) val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var navActions: NavigationActions
 
     @Before
     fun setUp() {
+        hiltRule.inject()
+
         navActions = mockk(relaxed = true)
-        composeTestRule.setContent { HomeScreen(navActions) }
+        composeTestRule.activity.setContent { HomeScreen(navActions) }
     }
 
     @Test
@@ -118,18 +127,21 @@ class HomeScreenTest {
         composeTestRule.onNodeWithTag("close_button_hamburger_menu").assertExists()
     }
 
+    // Change number of items to check according to the number of button in hamburger menu
+
     @Test
     fun shouldShowAllItemsWhenMenuButtonClicked() {
         composeTestRule.onNodeWithTag("menu_button").performClick()
-        for (i in 0..6) {
+        for (i in 0..1) {
             composeTestRule.onNodeWithTag("navigation_item_$i").assertExists()
         }
     }
 
+    // Change number of items to check according to the number of button in hamburger menu
     @Test
     fun shouldCloseHamburgerMenuWhenNavigationItemClicked() {
         composeTestRule.onNodeWithTag("menu_button").performClick()
-        for (i in 0..6) {
+        for (i in 0..1) {
             composeTestRule.onNodeWithTag("navigation_item_$i").performClick()
             composeTestRule.onNodeWithTag("mapViewWrapper").assertExists()
         }

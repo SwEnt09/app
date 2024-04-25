@@ -2,9 +2,7 @@ package com.github.swent.echo.data.model
 
 interface Semester
 
-interface EPFLSemester : Semester
-
-enum class BachelorSemester : EPFLSemester {
+enum class SemesterEPFL : Semester {
     BA1,
     MAN,
     BA2,
@@ -12,11 +10,16 @@ enum class BachelorSemester : EPFLSemester {
     BA4,
     BA5,
     BA6,
-}
-
-enum class MasterSemester : EPFLSemester {
     MA1,
     MA2,
     MA3,
-    MA4
+    MA4,
+}
+
+fun String.toSemesterEPFL(): SemesterEPFL? {
+    return try {
+        SemesterEPFL.valueOf(this)
+    } catch (e: IllegalArgumentException) {
+        null
+    }
 }

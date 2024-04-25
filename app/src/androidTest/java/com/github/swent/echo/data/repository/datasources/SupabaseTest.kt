@@ -4,6 +4,7 @@ import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.authentication.AuthenticationServiceImpl
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
@@ -45,7 +46,7 @@ class SupabaseTest {
     private val event =
         Event(
             "3bcf6f25-81d4-4a14-9caa-c05feb593da0",
-            UserProfile("e65e9435-a9f2-4474-be11-9054305f1a54", "", null, null, emptySet()),
+            EventCreator("e65e9435-a9f2-4474-be11-9054305f1a54", ""),
             association,
             "Dummy Event",
             "blabla description",
