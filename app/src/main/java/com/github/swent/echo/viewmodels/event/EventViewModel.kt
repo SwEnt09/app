@@ -43,7 +43,7 @@ constructor(
                 _status.value = EventStatus.Error(R.string.event_creation_error_not_logged_in)
                 Log.e("create event", "the user is not logged in")
             } else {
-                val username = repository.getUserProfile(userid).name
+                val username = repository.getUserProfile(userid)!!.name
                 if (savedEventId.contains("eventId")) {
                     _isEventNew.value = false
                     _event.value = repository.getEvent(savedEventId.get<String>("eventId")!!)
@@ -51,7 +51,7 @@ constructor(
                 } else {
                     _event.value =
                         _event.value.copy(
-                            creator = repository.getUserProfile(userid).toEventCreator(),
+                            creator = repository.getUserProfile(userid)!!.toEventCreator(),
                             organizer = null
                         )
                     _status.value = EventStatus.Modified
