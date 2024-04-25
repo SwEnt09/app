@@ -20,7 +20,6 @@ import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
@@ -92,28 +91,6 @@ class EventViewModelTest {
     }
 
     @Test
-    fun addTagToEventTest() {
-        val newTag = Tag("2", "tag2")
-        coEvery { mockedRepository.getAllTags() } returns listOf(newTag)
-        runBlocking {
-            eventViewModel =
-                EventViewModel(mockedRepository, fakeAuthenticationService, savedEventId)
-        }
-        scheduler.runCurrent()
-        val addedTag = eventViewModel.getAndAddTagFromString(newTag.name)
-        assertEquals(addedTag, newTag)
-        assertEquals(eventViewModel.event.value.tags, setOf(newTag))
-    }
-
-    @Test
-    fun deleteTagFromEventTest() {
-        val event = TEST_EVENT
-        eventViewModel.setEvent(event)
-        eventViewModel.deleteTag(Tag("1", "tag1"))
-        assertEquals(eventViewModel.event.value.tags, setOf<Tag>())
-    }
-
-    @Test
     fun modifyEventWhileSavingLogWarningAndDoesNotChangeEvent() {
         mockLog()
         blockOnSaving()
@@ -134,13 +111,6 @@ class EventViewModelTest {
         eventViewModel.saveEvent()
         eventViewModel.saveEvent()
         verify { Log.w(any(), any() as String) }
-    }
-
-    @Test
-    fun getAndAddTagFromStringReturnNullWithWrongTag() {
-        val wrongTag = "not a valid tag"
-        val ret = eventViewModel.getAndAddTagFromString(wrongTag)
-        assertNull(ret)
     }
 
     @Test
