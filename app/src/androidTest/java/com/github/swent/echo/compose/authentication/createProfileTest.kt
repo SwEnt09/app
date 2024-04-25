@@ -7,8 +7,12 @@ import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.data.model.BachelorSection
+import com.github.swent.echo.data.model.BachelorSemester
 import com.github.swent.echo.data.model.Tag
+import com.github.swent.echo.ui.navigation.NavigationActions
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,13 +26,10 @@ class CreateProfileTest {
         // Verify that the Profile Creation screen loads successfully
         composeTestRule.setContent {
             ProfileCreationUI(
-                {},
-                {},
-                {},
-                listOf("IN", "SC", "Math", "GM"),
-                listOf("BA1", "BA2"),
-                listOf(Tag("1", "Sports"), Tag("2", "Music"))
-            )
+                listOf(BachelorSection.AR, BachelorSection.IN, BachelorSection.SC, BachelorSection.GM),
+                listOf(BachelorSemester.BA1, BachelorSemester.BA2),
+                listOf(Tag("1", "Sports"), Tag("2", "Music")),
+                navAction = NavigationActions(navController = rememberNavController()))
         }
         // Assert that certain elements are present on the screen
         composeTestRule.onNodeWithTag("Save").assertExists()
@@ -57,7 +58,7 @@ class CreateProfileTest {
         val saveOnClick: () -> Unit = { saveButtonClicked = true }
 
         composeTestRule.setContent {
-            ProfileCreationUI(saveOnClick, {}, {}, emptyList(), emptyList(), emptyList())
+            ProfileCreationUI( emptyList(), emptyList(), emptyList(), navAction = NavigationActions(navController = rememberNavController()))
         }
         // Simulate a click on the Save button
         composeTestRule.onNodeWithText("Save").performClick()
