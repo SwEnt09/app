@@ -9,8 +9,7 @@ interface Repository {
 
     companion object {
         /** The root tag of the tag tree. Note the sub-tags of this tag are the top-level tags. */
-        // TODO: Replace this with the actual root tag id form supabase.
-        const val ROOT_TAG_ID = "0"
+        const val ROOT_TAG_ID = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
     }
 
     suspend fun getAssociation(associationId: String): Association
