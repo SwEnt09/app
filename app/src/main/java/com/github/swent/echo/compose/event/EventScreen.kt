@@ -9,8 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +48,6 @@ fun EventScreen(
 @Composable
 fun EventPropertiesFields(eventViewModel: EventViewModel) {
     val event by eventViewModel.event.collectAsState()
-    var tagText by remember { mutableStateOf("") }
     val organizerListState = eventViewModel.organizerList.collectAsState()
 
     Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -69,17 +66,15 @@ fun EventPropertiesFields(eventViewModel: EventViewModel) {
 
         EventTagEntry(
             tags = event.tags,
-            tagText = tagText,
-            onTagFieldChanged = {
-                tagText = it
-                val tag = eventViewModel.getAndAddTagFromString(tagText)
-                if (tag != null) {
-                    tagText = ""
-                }
+            onTagSelected = { addedTag ->
+                eventViewModel.setEvent(event.copy(tags = event.tags + addedTag))
+            },
+            onTagDeleted = { deletedTag ->
+                eventViewModel.setEvent(
+                    event.copy(tags = event.tags.filter { t -> t != deletedTag }.toSet())
+                )
             }
-        ) {
-            eventViewModel.deleteTag(it)
-        }
+        )
         var organizerName = event.creator.name
         if (event.organizer != null) {
             organizerName = event.organizer!!.name
