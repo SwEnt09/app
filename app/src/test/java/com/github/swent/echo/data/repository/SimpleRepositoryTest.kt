@@ -37,7 +37,7 @@ class SimpleRepositoryTest {
 
         assertEquals(SAMPLE_EVENTS.mapNotNull { it.organizer }.toSet().size, associations.size)
         assertEquals(SAMPLE_EVENTS.size, events.size)
-        assertTrue(tags.size >= 6)
+        assertTrue(tags.size >= SimpleRepository.NUM_OF_HARDCODED_TAGS)
         assertNotNull(userProfile)
     }
 
@@ -55,6 +55,15 @@ class SimpleRepositoryTest {
         val expected = events.first()
         val event = simpleRepository.getEvent(expected.eventId)
         assertEquals(expected, event)
+    }
+
+    @Test
+    fun `setEvent should update the event in the repository`() = runBlocking {
+        val events = simpleRepository.getAllEvents()
+        val event = events.first()
+        val updatedEvent = event.copy(title = "Updated Event")
+        simpleRepository.setEvent(updatedEvent)
+        assertEquals(updatedEvent, simpleRepository.getEvent(event.eventId))
     }
 
     @Test
@@ -77,6 +86,14 @@ class SimpleRepositoryTest {
     }
 
     @Test
+    fun `setUserProfile should update the user profile in the repository`() = runBlocking {
+        val userProfile = simpleRepository.getUserProfile(USER_ID)!!
+        val updatedUserProfile = userProfile.copy(name = "Updated Name")
+        simpleRepository.setUserProfile(updatedUserProfile)
+        assertEquals(updatedUserProfile, simpleRepository.getUserProfile(USER_ID))
+    }
+
+    @Test
     fun `createEvent should add the event to the repository and return its id`() = runBlocking {
         val numOfEvents = simpleRepository.getAllEvents().size
 
@@ -89,6 +106,6 @@ class SimpleRepositoryTest {
     @Test
     fun `getSubTags should return top level tags when called with ROOT_TAG_ID`() = runBlocking {
         val subTags = simpleRepository.getSubTags(Repository.ROOT_TAG_ID)
-        assertEquals(3, subTags.size)
+        assertEquals(SimpleRepository.NUM_OF_TOP_LEVEL_TAGS, subTags.size)
     }
 }

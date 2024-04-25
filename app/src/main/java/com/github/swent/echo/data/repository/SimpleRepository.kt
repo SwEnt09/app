@@ -17,6 +17,11 @@ import com.github.swent.echo.data.model.UserProfile
  */
 class SimpleRepository(authenticationService: AuthenticationService) : Repository {
 
+    companion object {
+        const val NUM_OF_TOP_LEVEL_TAGS = 3
+        const val NUM_OF_HARDCODED_TAGS = 6
+    }
+
     private val associations = mutableSetOf<Association>()
     private val events = mutableListOf<Event>()
     private val tags =
@@ -83,6 +88,7 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
     }
 
     override suspend fun setEvent(event: Event) {
+        events.removeIf { it.eventId == event.eventId }
         events.add(event)
     }
 
@@ -107,6 +113,7 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
     }
 
     override suspend fun setUserProfile(userProfile: UserProfile) {
+        userProfiles.removeIf { it.userId == userProfile.userId }
         userProfiles.add(userProfile)
     }
 }
