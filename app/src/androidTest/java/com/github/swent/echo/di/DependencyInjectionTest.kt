@@ -2,7 +2,7 @@ package com.github.swent.echo.di
 
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.repository.Repository
-import com.github.swent.echo.data.repository.RepositoryImpl
+import com.github.swent.echo.data.repository.SimpleRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.jan.supabase.SupabaseClient
@@ -55,6 +55,6 @@ class DependencyInjectionTest {
 
     @Test
     fun testRepositoryInjection() {
-        assertEquals(RepositoryImpl::class.java, repository::class.java)
+        assertEquals(SimpleRepository::class.java, repository::class.java)
     }
 }
