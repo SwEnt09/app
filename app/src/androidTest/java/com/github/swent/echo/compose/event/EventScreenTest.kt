@@ -13,6 +13,8 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.viewmodels.event.EventViewModel
 import io.mockk.mockk
@@ -136,5 +138,16 @@ class EventScreenTest {
         longInput.performTextReplacement(testLocation.long.toString())
         okButton.performClick()
         Assert.assertTrue(eventViewModel.event.value.location == testLocation)
+    }
+
+    @Test
+    fun clickOnTagDeleteIt() {
+        setCompose(eventViewModel)
+        val tag = Tag("test", "test")
+        eventViewModel.setEvent(Event.EMPTY.copy(tags = setOf(tag)))
+        val tagButton = composeTestRule.onNodeWithTag("test-tag-button")
+        tagButton.assertIsDisplayed()
+        tagButton.performClick()
+        tagButton.assertDoesNotExist()
     }
 }
