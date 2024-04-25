@@ -21,11 +21,13 @@ import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.ui.navigation.NavigationActions
 import java.time.ZonedDateTime
+
 enum class Overlay {
     NONE,
     EVENT_INFO_SHEET,
     SEARCH_SHEET
 }
+
 enum class MapOrListMode {
     MAP,
     LIST
@@ -63,6 +65,7 @@ fun HomeScreen(navActions: NavigationActions) {
         }
     }
 }
+
 @Composable
 private fun Content(
     paddingValues: PaddingValues,
