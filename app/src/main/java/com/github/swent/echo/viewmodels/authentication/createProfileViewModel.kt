@@ -18,7 +18,7 @@ class createProfileViewModel
 @Inject
 constructor(
     private val repository: Repository,
-    private val navAction: NavigationActions,
+    //private val navAction: NavigationActions,
     private val authenticationService: AuthenticationService,
 ) : ViewModel() {
 
@@ -79,9 +79,11 @@ constructor(
         currentList.add(tag)
         _tagList.value = currentList
     }
-
+/*
     // Back button
     fun navigateBack() {
         navAction.goBack()
     }
+
+ */
 }
