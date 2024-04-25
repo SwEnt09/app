@@ -5,6 +5,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.NavigationActions
@@ -16,7 +17,9 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class CreateEventScreenTest {
 
     @get:Rule val composeTestRule = createComposeRule()
