@@ -1,16 +1,26 @@
 package com.github.swent.echo.compose.map
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
 import org.maplibre.android.MapLibre
 import org.maplibre.android.annotations.MarkerOptions
 import org.maplibre.android.camera.CameraPosition
+import org.maplibre.android.location.LocationComponent
+import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.LocationComponentOptions
+import org.maplibre.android.location.engine.LocationEngineRequest
+import org.maplibre.android.location.modes.CameraMode
+import org.maplibre.android.location.permissions.PermissionsListener
+import org.maplibre.android.location.permissions.PermissionsManager
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
+import org.maplibre.android.maps.Style
 
 class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
+    private var locationComponent: LocationComponent? = null
     private fun redrawMarkers(map: MapLibreMap, events: List<Event>, callback: (Event) -> Unit) {
         map.markers.forEach { map.removeMarker(it) }
         events.forEach {
@@ -22,6 +32,32 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
             h[marker]?.let { callback(it) }
             true
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun displayLocation(context: Context, map : MapLibreMap, style: Style) {
+        locationComponent = map.locationComponent
+        val locationComponentOptions =
+            LocationComponentOptions.builder(context)
+                .pulseEnabled(true)
+                .build()
+        val locationComponentActivationOptions =
+            LocationComponentActivationOptions
+                .builder(context, style)
+                .locationComponentOptions(locationComponentOptions)
+                .useDefaultLocationEngine(true)
+                .locationEngineRequest(
+                    LocationEngineRequest.Builder(750)
+                        .setFastestInterval(750)
+                        .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
+                        .build()
+                )
+                .build()
+        locationComponent!!.activateLocationComponent(locationComponentActivationOptions)
+        locationComponent!!.isLocationComponentEnabled = true
+        locationComponent!!.cameraMode = CameraMode.TRACKING
+
+        // locationComponent!!.forceLocationUpdate(lastLocation)
     }
 
     override fun factory(context: Context): MapView {
@@ -42,6 +78,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                         .zoom(DEFAULT_ZOOM)
                         .bearing(2.0)
                         .build()
+                // displayLocation(context, map, it)
             }
         }
         return mapView
