@@ -55,10 +55,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.github.swent.echo.ExcludeFromJacocoGeneratedReport
 import com.github.swent.echo.R
-import com.github.swent.echo.data.model.BachelorSection
-import com.github.swent.echo.data.model.BachelorSemester
 import com.github.swent.echo.data.model.Section
+import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.Semester
+import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.viewmodels.authentication.createProfileViewModel
@@ -75,125 +75,134 @@ fun ProfileCreationUI(
     sectionList: List<Section>,
     semList: List<Semester>,
     tagList: List<Tag>,
-    viewModel: createProfileViewModel = hiltViewModel(),
+    //viewModel: createProfileViewModel = hiltViewModel(),
     navAction: NavigationActions
 ) {
-  Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-      var firstName by remember { mutableStateOf("") }
-      var lastName by remember { mutableStateOf("") }
+    Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            var firstName by remember { mutableStateOf("") }
+            var lastName by remember { mutableStateOf("") }
 
-      // Back button
-      Icon(
-          Icons.Default.ArrowBack,
-          contentDescription = "go back",
-          modifier =
-              Modifier.size(35.dp).clickable(onClick = { navAction.goBack() }).testTag("Back"))
+            // Back button
+            Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = "go back",
+                modifier =
+                    Modifier.size(35.dp).clickable(onClick = { navAction.goBack() }).testTag("Back")
+            )
 
-      // First name and last name fields
-      OutlinedTextField(
-          value = firstName,
-          onValueChange = { firstName = it },
-          modifier = Modifier.testTag("FirstName"),
-          label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) })
+            // First name and last name fields
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = { firstName = it },
+                modifier = Modifier.testTag("FirstName"),
+                label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) }
+            )
 
-      Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
-      OutlinedTextField(
-          value = lastName,
-          onValueChange = { lastName = it },
-          modifier = Modifier.testTag("LastName"),
-          label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) })
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                modifier = Modifier.testTag("LastName"),
+                label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) }
+            )
 
-      Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
-      // Section and semester dropdown menus
-      DropDownListFunctionWrapper(sectionList, R.string.profile_creation_section)
-      Spacer(modifier = Modifier.height(5.dp))
-      DropDownListFunctionWrapper(semList, R.string.profile_creation_semester)
+            // Section and semester dropdown menus
+            DropDownListFunctionWrapper(sectionList, R.string.profile_creation_section)
+            Spacer(modifier = Modifier.height(5.dp))
+            DropDownListFunctionWrapper(semList, R.string.profile_creation_semester)
 
-      Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-      // Tags
-      Text(
-          stringResource(id = R.string.profile_creation_tags),
-          fontSize = 20.sp,
-          fontWeight = FontWeight.Bold)
+            // Tags
+            Text(
+                stringResource(id = R.string.profile_creation_tags),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
 
-      Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-      Row() {
-        for (tag in tagList) {
-          InputChipFun(tag.name) {}
-          Spacer(modifier = Modifier.width(5.dp))
-        }
-        Spacer(modifier = Modifier.width(5.dp))
+            Row() {
+                for (tag in tagList) {
+                    InputChipFun(tag.name) {}
+                    Spacer(modifier = Modifier.width(5.dp))
+                }
+                Spacer(modifier = Modifier.width(5.dp))
 
-        // Add tag button
-        SmallFloatingActionButton(
-            onClick = {},
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.testTag("AddTag")) {
-              Icon(Icons.Default.Add, "Add tags")
+                // Add tag button
+                SmallFloatingActionButton(
+                    onClick = {},
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.testTag("AddTag")
+                ) {
+                    Icon(Icons.Default.Add, "Add tags")
+                }
             }
-      }
 
-      Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-      // Save button
-      OutlinedButton(
-          onClick = { viewModel.profilesave() },
-          modifier = Modifier.fillMaxWidth().testTag("Save")) {
-            Text(text = stringResource(id = R.string.profile_creation_save_button))
-          }
+            // Save button
+            OutlinedButton(
+                onClick = {/* viewModel.profilesave() */},
+                modifier = Modifier.fillMaxWidth().testTag("Save")
+            ) {
+                Text(text = stringResource(id = R.string.profile_creation_save_button))
+            }
+        }
     }
-  }
 }
 
 @Composable
 fun DropDownListFunctionWrapper(elementList: List<Any>, label: Int) {
-  var showDropdown by rememberSaveable { mutableStateOf(false) }
-  var selectedField by remember { mutableStateOf("") }
-  var selectedFieldSize by remember { mutableStateOf(Size.Zero) }
-  val icon = if (showDropdown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
-  Column {
-    Box() {
-      OutlinedTextField(
-          value = selectedField,
-          onValueChange = { selectedField = it },
-          modifier =
-              Modifier.onGloballyPositioned { coordinates ->
-                    selectedFieldSize = coordinates.size.toSize()
-                  }
-                  .clickable { showDropdown = !showDropdown }
-                  .testTag(stringResource(id = label)),
-          readOnly = true,
-          label = { Text(stringResource(id = label)) },
-          trailingIcon = {
-            Icon(icon, "list dropdown", Modifier.clickable { showDropdown = !showDropdown })
-          })
-      DropdownMenu(
-          properties = PopupProperties(focusable = false),
-          expanded = showDropdown,
-          onDismissRequest = { showDropdown = false },
-          modifier =
-              Modifier.align(Alignment.TopStart)
-                  .heightIn(max = 200.dp)
-                  .widthIn(with(LocalDensity.current) { selectedFieldSize.width.toDp() }),
-          offset = DpOffset(0.dp, 0.dp)) {
-            elementList.forEach { elem ->
-              DropdownMenuItem(
-                  text = { Text(elem.toString()) },
-                  onClick = {
-                    selectedField = elem.toString()
-                    showDropdown = false
-                  },
-                  modifier = Modifier.testTag(elem.toString()))
+    var showDropdown by rememberSaveable { mutableStateOf(false) }
+    var selectedField by remember { mutableStateOf("") }
+    var selectedFieldSize by remember { mutableStateOf(Size.Zero) }
+    val icon = if (showDropdown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
+    Column {
+        Box() {
+            OutlinedTextField(
+                value = selectedField,
+                onValueChange = { selectedField = it },
+                modifier =
+                    Modifier.onGloballyPositioned { coordinates ->
+                            selectedFieldSize = coordinates.size.toSize()
+                        }
+                        .clickable { showDropdown = !showDropdown }
+                        .testTag(stringResource(id = label)),
+                readOnly = true,
+                label = { Text(stringResource(id = label)) },
+                trailingIcon = {
+                    Icon(icon, "list dropdown", Modifier.clickable { showDropdown = !showDropdown })
+                }
+            )
+            DropdownMenu(
+                properties = PopupProperties(focusable = false),
+                expanded = showDropdown,
+                onDismissRequest = { showDropdown = false },
+                modifier =
+                    Modifier.align(Alignment.TopStart)
+                        .heightIn(max = 200.dp)
+                        .widthIn(with(LocalDensity.current) { selectedFieldSize.width.toDp() }),
+                offset = DpOffset(0.dp, 0.dp)
+            ) {
+                elementList.forEach { elem ->
+                    DropdownMenuItem(
+                        text = { Text(elem.toString()) },
+                        onClick = {
+                            selectedField = elem.toString()
+                            showDropdown = false
+                        },
+                        modifier = Modifier.testTag(elem.toString())
+                    )
+                }
             }
-          }
+        }
     }
-  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -202,58 +211,45 @@ fun InputChipFun(
     text: String,
     onDismiss: () -> Unit,
 ) {
-  var enabled by remember { mutableStateOf(true) }
-  if (!enabled) return
+    var enabled1 by remember { mutableStateOf(true) }
+    if (!enabled1) return
 
-  InputChip(
-      onClick = {
-        onDismiss()
-        enabled = !enabled
-      },
-      label = { Text(text) },
-      modifier = Modifier.testTag(text),
-      colors =
-          InputChipDefaults.inputChipColors(
-              selectedContainerColor = Color.Transparent,
-          ),
-      border =
-          InputChipDefaults.inputChipBorder(
-              selectedBorderColor = MaterialTheme.colorScheme.primary,
-          ),
-      selected = enabled,
-      trailingIcon = {
-        Icon(
-            Icons.Default.Close,
-            contentDescription = "Tags",
-            Modifier.size(InputChipDefaults.AvatarSize))
-      })
+    InputChip(
+        selected = enabled1,
+        onClick = {
+            onDismiss()
+            enabled1 = !enabled1
+        },
+        label = { Text(text) },
+        modifier = Modifier.testTag(text),
+        enabled = true,
+        trailingIcon = {
+            Icon(
+                Icons.Default.Close,
+                contentDescription = "Tags",
+                Modifier.size(InputChipDefaults.AvatarSize)
+            )
+        }
+        )
+
 }
 
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
 fun ProfileCreationPreview() {
-  ProfileCreationUI(
-      sectionList =
-          listOf(
-              BachelorSection.AR,
-              BachelorSection.EL,
-              BachelorSection.GC,
-              BachelorSection.IN,
-              BachelorSection.MA,
-              BachelorSection.MT,
-              BachelorSection.PH,
-              BachelorSection.SV,
-              BachelorSection.SC,
-              BachelorSection.MX),
-      semList =
-          listOf(
-              BachelorSemester.BA1,
-              BachelorSemester.BA2,
-              BachelorSemester.BA3,
-              BachelorSemester.BA4,
-              BachelorSemester.BA5,
-              BachelorSemester.BA6),
-      tagList = listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2")),
-      navAction = NavigationActions(navController = rememberNavController()))
+    ProfileCreationUI(
+        sectionList =
+            listOf(
+                SectionEPFL.AR,
+                SectionEPFL.SV,
+                SectionEPFL.MA,
+                SectionEPFL.IN,
+                SectionEPFL.SC,
+                SectionEPFL.EL
+            ),
+        semList = listOf(SemesterEPFL.BA1, SemesterEPFL.BA2),
+        tagList = listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2")),
+        navAction = NavigationActions(navController = rememberNavController())
+    )
 }
