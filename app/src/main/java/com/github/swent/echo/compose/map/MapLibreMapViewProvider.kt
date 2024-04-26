@@ -11,7 +11,8 @@ import org.maplibre.android.maps.MapView
 
 class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
-    private fun drawMarkers(map: MapLibreMap, events: List<Event>, callback: (Event) -> Unit) {
+    private fun redrawMarkers(map: MapLibreMap, events: List<Event>, callback: (Event) -> Unit) {
+        map.markers.forEach { map.removeMarker(it) }
         events.forEach {
             val markerBuilder = MarkerOptions().setPosition(it.location.toLatLng()).title(it.title)
             map.addMarker(markerBuilder)
@@ -47,6 +48,6 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     }
 
     override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
-        view.getMapAsync { drawMarkers(it, events, callback) }
+        view.getMapAsync { redrawMarkers(it, events, callback) }
     }
 }
