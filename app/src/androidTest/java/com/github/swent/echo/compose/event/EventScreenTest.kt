@@ -1,36 +1,44 @@
 package com.github.swent.echo.compose.event
 
+import androidx.activity.compose.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.lifecycle.SavedStateHandle
+import com.github.swent.echo.MainActivity
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.viewmodels.event.EventViewModel
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.mockk
+import junit.framework.TestCase.assertTrue
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
+@HiltAndroidTest
 class EventScreenTest {
 
     private val STRING_1 = "a test string"
     private val STRING_2 = "another test string"
     private val STRING_3 = "a third test string"
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule(order = 0) val hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1) val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private val mockedAuthenticationService = mockk<AuthenticationService>(relaxed = true)
@@ -40,10 +48,11 @@ class EventScreenTest {
     @Before
     fun init() {
         eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService, savedEventId)
+        hiltRule.inject()
     }
 
     private fun setCompose(eventViewModel: EventViewModel) {
-        composeTestRule.setContent {
+        composeTestRule.activity.setContent {
             EventScreen(
                 stringResource(R.string.create_event_screen_title),
                 onEventSaveButtonPressed = {},
@@ -149,5 +158,18 @@ class EventScreenTest {
         tagButton.assertIsDisplayed()
         tagButton.performClick()
         tagButton.assertDoesNotExist()
+    }
+
+    @Test
+    fun selectTagAddItToTagList() {
+        setCompose(eventViewModel)
+        val addTagButton = composeTestRule.onNodeWithTag("add-tag-button")
+        val tag1 = Tag("1", "Sport", Repository.ROOT_TAG_ID) // first tag of simple repository
+        val firstTag = composeTestRule.onNodeWithTag("${tag1.name}-select-button")
+        addTagButton.performClick()
+        composeTestRule.onNodeWithTag("tag-dialog").assertIsDisplayed()
+        firstTag.performClick()
+        composeTestRule.onNodeWithTag("tag-dialog").assertDoesNotExist()
+        assertTrue(eventViewModel.event.value.tags.contains(tag1))
     }
 }
