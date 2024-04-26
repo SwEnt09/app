@@ -136,7 +136,15 @@ class EventViewModelTest {
     @Test
     fun getOrganizerListReturnsCorrectUsername() {
         val testUserProfile =
-            UserProfile(TEST_EVENT.creator.userId, "testname", null, null, setOf())
+            UserProfile(
+                TEST_EVENT.creator.userId,
+                "testname",
+                null,
+                null,
+                setOf(),
+                setOf(),
+                setOf()
+            )
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
         runBlocking {
             eventViewModel =
@@ -150,7 +158,15 @@ class EventViewModelTest {
     @Test
     fun setOrganizerNameAsEventCreatorSetTheCorrectValue() {
         val testUserProfile =
-            UserProfile(TEST_EVENT.creator.userId, "testname", null, null, setOf())
+            UserProfile(
+                TEST_EVENT.creator.userId,
+                "testname",
+                null,
+                null,
+                setOf(),
+                setOf(),
+                setOf()
+            )
         eventViewModel.setEvent(TEST_EVENT)
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
         eventViewModel.setOrganizer(testUserProfile.name)
@@ -163,7 +179,15 @@ class EventViewModelTest {
     fun setOrganizerNameAsOtherUserThrowError() {
         mockLog()
         val testUserProfile =
-            UserProfile(TEST_EVENT.creator.userId, "testname", null, null, setOf())
+            UserProfile(
+                TEST_EVENT.creator.userId,
+                "testname",
+                null,
+                null,
+                setOf(),
+                setOf(),
+                setOf()
+            )
         eventViewModel.setEvent(TEST_EVENT)
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
         eventViewModel.setOrganizer("anothername")

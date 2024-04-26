@@ -5,6 +5,7 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
+import com.github.swent.echo.data.supabase.entities.AssociationSubscriptionSupabase
 import com.github.swent.echo.data.supabase.entities.EventSupabase
 import com.github.swent.echo.data.supabase.entities.EventSupabaseSetter
 import com.github.swent.echo.data.supabase.entities.EventTagSupabase
@@ -70,7 +71,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                 .from("user_profiles")
                 .select(
                     Columns.raw(
-                        "user_id, name, semester, section, user_tags(tags(tag_id, name, parent_id))"
+                        "user_id, name, semester, section, user_tags(tags(tag_id, name, parent_id)), committee_members(associations(association_id, name, description)), association_subscriptions(associations(association_id, name, description))"
                     )
                 ) {
                     filter { eq("user_id", userId) }
@@ -86,5 +87,11 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         val userTagsSupabase =
             userProfile.tags.map { tag -> UserTagSupabase(userProfile.userId, tag.tagId) }
         supabase.from("user_tags").upsert(userTagsSupabase)
+
+        val associationSubscriptionSupabase =
+            userProfile.associationsSubscriptions.map { association ->
+                AssociationSubscriptionSupabase(userProfile.userId, association.associationId)
+            }
+        supabase.from("association_subscriptions").upsert(associationSubscriptionSupabase)
     }
 }

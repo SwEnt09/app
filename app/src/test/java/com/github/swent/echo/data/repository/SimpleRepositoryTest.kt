@@ -78,7 +78,15 @@ class SimpleRepositoryTest {
     fun `getUserProfile should return the user profile with the given id`() = runBlocking {
         val newUserId = "newUserId"
         val newUserProfile =
-            UserProfile(newUserId, "New User", SemesterEPFL.BA1, SectionEPFL.SC, emptySet())
+            UserProfile(
+                newUserId,
+                "New User",
+                SemesterEPFL.BA1,
+                SectionEPFL.SC,
+                emptySet(),
+                emptySet(),
+                emptySet()
+            )
         simpleRepository.setUserProfile(newUserProfile)
 
         val userProfile = simpleRepository.getUserProfile(newUserId)
