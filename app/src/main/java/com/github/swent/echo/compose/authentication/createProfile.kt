@@ -39,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -51,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.github.swent.echo.ExcludeFromJacocoGeneratedReport
 import com.github.swent.echo.R
@@ -61,7 +59,6 @@ import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.ui.navigation.NavigationActions
-import com.github.swent.echo.viewmodels.authentication.createProfileViewModel
 
 /**
  * A composable function that displays the UI for creating a user profile.
@@ -75,7 +72,7 @@ fun ProfileCreationUI(
     sectionList: List<Section>,
     semList: List<Semester>,
     tagList: List<Tag>,
-    //viewModel: createProfileViewModel = hiltViewModel(),
+    // viewModel: createProfileViewModel = hiltViewModel(),
     navAction: NavigationActions
 ) {
     Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
@@ -148,7 +145,7 @@ fun ProfileCreationUI(
 
             // Save button
             OutlinedButton(
-                onClick = {/* viewModel.profilesave() */},
+                onClick = { /* viewModel.profilesave() */},
                 modifier = Modifier.fillMaxWidth().testTag("Save")
             ) {
                 Text(text = stringResource(id = R.string.profile_creation_save_button))
@@ -230,8 +227,7 @@ fun InputChipFun(
                 Modifier.size(InputChipDefaults.AvatarSize)
             )
         }
-        )
-
+    )
 }
 
 @ExcludeFromJacocoGeneratedReport
