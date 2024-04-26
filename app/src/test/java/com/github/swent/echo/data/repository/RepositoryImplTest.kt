@@ -38,7 +38,8 @@ class RepositoryImplTest {
             0,
             0
         )
-    private val userProfile = UserProfile("testUser", "Dummy User", null, null, emptySet())
+    private val userProfile =
+        UserProfile("testUser", "Dummy User", null, null, emptySet(), emptySet(), emptySet())
 
     @Before
     fun setUp() {
