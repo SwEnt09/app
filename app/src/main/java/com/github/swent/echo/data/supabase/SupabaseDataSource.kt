@@ -8,6 +8,9 @@ import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import com.github.swent.echo.data.supabase.entities.EventSupabase
 import com.github.swent.echo.data.supabase.entities.EventSupabaseSetter
 import com.github.swent.echo.data.supabase.entities.EventTagSupabase
+import com.github.swent.echo.data.supabase.entities.UserProfileSupabase
+import com.github.swent.echo.data.supabase.entities.UserProfileSupabaseSetter
+import com.github.swent.echo.data.supabase.entities.UserTagSupabase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
@@ -72,13 +75,24 @@ class SupabaseDataSource(supabaseClient: SupabaseClient) : RemoteDataSource {
     }
 
     override suspend fun getUserProfile(userId: String): UserProfile {
-        return supabase
-            .from("user_profiles")
-            .select() { filter { eq("user_id", userId) } }
-            .decodeSingle()
+        var userProfile =
+            supabase
+                .from("user_profiles")
+                .select(
+                    Columns.raw("user_id, name, semester, section, user_tags(tags(tag_id, name))")
+                ) {
+                    filter { eq("user_id", userId) }
+                }
+                .decodeSingle<UserProfileSupabase>()
+        return userProfile.toUserProfile()
     }
 
     override suspend fun setUserProfile(userProfile: UserProfile) {
-        supabase.from("user_profiles").upsert(userProfile, onConflict = "user_id")
+        val userProfileSupabaseSetter = UserProfileSupabaseSetter(userProfile)
+        supabase.from("user_profiles").upsert(userProfileSupabaseSetter, onConflict = "user_id")
+
+        val userTagsSupabase =
+            userProfile.tags.map { tag -> UserTagSupabase(userProfile.userId, tag.tagId) }
+        supabase.from("user_tags").upsert(userTagsSupabase)
     }
 }
