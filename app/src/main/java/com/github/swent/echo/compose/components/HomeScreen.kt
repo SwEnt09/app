@@ -43,11 +43,9 @@ fun HomeScreen(navActions: NavigationActions) {
     val overlay = remember { mutableStateOf(Overlay.NONE) }
     val mode = remember { mutableStateOf(MapOrListMode.MAP) }
     val displayEventInfo = remember { mutableStateOf<Event?>(null) }
-
     // Drawer state to open and close the hamburger menu
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
     // Hamburger menu compose
     ModalNavigationDrawer(
         // Content of the hamburger menu
@@ -82,7 +80,6 @@ private fun Content(
         displayEventInfo.value = event
         overlay.value = Overlay.EVENT_INFO_SHEET
     }
-
     val filters =
         FiltersContainer(
             tagId = remember { mutableStateOf("") },
@@ -99,7 +96,7 @@ private fun Content(
 
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode.value == MapOrListMode.LIST) {
-            // TODO add the list view
+            ListDrawer(SAMPLE_EVENTS)
         } else {
             MapDrawer(
                 events = SAMPLE_EVENTS,
@@ -118,7 +115,6 @@ private fun Content(
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info
         }
-
         if (overlay.value == Overlay.SEARCH_SHEET) {
             SearchMenuSheet(
                 filters,
