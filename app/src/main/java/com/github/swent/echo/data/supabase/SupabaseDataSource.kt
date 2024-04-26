@@ -15,9 +15,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 
-class SupabaseDataSource(supabaseClient: SupabaseClient) : RemoteDataSource {
-
-    var supabase = supabaseClient
+class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSource {
 
     override suspend fun getAssociation(associationId: String): Association {
         return supabase
@@ -30,17 +28,16 @@ class SupabaseDataSource(supabaseClient: SupabaseClient) : RemoteDataSource {
         return supabase.from("associations").select().decodeList<Association>()
     }
 
+    companion object {
+        const val QUERY_EVENT =
+            "event_id, user_profiles!public_events_creator_id_fkey(user_id, name), associations(association_id, name, description), title, description, event_tags(tags(tag_id, name, parent_id)), location_name, location_lat, location_long, start_date, end_date, participant_count, max_participants, image_id"
+    }
+
     override suspend fun getEvent(eventId: String): Event {
         var event =
             supabase
                 .from("events")
-                .select(
-                    Columns.raw(
-                        "event_id, user_profiles!public_events_creator_id_fkey(user_id, name), associations(association_id, name, description), title, description, event_tags(tags(tag_id, name)), location_name, location_lat, location_long, start_date, end_date, participant_count, max_participants, image_id"
-                    )
-                ) {
-                    filter { eq("event_id", eventId) }
-                }
+                .select(Columns.raw(QUERY_EVENT)) { filter { eq("event_id", eventId) } }
                 .decodeSingle<EventSupabase>()
         return event.toEvent()
     }
@@ -55,14 +52,7 @@ class SupabaseDataSource(supabaseClient: SupabaseClient) : RemoteDataSource {
 
     override suspend fun getAllEvents(): List<Event> {
         var events =
-            supabase
-                .from("events")
-                .select(
-                    Columns.raw(
-                        "event_id, user_profiles!public_events_creator_id_fkey(user_id, name), associations(association_id, name, description), title, description, event_tags(tags(tag_id, name)), location_name, location_lat, location_long, start_date, end_date, participant_count, max_participants, image_id"
-                    )
-                )
-                .decodeList<EventSupabase>()
+            supabase.from("events").select(Columns.raw(QUERY_EVENT)).decodeList<EventSupabase>()
         return events.map { event -> event.toEvent() }
     }
 
@@ -79,7 +69,9 @@ class SupabaseDataSource(supabaseClient: SupabaseClient) : RemoteDataSource {
             supabase
                 .from("user_profiles")
                 .select(
-                    Columns.raw("user_id, name, semester, section, user_tags(tags(tag_id, name))")
+                    Columns.raw(
+                        "user_id, name, semester, section, user_tags(tags(tag_id, name, parent_id))"
+                    )
                 ) {
                     filter { eq("user_id", userId) }
                 }
