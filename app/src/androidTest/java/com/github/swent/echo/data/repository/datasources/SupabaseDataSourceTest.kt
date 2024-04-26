@@ -58,7 +58,7 @@ class SupabaseDataSourceTest {
             0
         )
     private val userProfile =
-        UserProfile("b0122e3e-82ed-4409-83f9-dbfb9761db20", "Dummy User", null, null, emptySet())
+        UserProfile("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759", "Dummy User", null, null, emptySet())
 
     @Before
     fun instanciate() {
