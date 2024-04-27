@@ -55,7 +55,10 @@ fun EventTagEntry(
                 onClick = { dialogVisible = true }
             ) {
                 val icon = Icons.Filled.Add
-                Icon(imageVector = icon, contentDescription = icon.name)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = stringResource(R.string.edit_event_screen_add_tag_button)
+                )
             }
         }
         if (dialogVisible) {
