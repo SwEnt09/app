@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +36,7 @@ import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuDiscover
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuFilters
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +63,7 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
                 modifier = Modifier.align(Alignment.TopCenter).testTag("search_menu_first_layer")
             ) {
                 // Search bar
-                SearchBarTags(filters.tagId)
+                SearchBarTags(filters.searchEntry)
                 Spacer(modifier = Modifier.width(10.dp))
                 // Switch search mode button
                 SwitchSearchModeButton(searchMode)
@@ -111,10 +113,11 @@ fun stringResourceSearchMode(key: String): Int {
 
 /** Composable for the search bar tags TODO : update this with yoan implementation */
 @Composable
-fun SearchBarTags(searched: MutableState<String>) {
+fun SearchBarTags(searched: MutableStateFlow<String>) {
+
     OutlinedTextField(
         label = { Text(stringResource(id = R.string.search_menu_sheet_search_interests)) },
-        value = searched.value,
+        value = searched.collectAsState().value,
         onValueChange = { searched.value = it },
         modifier = Modifier.width(240.dp).testTag("search_menu_search_bar_tags")
     )

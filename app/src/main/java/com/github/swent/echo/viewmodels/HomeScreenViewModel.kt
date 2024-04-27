@@ -1,6 +1,5 @@
 package com.github.swent.echo.viewmodels
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
@@ -50,16 +49,16 @@ constructor(
     var filtersContainer =
         MutableStateFlow(
             FiltersContainer(
-                tagId = mutableStateOf(""),
-                epflChecked = mutableStateOf(true),
-                sectionChecked = mutableStateOf(true),
-                classChecked = mutableStateOf(true),
-                pendingChecked = mutableStateOf(true),
-                confirmedChecked = mutableStateOf(true),
-                fullChecked = mutableStateOf(true),
-                from = mutableStateOf(ZonedDateTime.now()),
-                to = mutableStateOf(ZonedDateTime.now()),
-                sortBy = mutableStateOf(SortBy.NONE)
+                searchEntry = MutableStateFlow(""),
+                epflChecked = MutableStateFlow(true),
+                sectionChecked = MutableStateFlow(true),
+                classChecked = MutableStateFlow(true),
+                pendingChecked = MutableStateFlow(true),
+                confirmedChecked = MutableStateFlow(true),
+                fullChecked = MutableStateFlow(true),
+                from = MutableStateFlow(ZonedDateTime.now()),
+                to = MutableStateFlow(ZonedDateTime.now()),
+                sortBy = MutableStateFlow(SortBy.NONE)
             )
         )
     private val _profileName =
@@ -88,32 +87,30 @@ constructor(
         }
     }
 
-    suspend fun signOut() {
-        authenticationService.signOut()
+    fun signOut() {
+        viewModelScope.launch { authenticationService.signOut() }
     }
 
     fun refreshFiltersContainer() {
         filterTagList =
             setOf(
-                SAMPLE_TAGS.find { it.name == filtersContainer.value.tagId.value } ?: Tag("0", "0")
+                SAMPLE_TAGS.find { it.name == filtersContainer.value.searchEntry.value }
+                    ?: Tag("0", "0")
             ) // replace with the repository call
         filterEvents()
     }
 
     fun resetFiltersContainer() {
-        filtersContainer.value =
-            FiltersContainer(
-                tagId = mutableStateOf(""),
-                epflChecked = mutableStateOf(true),
-                sectionChecked = mutableStateOf(true),
-                classChecked = mutableStateOf(true),
-                pendingChecked = mutableStateOf(true),
-                confirmedChecked = mutableStateOf(true),
-                fullChecked = mutableStateOf(true),
-                from = mutableStateOf(ZonedDateTime.now()),
-                to = mutableStateOf(ZonedDateTime.now()),
-                sortBy = mutableStateOf(SortBy.NONE)
-            )
+        filtersContainer.value.searchEntry.value = ""
+        filtersContainer.value.epflChecked.value = true
+        filtersContainer.value.sectionChecked.value = true
+        filtersContainer.value.classChecked.value = true
+        filtersContainer.value.pendingChecked.value = true
+        filtersContainer.value.confirmedChecked.value = true
+        filtersContainer.value.fullChecked.value = true
+        filtersContainer.value.from.value = ZonedDateTime.now()
+        filtersContainer.value.to.value = ZonedDateTime.now()
+        filtersContainer.value.sortBy.value = SortBy.NONE
         refreshFiltersContainer()
     }
 

@@ -40,7 +40,7 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
                 navActions,
                 drawerState,
                 scope
-            ) { /* homeScreenViewModel.signOut() */}
+            ) {homeScreenViewModel.signOut()}
         },
         drawerState = drawerState,
         modifier = Modifier.testTag("hamburger_menu"),
