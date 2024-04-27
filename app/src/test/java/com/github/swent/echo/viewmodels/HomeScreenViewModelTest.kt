@@ -58,28 +58,25 @@ class HomeScreenViewModelTest {
 
     @Test
     fun filtersContainerTest() {
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagName.value, "")
-        homeScreenViewModel.filtersContainer.value.tagName.value = "test"
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagName.value, "test")
+        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "")
+        homeScreenViewModel.filtersContainer.value.tagId.value = "test"
+        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "test")
         homeScreenViewModel.resetFiltersContainer()
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagName.value, "")
+        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "")
     }
 
     @Test
     fun filtersContainerRefreshTest() {
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagName.value, "")
-        homeScreenViewModel.filtersContainer.value.tagName.value = "test"
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagName.value, "test")
+        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "")
+        homeScreenViewModel.filtersContainer.value.tagId.value = "test"
+        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "test")
         homeScreenViewModel.refreshFiltersContainer()
         assertEquals(homeScreenViewModel.displayEventList.value.size, 0)
 
-        homeScreenViewModel.filtersContainer.value.tagName.value =
+        homeScreenViewModel.filtersContainer.value.tagId.value =
             "Dungeons and Dragons" // /!\ this is a tag name that needs to be changed when the
         // repository is linked to the viewModel (mock the rep then)
-        assertEquals(
-            homeScreenViewModel.filtersContainer.value.tagName.value,
-            "Dungeons and Dragons"
-        )
+        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "Dungeons and Dragons")
         homeScreenViewModel.refreshFiltersContainer()
         assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
     }

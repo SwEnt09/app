@@ -50,7 +50,7 @@ constructor(
     var filtersContainer =
         MutableStateFlow(
             FiltersContainer(
-                tagName = mutableStateOf(""),
+                tagId = mutableStateOf(""),
                 epflChecked = mutableStateOf(true),
                 sectionChecked = mutableStateOf(true),
                 classChecked = mutableStateOf(true),
@@ -95,8 +95,7 @@ constructor(
     fun refreshFiltersContainer() {
         filterTagList =
             setOf(
-                SAMPLE_TAGS.find { it.name == filtersContainer.value.tagName.value }
-                    ?: Tag("0", "0")
+                SAMPLE_TAGS.find { it.name == filtersContainer.value.tagId.value } ?: Tag("0", "0")
             ) // replace with the repository call
         filterEvents()
     }
@@ -104,7 +103,7 @@ constructor(
     fun resetFiltersContainer() {
         filtersContainer.value =
             FiltersContainer(
-                tagName = mutableStateOf(""),
+                tagId = mutableStateOf(""),
                 epflChecked = mutableStateOf(true),
                 sectionChecked = mutableStateOf(true),
                 classChecked = mutableStateOf(true),
