@@ -1,5 +1,6 @@
 package com.github.swent.echo
 
+import android.content.pm.ActivityInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -7,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -68,5 +70,13 @@ class MainActivityTest {
 
         // The map screen should be displayed
         composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+    }
+
+    @Test
+    fun orientationIsPortraitOrientation() {
+        assertEquals(
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+            composeTestRule.activity.requestedOrientation
+        )
     }
 }
