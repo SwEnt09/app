@@ -51,7 +51,7 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
     ) {
         Scaffold(
             modifier = Modifier.testTag("home_screen"),
-            topBar = { TopAppBar(scope, drawerState, mode) { homeScreenViewModel.switchMode() } },
+            topBar = { TopAppBar(scope, drawerState, mode, homeScreenViewModel::switchMode) },
             floatingActionButton = {
                 SearchButton(onClick = { homeScreenViewModel.setOverlay(Overlay.SEARCH_SHEET) })
             }
@@ -82,7 +82,7 @@ private fun Content(
         } else {
             MapDrawer(
                 events = displayEventList,
-                callback = { event -> homeScreenViewModel.onEventSelected(event) },
+                callback = homeScreenViewModel::onEventSelected,
             )
         }
         // add the tag filtering here
@@ -91,7 +91,7 @@ private fun Content(
                 event = displayEventInfo!!,
                 onJoinButtonPressed = {},
                 onShowPeopleButtonPressed = {},
-                onDismiss = { homeScreenViewModel.clearOverlay() },
+                onDismiss = homeScreenViewModel::clearOverlay,
                 onFullyExtended = {}
             )
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
@@ -102,16 +102,16 @@ private fun Content(
             SearchMenuSheet(
                 filters,
                 onFullyExtended = {},
-                onDismiss = { homeScreenViewModel.clearOverlay() },
-                searchEntryCallback = { s -> homeScreenViewModel.onSearchEntryChanged(s) },
-                epflCallback = { homeScreenViewModel.onEpflCheckedSwitch() },
-                sectionCallback = { homeScreenViewModel.onSectionCheckedSwitch() },
-                classCallback = { homeScreenViewModel.onClassCheckedSwitch() },
-                pendingCallback = { homeScreenViewModel.onPendingCheckedSwitch() },
-                confirmedCallback = { homeScreenViewModel.onConfirmedCheckedSwitch() },
-                fullCallback = { homeScreenViewModel.onFullCheckedSwitch() },
-                sortByCallback = { sortBy -> homeScreenViewModel.onSortByChanged(sortBy) },
-                resetFiltersCallback = { homeScreenViewModel.resetFiltersContainer() }
+                onDismiss = homeScreenViewModel::clearOverlay,
+                searchEntryCallback = homeScreenViewModel::onSearchEntryChanged,
+                epflCallback = homeScreenViewModel::onEpflCheckedSwitch,
+                sectionCallback = homeScreenViewModel::onSectionCheckedSwitch,
+                classCallback = homeScreenViewModel::onClassCheckedSwitch,
+                pendingCallback = homeScreenViewModel::onPendingCheckedSwitch,
+                confirmedCallback = homeScreenViewModel::onConfirmedCheckedSwitch,
+                fullCallback = homeScreenViewModel::onFullCheckedSwitch,
+                sortByCallback = homeScreenViewModel::onSortByChanged,
+                resetFiltersCallback = homeScreenViewModel::resetFiltersContainer
             )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu

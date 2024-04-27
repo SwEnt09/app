@@ -107,7 +107,7 @@ fun SearchMenuFilters(
                     .zIndex(1f)
                     .testTag("sort_by_displayer_container")
         ) {
-            SortByDisplayer(filters.sortBy) { sortByCallback(it) }
+            SortByDisplayer(filters.sortBy, sortByCallback)
         }
         // Checkbox filters
         Row(
