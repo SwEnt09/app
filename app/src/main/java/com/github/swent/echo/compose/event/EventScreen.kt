@@ -95,5 +95,8 @@ fun EventPropertiesFields(eventViewModel: EventViewModel) {
         ) {
             eventViewModel.setEvent(event.copy(endDate = it))
         }
+        EventMaxNumberOfParticipantsEntry(event.maxParticipants) { newMax ->
+            eventViewModel.setEvent(event.copy(maxParticipants = newMax))
+        }
     }
 }

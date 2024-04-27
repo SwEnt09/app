@@ -40,6 +40,7 @@
     <string name="edit_event_screen_delete_tag_button">Delete tag </string>
     <string name="edit_event_screen_add_tag_button">Add tag </string>
     <string name="edit_event_screen_select_location_button">Select location</string>
+    <string name="edit_event_screen_max_participants">Max number of participants</string>
     <string name="event_creation_error_not_logged_in">You are not logged in</string>
     <string name="event_creation_error_end_date_before_start_date">The end date is before the start date</string>
     <string name="event_creation_error_empty_title">The title is empty</string>
