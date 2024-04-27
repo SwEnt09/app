@@ -76,7 +76,7 @@ constructor(
             val userid = authenticationService.getCurrentUserID()
             allEventsList = SAMPLE_EVENTS // repository.getAllEvents()
             allTagSet = SAMPLE_TAGS // repository.getAllTags()
-            filterEvents()
+            refreshFiltersContainer()
         }
     }
 
@@ -190,7 +190,7 @@ constructor(
                             event.tags.any { tag ->
                                 tag.name.lowercase() == "ba6"
                             }) // change when we have the userProfile (take their class and section
-                               // as strings)
+                    // as strings)
                     // filter by status of the event (pending, confirmed, full)
                     &&
                     (_filtersContainer.value.pendingChecked &&
