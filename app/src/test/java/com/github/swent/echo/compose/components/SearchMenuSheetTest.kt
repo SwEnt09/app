@@ -39,18 +39,20 @@ class SearchMenuSheetTest {
             dismissed = 0
             extended = 0
 
-            SearchMenuSheet(filters,
+            SearchMenuSheet(
+                filters,
                 onDismiss = { dismissed++ },
                 onFullyExtended = { extended++ },
-                searchEntryCallback = {callback++},
-                epflCallback = {callback++},
-                sectionCallback = {callback++},
-                classCallback = {callback++},
-                pendingCallback = {callback++},
-                confirmedCallback = {callback++},
-                fullCallback = {callback++},
-                sortByCallback = {callback++},
-                resetFiltersCallback = {callback++})
+                searchEntryCallback = { callback++ },
+                epflCallback = { callback++ },
+                sectionCallback = { callback++ },
+                classCallback = { callback++ },
+                pendingCallback = { callback++ },
+                confirmedCallback = { callback++ },
+                fullCallback = { callback++ },
+                sortByCallback = { callback++ },
+                resetFiltersCallback = { callback++ }
+            )
         }
     }
 
