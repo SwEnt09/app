@@ -40,7 +40,7 @@ constructor(
     val overlay = _overlay.asStateFlow()
     private val _mode = MutableStateFlow<MapOrListMode>(MapOrListMode.MAP)
     val mode = _mode.asStateFlow()
-    private lateinit var filterTagSet: Set<Tag>
+    private var filterTagSet: Set<Tag> = setOf()
     private lateinit var allEventsList: List<Event>
     private lateinit var allTagSet: Set<Tag>
     private val _displayEventList = MutableStateFlow<List<Event>>(listOf())
@@ -58,7 +58,7 @@ constructor(
                 confirmedChecked = true,
                 fullChecked = true,
                 from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
+                to = ZonedDateTime.now().plusDays(365),
                 sortBy = SortBy.NONE
             )
         )
@@ -74,17 +74,6 @@ constructor(
     init {
         viewModelScope.launch {
             val userid = authenticationService.getCurrentUserID()
-            filterTagSet =
-                if (userid == null) {
-                    // the user is not logged in, display the default events on map
-                    // TODO add a default tag list
-                    repository.getAllTags().toSet()
-                } else {
-                    // the user is logged in, display the events based on the users tags on map
-                    // repository.getUserProfile(userid).tags
-                    setOf(SAMPLE_TAGS.first())
-                    // SAMPLE_TAGS
-                }
             allEventsList = SAMPLE_EVENTS // repository.getAllEvents()
             allTagSet = SAMPLE_TAGS // repository.getAllTags()
             filterEvents()
@@ -155,10 +144,11 @@ constructor(
     }
 
     fun refreshFiltersContainer() {
+        val listOfWords = _filtersContainer.value.searchEntry.lowercase().split(" ")
         filterTagSet =
-            setOf(
-                SAMPLE_TAGS.find { it.name == filtersContainer.value.searchEntry } ?: Tag("0", "0")
-            ) // replace with the repository call
+            allTagSet
+                .filter { tag -> listOfWords.any { word -> tag.name.lowercase().contains(word) } }
+                .toSet()
         filterEvents()
     }
 
@@ -173,7 +163,7 @@ constructor(
                 confirmedChecked = true,
                 fullChecked = true,
                 from = ZonedDateTime.now(),
-                to = ZonedDateTime.now(),
+                to = ZonedDateTime.now().plusDays(365),
                 sortBy = SortBy.NONE
             )
         refreshFiltersContainer()
@@ -184,7 +174,32 @@ constructor(
     private fun filterEvents() {
         _displayEventList.value =
             allEventsList.filter { event ->
+                // filter by tags
                 event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
+                // filter by time
+                &&
+                    event.startDate.isAfter(_filtersContainer.value.from) &&
+                    event.endDate.isBefore(_filtersContainer.value.to)
+                    // filter by scope of the event
+                    &&
+                    (_filtersContainer.value.epflChecked &&
+                        event.tags.any { tag -> tag.name.lowercase() == "epfl" } ||
+                        _filtersContainer.value.sectionChecked &&
+                            event.tags.any { tag -> tag.name.lowercase() == "in" } ||
+                        _filtersContainer.value.classChecked &&
+                            event.tags.any { tag ->
+                                tag.name.lowercase() == "ba6"
+                            }) // change when we have the userProfile (take their class and section
+                               // as strings)
+                    // filter by status of the event (pending, confirmed, full)
+                    &&
+                    (_filtersContainer.value.pendingChecked &&
+                        event.participantCount < event.maxParticipants * 0.5 ||
+                        _filtersContainer.value.confirmedChecked &&
+                            (event.participantCount >= event.maxParticipants * 0.5 &&
+                                event.participantCount < event.maxParticipants) ||
+                        _filtersContainer.value.fullChecked &&
+                            event.participantCount == event.maxParticipants)
             }
     }
 

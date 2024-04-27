@@ -19,9 +19,9 @@ val SAMPLE_EVENTS: List<Event> =
             title = "Bowling Event",
             description = "",
             location = Location("Location 1", MAP_CENTER.toGeoPoint()),
-            startDate = ZonedDateTime.now(),
-            endDate = ZonedDateTime.now(),
-            tags = setOf(Tag("64", "Bowling"), Tag("1", "Sport")),
+            startDate = ZonedDateTime.now().plusDays(2),
+            endDate = ZonedDateTime.now().plusDays(3),
+            tags = setOf(Tag("64", "Bowling"), Tag("1", "Sport"), Tag("65", "EPFL")),
             participantCount = 5,
             maxParticipants = 8,
             imageId = 0
@@ -34,9 +34,9 @@ val SAMPLE_EVENTS: List<Event> =
             description = "",
             location =
                 Location("Location 2", MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 0.0)),
-            startDate = ZonedDateTime.now(),
-            endDate = ZonedDateTime.now(),
-            tags = setOf(Tag("63", "Swimming"), Tag("1", "Sport")),
+            startDate = ZonedDateTime.now().plusDays(3),
+            endDate = ZonedDateTime.now().plusDays(6),
+            tags = setOf(Tag("63", "Swimming"), Tag("1", "Sport"), Tag("66", "IN")),
             participantCount = 4,
             maxParticipants = 30,
             imageId = 0
@@ -52,10 +52,10 @@ val SAMPLE_EVENTS: List<Event> =
                     "Third lamppost on the right",
                     MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 90.0)
                 ),
-            startDate = ZonedDateTime.now(),
+            startDate = ZonedDateTime.now().plusDays(4),
             endDate = ZonedDateTime.now().plusDays(200),
-            tags = setOf(Tag("62", "Badminton"), Tag("1", "Sport")),
-            participantCount = 1,
+            tags = setOf(Tag("62", "Badminton"), Tag("1", "Sport"), Tag("67", "BA6")),
+            participantCount = 200,
             maxParticipants = 200,
             imageId = 0
         ),
@@ -67,9 +67,16 @@ val SAMPLE_EVENTS: List<Event> =
             description = "Come play D&D with us ! We have cookies.",
             location =
                 Location("Baldur's Gate", MAP_CENTER.toGeoPoint().destinationPoint(500.0, 30.0)),
-            startDate = ZonedDateTime.now(),
-            endDate = ZonedDateTime.now().plusDays(1),
-            tags = setOf(Tag("60", "Dungeons and Dragons"), Tag("61", "Games")),
+            startDate = ZonedDateTime.now().plusDays(1),
+            endDate = ZonedDateTime.now().plusDays(2),
+            tags =
+                setOf(
+                    Tag("60", "Dungeons and Dragons"),
+                    Tag("61", "Games"),
+                    Tag("65", "EPFL"),
+                    Tag("66", "IN"),
+                    Tag("67", "BA6")
+                ),
             participantCount = 3,
             maxParticipants = 5,
             imageId = 0

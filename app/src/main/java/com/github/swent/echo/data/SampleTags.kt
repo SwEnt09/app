@@ -67,7 +67,10 @@ val SAMPLE_TAGS: Set<Tag> =
         Tag("61", "Games"),
         Tag("62", "Badminton"),
         Tag("63", "Swimming"),
-        Tag("64", "Bowling")
+        Tag("64", "Bowling"),
+        Tag("65", "EPFL"),
+        Tag("66", "IN"),
+        Tag("67", "BA6"),
     )
 
 val ONE_TAG = Tag("60", "Dungeons and Dragons")
