@@ -46,6 +46,8 @@ fun HamburgerMenuDrawerSheet(
     navActions: NavigationActions,
     drawerState: DrawerState,
     scope: CoroutineScope,
+    profileName: String,
+    profileClass: String,
     onSignOutPressed: () -> Unit
 ) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -131,12 +133,12 @@ fun HamburgerMenuDrawerSheet(
                 Row(modifier = Modifier.padding(8.dp).testTag("profile_info")) {
                     // TO-DO: Replace with actual name and class
                     Text(
-                        text = "John Doe",
+                        text = profileName,
                         modifier = Modifier.testTag("profile_name"),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "IN - BA6",
+                        text = profileClass,
                         color = Color.White.copy(alpha = 0.5f),
                         modifier = Modifier.testTag("profile_class")
                     )
