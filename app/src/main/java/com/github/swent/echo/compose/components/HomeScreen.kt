@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.ui.navigation.NavigationActions
+import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.HomeScreenViewModel
 import com.github.swent.echo.viewmodels.MapOrListMode
 import com.github.swent.echo.viewmodels.Overlay
@@ -32,12 +33,16 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
     val scope = rememberCoroutineScope()
     val mode by homeScreenViewModel.mode.collectAsState()
 
+    val profileName by homeScreenViewModel.profileName.collectAsState()
+    val profileClass by homeScreenViewModel.profileClass.collectAsState()
+
     // Hamburger menu compose
     ModalNavigationDrawer(
         // Content of the hamburger menu
         drawerContent = {
-            HamburgerMenuDrawerSheet(navActions, drawerState, scope) {
+            HamburgerMenuDrawerSheet(navActions, drawerState, scope, profileName, profileClass) {
                 homeScreenViewModel.signOut()
+                navActions.navigateTo(Routes.LOGIN)
             }
         },
         drawerState = drawerState,
