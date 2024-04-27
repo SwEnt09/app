@@ -191,7 +191,7 @@ constructor(
                                 event.tags.any { tag ->
                                     tag.name.lowercase() == "ba6"
                                 }) // change when we have the userProfile (take their class and
-                                   // section
+                        // section
                         // as strings)
                         // filter by status of the event (pending, confirmed, full)
                         &&
