@@ -1,5 +1,6 @@
 package com.github.swent.echo
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
 
         // This happens so quickly, I doesn't make sense to show a loading screen.
         runBlocking { authenticationService.initialize() }
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         setContent {
             EchoTheme {
                 // A surface container using the 'background' color from the theme
