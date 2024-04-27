@@ -58,25 +58,25 @@ class HomeScreenViewModelTest {
 
     @Test
     fun filtersContainerTest() {
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "")
-        homeScreenViewModel.filtersContainer.value.tagId.value = "test"
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "test")
+        assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "")
+        homeScreenViewModel.onSearchEntryChanged("test")
+        assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "test")
         homeScreenViewModel.resetFiltersContainer()
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "")
+        assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "")
     }
 
     @Test
     fun filtersContainerRefreshTest() {
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "")
-        homeScreenViewModel.filtersContainer.value.tagId.value = "test"
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "test")
+        assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "")
+        homeScreenViewModel.onSearchEntryChanged("test")
+        assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "test")
         homeScreenViewModel.refreshFiltersContainer()
         assertEquals(homeScreenViewModel.displayEventList.value.size, 0)
 
-        homeScreenViewModel.filtersContainer.value.tagId.value =
-            "Dungeons and Dragons" // /!\ this is a tag name that needs to be changed when the
+        homeScreenViewModel.onSearchEntryChanged("Dungeons and Dragons")
+        // /!\ this is a tag name that needs to be changed when the
         // repository is linked to the viewModel (mock the rep then)
-        assertEquals(homeScreenViewModel.filtersContainer.value.tagId.value, "Dungeons and Dragons")
+        assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "Dungeons and Dragons")
         homeScreenViewModel.refreshFiltersContainer()
         assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
     }
@@ -111,5 +111,32 @@ class HomeScreenViewModelTest {
             )
         )
         assertEquals(homeScreenViewModel.displayEventInfo.value?.title, "Bowling Event")
+    }
+
+    @Test
+    fun callbacksTest(){
+        val v = homeScreenViewModel.filtersContainer.value.epflChecked
+        homeScreenViewModel.onEpflCheckedSwitch()
+        assertEquals(homeScreenViewModel.filtersContainer.value.epflChecked, !v)
+
+        val v2 = homeScreenViewModel.filtersContainer.value.sectionChecked
+        homeScreenViewModel.onSectionCheckedSwitch()
+        assertEquals(homeScreenViewModel.filtersContainer.value.sectionChecked, !v2)
+
+        val v3 = homeScreenViewModel.filtersContainer.value.classChecked
+        homeScreenViewModel.onClassCheckedSwitch()
+        assertEquals(homeScreenViewModel.filtersContainer.value.classChecked, !v3)
+
+        val v4 = homeScreenViewModel.filtersContainer.value.pendingChecked
+        homeScreenViewModel.onPendingCheckedSwitch()
+        assertEquals(homeScreenViewModel.filtersContainer.value.pendingChecked, !v4)
+
+        val v5 = homeScreenViewModel.filtersContainer.value.confirmedChecked
+        homeScreenViewModel.onConfirmedCheckedSwitch()
+        assertEquals(homeScreenViewModel.filtersContainer.value.confirmedChecked, !v5)
+
+        val v6 = homeScreenViewModel.filtersContainer.value.fullChecked
+        homeScreenViewModel.onFullCheckedSwitch()
+        assertEquals(homeScreenViewModel.filtersContainer.value.fullChecked, !v6)
     }
 }
