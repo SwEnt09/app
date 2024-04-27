@@ -21,12 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.github.swent.echo.R
+import com.github.swent.echo.viewmodels.MapOrListMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(scope: CoroutineScope, drawerState: DrawerState, mode: MutableState<MapOrListMode>) {
+fun TopAppBar(scope: CoroutineScope, drawerState: DrawerState, mode: MapOrListMode, switchMode: () -> Unit) {
     // Scroll behavior for the top app bar, makes it pinned
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -53,17 +54,13 @@ fun TopAppBar(scope: CoroutineScope, drawerState: DrawerState, mode: MutableStat
         actions = { // mode switch icon
             IconButton(
                 onClick = {
-                    if (mode.value == MapOrListMode.MAP) {
-                        mode.value = MapOrListMode.LIST
-                    } else {
-                        mode.value = MapOrListMode.MAP
-                    }
+                    switchMode()
                 },
                 modifier = Modifier.testTag("list_map_mode_button")
             ) {
                 Icon(
                     painter =
-                        if (mode.value == MapOrListMode.MAP) {
+                        if (mode == MapOrListMode.MAP) {
                             rememberVectorPainter(image = Icons.Filled.List)
                         } else {
                             painterResource(id = R.drawable.map_icon)
