@@ -40,7 +40,7 @@ fun AppNavigationHost(
 
         composable(Routes.MAP.name) {
             // placeholder for the map composable
-            HomeScreen(navActions)
+            HomeScreen(homeScreenViewModel = hiltViewModel(), navActions = navActions)
         }
 
         composable(Routes.CREATE_EVENT.name) {

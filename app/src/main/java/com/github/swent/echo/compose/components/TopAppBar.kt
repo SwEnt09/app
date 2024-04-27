@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.testTag
@@ -27,7 +26,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(scope: CoroutineScope, drawerState: DrawerState, mode: MapOrListMode, switchMode: () -> Unit) {
+fun TopAppBar(
+    scope: CoroutineScope,
+    drawerState: DrawerState,
+    mode: MapOrListMode,
+    switchMode: () -> Unit
+) {
     // Scroll behavior for the top app bar, makes it pinned
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -53,9 +57,7 @@ fun TopAppBar(scope: CoroutineScope, drawerState: DrawerState, mode: MapOrListMo
         },
         actions = { // mode switch icon
             IconButton(
-                onClick = {
-                    switchMode()
-                },
+                onClick = { switchMode() },
                 modifier = Modifier.testTag("list_map_mode_button")
             ) {
                 Icon(

@@ -8,60 +8,52 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
-import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.map.MapDrawer
-import com.github.swent.echo.data.SAMPLE_EVENTS
-import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.ui.navigation.NavigationActions
-import java.time.ZonedDateTime
+import com.github.swent.echo.viewmodels.HomeScreenViewModel
+import com.github.swent.echo.viewmodels.MapOrListMode
+import com.github.swent.echo.viewmodels.Overlay
 
-enum class Overlay {
-    NONE,
-    EVENT_INFO_SHEET,
-    SEARCH_SHEET
-}
-
-enum class MapOrListMode {
-    MAP,
-    LIST
-}
 /**
  * The scaffold for the home screen. contains the top bar, the bottom sheet if an event is selected,
  * the hamburger menu when the button is clicked on the top bar, the search bottom sheet, the list
  * view, and the map.
  */
 @Composable
-fun HomeScreen(navActions: NavigationActions) {
-    // State for the MapOrListMode
-    val overlay = remember { mutableStateOf(Overlay.NONE) }
-    val mode = remember { mutableStateOf(MapOrListMode.MAP) }
-    val displayEventInfo = remember { mutableStateOf<Event?>(null) }
+fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenViewModel) {
+
     // Drawer state to open and close the hamburger menu
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val mode by homeScreenViewModel.mode.collectAsState()
+
     // Hamburger menu compose
     ModalNavigationDrawer(
         // Content of the hamburger menu
-        drawerContent = { HamburgerMenuDrawerSheet(navActions, drawerState, scope, {}) },
+        drawerContent = {
+            HamburgerMenuDrawerSheet(
+                navActions,
+                drawerState,
+                scope
+            ) { /* homeScreenViewModel.signOut() */}
+        },
         drawerState = drawerState,
         modifier = Modifier.testTag("hamburger_menu"),
         gesturesEnabled = drawerState.isOpen
     ) {
         Scaffold(
             modifier = Modifier.testTag("home_screen"),
-            topBar = { TopAppBar(scope, drawerState, mode) },
+            topBar = { TopAppBar(scope, drawerState, mode) { homeScreenViewModel.switchMode() } },
             floatingActionButton = {
-                SearchButton(onClick = { overlay.value = Overlay.SEARCH_SHEET })
+                SearchButton(onClick = { homeScreenViewModel.setOverlay(Overlay.SEARCH_SHEET) })
             }
         ) { paddingValues ->
-            Content(paddingValues, overlay, mode, navActions, displayEventInfo)
+            Content(paddingValues, navActions, homeScreenViewModel)
         }
     }
 }
@@ -69,57 +61,45 @@ fun HomeScreen(navActions: NavigationActions) {
 @Composable
 private fun Content(
     paddingValues: PaddingValues,
-    overlay: MutableState<Overlay>,
-    mode: MutableState<MapOrListMode>,
     navActions: NavigationActions,
-    displayEventInfo: MutableState<Event?>
+    homeScreenViewModel: HomeScreenViewModel
 ) {
-    fun onEventSelected(
-        event: Event,
-    ) {
-        displayEventInfo.value = event
-        overlay.value = Overlay.EVENT_INFO_SHEET
-    }
-    val filters =
-        FiltersContainer(
-            tagId = remember { mutableStateOf("") },
-            epflChecked = remember { mutableStateOf(true) },
-            sectionChecked = remember { mutableStateOf(true) },
-            classChecked = remember { mutableStateOf(true) },
-            pendingChecked = remember { mutableStateOf(true) },
-            confirmedChecked = remember { mutableStateOf(true) },
-            fullChecked = remember { mutableStateOf(true) },
-            from = remember { mutableStateOf(ZonedDateTime.now()) },
-            to = remember { mutableStateOf(ZonedDateTime.now()) },
-            sortBy = remember { mutableStateOf(SortBy.NONE) }
-        )
+
+    val mode by homeScreenViewModel.mode.collectAsState()
+    val overlay by homeScreenViewModel.overlay.collectAsState()
+
+    val displayEventInfo by homeScreenViewModel.displayEventInfo.collectAsState()
+    val displayEventList by homeScreenViewModel.displayEventList.collectAsState()
+
+    val filters by homeScreenViewModel.filtersContainer.collectAsState()
 
     Box(modifier = Modifier.padding(paddingValues)) {
-        if (mode.value == MapOrListMode.LIST) {
-            ListDrawer(SAMPLE_EVENTS)
+        if (mode == MapOrListMode.LIST) {
+            ListDrawer(displayEventList)
         } else {
             MapDrawer(
-                events = SAMPLE_EVENTS,
-                callback = { event -> onEventSelected(event) },
+                events = displayEventList,
+                callback = { event -> homeScreenViewModel.onEventSelected(event) },
             )
         }
         // add the tag filtering here
-        if (overlay.value == Overlay.EVENT_INFO_SHEET && displayEventInfo.value != null) {
+        if (overlay == Overlay.EVENT_INFO_SHEET && displayEventInfo != null) {
             EventInfoSheet(
-                event = displayEventInfo.value!!,
+                event = displayEventInfo!!,
                 onJoinButtonPressed = {},
                 onShowPeopleButtonPressed = {},
-                onDismiss = { overlay.value = Overlay.NONE },
+                onDismiss = { homeScreenViewModel.clearOverlay() },
                 onFullyExtended = {}
             )
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info
         }
-        if (overlay.value == Overlay.SEARCH_SHEET) {
+
+        if (overlay == Overlay.SEARCH_SHEET) {
             SearchMenuSheet(
                 filters,
                 onFullyExtended = {},
-                onDismiss = { overlay.value = Overlay.NONE }
+                onDismiss = { homeScreenViewModel.clearOverlay() }
             )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu

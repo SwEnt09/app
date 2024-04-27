@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.ui.navigation.NavigationActions
@@ -29,7 +30,9 @@ class HomeScreenTest {
         hiltRule.inject()
 
         navActions = mockk(relaxed = true)
-        composeTestRule.activity.setContent { HomeScreen(navActions) }
+        composeTestRule.activity.setContent {
+            HomeScreen(homeScreenViewModel = hiltViewModel(), navActions = navActions)
+        }
     }
 
     @Test
