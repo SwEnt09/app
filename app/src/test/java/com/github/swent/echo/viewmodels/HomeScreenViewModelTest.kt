@@ -114,7 +114,7 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun callbacksTest(){
+    fun callbacksTest() {
         val v = homeScreenViewModel.filtersContainer.value.epflChecked
         homeScreenViewModel.onEpflCheckedSwitch()
         assertEquals(homeScreenViewModel.filtersContainer.value.epflChecked, !v)
