@@ -1,7 +1,5 @@
 package com.github.swent.echo.compose.components
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -22,35 +20,37 @@ class SearchMenuSheetTest {
     private var extended = 0
     private var filters =
         FiltersContainer(
-            tagId = mutableStateOf(""),
-            epflChecked = mutableStateOf(true),
-            sectionChecked = mutableStateOf(true),
-            classChecked = mutableStateOf(true),
-            pendingChecked = mutableStateOf(true),
-            confirmedChecked = mutableStateOf(true),
-            fullChecked = mutableStateOf(true),
-            from = mutableStateOf(ZonedDateTime.now()),
-            to = mutableStateOf(ZonedDateTime.now()),
-            sortBy = mutableStateOf(SortBy.NONE)
+            searchEntry = "",
+            epflChecked = true,
+            sectionChecked = true,
+            classChecked = true,
+            pendingChecked = true,
+            confirmedChecked = true,
+            fullChecked = true,
+            from = ZonedDateTime.now(),
+            to = ZonedDateTime.now().plusDays(365),
+            sortBy = SortBy.NONE
         )
+    private var callback = 0
 
     @Before
     fun setUp() {
         composeTestRule.setContent {
             dismissed = 0
             extended = 0
-            filters.tagId = remember { mutableStateOf("") }
-            filters.epflChecked = remember { mutableStateOf(true) }
-            filters.sectionChecked = remember { mutableStateOf(true) }
-            filters.classChecked = remember { mutableStateOf(true) }
-            filters.pendingChecked = remember { mutableStateOf(true) }
-            filters.confirmedChecked = remember { mutableStateOf(true) }
-            filters.fullChecked = remember { mutableStateOf(true) }
-            filters.from = remember { mutableStateOf(ZonedDateTime.now()) }
-            filters.to = remember { mutableStateOf(ZonedDateTime.now()) }
-            filters.sortBy = remember { mutableStateOf(SortBy.NONE) }
 
-            SearchMenuSheet(filters, onDismiss = { dismissed++ }, onFullyExtended = { extended++ })
+            SearchMenuSheet(filters,
+                onDismiss = { dismissed++ },
+                onFullyExtended = { extended++ },
+                searchEntryCallback = {callback++},
+                epflCallback = {callback++},
+                sectionCallback = {callback++},
+                classCallback = {callback++},
+                pendingCallback = {callback++},
+                confirmedCallback = {callback++},
+                fullCallback = {callback++},
+                sortByCallback = {callback++},
+                resetFiltersCallback = {callback++})
         }
     }
 

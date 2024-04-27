@@ -1,11 +1,10 @@
 package com.github.swent.echo.compose.components.searchmenu
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Assert.assertEquals
 import java.time.ZonedDateTime
 import org.junit.Before
 import org.junit.Rule
@@ -18,34 +17,26 @@ class SearchMenuFiltersTest {
 
     private var filters =
         FiltersContainer(
-            tagId = mutableStateOf(""),
-            epflChecked = mutableStateOf(true),
-            sectionChecked = mutableStateOf(true),
-            classChecked = mutableStateOf(true),
-            pendingChecked = mutableStateOf(true),
-            confirmedChecked = mutableStateOf(true),
-            fullChecked = mutableStateOf(true),
-            from = mutableStateOf(ZonedDateTime.now()),
-            to = mutableStateOf(ZonedDateTime.now()),
-            sortBy = mutableStateOf(SortBy.NONE)
+            searchEntry = "",
+            epflChecked = true,
+            sectionChecked = true,
+            classChecked = true,
+            pendingChecked = true,
+            confirmedChecked = true,
+            fullChecked = true,
+            from = ZonedDateTime.now(),
+            to = ZonedDateTime.now().plusDays(365),
+            sortBy = SortBy.NONE
         )
     private var checkboxes = listOf("EPFL", "Section", "Class", "Pending", "Confirmed", "Full")
+    private var callback = 0
 
     @Before
     fun setUp() {
         composeTestRule.setContent {
-            filters.tagId = remember { mutableStateOf("") }
-            filters.epflChecked = remember { mutableStateOf(true) }
-            filters.sectionChecked = remember { mutableStateOf(true) }
-            filters.classChecked = remember { mutableStateOf(true) }
-            filters.pendingChecked = remember { mutableStateOf(true) }
-            filters.confirmedChecked = remember { mutableStateOf(true) }
-            filters.fullChecked = remember { mutableStateOf(true) }
-            filters.from = remember { mutableStateOf(ZonedDateTime.now()) }
-            filters.to = remember { mutableStateOf(ZonedDateTime.now()) }
-            filters.sortBy = remember { mutableStateOf(SortBy.NONE) }
 
-            SearchMenuFilters(filters)
+
+            SearchMenuFilters(filters, { callback++ }, { callback++ }, { callback++ }, { callback++ }, { callback++ }, { callback++ }, { callback++ })
         }
     }
 
@@ -85,18 +76,8 @@ class SearchMenuFiltersTest {
     @Test
     fun testCheckBoxesCheckedAndUncheckedWhenClicked() {
         checkboxes.forEach { composeTestRule.onNodeWithTag("${it}_checkbox").performClick() }
-        assert(!filters.epflChecked.value)
-        assert(!filters.sectionChecked.value)
-        assert(!filters.classChecked.value)
-        assert(!filters.pendingChecked.value)
-        assert(!filters.confirmedChecked.value)
-        assert(!filters.fullChecked.value)
+        assertEquals(callback, 6)
         checkboxes.forEach { composeTestRule.onNodeWithTag("${it}_checkbox").performClick() }
-        assert(filters.epflChecked.value)
-        assert(filters.sectionChecked.value)
-        assert(filters.classChecked.value)
-        assert(filters.pendingChecked.value)
-        assert(filters.confirmedChecked.value)
-        assert(filters.fullChecked.value)
+        assertEquals(callback, 12)
     }
 }
