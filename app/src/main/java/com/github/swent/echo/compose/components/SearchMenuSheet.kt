@@ -96,10 +96,9 @@ fun SearchMenuSheet(
                         classCallback,
                         pendingCallback,
                         confirmedCallback,
-                        fullCallback
-                    ) { sortBy ->
-                        sortByCallback(sortBy)
-                    }
+                        fullCallback,
+                        sortByCallback
+                    )
                 } else {
                     SearchMenuDiscover()
                 }
@@ -140,7 +139,7 @@ fun SearchBarTags(searched: String, searchEntryCallback: (String) -> Unit) {
     OutlinedTextField(
         label = { Text(stringResource(id = R.string.search_menu_sheet_search_interests)) },
         value = searched,
-        onValueChange = { searchEntryCallback(it) },
+        onValueChange = searchEntryCallback,
         modifier = Modifier.width(240.dp).testTag("search_menu_search_bar_tags")
     )
 }
@@ -180,7 +179,7 @@ fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
 @Composable
 fun ResetFiltersButton(callback: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth().testTag("search_menu_reset_filters_button")) {
-        Button(onClick = { callback() }, modifier = Modifier.align(Alignment.Center)) {
+        Button(onClick = callback, modifier = Modifier.align(Alignment.Center)) {
             Text(stringResource(id = R.string.search_menu_sheet_reset_filters))
         }
     }

@@ -173,34 +173,48 @@ constructor(
 
     private fun filterEvents() {
         _displayEventList.value =
-            allEventsList.filter { event ->
-                // filter by tags
-                event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
-                // filter by time
-                &&
-                    event.startDate.isAfter(_filtersContainer.value.from) &&
-                    event.endDate.isBefore(_filtersContainer.value.to)
-                    // filter by scope of the event
+            allEventsList
+                .filter { event ->
+                    // filter by tags
+                    event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
+                    // filter by time
                     &&
-                    (_filtersContainer.value.epflChecked &&
-                        event.tags.any { tag -> tag.name.lowercase() == "epfl" } ||
-                        _filtersContainer.value.sectionChecked &&
-                            event.tags.any { tag -> tag.name.lowercase() == "in" } ||
-                        _filtersContainer.value.classChecked &&
-                            event.tags.any { tag ->
-                                tag.name.lowercase() == "ba6"
-                            }) // change when we have the userProfile (take their class and section
-                    // as strings)
-                    // filter by status of the event (pending, confirmed, full)
-                    &&
-                    (_filtersContainer.value.pendingChecked &&
-                        event.participantCount < event.maxParticipants * 0.5 ||
-                        _filtersContainer.value.confirmedChecked &&
-                            (event.participantCount >= event.maxParticipants * 0.5 &&
-                                event.participantCount < event.maxParticipants) ||
-                        _filtersContainer.value.fullChecked &&
-                            event.participantCount == event.maxParticipants)
-            }
+                        event.startDate.isAfter(_filtersContainer.value.from) &&
+                        event.endDate.isBefore(_filtersContainer.value.to)
+                        // filter by scope of the event
+                        &&
+                        (_filtersContainer.value.epflChecked &&
+                            event.tags.any { tag -> tag.name.lowercase() == "epfl" } ||
+                            _filtersContainer.value.sectionChecked &&
+                                event.tags.any { tag -> tag.name.lowercase() == "in" } ||
+                            _filtersContainer.value.classChecked &&
+                                event.tags.any { tag ->
+                                    tag.name.lowercase() == "ba6"
+                                }) // change when we have the userProfile (take their class and
+                                   // section
+                        // as strings)
+                        // filter by status of the event (pending, confirmed, full)
+                        &&
+                        (_filtersContainer.value.pendingChecked &&
+                            event.participantCount < event.maxParticipants * 0.5 ||
+                            _filtersContainer.value.confirmedChecked &&
+                                (event.participantCount >= event.maxParticipants * 0.5 &&
+                                    event.participantCount < event.maxParticipants) ||
+                            _filtersContainer.value.fullChecked &&
+                                event.participantCount == event.maxParticipants)
+                }
+                .sortedBy { event ->
+                    when (_filtersContainer.value.sortBy) {
+                        SortBy.DATE_ASC -> event.startDate
+                        SortBy.DATE_DESC -> event.startDate
+                        else -> event.startDate
+                    }
+                }
+
+        // reverse the list if the sort by is descending
+        if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) {
+            _displayEventList.value = _displayEventList.value.reversed()
+        }
     }
 
     /** Displays the event info sheet for the given event. Set the overlay to EVENT_INFO_SHEET. */
