@@ -204,11 +204,12 @@ constructor(
                                 event.participantCount == event.maxParticipants)
                 }
                 .sortedBy { event ->
-                    when (_filtersContainer.value.sortBy) {
+                    event.startDate
+                    /*when (_filtersContainer.value.sortBy) {
                         SortBy.DATE_ASC -> event.startDate
-                        SortBy.DATE_DESC -> event.startDate
-                        else -> event.startDate
-                    }
+                        SortBy.DATE_DESC ->
+                        else ->
+                    }*/
                 }
 
         // reverse the list if the sort by is descending
