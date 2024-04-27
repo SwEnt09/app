@@ -1,6 +1,8 @@
 package com.github.swent.echo.data.model
 
-interface Semester
+interface Semester {
+    val name: String
+}
 
 enum class SemesterEPFL : Semester {
     BA1,
