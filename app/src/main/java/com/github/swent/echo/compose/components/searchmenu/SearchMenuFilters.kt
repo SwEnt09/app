@@ -20,7 +20,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.github.swent.echo.R
 import java.time.ZonedDateTime
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /** Composable to display the filters sheet */
 @Composable
@@ -119,7 +120,7 @@ fun SearchMenuFilters(filters: FiltersContainer) {
 data class CheckBoxItems(
     val icon: ImageVector,
     val contentDescription: String,
-    var checked: MutableState<Boolean>
+    var checked: MutableStateFlow<Boolean>,
 )
 
 /** Composable to display the checkboxes in the correct format */
@@ -132,8 +133,8 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
             Row(modifier = Modifier.testTag("${checkBoxItem.contentDescription}_checkbox_row")) {
                 Icon(checkBoxItem.icon, contentDescription = checkBoxItem.contentDescription)
                 Checkbox(
-                    checked = checkBoxItem.checked.value,
-                    onCheckedChange = { checkBoxItem.checked.value = !checkBoxItem.checked.value },
+                    checked = checkBoxItem.checked.collectAsState().value,
+                    onCheckedChange = { checkBoxItem.checked.value = it },
                     modifier =
                         Modifier.height(25.dp)
                             .width(25.dp)
@@ -148,7 +149,7 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
 
 /** Composable to display the dropdown menu for the sort by filter */
 @Composable
-fun SortByDisplayer(sortBy: MutableState<SortBy>) {
+fun SortByDisplayer(sortBy: MutableStateFlow<SortBy>) {
     var expanded by remember { mutableStateOf(false) }
 
     Column {
@@ -158,9 +159,12 @@ fun SortByDisplayer(sortBy: MutableState<SortBy>) {
             modifier = Modifier.width(170.dp).testTag("sort_by_button")
         ) {
             Text(
-                if (sortBy.value == SortBy.NONE)
+                if (sortBy.collectAsState().value == SortBy.NONE)
                     stringResource(id = R.string.search_menu_filters_sort_by)
-                else stringResource(id = stringResourceSortBy(sortBy.value.stringKey))
+                else
+                    stringResource(
+                        id = stringResourceSortBy(sortBy.collectAsState().value.stringKey)
+                    )
             )
             Icon(
                 if (!expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
@@ -190,4 +194,4 @@ fun SortByDisplayer(sortBy: MutableState<SortBy>) {
  * TODO : Implement it, but I spend a bit too much time
  *   on non-working solution so leaving it for next sprint
  */
-@Composable fun DateInputSample(dateOutput: MutableState<ZonedDateTime>) {}
+@Composable fun DateInputSample(dateOutput: MutableStateFlow<ZonedDateTime>) {}
