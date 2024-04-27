@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.event
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -12,6 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,7 +30,13 @@ fun EventScreen(
     onEventBackButtonPressed: () -> Unit,
     eventViewModel: EventViewModel
 ) {
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    val focusManager = LocalFocusManager.current
+    Column(
+        modifier =
+            Modifier.verticalScroll(rememberScrollState()).pointerInput(Unit) {
+                detectTapGestures(onTap = { focusManager.clearFocus() })
+            }
+    ) {
         EventTitleAndBackButton(title = title, onBackButtonPressed = onEventBackButtonPressed)
         // all the inputs for an event
         EventPropertiesFields(eventViewModel = eventViewModel)
