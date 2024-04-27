@@ -2,19 +2,18 @@ package com.github.swent.echo.compose.components.searchmenu
 
 import com.github.swent.echo.R
 import java.time.ZonedDateTime
-import kotlinx.coroutines.flow.MutableStateFlow
 
 data class FiltersContainer(
-    var searchEntry: MutableStateFlow<String>,
-    var epflChecked: MutableStateFlow<Boolean>,
-    var sectionChecked: MutableStateFlow<Boolean>,
-    var classChecked: MutableStateFlow<Boolean>,
-    var pendingChecked: MutableStateFlow<Boolean>,
-    var confirmedChecked: MutableStateFlow<Boolean>,
-    var fullChecked: MutableStateFlow<Boolean>,
-    var from: MutableStateFlow<ZonedDateTime>,
-    var to: MutableStateFlow<ZonedDateTime>,
-    var sortBy: MutableStateFlow<SortBy>,
+    var searchEntry: String,
+    var epflChecked: Boolean,
+    var sectionChecked: Boolean,
+    var classChecked: Boolean,
+    var pendingChecked: Boolean,
+    var confirmedChecked: Boolean,
+    var fullChecked: Boolean,
+    var from: ZonedDateTime,
+    var to: ZonedDateTime,
+    var sortBy: SortBy,
 )
 
 // Enum class for the different states of the sort by filter

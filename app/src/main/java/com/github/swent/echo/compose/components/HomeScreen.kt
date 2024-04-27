@@ -36,11 +36,9 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
     ModalNavigationDrawer(
         // Content of the hamburger menu
         drawerContent = {
-            HamburgerMenuDrawerSheet(
-                navActions,
-                drawerState,
-                scope
-            ) {homeScreenViewModel.signOut()}
+            HamburgerMenuDrawerSheet(navActions, drawerState, scope) {
+                homeScreenViewModel.signOut()
+            }
         },
         drawerState = drawerState,
         modifier = Modifier.testTag("hamburger_menu"),
@@ -99,7 +97,16 @@ private fun Content(
             SearchMenuSheet(
                 filters,
                 onFullyExtended = {},
-                onDismiss = { homeScreenViewModel.clearOverlay() }
+                onDismiss = { homeScreenViewModel.clearOverlay() },
+                searchEntryCallback = { s -> homeScreenViewModel.onSearchEntryChanged(s) },
+                epflCallback = { homeScreenViewModel.onEpflCheckedSwitch() },
+                sectionCallback = { homeScreenViewModel.onSectionCheckedSwitch() },
+                classCallback = { homeScreenViewModel.onClassCheckedSwitch() },
+                pendingCallback = { homeScreenViewModel.onPendingCheckedSwitch() },
+                confirmedCallback = { homeScreenViewModel.onConfirmedCheckedSwitch() },
+                fullCallback = { homeScreenViewModel.onFullCheckedSwitch() },
+                sortByCallback = { sortBy -> homeScreenViewModel.onSortByChanged(sortBy) },
+                resetFiltersCallback = { homeScreenViewModel.resetFiltersContainer() }
             )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu
