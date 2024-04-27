@@ -40,27 +40,30 @@ constructor(
     val overlay = _overlay.asStateFlow()
     private val _mode = MutableStateFlow<MapOrListMode>(MapOrListMode.MAP)
     val mode = _mode.asStateFlow()
-    private lateinit var filterTagList: Set<Tag>
+    private lateinit var filterTagSet: Set<Tag>
     private lateinit var allEventsList: List<Event>
+    private lateinit var allTagSet: Set<Tag>
     private val _displayEventList = MutableStateFlow<List<Event>>(listOf())
     val displayEventList = _displayEventList.asStateFlow()
     private val _displayEventInfo = MutableStateFlow<Event?>(null)
     val displayEventInfo = _displayEventInfo.asStateFlow()
-    var filtersContainer =
+    private val _filtersContainer =
         MutableStateFlow(
             FiltersContainer(
-                searchEntry = MutableStateFlow(""),
-                epflChecked = MutableStateFlow(true),
-                sectionChecked = MutableStateFlow(true),
-                classChecked = MutableStateFlow(true),
-                pendingChecked = MutableStateFlow(true),
-                confirmedChecked = MutableStateFlow(true),
-                fullChecked = MutableStateFlow(true),
-                from = MutableStateFlow(ZonedDateTime.now()),
-                to = MutableStateFlow(ZonedDateTime.now()),
-                sortBy = MutableStateFlow(SortBy.NONE)
+                searchEntry = "",
+                epflChecked = true,
+                sectionChecked = true,
+                classChecked = true,
+                pendingChecked = true,
+                confirmedChecked = true,
+                fullChecked = true,
+                from = ZonedDateTime.now(),
+                to = ZonedDateTime.now(),
+                sortBy = SortBy.NONE
             )
         )
+    val filtersContainer = _filtersContainer.asStateFlow()
+
     private val _profileName =
         MutableStateFlow<String>("John Doe") // placeholder until we have user profiles
     val profileName = _profileName.asStateFlow()
@@ -71,7 +74,7 @@ constructor(
     init {
         viewModelScope.launch {
             val userid = authenticationService.getCurrentUserID()
-            filterTagList =
+            filterTagSet =
                 if (userid == null) {
                     // the user is not logged in, display the default events on map
                     // TODO add a default tag list
@@ -83,8 +86,68 @@ constructor(
                     // SAMPLE_TAGS
                 }
             allEventsList = SAMPLE_EVENTS // repository.getAllEvents()
+            allTagSet = SAMPLE_TAGS // repository.getAllTags()
             filterEvents()
         }
+    }
+
+    fun onSearchEntryChanged(searchEntry: String) {
+        _filtersContainer.value = _filtersContainer.value.copy(searchEntry = searchEntry)
+        refreshFiltersContainer()
+    }
+
+    fun onEpflCheckedSwitch() {
+        _filtersContainer.value =
+            _filtersContainer.value.copy(epflChecked = !_filtersContainer.value.epflChecked)
+        refreshFiltersContainer()
+        print("epflChecked: ${_filtersContainer.value.epflChecked}\n")
+    }
+
+    fun onSectionCheckedSwitch() {
+        _filtersContainer.value =
+            _filtersContainer.value.copy(sectionChecked = !_filtersContainer.value.sectionChecked)
+        refreshFiltersContainer()
+    }
+
+    fun onClassCheckedSwitch() {
+        _filtersContainer.value =
+            _filtersContainer.value.copy(classChecked = !_filtersContainer.value.classChecked)
+        refreshFiltersContainer()
+    }
+
+    fun onPendingCheckedSwitch() {
+        _filtersContainer.value =
+            _filtersContainer.value.copy(pendingChecked = !_filtersContainer.value.pendingChecked)
+        refreshFiltersContainer()
+    }
+
+    fun onConfirmedCheckedSwitch() {
+        _filtersContainer.value =
+            _filtersContainer.value.copy(
+                confirmedChecked = !_filtersContainer.value.confirmedChecked
+            )
+        refreshFiltersContainer()
+    }
+
+    fun onFullCheckedSwitch() {
+        _filtersContainer.value =
+            _filtersContainer.value.copy(fullChecked = !_filtersContainer.value.fullChecked)
+        refreshFiltersContainer()
+    }
+
+    fun onFromChanged(from: ZonedDateTime) {
+        _filtersContainer.value = _filtersContainer.value.copy(from = from)
+        refreshFiltersContainer()
+    }
+
+    fun onToChanged(to: ZonedDateTime) {
+        _filtersContainer.value = _filtersContainer.value.copy(to = to)
+        refreshFiltersContainer()
+    }
+
+    fun onSortByChanged(sortBy: SortBy) {
+        _filtersContainer.value = _filtersContainer.value.copy(sortBy = sortBy)
+        refreshFiltersContainer()
     }
 
     fun signOut() {
@@ -92,25 +155,27 @@ constructor(
     }
 
     fun refreshFiltersContainer() {
-        filterTagList =
+        filterTagSet =
             setOf(
-                SAMPLE_TAGS.find { it.name == filtersContainer.value.searchEntry.value }
-                    ?: Tag("0", "0")
+                SAMPLE_TAGS.find { it.name == filtersContainer.value.searchEntry } ?: Tag("0", "0")
             ) // replace with the repository call
         filterEvents()
     }
 
     fun resetFiltersContainer() {
-        filtersContainer.value.searchEntry.value = ""
-        filtersContainer.value.epflChecked.value = true
-        filtersContainer.value.sectionChecked.value = true
-        filtersContainer.value.classChecked.value = true
-        filtersContainer.value.pendingChecked.value = true
-        filtersContainer.value.confirmedChecked.value = true
-        filtersContainer.value.fullChecked.value = true
-        filtersContainer.value.from.value = ZonedDateTime.now()
-        filtersContainer.value.to.value = ZonedDateTime.now()
-        filtersContainer.value.sortBy.value = SortBy.NONE
+        _filtersContainer.value =
+            FiltersContainer(
+                searchEntry = "",
+                epflChecked = true,
+                sectionChecked = true,
+                classChecked = true,
+                pendingChecked = true,
+                confirmedChecked = true,
+                fullChecked = true,
+                from = ZonedDateTime.now(),
+                to = ZonedDateTime.now(),
+                sortBy = SortBy.NONE
+            )
         refreshFiltersContainer()
     }
 
@@ -119,7 +184,7 @@ constructor(
     private fun filterEvents() {
         _displayEventList.value =
             allEventsList.filter { event ->
-                event.tags.any { tag -> filterTagList.any { tag2 -> tag.tagId == tag2.tagId } }
+                event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
             }
     }
 
@@ -131,13 +196,13 @@ constructor(
 
     /** Add the given tag to the filter tag list. */
     fun addTag(tag: Tag) {
-        filterTagList = filterTagList.plus(tag)
+        filterTagSet = filterTagSet.plus(tag)
         filterEvents()
     }
 
     /** Remove the given tag from the filter tag list. */
     fun removeTag(tag: Tag) {
-        filterTagList = filterTagList.minus(tag)
+        filterTagSet = filterTagSet.minus(tag)
         filterEvents()
     }
 

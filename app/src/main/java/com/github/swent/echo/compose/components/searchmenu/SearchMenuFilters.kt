@@ -20,7 +20,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,11 +33,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.github.swent.echo.R
 import java.time.ZonedDateTime
-import kotlinx.coroutines.flow.MutableStateFlow
 
 /** Composable to display the filters sheet */
 @Composable
-fun SearchMenuFilters(filters: FiltersContainer) {
+fun SearchMenuFilters(
+    filters: FiltersContainer,
+    epflCallback: () -> Unit,
+    sectionCallback: () -> Unit,
+    classCallback: () -> Unit,
+    pendingCallback: () -> Unit,
+    confirmedCallback: () -> Unit,
+    fullCallback: () -> Unit,
+    sortByCallback: (SortBy) -> Unit
+) {
     // Content of the Events for filters
     val eventsForItems =
         listOf(
@@ -46,17 +53,23 @@ fun SearchMenuFilters(filters: FiltersContainer) {
                 Icons.Filled.Face,
                 stringResource(id = R.string.search_menu_filters_epfl),
                 filters.epflChecked
-            ),
+            ) {
+                epflCallback()
+            },
             CheckBoxItems(
                 Icons.Filled.Face,
                 stringResource(id = R.string.search_menu_filters_section),
                 filters.sectionChecked
-            ),
+            ) {
+                sectionCallback()
+            },
             CheckBoxItems(
                 Icons.Filled.Face,
                 stringResource(id = R.string.search_menu_filters_class),
                 filters.classChecked
-            )
+            ) {
+                classCallback()
+            }
         )
 
     // Content of the Events Status filters
@@ -66,17 +79,23 @@ fun SearchMenuFilters(filters: FiltersContainer) {
                 Icons.Filled.Person,
                 stringResource(id = R.string.search_menu_filters_pending),
                 filters.pendingChecked
-            ),
+            ) {
+                pendingCallback()
+            },
             CheckBoxItems(
                 Icons.Filled.Person,
                 stringResource(id = R.string.search_menu_filters_confirmed),
                 filters.confirmedChecked
-            ),
+            ) {
+                confirmedCallback()
+            },
             CheckBoxItems(
                 Icons.Filled.Person,
                 stringResource(id = R.string.search_menu_filters_full),
                 filters.fullChecked
-            )
+            ) {
+                fullCallback()
+            }
         )
 
     Box(modifier = Modifier.fillMaxSize().testTag("search_menu_filters_content")) {
@@ -88,7 +107,7 @@ fun SearchMenuFilters(filters: FiltersContainer) {
                     .zIndex(1f)
                     .testTag("sort_by_displayer_container")
         ) {
-            SortByDisplayer(filters.sortBy)
+            SortByDisplayer(filters.sortBy) { sortByCallback(it) }
         }
         // Checkbox filters
         Row(
@@ -120,7 +139,8 @@ fun SearchMenuFilters(filters: FiltersContainer) {
 data class CheckBoxItems(
     val icon: ImageVector,
     val contentDescription: String,
-    var checked: MutableStateFlow<Boolean>,
+    val checked: Boolean,
+    val callback: () -> Unit
 )
 
 /** Composable to display the checkboxes in the correct format */
@@ -133,8 +153,8 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
             Row(modifier = Modifier.testTag("${checkBoxItem.contentDescription}_checkbox_row")) {
                 Icon(checkBoxItem.icon, contentDescription = checkBoxItem.contentDescription)
                 Checkbox(
-                    checked = checkBoxItem.checked.collectAsState().value,
-                    onCheckedChange = { checkBoxItem.checked.value = it },
+                    checked = checkBoxItem.checked,
+                    onCheckedChange = { checkBoxItem.callback() },
                     modifier =
                         Modifier.height(25.dp)
                             .width(25.dp)
@@ -149,7 +169,7 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
 
 /** Composable to display the dropdown menu for the sort by filter */
 @Composable
-fun SortByDisplayer(sortBy: MutableStateFlow<SortBy>) {
+fun SortByDisplayer(sortBy: SortBy, sortByCallback: (SortBy) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
     Column {
@@ -159,12 +179,8 @@ fun SortByDisplayer(sortBy: MutableStateFlow<SortBy>) {
             modifier = Modifier.width(170.dp).testTag("sort_by_button")
         ) {
             Text(
-                if (sortBy.collectAsState().value == SortBy.NONE)
-                    stringResource(id = R.string.search_menu_filters_sort_by)
-                else
-                    stringResource(
-                        id = stringResourceSortBy(sortBy.collectAsState().value.stringKey)
-                    )
+                if (sortBy == SortBy.NONE) stringResource(id = R.string.search_menu_filters_sort_by)
+                else stringResource(id = stringResourceSortBy(sortBy.stringKey))
             )
             Icon(
                 if (!expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
@@ -176,7 +192,7 @@ fun SortByDisplayer(sortBy: MutableStateFlow<SortBy>) {
             SortBy.entries.forEach {
                 Button(
                     onClick = {
-                        sortBy.value = it
+                        sortByCallback(it)
                         expanded = false
                     },
                     shape = RoundedCornerShape(5),
@@ -194,4 +210,4 @@ fun SortByDisplayer(sortBy: MutableStateFlow<SortBy>) {
  * TODO : Implement it, but I spend a bit too much time
  *   on non-working solution so leaving it for next sprint
  */
-@Composable fun DateInputSample(dateOutput: MutableStateFlow<ZonedDateTime>) {}
+@Composable fun DateInputSample(dateOutput: ZonedDateTime) {}

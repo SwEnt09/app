@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,11 +35,24 @@ import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuDiscover
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuFilters
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.github.swent.echo.compose.components.searchmenu.SortBy
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDismiss: () -> Unit) {
+fun SearchMenuSheet(
+    filters: FiltersContainer,
+    onFullyExtended: () -> Unit,
+    onDismiss: () -> Unit,
+    searchEntryCallback: (String) -> Unit,
+    epflCallback: () -> Unit,
+    sectionCallback: () -> Unit,
+    classCallback: () -> Unit,
+    pendingCallback: () -> Unit,
+    confirmedCallback: () -> Unit,
+    fullCallback: () -> Unit,
+    sortByCallback: (SortBy) -> Unit,
+    resetFiltersCallback: () -> Unit
+) {
     // Search mode
     val searchMode = remember { mutableStateOf(SearchMode.FILTERS) }
 
@@ -63,7 +75,7 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
                 modifier = Modifier.align(Alignment.TopCenter).testTag("search_menu_first_layer")
             ) {
                 // Search bar
-                SearchBarTags(filters.searchEntry)
+                SearchBarTags(filters.searchEntry, searchEntryCallback)
                 Spacer(modifier = Modifier.width(10.dp))
                 // Switch search mode button
                 SwitchSearchModeButton(searchMode)
@@ -77,7 +89,17 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
                         .testTag("search_menu_second_layer")
             ) {
                 if (searchMode.value == SearchMode.FILTERS) {
-                    SearchMenuFilters(filters)
+                    SearchMenuFilters(
+                        filters,
+                        epflCallback,
+                        sectionCallback,
+                        classCallback,
+                        pendingCallback,
+                        confirmedCallback,
+                        fullCallback
+                    ) { sortBy ->
+                        sortByCallback(sortBy)
+                    }
                 } else {
                     SearchMenuDiscover()
                 }
@@ -90,7 +112,7 @@ fun SearchMenuSheet(filters: FiltersContainer, onFullyExtended: () -> Unit, onDi
                         .absoluteOffset(y = 300.dp)
                         .testTag("search_menu_third_layer")
             ) {
-                ResetFiltersButton()
+                ResetFiltersButton(resetFiltersCallback)
             }
         }
     }
@@ -113,12 +135,12 @@ fun stringResourceSearchMode(key: String): Int {
 
 /** Composable for the search bar tags TODO : update this with yoan implementation */
 @Composable
-fun SearchBarTags(searched: MutableStateFlow<String>) {
+fun SearchBarTags(searched: String, searchEntryCallback: (String) -> Unit) {
 
     OutlinedTextField(
         label = { Text(stringResource(id = R.string.search_menu_sheet_search_interests)) },
-        value = searched.collectAsState().value,
-        onValueChange = { searched.value = it },
+        value = searched,
+        onValueChange = { searchEntryCallback(it) },
         modifier = Modifier.width(240.dp).testTag("search_menu_search_bar_tags")
     )
 }
@@ -156,9 +178,9 @@ fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
  */
 // Todo : see how we want to handle this reset filters button
 @Composable
-fun ResetFiltersButton() {
+fun ResetFiltersButton(callback: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth().testTag("search_menu_reset_filters_button")) {
-        Button(onClick = {}, modifier = Modifier.align(Alignment.Center)) {
+        Button(onClick = { callback() }, modifier = Modifier.align(Alignment.Center)) {
             Text(stringResource(id = R.string.search_menu_sheet_reset_filters))
         }
     }
