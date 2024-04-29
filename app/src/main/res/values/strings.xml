@@ -68,4 +68,5 @@
     <string name="edit_event_screen_confirm_location">OK</string>
     <string name="list_drawer_view_on_map">View On Map</string>
     <string name="list_drawer_join_event">Join Event</string>
+    <string name="event_successfully_joined">Event successfully joined!</string>
 </resources>

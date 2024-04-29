@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.components
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,6 +21,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -65,6 +67,9 @@ fun EventInfoSheet(
     val displayDay = if (day < 10) "0$day" else day.toString()
     val displayHour = if (hour < 10) "0$hour" else hour.toString()
     val displayDate = "$displayDay/$displayMonth\n$displayHour:$displayMinute"
+
+    // get the context
+    val context = LocalContext.current
 
     ModalBottomSheet(
         modifier = Modifier.fillMaxSize().testTag("event_info_sheet"),
@@ -151,7 +156,15 @@ fun EventInfoSheet(
 
             // button to join the event
             Button(
-                onClick = onJoinButtonPressed,
+                onClick = {
+                    onJoinButtonPressed()
+                    Toast.makeText(
+                            context,
+                            context.getString(R.string.event_successfully_joined),
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
+                },
                 modifier =
                     Modifier.align(Alignment.BottomCenter)
                         .padding(bottom = 20.dp)
