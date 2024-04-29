@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.github.swent.echo.R
@@ -29,19 +30,21 @@ fun EventMaxNumberOfParticipantsEntry(
         TextField(
             value = nbParticipants,
             modifier =
-                Modifier.fillMaxWidth(0.25F).onFocusChanged {
-                    if (!it.isFocused) {
-                        var newNumberOfParticipants = maxNumberOfParticipants
-                        try {
-                            newNumberOfParticipants = nbParticipants.toInt()
-                        } catch (e: Exception) {
-                            Log.w("edit event number of participants", e)
+                Modifier.fillMaxWidth(0.25F)
+                    .onFocusChanged {
+                        if (!it.isFocused) {
+                            var newNumberOfParticipants = maxNumberOfParticipants
+                            try {
+                                newNumberOfParticipants = nbParticipants.toInt()
+                            } catch (e: Exception) {
+                                Log.w("edit event number of participants", e)
+                            }
+                            newNumberOfParticipants = max(0, newNumberOfParticipants)
+                            nbParticipants = newNumberOfParticipants.toString()
+                            onMaxNbParticipantsChange(newNumberOfParticipants)
                         }
-                        newNumberOfParticipants = max(0, newNumberOfParticipants)
-                        nbParticipants = newNumberOfParticipants.toString()
-                        onMaxNbParticipantsChange(newNumberOfParticipants)
                     }
-                },
+                    .testTag("nb-participant-field"),
             onValueChange = { nbParticipants = it },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
