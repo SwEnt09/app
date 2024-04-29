@@ -15,7 +15,7 @@ interface UserProfileRoomDao {
     suspend fun insert(userProfile: UserProfileRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserProfileTagCrossRegs(userProfileTagCrossRef: List<UserProfileTagCrossRef>)
+    suspend fun insertUserProfileTagCrossRefs(userProfileTagCrossRef: List<UserProfileTagCrossRef>)
 
     @Transaction
     @Query("SELECT * FROM UserProfileRoom WHERE userId = :userId")

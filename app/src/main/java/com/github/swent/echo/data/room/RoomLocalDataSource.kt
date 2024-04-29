@@ -98,7 +98,7 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         val crossRefs = tags.map { UserProfileTagCrossRef(userProfile.userId, it.tagId) }
 
         userProfileDao.insert(UserProfileRoom(userProfile))
-        userProfileDao.insertUserProfileTagCrossRegs(crossRefs)
+        userProfileDao.insertUserProfileTagCrossRefs(crossRefs)
         tagDao.insertAll(tags)
     }
 }
