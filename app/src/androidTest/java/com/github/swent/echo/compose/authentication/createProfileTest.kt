@@ -28,6 +28,8 @@ class CreateProfileTest {
                 listOf(SectionEPFL.AR, SectionEPFL.IN, SectionEPFL.SC, SectionEPFL.GM),
                 listOf(SemesterEPFL.BA1, SemesterEPFL.BA2),
                 listOf(Tag("1", "Sports"), Tag("2", "Music")),
+                {},
+                {},
                 navAction = NavigationActions(navController = rememberNavController())
             )
         }
