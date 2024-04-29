@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.authentication
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,22 +45,50 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
-import androidx.navigation.compose.rememberNavController
-import com.github.swent.echo.ExcludeFromJacocoGeneratedReport
 import com.github.swent.echo.R
+import com.github.swent.echo.compose.components.TagSelectionDialog
 import com.github.swent.echo.data.model.Section
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.ui.navigation.NavigationActions
+import com.github.swent.echo.viewmodels.authentication.CreateProfileViewModel
+import com.github.swent.echo.viewmodels.tag.TagViewModel
 
+@SuppressLint("StateFlowValueCalledInComposition")
+@Composable
+fun ProfileCreationScreen(
+    viewModel: CreateProfileViewModel,
+    navAction: NavigationActions,
+    tagviewModel: TagViewModel
+) {
+    var dialogVisible by remember { mutableStateOf(false) }
+    ProfileCreationUI(
+        sectionList = SectionEPFL.entries,
+        semList = SemesterEPFL.entries,
+        tagList = viewModel.tagList.value,
+        onSave = viewModel::profilesave,
+        onAdd = { dialogVisible = true },
+        navAction = navAction,
+    )
+
+    if (dialogVisible) {
+        TagSelectionDialog(
+            onDismissRequest = { dialogVisible = false },
+            tagViewModel = tagviewModel,
+            onTagSelected = { tag ->
+                viewModel.addTag(tag)
+                dialogVisible = false
+            }
+        )
+    }
+}
 /**
  * A composable function that displays the UI for creating a user profile.
  *
@@ -72,8 +101,9 @@ fun ProfileCreationUI(
     sectionList: List<Section>,
     semList: List<Semester>,
     tagList: List<Tag>,
-    // viewModel: createProfileViewModel = hiltViewModel(),
-    navAction: NavigationActions
+    onSave: () -> Unit,
+    onAdd: () -> Unit,
+    navAction: NavigationActions,
 ) {
     Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -132,7 +162,7 @@ fun ProfileCreationUI(
 
                 // Add tag button
                 SmallFloatingActionButton(
-                    onClick = {},
+                    onClick = { onAdd() },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.testTag("AddTag")
@@ -140,12 +170,10 @@ fun ProfileCreationUI(
                     Icon(Icons.Default.Add, "Add tags")
                 }
             }
-
             Spacer(modifier = Modifier.weight(1f))
-
             // Save button
             OutlinedButton(
-                onClick = { /* viewModel.profilesave() */},
+                onClick = { onSave() },
                 modifier = Modifier.fillMaxWidth().testTag("Save")
             ) {
                 Text(text = stringResource(id = R.string.profile_creation_save_button))
@@ -229,23 +257,18 @@ fun InputChipFun(
         }
     )
 }
-
+/*
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
 fun ProfileCreationPreview() {
-    ProfileCreationUI(
-        sectionList =
-            listOf(
-                SectionEPFL.AR,
-                SectionEPFL.SV,
-                SectionEPFL.MA,
-                SectionEPFL.IN,
-                SectionEPFL.SC,
-                SectionEPFL.EL
-            ),
-        semList = listOf(SemesterEPFL.BA1, SemesterEPFL.BA2),
-        tagList = listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2")),
-        navAction = NavigationActions(navController = rememberNavController())
-    )
+  ProfileCreationUI(
+      sectionList = SectionEPFL.entries,
+      semList = listOf(SemesterEPFL.BA1, SemesterEPFL.BA2),
+      tagList = listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2")),
+      onSave = {},
+      onAdd = {},
+      navAction = NavigationActions(navController = rememberNavController()))
 }
+
+ */
