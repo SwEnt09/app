@@ -62,7 +62,7 @@ val SAMPLE_EVENTS: List<Event> =
         Event(
             eventId = "d",
             creator = EventCreator("d", "Matt Mercer"),
-            organizer = Association("C", "EPFL D&D club", ""),
+            organizer = null,
             title = "D&D oneshot",
             description = "Come play D&D with us ! We have cookies.",
             location =
