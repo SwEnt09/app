@@ -72,10 +72,4 @@ constructor(
         _tagList.value += tag
     }
 
-    /*
-       // Back button
-       fun navigateBack() {
-           navAction.goBack()
-       }
-    */
 }
