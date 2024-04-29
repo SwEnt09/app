@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.testTag
 import com.github.swent.echo.data.model.Event
 
 /**
@@ -33,7 +34,9 @@ class SimpleMapViewProvider : IMapViewProvider<ComposeView> {
                 events.forEach { event ->
                     Text(
                         text = event.title,
-                        modifier = Modifier.clickable(onClick = { callback(event) }),
+                        modifier =
+                            Modifier.clickable(onClick = { callback(event) })
+                                .testTag("event_marker_" + event.eventId),
                     )
                 }
             }
