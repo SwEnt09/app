@@ -1,19 +1,18 @@
 package com.github.swent.echo.compose.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
@@ -21,9 +20,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,7 +61,10 @@ fun EventInfoSheet(
     val hour = event.startDate.hour
     val minute = event.startDate.minute
     val displayMonth = if (month < 10) "0$month" else month.toString()
-    val displayDate = "$day/$displayMonth\n$hour:$minute"
+    val displayMinute = if (minute < 10) "0$minute" else minute.toString()
+    val displayDay = if (day < 10) "0$day" else day.toString()
+    val displayHour = if (hour < 10) "0$hour" else hour.toString()
+    val displayDate = "$displayDay/$displayMonth\n$displayHour:$displayMinute"
 
     ModalBottomSheet(
         modifier = Modifier.fillMaxSize().testTag("event_info_sheet"),
@@ -72,6 +72,7 @@ fun EventInfoSheet(
         sheetState = sheetState,
     ) {
         // Sheet content
+
         Box(
             modifier =
                 Modifier.fillMaxWidth()
@@ -88,11 +89,12 @@ fun EventInfoSheet(
             )
             Text(
                 modifier = Modifier.padding(top = 24.dp),
-                text = event.organizer!!.name,
+                text = event.organizer?.name ?: event.creator.name,
                 style =
                     TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight(600),
+                        color = MaterialTheme.colorScheme.secondary
                     )
             )
             Text(
@@ -102,6 +104,7 @@ fun EventInfoSheet(
                     TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight(600),
+                        color = MaterialTheme.colorScheme.secondary
                     )
             )
             Text(
@@ -114,7 +117,7 @@ fun EventInfoSheet(
                     )
             )
             Text(
-                modifier = Modifier.padding(top = 100.dp).width(185.dp),
+                modifier = Modifier.padding(top = 100.dp),
                 text = event.description,
                 style =
                     TextStyle(
@@ -122,11 +125,38 @@ fun EventInfoSheet(
                         fontWeight = FontWeight(600),
                     )
             )
+
+            Row(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 70.dp)) {
+                // icon of a person
+                Icon(
+                    imageVector = Icons.Filled.Face,
+                    contentDescription = "Show people who joined the event",
+                    modifier = Modifier.testTag("people_icon")
+                )
+                // text to show the number of people who joined the event
+                Text(
+                    text =
+                        if (event.maxParticipants <= 0) {
+                            "${event.participantCount}"
+                        } else {
+                            "${event.participantCount}/${event.maxParticipants}"
+                        },
+                    style =
+                        TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight(600),
+                        )
+                )
+            }
+
             // button to join the event
             Button(
                 onClick = onJoinButtonPressed,
                 modifier =
-                    Modifier.align(Alignment.BottomCenter).width(165.dp).testTag("join_button"),
+                    Modifier.align(Alignment.BottomCenter)
+                        .padding(bottom = 20.dp)
+                        .width(165.dp)
+                        .testTag("join_button"),
             ) {
                 Text(
                     text = stringResource(R.string.event_info_sheet_join_event_button_text),
@@ -137,7 +167,7 @@ fun EventInfoSheet(
                         )
                 )
             }
-            // contains the image and the button to show people who have joined the event
+            /* contains the image and the button to show people who have joined the event
             Box(modifier = Modifier.align(Alignment.CenterEnd).width(150.dp).height(200.dp)) {
                 // image of the event
                 val buttonAlignment =
@@ -186,7 +216,7 @@ fun EventInfoSheet(
                             )
                     )
                 }
-            }
+            }*/
         }
     }
 }

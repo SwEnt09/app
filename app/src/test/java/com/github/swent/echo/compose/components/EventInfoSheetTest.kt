@@ -103,16 +103,9 @@ class EventInfoSheetTest {
     }
 
     @Test
-    fun shouldCallShowPeopleButtonPressedWhenPeopleButtonClicked() {
+    fun shouldShowPeopleIcon() {
         setUp()
-        composeTestRule.onNodeWithTag("people_button").performClick()
-        assertThat(peopleClicked, equalTo(1))
-    }
-
-    @Test
-    fun shouldShowEventImage() {
-        setUp()
-        composeTestRule.onNodeWithTag("event_image").assertExists()
+        composeTestRule.onNodeWithTag("people_icon").assertExists()
     }
 
     @Test
