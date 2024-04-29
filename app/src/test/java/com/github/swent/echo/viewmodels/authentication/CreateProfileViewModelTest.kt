@@ -28,7 +28,7 @@ class CreateProfileViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = CreateProfileViewModel(repository, authenticationService)
+        viewModel = CreateProfileViewModel( authenticationService, repository)
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
@@ -55,13 +55,6 @@ class CreateProfileViewModelTest {
         coEvery { authenticationService.getCurrentUserID() } returns userId
         coEvery { repository.setUserProfile(any()) } just runs
         viewModel.profilesave()
-        /*
-               assertEquals(viewModel.firstName.value,firstName)
-               assertEquals(viewModel.lastName.value,lastName)
-               assertEquals(viewModel.selectedSection.value,section)
-               assertEquals(viewModel.selectedSemester.value,semester)
-               assertEquals(viewModel.tagList.value,tags)
-        */
         coVerify { repository.setUserProfile(userProfile) }
     }
 
@@ -69,7 +62,7 @@ class CreateProfileViewModelTest {
     fun addTagTest() {
         val tag = Tag("tag3", "Dance")
         val initialTags = listOf(Tag("tag1", "Sports"), Tag("tag2", "Music"))
-        val viewModel = CreateProfileViewModel(repository, authenticationService)
+        val viewModel = CreateProfileViewModel( authenticationService, repository)
         viewModel.addTag(tag)
         assert(viewModel.tagList.value == initialTags + tag)
     }
