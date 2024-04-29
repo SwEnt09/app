@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.navigation
 
+// import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -7,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.swent.echo.compose.authentication.LoginScreen
+import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import com.github.swent.echo.compose.authentication.RegisterScreen
 import com.github.swent.echo.compose.components.HomeScreen
 import com.github.swent.echo.compose.event.CreateEventScreen
@@ -28,7 +30,8 @@ fun AppNavigationHost(
 
     NavHost(
         navController = navController,
-        startDestination = if (userIsLoggedIn) Routes.MAP.name else Routes.REGISTER.name,
+        startDestination = Routes.PROFILE_CREATION.name,
+        // startDestination = if (userIsLoggedIn) Routes.MAP.name else Routes.REGISTER.name,
     ) {
         composable(Routes.LOGIN.name) {
             LoginScreen(loginViewModel = hiltViewModel(), navActions = navActions)
@@ -45,6 +48,13 @@ fun AppNavigationHost(
 
         composable(Routes.CREATE_EVENT.name) {
             CreateEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
+        }
+        composable(Routes.PROFILE_CREATION.name) {
+            ProfileCreationScreen(
+                viewModel = hiltViewModel(),
+                navAction = navActions,
+                tagviewModel = hiltViewModel()
+            )
         }
     }
 }

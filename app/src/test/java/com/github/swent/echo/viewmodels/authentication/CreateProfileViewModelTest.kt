@@ -13,7 +13,6 @@ import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -25,11 +24,11 @@ class CreateProfileViewModelTest {
 
     private val repository: Repository = mockk()
     private val authenticationService: AuthenticationService = mockk()
-    private lateinit var viewModel: createProfileViewModel
+    private lateinit var viewModel: CreateProfileViewModel
 
     @Before
     fun setUp() {
-        viewModel = createProfileViewModel(repository, authenticationService)
+        viewModel = CreateProfileViewModel(repository, authenticationService)
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
@@ -70,7 +69,7 @@ class CreateProfileViewModelTest {
     fun addTagTest() {
         val tag = Tag("tag3", "Dance")
         val initialTags = listOf(Tag("tag1", "Sports"), Tag("tag2", "Music"))
-        val viewModel = createProfileViewModel(repository, authenticationService)
+        val viewModel = CreateProfileViewModel(repository, authenticationService)
         viewModel.addTag(tag)
         assert(viewModel.tagList.value == initialTags + tag)
     }

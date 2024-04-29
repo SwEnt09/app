@@ -13,72 +13,69 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class createProfileViewModel
+class CreateProfileViewModel
 @Inject
 constructor(
-    private val repository: Repository,
-    // private val navAction: NavigationActions,
     private val authenticationService: AuthenticationService,
+    private val repository: Repository,
+
+    // private val navAction: NavigationActions,
+
 ) : ViewModel() {
 
-  private val _firstName = MutableStateFlow("")
-  val firstName = _firstName.asStateFlow()
+    private val _firstName = MutableStateFlow("")
+    val firstName = _firstName.asStateFlow()
 
-  private val _lastName = MutableStateFlow("")
-  val lastName = _lastName.asStateFlow()
+    private val _lastName = MutableStateFlow("")
+    val lastName = _lastName.asStateFlow()
 
-  private val _selectedSection = MutableStateFlow(null)
-  val selectedSection = _selectedSection.asStateFlow()
+    private val _selectedSection = MutableStateFlow(null)
+    val selectedSection = _selectedSection.asStateFlow()
 
-  private val _selectedSemester = MutableStateFlow(null)
-  val selectedSemester = _selectedSemester.asStateFlow()
+    private val _selectedSemester = MutableStateFlow(null)
+    val selectedSemester = _selectedSemester.asStateFlow()
 
-  private val _tagList = MutableStateFlow<List<Tag>>(listOf())
-  val tagList = _tagList.asStateFlow()
+    private val _tagList = MutableStateFlow<List<Tag>>(listOf())
+    val tagList = _tagList.asStateFlow()
 
-  private val _errorMessage = MutableStateFlow<String?>(null)
-  val errorMessage = _errorMessage.asStateFlow()
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage = _errorMessage.asStateFlow()
 
-  //  private val _profileCreationStatus =
-  // MutableStateFlow<ProfileCreationStatus>(ProfileCreationStatus.Initial)
-  // val profileCreationStatus = _profileCreationStatus.asStateFlow()
+    // TODO: Save profile button => go to the home screen after saving the profile.
+    fun profilesave() {
 
-  fun profilesave() {
-
-    viewModelScope.launch {
-      val userId = authenticationService.getCurrentUserID()
-      if (userId == null) {
-        _errorMessage.value = "Profile creation error: Not logged in"
-        // TODO: handle error later on. Will this ever be the case?
-      } else {
-
-        // TODO: this is the logic for creating a userProfile, changes are required in the
-        // getUserProfile function so that it returns null if a user has not yet created a
-        // user profile
-
-        val userProfile =
-            repository.setUserProfile(
-                UserProfile(
-                    userId,
-                    name = "$_firstName $_lastName",
-                    semester = _selectedSemester.value,
-                    section = _selectedSection.value,
-                    tags = _tagList.value.toSet()))
-        // val userProfile = repository.getUserProfile(userId)
-        // _tagList.value = userProfile.tags.toList()
-      }
+        viewModelScope.launch {
+            val userId = authenticationService.getCurrentUserID()
+            if (userId == null) {
+                _errorMessage.value = "Profile creation error: Not logged in"
+                // TODO: handle error later on. Will this ever be the case?
+            } else {
+                // TODO: this is the logic for creating a userProfile, changes are required in the
+                // getUserProfile function so that it returns null if a user has not yet created a
+                // user profile
+                val userProfile =
+                    repository.setUserProfile(
+                        UserProfile(
+                            userId,
+                            name = "$_firstName $_lastName",
+                            semester = _selectedSemester.value,
+                            section = _selectedSection.value,
+                            tags = _tagList.value.toSet()
+                        )
+                    )
+            }
+        }
     }
-  }
 
-  // Add tag button
-  fun addTag(tag: Tag) {
-    _tagList.value = _tagList.value.toMutableList().apply { add(tag) }
-  }
+    // Add tag button
+    fun addTag(tag: Tag) {
+        _tagList.value += tag
+    }
 
-  /*
-     // Back button
-     fun navigateBack() {
-         navAction.goBack()
-     }
-  */
+    /*
+       // Back button
+       fun navigateBack() {
+           navAction.goBack()
+       }
+    */
 }
