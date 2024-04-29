@@ -47,10 +47,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     override suspend fun setEvent(event: Event) {
         val crossRefs = event.tags.map { EventTagCrossRef(event.eventId, it.tagId) }
 
-        eventDao.insert(EventRoom(event))
-        eventDao.insertEventTagCrossRegs(crossRefs)
         event.organizer?.let { associationDao.insert(AssociationRoom(it)) }
         tagDao.insertAll(event.tags.toTagRoomList())
+        eventDao.insertEventTagCrossRegs(crossRefs)
+        eventDao.insert(EventRoom(event))
     }
 
     override suspend fun getAllEvents(): List<Event> {
@@ -63,10 +63,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         val crossRefs =
             events.flatMap { event -> event.tags.map { EventTagCrossRef(event.eventId, it.tagId) } }
 
-        eventDao.insertAll(events.map { EventRoom(it) })
-        eventDao.insertEventTagCrossRegs(crossRefs)
         associationDao.insertAll(associations.map { AssociationRoom(it) })
         tagDao.insertAll(tags.toTagRoomList())
+        eventDao.insertEventTagCrossRegs(crossRefs)
+        eventDao.insertAll(events.map { EventRoom(it) })
     }
 
     override suspend fun getTag(tagId: String): Tag? {
@@ -97,8 +97,8 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         val tags = userProfile.tags.toTagRoomList()
         val crossRefs = tags.map { UserProfileTagCrossRef(userProfile.userId, it.tagId) }
 
-        userProfileDao.insert(UserProfileRoom(userProfile))
-        userProfileDao.insertUserProfileTagCrossRefs(crossRefs)
         tagDao.insertAll(tags)
+        userProfileDao.insertUserProfileTagCrossRefs(crossRefs)
+        userProfileDao.insert(UserProfileRoom(userProfile))
     }
 }
