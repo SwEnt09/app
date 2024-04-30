@@ -4,7 +4,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import java.time.ZonedDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -24,8 +23,8 @@ class SearchMenuFiltersTest {
             pendingChecked = true,
             confirmedChecked = true,
             fullChecked = true,
-            from = ZonedDateTime.now(),
-            to = ZonedDateTime.now().plusDays(365),
+            from = 0f,
+            to = 14f,
             sortBy = SortBy.NONE
         )
     private var checkboxes = listOf("EPFL", "Section", "Class", "Pending", "Confirmed", "Full")
@@ -42,7 +41,8 @@ class SearchMenuFiltersTest {
                 { callback++ },
                 { callback++ },
                 { callback++ },
-                { callback++ }
+                { callback++ },
+                { _, _ -> callback++ }
             )
         }
     }
@@ -86,5 +86,10 @@ class SearchMenuFiltersTest {
         assertEquals(callback, 6)
         checkboxes.forEach { composeTestRule.onNodeWithTag("${it}_checkbox").performClick() }
         assertEquals(callback, 12)
+    }
+
+    @Test
+    fun testDateSliderExists() {
+        composeTestRule.onNodeWithTag("search_menu_time_slider").assertExists()
     }
 }
