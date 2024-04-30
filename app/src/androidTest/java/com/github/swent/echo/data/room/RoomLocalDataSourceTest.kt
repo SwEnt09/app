@@ -126,6 +126,9 @@ class RoomLocalDataSourceTest {
 
     @Test
     fun testGetAndSetUserProfile() = runBlocking {
+        assertTrue(tags.isNotEmpty())
+        assertTrue(associations.isNotEmpty())
+
         val expected =
             UserProfile(
                 "0",
@@ -133,6 +136,8 @@ class RoomLocalDataSourceTest {
                 SemesterEPFL.BA1,
                 SectionEPFL.IN,
                 setOf(tags.first()),
+                setOf(associations.first()),
+                setOf(associations.first()),
             )
 
         localDataSource.setUserProfile(expected)

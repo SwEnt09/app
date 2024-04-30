@@ -20,3 +20,7 @@ data class AssociationRoom(
 
     fun toAssociation(): Association = Association(associationId, name, description)
 }
+
+fun List<AssociationRoom>.toAssociationSet(): Set<Association> = map { it.toAssociation() }.toSet()
+
+fun Set<Association>.toAssociationRoomList(): List<AssociationRoom> = map { AssociationRoom(it) }
