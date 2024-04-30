@@ -101,8 +101,13 @@ class SupabaseDataSourceTest {
     }
 
     @Test
+    fun createEventTest() {
+        val eventFetched = runBlocking { source.createEvent(event.copy(title = "Autre")) }
+    }
+
+    @Test
     fun setEventTest() {
-        val eventFetched = runBlocking { source.setEvent(event) }
+        runBlocking { source.setEvent(event) }
     }
 
     @Test

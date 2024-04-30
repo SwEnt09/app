@@ -12,6 +12,8 @@ interface RemoteDataSource {
 
     suspend fun getEvent(eventId: String): Event
 
+    suspend fun createEvent(event: Event): String
+
     suspend fun setEvent(event: Event)
 
     suspend fun getAllEvents(): List<Event>

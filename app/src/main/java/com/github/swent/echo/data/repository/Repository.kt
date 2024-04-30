@@ -23,9 +23,7 @@ interface Repository {
      *
      * @param event The id of the created event.
      */
-    suspend fun createEvent(event: Event): String {
-        return ""
-    }
+    suspend fun createEvent(event: Event): String
 
     suspend fun setEvent(event: Event)
 

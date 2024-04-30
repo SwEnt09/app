@@ -19,6 +19,10 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
         return remoteDataSource.getEvent(eventId)
     }
 
+    override suspend fun createEvent(event: Event): String {
+        return remoteDataSource.createEvent(event)
+    }
+
     override suspend fun setEvent(event: Event) {
         return remoteDataSource.setEvent(event)
     }
