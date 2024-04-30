@@ -198,4 +198,11 @@ class EventScreenTest {
         composeTestRule.onNodeWithTag("nb-participant-field").assertIsNotFocused()
         assertEquals(maxParticipants, eventViewModel.event.value.maxParticipants)
     }
+
+    @Test
+    fun saveEventWithEmptyTitleShouldDisplayError() {
+        setCompose(eventViewModel)
+        composeTestRule.onNodeWithTag("Save-button").performScrollTo().performClick()
+        composeTestRule.onNodeWithTag("snackbar").assertIsDisplayed()
+    }
 }
