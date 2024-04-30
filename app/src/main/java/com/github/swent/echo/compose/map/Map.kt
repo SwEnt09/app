@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.view.View
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -17,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
@@ -34,45 +33,11 @@ fun <T : View> EchoAndroidView(
     events: List<Event>,
     callback: (Event) -> Unit = {}
 ) {
-    val permissions = arrayOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
+    AndroidView(
+        modifier = modifier.testTag("mapAndroidView"),
+        factory = factory,
+        update = { update(it, events, callback) }
     )
-    fun permissionsDenied(context: Context) = permissions.any {
-        ContextCompat.checkSelfPermission(
-            context,
-            it
-        ) == PackageManager.PERMISSION_DENIED
-    }
-    var displayLocation by remember {
-        mutableStateOf(false)
-    }
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { p ->
-        val isOneGranted = p.values.reduce { acc, next -> acc || next }
-        if (isOneGranted) {
-            displayLocation = true
-        }
-    }
-
-    if (permissionsDenied(LocalContext.current)) {
-        SideEffect {
-            launcher.launch(permissions)
-        }
-    } else {
-        displayLocation = true
-    }
-
-    if (displayLocation) {
-        AndroidView(
-            modifier = modifier.testTag("mapAndroidView"),
-            factory = factory,
-            update = { update(it, events, callback) }
-        )
-    } else {
-        Text(text = "No permission to display the map.")
-    }
 }
 
 /**
@@ -91,6 +56,36 @@ fun MapDrawer(
     callback: (Event) -> Unit = {},
     mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
 ) {
+    val permissions =
+        arrayOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    fun permissionsDenied(context: Context) =
+        permissions.any {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED
+        }
+    var displayLocation by remember { mutableStateOf(false) }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p
+            ->
+            val isOneGranted = p.values.reduce { acc, next -> acc || next }
+            if (isOneGranted) {
+                displayLocation = true
+            }
+        }
+
+    if (permissionsDenied(LocalContext.current)) {
+        SideEffect { launcher.launch(permissions) }
+    } else {
+        displayLocation = true
+    }
+
+    if (displayLocation) {
+        SideEffect { mapDrawerViewModel.enableLocation() }
+    } else {
+        SideEffect { mapDrawerViewModel.disableLocation() }
+    }
     EchoAndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
         factory = mapDrawerViewModel::factory,

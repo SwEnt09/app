@@ -16,4 +16,8 @@ class MapDrawerViewModel @Inject constructor(private val provider: IMapViewProvi
 
     fun update(view: View, events: List<Event>, callback: (Event) -> Unit) =
         provider.update(view, events, callback)
+
+    fun enableLocation() = provider.enableLocation()
+
+    fun disableLocation() = provider.disableLocation()
 }
