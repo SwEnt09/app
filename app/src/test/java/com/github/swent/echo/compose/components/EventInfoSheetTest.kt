@@ -128,4 +128,10 @@ class EventInfoSheetTest {
         composeTestRule.onNodeWithTag("modify_button").performClick()
         assertThat(modified, equalTo(1))
     }
+
+    @Test
+    fun shouldShowModifyButtonLabel() {
+        setUp(canModifyEvent = true)
+        composeTestRule.onNodeWithText("Modify Event").assertExists()
+    }
 }
