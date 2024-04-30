@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,10 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.github.swent.echo.R
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.roundToLong
 
 /** Composable to display the filters sheet */
 @Composable
@@ -44,7 +49,8 @@ fun SearchMenuFilters(
     pendingCallback: () -> Unit,
     confirmedCallback: () -> Unit,
     fullCallback: () -> Unit,
-    sortByCallback: (SortBy) -> Unit
+    sortByCallback: (SortBy) -> Unit,
+    timeFilterCallback: (Float, Float) -> Unit
 ) {
     // Content of the Events for filters
     val eventsForItems =
@@ -129,8 +135,7 @@ fun SearchMenuFilters(
             )
         }
         Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 170.dp)) {
-            DateInputSample(filters.from)
-            DateInputSample(filters.to)
+            DateSlider(filters, timeFilterCallback)
         }
     }
 }
@@ -205,9 +210,67 @@ fun SortByDisplayer(sortBy: SortBy, sortByCallback: (SortBy) -> Unit) {
     }
 }
 
-/*
- * Composable to get a date from the user.
- * TODO : Implement it, but I spend a bit too much time
- *   on non-working solution so leaving it for next sprint
- */
-@Composable fun DateInputSample(dateOutput: ZonedDateTime) {}
+/** Composable to select the date range for the events */
+@Composable
+fun DateSlider(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> Unit) {
+    var sliderPosition by remember { mutableStateOf(filters.from..filters.to) }
+    Column(modifier = Modifier.width(350.dp)) {
+        // Slider for the date range
+        RangeSlider(
+            value = sliderPosition,
+            steps = 13,
+            onValueChange = { range ->
+                sliderPosition = range
+                timeSliderCallback(sliderPosition.start, sliderPosition.endInclusive)
+            },
+            valueRange = 0f..14f,
+            onValueChangeFinished = {},
+            modifier = Modifier.testTag("search_menu_time_slider")
+        )
+        // Text under the slider to display the date range
+        Box(modifier = Modifier.absoluteOffset(y = (-10).dp)) {
+            // Function to calculate the offset of the text when the range is big enough to display
+            // two dates
+            fun sliderTextOffsetSolo(x: Float): Dp = (23 * x - 10).dp
+            // Function to calculate the offset of the text when the range is too close to display
+            // two dates
+            fun sliderTextOffsetCombine(x: Float, y: Float): Dp =
+                // Check if the left side of the slider is too close to the start
+                if (x < 0.5f) {
+                    sliderTextOffsetSolo(x)
+                    // Check if the right side of the slider is too close to the end
+                } else if (y > 13.5f) {
+                    (sliderTextOffsetSolo(y) - 60.dp)
+                    // In between
+                } else {
+                    (sliderTextOffsetSolo((x + y) / 2) - 35.dp)
+                }
+            // Choose if we display two dates or one combination of them
+            // For simplicity, if both dates are equal, we simply display one on the other
+            // (they will have same offset)
+            if ((filters.to - filters.from) > 2.5f || (filters.to - filters.from) < 0.5) {
+                Text(
+                    floatToDate(filters.from).format(DateTimeFormatter.ofPattern("dd/MM")),
+                    modifier = Modifier.offset(sliderTextOffsetSolo(filters.from))
+                )
+                Text(
+                    floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")),
+                    modifier = Modifier.offset(sliderTextOffsetSolo(filters.to))
+                )
+            } else {
+                Text(
+                    floatToDate(filters.from).format(DateTimeFormatter.ofPattern("dd/MM")) +
+                        " - " +
+                        floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")),
+                    modifier = Modifier.offset(sliderTextOffsetCombine(filters.from, filters.to))
+                )
+            }
+        }
+    }
+}
+
+// Function to convert a float from the slider into a date
+fun floatToDate(value: Float): ZonedDateTime {
+    val valueToFloat = value.roundToLong()
+    return ZonedDateTime.now().plusDays(valueToFloat)
+}
