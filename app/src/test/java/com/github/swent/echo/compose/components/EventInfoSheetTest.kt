@@ -23,14 +23,12 @@ class EventInfoSheetTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     private var joinClicked = 0
-    private var peopleClicked = 0
     private var dismissed = 0
     private var extended = 0
 
     private fun setUp(peopleMax: Int = 0) {
         composeTestRule.setContent {
             joinClicked = 0
-            peopleClicked = 0
             dismissed = 0
 
             val event =
@@ -52,7 +50,6 @@ class EventInfoSheetTest {
             EventInfoSheet(
                 event = event,
                 onJoinButtonPressed = { joinClicked++ },
-                onShowPeopleButtonPressed = { peopleClicked++ },
                 onDismiss = { dismissed++ },
                 onFullyExtended = { extended++ }
             )
