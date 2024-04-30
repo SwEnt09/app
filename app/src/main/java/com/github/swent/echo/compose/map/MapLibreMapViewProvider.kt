@@ -7,20 +7,18 @@ import com.github.swent.echo.data.model.Event
 import org.maplibre.android.MapLibre
 import org.maplibre.android.annotations.MarkerOptions
 import org.maplibre.android.camera.CameraPosition
-import org.maplibre.android.location.LocationComponent
 import org.maplibre.android.location.LocationComponentActivationOptions
 import org.maplibre.android.location.LocationComponentOptions
 import org.maplibre.android.location.engine.LocationEngineRequest
 import org.maplibre.android.location.modes.CameraMode
-import org.maplibre.android.location.permissions.PermissionsListener
-import org.maplibre.android.location.permissions.PermissionsManager
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 
 class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
-    private var locationComponent: LocationComponent? = null
+    private var canDisplayLocation = false
+
     private fun redrawMarkers(map: MapLibreMap, events: List<Event>, callback: (Event) -> Unit) {
         map.markers.forEach { map.removeMarker(it) }
         events.forEach {
@@ -36,7 +34,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
     @SuppressLint("MissingPermission")
     private fun displayLocation(context: Context, map : MapLibreMap, style: Style) {
-        locationComponent = map.locationComponent
+        val locationComponent = map.locationComponent
         val locationComponentOptions =
             LocationComponentOptions.builder(context)
                 .pulseEnabled(true)
@@ -53,9 +51,9 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                         .build()
                 )
                 .build()
-        locationComponent!!.activateLocationComponent(locationComponentActivationOptions)
-        locationComponent!!.isLocationComponentEnabled = true
-        locationComponent!!.cameraMode = CameraMode.TRACKING
+        locationComponent.activateLocationComponent(locationComponentActivationOptions)
+        locationComponent.isLocationComponentEnabled = true
+        locationComponent.cameraMode = CameraMode.TRACKING
 
         // locationComponent!!.forceLocationUpdate(lastLocation)
     }
@@ -78,7 +76,9 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                         .zoom(DEFAULT_ZOOM)
                         .bearing(2.0)
                         .build()
-                // displayLocation(context, map, it)
+                if (canDisplayLocation) {
+                    displayLocation(context, map, it)
+                }
             }
         }
         return mapView
@@ -86,5 +86,13 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
     override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
         view.getMapAsync { redrawMarkers(it, events, callback) }
+    }
+
+    override fun enableLocation() {
+        canDisplayLocation = true
+    }
+
+    override fun disableLocation() {
+        canDisplayLocation = false
     }
 }

@@ -16,4 +16,8 @@ interface IMapViewProvider<T : View> {
     fun factory(context: Context): T
 
     fun update(view: T, events: List<Event>, callback: (Event) -> Unit)
+
+    fun enableLocation()
+
+    fun disableLocation()
 }

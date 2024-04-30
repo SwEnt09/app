@@ -70,4 +70,7 @@ class OsmdroidMapViewProvider() : IMapViewProvider<MapView> {
     override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
         view.apply { drawAllMarkers(events, callback) }
     }
+
+    override fun enableLocation() {}
+    override fun disableLocation() {}
 }
