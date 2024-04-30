@@ -28,7 +28,7 @@ class CreateProfileViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = CreateProfileViewModel( authenticationService, repository)
+        viewModel = CreateProfileViewModel(authenticationService, repository)
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
@@ -62,7 +62,7 @@ class CreateProfileViewModelTest {
     fun addTagTest() {
         val tag = Tag("tag3", "Dance")
         val initialTags = listOf(Tag("tag1", "Sports"), Tag("tag2", "Music"))
-        val viewModel = CreateProfileViewModel( authenticationService, repository)
+        val viewModel = CreateProfileViewModel(authenticationService, repository)
         viewModel.addTag(tag)
         assert(viewModel.tagList.value == initialTags + tag)
     }

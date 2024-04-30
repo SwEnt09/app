@@ -71,5 +71,4 @@ constructor(
     fun addTag(tag: Tag) {
         _tagList.value += tag
     }
-
 }

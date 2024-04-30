@@ -24,6 +24,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
@@ -111,12 +112,13 @@ fun ProfileCreationUI(
             var lastName by remember { mutableStateOf("") }
 
             // Back button
-            Icon(
-                Icons.Default.ArrowBack,
-                contentDescription = "go back",
-                modifier =
-                    Modifier.size(35.dp).clickable(onClick = { navAction.goBack() }).testTag("Back")
-            )
+            IconButton(onClick = { navAction.goBack() }, modifier = Modifier.testTag("Back")) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "go back",
+                    modifier = Modifier.size(35.dp)
+                )
+            }
 
             // First name and last name fields
             OutlinedTextField(
