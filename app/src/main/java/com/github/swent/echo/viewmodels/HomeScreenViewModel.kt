@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
+import com.github.swent.echo.compose.components.searchmenu.floatToDate
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.SAMPLE_TAGS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.ZonedDateTime
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,8 +59,8 @@ constructor(
                 pendingChecked = true,
                 confirmedChecked = true,
                 fullChecked = true,
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now().plusDays(365),
+                from = 0f,
+                to = 14f,
                 sortBy = SortBy.NONE
             )
         )
@@ -125,13 +125,8 @@ constructor(
         refreshFiltersContainer()
     }
 
-    fun onFromChanged(from: ZonedDateTime) {
-        _filtersContainer.value = _filtersContainer.value.copy(from = from)
-        refreshFiltersContainer()
-    }
-
-    fun onToChanged(to: ZonedDateTime) {
-        _filtersContainer.value = _filtersContainer.value.copy(to = to)
+    fun onTimeFilterChanged(from: Float, to: Float) {
+        _filtersContainer.value = _filtersContainer.value.copy(from = from, to = to)
         refreshFiltersContainer()
     }
 
@@ -163,8 +158,8 @@ constructor(
                 pendingChecked = true,
                 confirmedChecked = true,
                 fullChecked = true,
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now().plusDays(365),
+                from = 0f,
+                to = 14f,
                 sortBy = SortBy.NONE
             )
         refreshFiltersContainer()
@@ -180,8 +175,8 @@ constructor(
                     event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
                     // filter by time
                     &&
-                        event.startDate.isAfter(_filtersContainer.value.from) &&
-                        event.endDate.isBefore(_filtersContainer.value.to)
+                        event.startDate.isAfter(floatToDate(_filtersContainer.value.from)) &&
+                        event.endDate.isBefore(floatToDate(_filtersContainer.value.to))
                         // filter by scope of the event
                         &&
                         (_filtersContainer.value.epflChecked &&
