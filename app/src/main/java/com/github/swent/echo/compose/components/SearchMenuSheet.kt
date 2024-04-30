@@ -51,7 +51,8 @@ fun SearchMenuSheet(
     confirmedCallback: () -> Unit,
     fullCallback: () -> Unit,
     sortByCallback: (SortBy) -> Unit,
-    resetFiltersCallback: () -> Unit
+    resetFiltersCallback: () -> Unit,
+    timeFilterCallback: (Float, Float) -> Unit
 ) {
     // Search mode
     val searchMode = remember { mutableStateOf(SearchMode.FILTERS) }
@@ -97,7 +98,8 @@ fun SearchMenuSheet(
                         pendingCallback,
                         confirmedCallback,
                         fullCallback,
-                        sortByCallback
+                        sortByCallback,
+                        timeFilterCallback
                     )
                 } else {
                     SearchMenuDiscover()

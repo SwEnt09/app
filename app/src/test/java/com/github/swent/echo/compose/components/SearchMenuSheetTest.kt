@@ -6,7 +6,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
-import java.time.ZonedDateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,8 +26,8 @@ class SearchMenuSheetTest {
             pendingChecked = true,
             confirmedChecked = true,
             fullChecked = true,
-            from = ZonedDateTime.now(),
-            to = ZonedDateTime.now().plusDays(365),
+            from = 0f,
+            to = 14f,
             sortBy = SortBy.NONE
         )
     private var callback = 0
@@ -51,7 +50,8 @@ class SearchMenuSheetTest {
                 confirmedCallback = { callback++ },
                 fullCallback = { callback++ },
                 sortByCallback = { callback++ },
-                resetFiltersCallback = { callback++ }
+                resetFiltersCallback = { callback++ },
+                timeFilterCallback = { _, _ -> callback++ },
             )
         }
     }
