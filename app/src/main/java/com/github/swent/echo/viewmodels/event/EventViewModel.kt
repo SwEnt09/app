@@ -110,6 +110,13 @@ constructor(
         }
     }
 
+    /** change event status from error to modified */
+    fun dismissError() {
+        if (_status.value is EventStatus.Error) {
+            _status.value = EventStatus.Modified
+        }
+    }
+
     /** check the current event has valid data if not return false and set _status to Error */
     private fun eventIsValid(): Boolean {
         val event = _event.value
