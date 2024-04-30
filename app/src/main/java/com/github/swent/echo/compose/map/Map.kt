@@ -22,7 +22,7 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
 
-val MAP_CENTER = Location("Lausanne Center", 46.5191, 6.5668)
+val MAP_CENTER = Location("EPFL", 46.5191, 6.5668)
 const val DEFAULT_ZOOM = 13.0
 
 @Composable
