@@ -138,11 +138,7 @@ fun EventInfoSheet(
             }
 
             Row(
-                modifier =
-                    Modifier.align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp)
-                        // .width(165.dp)
-                        .testTag("join_button"),
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp),
             ) {
                 // button to join the event
                 Button(
