@@ -2,6 +2,7 @@ package com.github.swent.echo.viewmodels.event
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
@@ -45,7 +46,7 @@ class EventViewModelTest {
             endDate = ZonedDateTime.now(),
             tags = setOf(Tag("1", "tag1")),
             0,
-            0,
+            15,
             0
         )
 
@@ -129,6 +130,23 @@ class EventViewModelTest {
     fun saveWithBlankTitleChangeStatusToError() {
         val event = TEST_EVENT.copy(title = " ")
         eventViewModel.setEvent(event)
+        eventViewModel.saveEvent()
+        assertTrue(eventViewModel.status.value is EventStatus.Error)
+    }
+
+    @Test
+    fun saveWhileNotLoggedInChangeStatusToError() {
+        mockLog()
+        val mockedAuthService = mockk<AuthenticationService>()
+        every { mockedAuthService.getCurrentUserID() } returns null
+        runBlocking {
+            eventViewModel = EventViewModel(mockedRepository, mockedAuthService, savedEventId)
+        }
+        scheduler.runCurrent()
+        assertTrue(eventViewModel.status.value is EventStatus.Error)
+        eventViewModel.dismissError()
+        assertTrue(eventViewModel.status.value !is EventStatus.Error)
+        eventViewModel.setEvent(TEST_EVENT.copy(creator = EventCreator.EMPTY))
         eventViewModel.saveEvent()
         assertTrue(eventViewModel.status.value is EventStatus.Error)
     }
