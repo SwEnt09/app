@@ -66,18 +66,24 @@ constructor(
             )
         )
     val filtersContainer = _filtersContainer.asStateFlow()
-
     private val _profileName =
-        MutableStateFlow<String>("John Doe") // placeholder until we have user profiles
+        MutableStateFlow<String>("")
     val profileName = _profileName.asStateFlow()
     private val _profileClass =
-        MutableStateFlow<String>("IN - BA6") // placeholder until we have user profiles
+        MutableStateFlow<String>("")
     val profileClass = _profileClass.asStateFlow()
+    private var section = ""
+    private var semester = ""
 
     init {
         viewModelScope.launch {
-            allEventsList = SAMPLE_EVENTS // repository.getAllEvents()
-            allTagSet = SAMPLE_TAGS // repository.getAllTags()
+            val userId = authenticationService.getCurrentUserID() ?: ""
+            allEventsList = SAMPLE_EVENTS//repository.getAllEvents()
+            allTagSet = SAMPLE_TAGS//repository.getAllTags().toSet()
+            semester = repository.getUserProfile(userId)?.semester?.name ?: ""
+            section = repository.getUserProfile(userId)?.section?.name ?: ""
+            _profileClass.value = if(semester == "") section else if (section == "") semester else "$section - $semester"
+            _profileName.value = repository.getUserProfile(userId)?.name ?: ""
             refreshFiltersContainer()
         }
     }
@@ -182,13 +188,11 @@ constructor(
                         (_filtersContainer.value.epflChecked &&
                             event.tags.any { tag -> tag.name.lowercase() == "epfl" } ||
                             _filtersContainer.value.sectionChecked &&
-                                event.tags.any { tag -> tag.name.lowercase() == "in" } ||
+                                event.tags.any { tag -> tag.name.lowercase() == section.lowercase() } ||
                             _filtersContainer.value.classChecked &&
                                 event.tags.any { tag ->
-                                    tag.name.lowercase() == "ba6"
-                                }) // change when we have the userProfile (take their class and
-                        // section
-                        // as strings)
+                                    tag.name.lowercase() == semester.lowercase()
+                                })
                         // filter by status of the event (pending, confirmed, full)
                         &&
                         (_filtersContainer.value.pendingChecked &&
@@ -201,6 +205,7 @@ constructor(
                 }
                 .sortedBy { event ->
                     event.startDate
+                    // when we can sort by distance, update this
                     /*when (_filtersContainer.value.sortBy) {
                         SortBy.DATE_ASC -> event.startDate
                         SortBy.DATE_DESC ->

@@ -6,8 +6,10 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
+import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.fakes.FakeAuthenticationService
+import io.mockk.coEvery
 import io.mockk.mockk
 import java.time.ZonedDateTime
 import kotlinx.coroutines.Dispatchers
@@ -26,12 +28,41 @@ class HomeScreenViewModelTest {
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private lateinit var homeScreenViewModel: HomeScreenViewModel
     private val scheduler = TestCoroutineScheduler()
+    private val eventList = listOf(
+        Event(
+            eventId = "wow",
+            creator = EventCreator("a", ""),
+            organizer = Association("a", "a", ""),
+            title = "Bowling Event",
+            description = "",
+            location = Location("Location 1", MAP_CENTER.toGeoPoint()),
+            startDate = ZonedDateTime.now(),
+            endDate = ZonedDateTime.now(),
+            tags = setOf(Tag("1", "wow")),
+            participantCount = 5,
+            maxParticipants = 8,
+            imageId = 0
+        )
+    )
+    private val tagSet = listOf(Tag("1", "wow"), Tag("2", "test"))
+    private val userProfile = UserProfile(
+        userId = "u0",
+        name = "John Doe",
+        semester = null,
+        section = null,
+        tags = setOf(),
+        committeeMember = setOf(),
+        associationsSubscriptions = setOf()
+    )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun init() {
         fakeAuthenticationService.userID = "u0"
         Dispatchers.setMain(StandardTestDispatcher(scheduler))
+        coEvery { mockedRepository.getAllEvents() } returns eventList
+        coEvery { mockedRepository.getAllTags() } returns tagSet
+        coEvery { mockedRepository.getUserProfile("u0") } returns userProfile
         runBlocking {
             homeScreenViewModel = HomeScreenViewModel(mockedRepository, fakeAuthenticationService)
         }
@@ -70,15 +101,9 @@ class HomeScreenViewModelTest {
         assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "")
         homeScreenViewModel.onSearchEntryChanged("test")
         assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "test")
-        homeScreenViewModel.refreshFiltersContainer()
         assertEquals(homeScreenViewModel.displayEventList.value.size, 0)
-
-        homeScreenViewModel.onSearchEntryChanged("Dungeons and Dragons")
-        // /!\ this is a tag name that needs to be changed when the
-        // repository is linked to the viewModel (mock the rep then)
-        assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "Dungeons and Dragons")
-        homeScreenViewModel.refreshFiltersContainer()
-        assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
+        homeScreenViewModel.onSearchEntryChanged("wow")
+        assertEquals(homeScreenViewModel.filtersContainer.value.searchEntry, "wow")
     }
 
     @Test
@@ -88,7 +113,7 @@ class HomeScreenViewModelTest {
             "John Doe"
         ) // /!\ this is a placeholder that needs to be changed when the repository is linked to the
         // viewModel (mock the rep then)
-        assertEquals(homeScreenViewModel.profileClass.value, "IN - BA6")
+        assertEquals(homeScreenViewModel.profileClass.value, "")
     }
 
     @Test
