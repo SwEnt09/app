@@ -43,12 +43,27 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         return event.toEvent()
     }
 
+    override suspend fun createEvent(event: Event): String {
+        val eventSupabase = EventSupabaseSetter(event).copy(eventId = null)
+        val eventId =
+            supabase
+                .from("events")
+                .insert(eventSupabase) { select() }
+                .decodeSingle<EventSupabaseSetter>()
+                .eventId!!
+        setEventTagRelations(eventId, event.tags)
+        return eventId
+    }
+
     override suspend fun setEvent(event: Event) {
         val eventSupabase = EventSupabaseSetter(event)
         supabase.from("events").upsert(eventSupabase, onConflict = "event_id")
+        setEventTagRelations(event.eventId, event.tags)
+    }
 
-        val eventTags = event.tags.map { tag -> EventTagSupabase(tag.tagId, event.eventId) }
-        supabase.from("event_tags").upsert(eventTags)
+    private suspend fun setEventTagRelations(eventId: String, tags: Set<Tag>) {
+        val eventTags = tags.map { tag -> EventTagSupabase(tag.tagId, eventId) }
+        supabase.from("event_tags").upsert(eventTags, onConflict = "tag_id,event_id")
     }
 
     override suspend fun getAllEvents(): List<Event> {
