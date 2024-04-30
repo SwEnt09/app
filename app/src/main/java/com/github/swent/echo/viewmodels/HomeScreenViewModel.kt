@@ -13,6 +13,7 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -175,8 +176,7 @@ constructor(
                     event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
                     // filter by time
                     &&
-                        event.startDate.isAfter(floatToDate(_filtersContainer.value.from)) &&
-                        event.endDate.isBefore(floatToDate(_filtersContainer.value.to))
+                        dateFilterConditions(event)
                         // filter by scope of the event
                         &&
                         (_filtersContainer.value.epflChecked &&
@@ -251,5 +251,15 @@ constructor(
     fun switchMode() {
         _mode.value =
             if (_mode.value == MapOrListMode.MAP) MapOrListMode.LIST else MapOrListMode.MAP
+    }
+
+    // Allows the users to see events that are happening in the next 14 days, and more if
+    // the slider is full on the right
+    private fun dateFilterConditions(event: Event): Boolean {
+        var result = event.startDate.isAfter(floatToDate(_filtersContainer.value.from))
+        if (_filtersContainer.value.to.roundToInt() != 14) {
+            result = event.endDate.isBefore(floatToDate(_filtersContainer.value.to))
+        }
+        return result
     }
 }

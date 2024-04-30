@@ -37,6 +37,7 @@ import androidx.compose.ui.zIndex
 import com.github.swent.echo.R
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 /** Composable to display the filters sheet */
@@ -256,7 +257,8 @@ fun DateFilter(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> 
                             .testTag("search_menu_filter_from")
                 )
                 Text(
-                    floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")),
+                    floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")) +
+                        if (filters.to.roundToInt() == 14) "+" else "",
                     modifier =
                         Modifier.offset(sliderTextOffsetSolo(filters.to))
                             .testTag("search_menu_filter_to")
@@ -265,7 +267,8 @@ fun DateFilter(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> 
                 Text(
                     floatToDate(filters.from).format(DateTimeFormatter.ofPattern("dd/MM")) +
                         " - " +
-                        floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")),
+                        floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")) +
+                        if (filters.to.roundToInt() == 14) "+" else "",
                     modifier =
                         Modifier.offset(sliderTextOffsetCombine(filters.from, filters.to))
                             .testTag("search_menu_filter_from_and_to")
