@@ -75,6 +75,7 @@ private fun Content(
     val displayEventList by homeScreenViewModel.displayEventList.collectAsState()
 
     val filters by homeScreenViewModel.filtersContainer.collectAsState()
+    val canUserModifyEvent by homeScreenViewModel.canUserModifyEvent.collectAsState()
 
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
@@ -91,7 +92,9 @@ private fun Content(
                 event = displayEventInfo!!,
                 onJoinButtonPressed = {},
                 onDismiss = homeScreenViewModel::clearOverlay,
-                onFullyExtended = {}
+                onFullyExtended = {},
+                canModifyEvent = canUserModifyEvent,
+                onModifyEvent = {}
             )
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info

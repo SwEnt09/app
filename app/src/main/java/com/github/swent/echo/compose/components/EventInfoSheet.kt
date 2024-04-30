@@ -44,7 +44,9 @@ fun EventInfoSheet(
     event: Event,
     onJoinButtonPressed: () -> Unit,
     onDismiss: () -> Unit,
-    onFullyExtended: () -> Unit
+    onFullyExtended: () -> Unit,
+    canModifyEvent: Boolean,
+    onModifyEvent: () -> Unit,
 ) {
     val sheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = false) { value ->
@@ -108,7 +110,14 @@ fun EventInfoSheet(
                 style = MaterialTheme.typography.bodyLarge
             )
 
-            Row(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 70.dp)) {
+            val rowModifier =
+                if (canModifyEvent)
+                    Modifier.align(Alignment.BottomCenter)
+                        .padding(bottom = 70.dp)
+                        .padding(end = 140.dp)
+                else Modifier.align(Alignment.BottomCenter).padding(bottom = 70.dp)
+
+            Row(modifier = rowModifier) {
                 // icon of a person
                 Icon(
                     imageVector = Icons.Filled.Face,
@@ -128,27 +137,46 @@ fun EventInfoSheet(
                 )
             }
 
-            // button to join the event
-            Button(
-                onClick = {
-                    onJoinButtonPressed()
-                    Toast.makeText(
-                            context,
-                            context.getString(R.string.event_successfully_joined),
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                },
+            Row(
                 modifier =
                     Modifier.align(Alignment.BottomCenter)
                         .padding(bottom = 20.dp)
-                        .width(165.dp)
+                        // .width(165.dp)
                         .testTag("join_button"),
             ) {
-                Text(
-                    text = stringResource(R.string.event_info_sheet_join_event_button_text),
-                    style = MaterialTheme.typography.labelLarge
-                )
+                // button to join the event
+                Button(
+                    onClick = {
+                        onJoinButtonPressed()
+                        Toast.makeText(
+                                context,
+                                context.getString(R.string.event_successfully_joined),
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    },
+                    modifier = Modifier.testTag("join_button"),
+                ) {
+                    Text(
+                        text = stringResource(R.string.event_info_sheet_join_event_button_text),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
+                // button to modify the event
+                if (canModifyEvent) {
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Button(
+                        onClick = onModifyEvent,
+                        modifier = Modifier.testTag("modify_button"),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.event_info_sheet_modify_event),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
             }
         }
     }
