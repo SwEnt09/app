@@ -62,9 +62,7 @@ fun EventInfoSheet(
     val context = LocalContext.current
 
     ModalBottomSheet(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("event_info_sheet"),
+        modifier = Modifier.fillMaxSize().testTag("event_info_sheet"),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
     ) {
@@ -72,10 +70,9 @@ fun EventInfoSheet(
 
         Box(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f)
-                .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 32.dp)
+                Modifier.fillMaxWidth()
+                    .fillMaxHeight(0.5f)
+                    .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 32.dp)
         ) {
             Text(
                 text = event.title,
@@ -85,13 +82,19 @@ fun EventInfoSheet(
             Text(
                 modifier = Modifier.padding(top = 38.dp),
                 text = event.organizer?.name ?: event.creator.name,
-                style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.secondary),
+                style =
+                    MaterialTheme.typography.titleLarge.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    ),
                 maxLines = 1,
             )
             Text(
                 modifier = Modifier.padding(top = 62.dp),
                 text = event.location.name,
-                style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.secondary),
+                style =
+                    MaterialTheme.typography.titleLarge.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    ),
                 maxLines = 1,
             )
             Text(
@@ -105,9 +108,7 @@ fun EventInfoSheet(
                 style = MaterialTheme.typography.bodyLarge
             )
 
-            Row(modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 70.dp)) {
+            Row(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 70.dp)) {
                 // icon of a person
                 Icon(
                     imageVector = Icons.Filled.Face,
@@ -139,11 +140,10 @@ fun EventInfoSheet(
                         .show()
                 },
                 modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 20.dp)
-                    .width(165.dp)
-                    .testTag("join_button"),
+                    Modifier.align(Alignment.BottomCenter)
+                        .padding(bottom = 20.dp)
+                        .width(165.dp)
+                        .testTag("join_button"),
             ) {
                 Text(
                     text = stringResource(R.string.event_info_sheet_join_event_button_text),
