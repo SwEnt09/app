@@ -13,10 +13,7 @@ fun CreateEventScreen(eventViewModel: EventViewModel, navigationActions: Navigat
     EventScreen(
         title = stringResource(R.string.create_event_screen_title),
         onEventBackButtonPressed = navigationActions::goBack,
-        onEventSaveButtonPressed = {
-            eventViewModel.saveEvent()
-            navigationActions.navigateTo(Routes.MAP)
-        },
+        onEventSaved = { navigationActions.navigateTo(Routes.MAP) },
         eventViewModel = eventViewModel
     )
 }

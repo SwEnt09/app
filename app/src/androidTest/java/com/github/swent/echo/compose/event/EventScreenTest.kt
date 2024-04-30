@@ -58,7 +58,7 @@ class EventScreenTest {
         composeTestRule.activity.setContent {
             EventScreen(
                 stringResource(R.string.create_event_screen_title),
-                onEventSaveButtonPressed = {},
+                onEventSaved = {},
                 onEventBackButtonPressed = {},
                 eventViewModel = eventViewModel
             )

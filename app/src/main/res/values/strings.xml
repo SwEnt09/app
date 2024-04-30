@@ -29,6 +29,7 @@
     <string name="event_info_sheet_join_event_button_text">Join Event</string>
     <string name="create_event_screen_title">Create event</string>
     <string name="edit_event_screen_save">Save</string>
+    <string name="edit_event_screen_saving">Saving</string>
     <string name="edit_event_screen_confirm_date">OK</string>
     <string name="edit_event_screen_title">Title</string>
     <string name="edit_event_screen_description">Description</string>
