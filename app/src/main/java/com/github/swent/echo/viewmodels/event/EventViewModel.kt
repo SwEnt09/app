@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -126,6 +127,12 @@ constructor(
         }
         if (event.title.isBlank()) {
             _status.value = EventStatus.Error(R.string.event_creation_error_empty_title)
+        }
+        if (event.maxParticipants <= 0) {
+            _status.value = EventStatus.Error(R.string.event_creation_error_max_participant)
+        }
+        if (event.creator == EventCreator.EMPTY) {
+            _status.value = EventStatus.Error(R.string.event_creation_error_not_logged_in)
         }
         return _status.value !is EventStatus.Error
     }
