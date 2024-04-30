@@ -33,7 +33,19 @@ data class UserProfileTagCrossRef(
     val tagId: String,
 )
 
-data class UserProfileWithTags(
+@Entity(primaryKeys = ["userId", "associationId"], indices = [Index("associationId")])
+data class UserProfileCommitteeMemberCrossRef(
+    val userId: String,
+    val associationId: String,
+)
+
+@Entity(primaryKeys = ["userId", "associationId"], indices = [Index("associationId")])
+data class UserProfileAssociationSubscriptionCrossRef(
+    val userId: String,
+    val associationId: String,
+)
+
+data class UserProfileWithTagsCommitteeMemberAndAssociationSubscription(
     @Embedded val userProfile: UserProfileRoom,
     @Relation(
         parentColumn = "userId",
@@ -41,6 +53,18 @@ data class UserProfileWithTags(
         associateBy = Junction(UserProfileTagCrossRef::class),
     )
     val tags: List<TagRoom>,
+    @Relation(
+        parentColumn = "userId",
+        entityColumn = "associationId",
+        associateBy = Junction(UserProfileCommitteeMemberCrossRef::class),
+    )
+    val committeeMember: List<AssociationRoom>,
+    @Relation(
+        parentColumn = "userId",
+        entityColumn = "associationId",
+        associateBy = Junction(UserProfileAssociationSubscriptionCrossRef::class),
+    )
+    val associationsSubscriptions: List<AssociationRoom>,
 ) {
     fun toUserProfile(): UserProfile =
         UserProfile(
@@ -49,5 +73,7 @@ data class UserProfileWithTags(
             userProfile.semester?.toSemesterEPFL(),
             userProfile.section?.toSectionEPFL(),
             tags.toTagSet(),
+            committeeMember.toAssociationSet(),
+            associationsSubscriptions.toAssociationSet(),
         )
 }

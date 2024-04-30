@@ -9,8 +9,11 @@ import com.github.swent.echo.data.room.entity.AssociationRoom
 import com.github.swent.echo.data.room.entity.EventRoom
 import com.github.swent.echo.data.room.entity.EventTagCrossRef
 import com.github.swent.echo.data.room.entity.TagRoom
+import com.github.swent.echo.data.room.entity.UserProfileAssociationSubscriptionCrossRef
+import com.github.swent.echo.data.room.entity.UserProfileCommitteeMemberCrossRef
 import com.github.swent.echo.data.room.entity.UserProfileRoom
 import com.github.swent.echo.data.room.entity.UserProfileTagCrossRef
+import com.github.swent.echo.data.room.entity.toAssociationRoomList
 import com.github.swent.echo.data.room.entity.toTagList
 import com.github.swent.echo.data.room.entity.toTagRoomList
 import javax.inject.Inject
@@ -95,10 +98,31 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
 
     override suspend fun setUserProfile(userProfile: UserProfile) {
         val tags = userProfile.tags.toTagRoomList()
-        val crossRefs = tags.map { UserProfileTagCrossRef(userProfile.userId, it.tagId) }
+        val tagCrossRefs = tags.map { UserProfileTagCrossRef(userProfile.userId, it.tagId) }
+
+        val committeeMemberAssociations = userProfile.committeeMember.toAssociationRoomList()
+        val committeeMemberCrossRefs =
+            committeeMemberAssociations.map {
+                UserProfileCommitteeMemberCrossRef(userProfile.userId, it.associationId)
+            }
+
+        val associationSubscriptions = userProfile.associationsSubscriptions.toAssociationRoomList()
+        val associationSubscriptionCrossRefs =
+            associationSubscriptions.map {
+                UserProfileAssociationSubscriptionCrossRef(userProfile.userId, it.associationId)
+            }
 
         tagDao.insertAll(tags)
-        userProfileDao.insertUserProfileTagCrossRefs(crossRefs)
+        userProfileDao.insertUserProfileTagCrossRefs(tagCrossRefs)
+
+        associationDao.insertAll(committeeMemberAssociations)
+        userProfileDao.insertUserProfileCommitteeMemberCrossRefs(committeeMemberCrossRefs)
+
+        associationDao.insertAll(associationSubscriptions)
+        userProfileDao.insertUserProfileAssociationSubscriptionCrossRefs(
+            associationSubscriptionCrossRefs
+        )
+
         userProfileDao.insert(UserProfileRoom(userProfile))
     }
 }
