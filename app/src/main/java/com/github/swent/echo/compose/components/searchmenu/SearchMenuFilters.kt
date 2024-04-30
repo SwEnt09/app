@@ -135,7 +135,7 @@ fun SearchMenuFilters(
             )
         }
         Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 170.dp)) {
-            DateSlider(filters, timeFilterCallback)
+            DateFilter(filters, timeFilterCallback)
         }
     }
 }
@@ -212,7 +212,7 @@ fun SortByDisplayer(sortBy: SortBy, sortByCallback: (SortBy) -> Unit) {
 
 /** Composable to select the date range for the events */
 @Composable
-fun DateSlider(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> Unit) {
+fun DateFilter(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> Unit) {
     var sliderPosition by remember { mutableStateOf(filters.from..filters.to) }
     Column(modifier = Modifier.width(350.dp)) {
         // Slider for the date range
@@ -251,18 +251,24 @@ fun DateSlider(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> 
             if ((filters.to - filters.from) > 2.5f || (filters.to - filters.from) < 0.5) {
                 Text(
                     floatToDate(filters.from).format(DateTimeFormatter.ofPattern("dd/MM")),
-                    modifier = Modifier.offset(sliderTextOffsetSolo(filters.from))
+                    modifier =
+                        Modifier.offset(sliderTextOffsetSolo(filters.from))
+                            .testTag("search_menu_filter_from")
                 )
                 Text(
                     floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")),
-                    modifier = Modifier.offset(sliderTextOffsetSolo(filters.to))
+                    modifier =
+                        Modifier.offset(sliderTextOffsetSolo(filters.to))
+                            .testTag("search_menu_filter_to")
                 )
             } else {
                 Text(
                     floatToDate(filters.from).format(DateTimeFormatter.ofPattern("dd/MM")) +
                         " - " +
                         floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")),
-                    modifier = Modifier.offset(sliderTextOffsetCombine(filters.from, filters.to))
+                    modifier =
+                        Modifier.offset(sliderTextOffsetCombine(filters.from, filters.to))
+                            .testTag("search_menu_filter_from_and_to")
                 )
             }
         }

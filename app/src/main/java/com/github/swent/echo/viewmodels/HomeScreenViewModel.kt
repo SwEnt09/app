@@ -125,7 +125,7 @@ constructor(
         refreshFiltersContainer()
     }
 
-    fun onTimeFilterChanged(from: Float, to: Float) {
+    fun onDateFilterChanged(from: Float, to: Float) {
         _filtersContainer.value = _filtersContainer.value.copy(from = from, to = to)
         refreshFiltersContainer()
     }
