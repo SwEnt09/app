@@ -51,7 +51,9 @@ class EventInfoSheetTest {
                 event = event,
                 onJoinButtonPressed = { joinClicked++ },
                 onDismiss = { dismissed++ },
-                onFullyExtended = { extended++ }
+                onFullyExtended = { extended++ },
+                canModifyEvent = false,
+                onModifyEvent = {}
             )
         }
     }

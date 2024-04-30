@@ -47,6 +47,8 @@ constructor(
     val displayEventList = _displayEventList.asStateFlow()
     private val _displayEventInfo = MutableStateFlow<Event?>(null)
     val displayEventInfo = _displayEventInfo.asStateFlow()
+    private val _canUserModifyEvent = MutableStateFlow<Boolean>(false)
+    val canUserModifyEvent = _canUserModifyEvent.asStateFlow()
     private val _filtersContainer =
         MutableStateFlow(
             FiltersContainer(
@@ -73,7 +75,6 @@ constructor(
 
     init {
         viewModelScope.launch {
-            val userid = authenticationService.getCurrentUserID()
             allEventsList = SAMPLE_EVENTS // repository.getAllEvents()
             allTagSet = SAMPLE_TAGS // repository.getAllTags()
             refreshFiltersContainer()
@@ -221,6 +222,7 @@ constructor(
     /** Displays the event info sheet for the given event. Set the overlay to EVENT_INFO_SHEET. */
     fun onEventSelected(event: Event) {
         _displayEventInfo.value = event
+        _canUserModifyEvent.value = authenticationService.getCurrentUserID() == event.creator.userId
         setOverlay(Overlay.EVENT_INFO_SHEET)
     }
 
