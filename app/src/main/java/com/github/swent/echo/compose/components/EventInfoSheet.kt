@@ -110,14 +110,11 @@ fun EventInfoSheet(
                 style = MaterialTheme.typography.bodyLarge
             )
 
-            val rowModifier =
-                if (canModifyEvent)
+            Row(
+                modifier =
                     Modifier.align(Alignment.BottomCenter)
-                        .padding(bottom = 70.dp)
-                        .padding(end = 140.dp)
-                else Modifier.align(Alignment.BottomCenter).padding(bottom = 70.dp)
-
-            Row(modifier = rowModifier) {
+                        .padding(bottom = 70.dp, end = if (canModifyEvent) 140.dp else 0.dp)
+            ) {
                 // icon of a person
                 Icon(
                     imageVector = Icons.Filled.Face,
