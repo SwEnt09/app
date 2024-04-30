@@ -114,7 +114,7 @@ private fun Content(
                 fullCallback = homeScreenViewModel::onFullCheckedSwitch,
                 sortByCallback = homeScreenViewModel::onSortByChanged,
                 resetFiltersCallback = homeScreenViewModel::resetFiltersContainer,
-                timeFilterCallback = homeScreenViewModel::onTimeFilterChanged
+                timeFilterCallback = homeScreenViewModel::onDateFilterChanged
             )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu
