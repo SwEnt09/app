@@ -51,7 +51,6 @@ class MapViewAndroidTest {
     @Test
     fun osmdroidMapProviderShouldShowAndroidView() {
         val p = OsmdroidMapViewProvider()
-        p.enableLocation()
         composeTestRule.setContent { DummyMapDrawer(p) }
         composeTestRule.onNodeWithTag("mapAndroidView").assertIsDisplayed()
     }
@@ -59,6 +58,7 @@ class MapViewAndroidTest {
     @Test
     fun mapLibreMapProviderShouldShowAndroidView() {
         val p = MapLibreMapViewProvider()
+        p.enableLocation()
         composeTestRule.setContent { DummyMapDrawer(p) }
         composeTestRule.onNodeWithTag("mapAndroidView").assertIsDisplayed()
     }

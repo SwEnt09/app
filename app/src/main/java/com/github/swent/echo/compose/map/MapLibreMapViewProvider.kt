@@ -50,8 +50,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                 .build()
         locationComponent.activateLocationComponent(locationComponentActivationOptions)
         locationComponent.isLocationComponentEnabled = true
-        locationComponent.cameraMode = CameraMode.TRACKING
-
+        locationComponent.cameraMode = CameraMode.NONE
         // locationComponent!!.forceLocationUpdate(lastLocation)
     }
 
@@ -65,13 +64,16 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
         mapView.getMapAsync { map ->
             // Set the style after mapView was loaded
             map.setStyle(styleUrl) {
-                map.uiSettings.setAttributionMargins(15, 0, 0, 15)
+                map.uiSettings.apply {
+                    setAttributionMargins(15, 0, 0, 15)
+                    isRotateGesturesEnabled = false
+                }
                 // Set the map view center
                 map.cameraPosition =
                     CameraPosition.Builder()
                         .target(MAP_CENTER.toLatLng())
                         .zoom(DEFAULT_ZOOM)
-                        .bearing(2.0)
+                        .bearing(0.0)
                         .build()
                 if (canDisplayLocation) {
                     displayLocation(context, map, it)

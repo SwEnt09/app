@@ -22,8 +22,8 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
 
-val MAP_CENTER = Location("Lausanne Center", 46.5197, 6.6323)
-const val DEFAULT_ZOOM = 15.0
+val MAP_CENTER = Location("Lausanne Center", 46.5191, 6.5668)
+const val DEFAULT_ZOOM = 13.0
 
 @Composable
 fun <T : View> EchoAndroidView(
@@ -69,10 +69,7 @@ fun MapDrawer(
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p
             ->
-            val isOneGranted = p.values.reduce { acc, next -> acc || next }
-            if (isOneGranted) {
-                displayLocation = true
-            }
+            displayLocation = displayLocation || p.values.any { it }
         }
 
     if (permissionsDenied(LocalContext.current)) {
