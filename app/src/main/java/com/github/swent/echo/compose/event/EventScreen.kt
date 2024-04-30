@@ -70,7 +70,9 @@ fun EventScreen(
         topBar = {
             EventTitleAndBackButton(title = title, onBackButtonPressed = onEventBackButtonPressed)
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState, modifier = Modifier.testTag("snackbar"))
+        }
     ) { padding ->
         Column(
             modifier =
