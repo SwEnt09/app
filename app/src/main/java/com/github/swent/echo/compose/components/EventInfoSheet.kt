@@ -151,7 +151,7 @@ fun EventInfoSheet(
                             )
                             .show()
                     },
-                    modifier = Modifier.testTag("join_button"),
+                    modifier = Modifier.testTag("join_button_event_info_sheet"),
                 ) {
                     Text(
                         text = stringResource(R.string.event_info_sheet_join_event_button_text),
