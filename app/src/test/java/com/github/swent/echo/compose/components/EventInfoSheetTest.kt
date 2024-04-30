@@ -25,8 +25,9 @@ class EventInfoSheetTest {
     private var joinClicked = 0
     private var dismissed = 0
     private var extended = 0
+    private var modified = 0
 
-    private fun setUp(peopleMax: Int = 0) {
+    private fun setUp(peopleMax: Int = 0, canModifyEvent: Boolean = false) {
         composeTestRule.setContent {
             joinClicked = 0
             dismissed = 0
@@ -52,8 +53,8 @@ class EventInfoSheetTest {
                 onJoinButtonPressed = { joinClicked++ },
                 onDismiss = { dismissed++ },
                 onFullyExtended = { extended++ },
-                canModifyEvent = false,
-                onModifyEvent = {}
+                canModifyEvent = canModifyEvent,
+                onModifyEvent = { modified++ }
             )
         }
     }
@@ -97,7 +98,7 @@ class EventInfoSheetTest {
     @Test
     fun shouldCallJoinButtonPressedWhenJoinButtonClicked() {
         setUp()
-        composeTestRule.onNodeWithTag("join_button").performClick()
+        composeTestRule.onNodeWithTag("join_button_event_info_sheet").performClick()
         assertThat(joinClicked, equalTo(1))
     }
 
@@ -111,5 +112,20 @@ class EventInfoSheetTest {
     fun shouldShowPeopleCorrectlyWhenMaxPeopleIsNotZero() {
         setUp(5)
         composeTestRule.onNodeWithText("0/5").assertExists()
+    }
+
+    @Test
+    fun shouldNotShowModifyButtonWhenUserCannotModifyEvent() {
+        setUp(canModifyEvent = false)
+        composeTestRule.onNodeWithTag("modify_button").assertDoesNotExist()
+    }
+
+    @Test
+    fun shouldShowModifyButtonWhenUserCanModifyEvent() {
+        setUp(canModifyEvent = true)
+        composeTestRule.onNodeWithTag("modify_button").assertExists()
+
+        composeTestRule.onNodeWithTag("modify_button").performClick()
+        assertThat(modified, equalTo(1))
     }
 }
