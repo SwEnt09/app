@@ -28,8 +28,4 @@ class SimpleMapViewProvider : IMapViewProvider<ComposeView> {
             }
         }
     }
-
-    override fun enableLocation() {}
-
-    override fun disableLocation() {}
 }

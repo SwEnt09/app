@@ -33,15 +33,12 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     }
 
     @SuppressLint("MissingPermission")
-    private fun displayLocation(context: Context, map : MapLibreMap, style: Style) {
+    private fun displayLocation(context: Context, map: MapLibreMap, style: Style) {
         val locationComponent = map.locationComponent
         val locationComponentOptions =
-            LocationComponentOptions.builder(context)
-                .pulseEnabled(true)
-                .build()
+            LocationComponentOptions.builder(context).pulseEnabled(true).build()
         val locationComponentActivationOptions =
-            LocationComponentActivationOptions
-                .builder(context, style)
+            LocationComponentActivationOptions.builder(context, style)
                 .locationComponentOptions(locationComponentOptions)
                 .useDefaultLocationEngine(true)
                 .locationEngineRequest(
