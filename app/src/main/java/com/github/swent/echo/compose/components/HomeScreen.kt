@@ -90,7 +90,6 @@ private fun Content(
             EventInfoSheet(
                 event = displayEventInfo!!,
                 onJoinButtonPressed = {},
-                onShowPeopleButtonPressed = {},
                 onDismiss = homeScreenViewModel::clearOverlay,
                 onFullyExtended = {}
             )
