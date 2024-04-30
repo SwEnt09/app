@@ -23,52 +23,52 @@ constructor(
 
 ) : ViewModel() {
 
-  private val _firstName = MutableStateFlow("")
-  val firstName = _firstName.asStateFlow()
+    private val _firstName = MutableStateFlow("")
+    val firstName = _firstName.asStateFlow()
 
-  private val _lastName = MutableStateFlow("")
-  val lastName = _lastName.asStateFlow()
+    private val _lastName = MutableStateFlow("")
+    val lastName = _lastName.asStateFlow()
 
-  private val _selectedSection = MutableStateFlow(null)
-  val selectedSection = _selectedSection.asStateFlow()
+    private val _selectedSection = MutableStateFlow(null)
+    val selectedSection = _selectedSection.asStateFlow()
 
-  private val _selectedSemester = MutableStateFlow(null)
-  val selectedSemester = _selectedSemester.asStateFlow()
+    private val _selectedSemester = MutableStateFlow(null)
+    val selectedSemester = _selectedSemester.asStateFlow()
 
-  private val _tagList = MutableStateFlow<List<Tag>>(listOf())
-  val tagList = _tagList.asStateFlow()
+    private val _tagList = MutableStateFlow<List<Tag>>(listOf())
+    val tagList = _tagList.asStateFlow()
 
-  private val _errorMessage = MutableStateFlow<String?>(null)
-  val errorMessage = _errorMessage.asStateFlow()
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage = _errorMessage.asStateFlow()
 
     // TODO: Save profile button => go to the home screen after saving the profile.
-  fun profilesave() {
+    fun profilesave() {
 
-    viewModelScope.launch {
-      val userId = authenticationService.getCurrentUserID()
-      if (userId == null) {
-        _errorMessage.value = "Profile creation error: Not logged in"
-        // TODO: handle error later on. Will this ever be the case?
-      } else {
-        // TODO: this is the logic for creating a userProfile, changes are required in the
-        // getUserProfile function so that it returns null if a user has not yet created a
-        // user profile
-        val userProfile =
-            repository.setUserProfile(
-                UserProfile(
-                    userId,
-                    name = "$_firstName $_lastName",
-                    semester = _selectedSemester.value,
-                    section = _selectedSection.value,
+        viewModelScope.launch {
+            val userId = authenticationService.getCurrentUserID()
+            if (userId == null) {
+                _errorMessage.value = "Profile creation error: Not logged in"
+                // TODO: handle error later on. Will this ever be the case?
+            } else {
+                // TODO: this is the logic for creating a userProfile, changes are required in the
+                // getUserProfile function so that it returns null if a user has not yet created a
+                // user profile
+                val userProfile =
+                    repository.setUserProfile(
+                        UserProfile(
+                            userId,
+                            name = "$_firstName $_lastName",
+                            semester = _selectedSemester.value,
+                            section = _selectedSection.value,
                             tags = _tagList.value.toSet()
                         )
                     )
-      }
+            }
+        }
     }
-  }
 
-  // Add tag button
-  fun addTag(tag: Tag) {
+    // Add tag button
+    fun addTag(tag: Tag) {
         _tagList.value += tag
-     }
+    }
 }

@@ -65,14 +65,6 @@
     <string name="event_location_longitude">Longitude</string>
     <string name="edit_event_screen_cancel">Cancel</string>
     <string name="edit_event_screen_confirm_location">OK</string>
-
-    <string name="profile_creation_first_name">First name</string>
-    <string name="profile_creation_last_name">Last name</string>
-    <string name="profile_creation_save_button">Save</string>
-    <string name="profile_creation_section">Section</string>
-    <string name="profile_creation_semester">Semester</string>
-    <string name="profile_creation_tags">Tags</string>
-
     <string name="list_drawer_view_on_map">View On Map</string>
     <string name="list_drawer_join_event">Join Event</string>
     <string name="profile_creation_first_name">First name</string>

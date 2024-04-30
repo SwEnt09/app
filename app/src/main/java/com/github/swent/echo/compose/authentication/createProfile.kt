@@ -113,11 +113,11 @@ fun ProfileCreationUI(
 
             // Back button
             IconButton(onClick = { navAction.goBack() }, modifier = Modifier.testTag("Back")) {
-            Icon(
-                Icons.Default.ArrowBack,
-                contentDescription = "go back",
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "go back",
                     modifier = Modifier.size(35.dp)
-            )
+                )
             }
 
             // First name and last name fields
