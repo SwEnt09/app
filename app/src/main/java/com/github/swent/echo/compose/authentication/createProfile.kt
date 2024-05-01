@@ -59,6 +59,7 @@ import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.ui.navigation.NavigationActions
+import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.CreateProfileViewModel
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
@@ -119,13 +120,14 @@ fun ProfileCreationUI(
                     modifier = Modifier.size(35.dp)
                 )
             }
-
+            val maxChars = 26
             // First name and last name fields
             OutlinedTextField(
                 value = firstName,
                 onValueChange = { firstName = it },
                 modifier = Modifier.testTag("FirstName"),
-                label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) }
+                label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) },
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -134,7 +136,8 @@ fun ProfileCreationUI(
                 value = lastName,
                 onValueChange = { lastName = it },
                 modifier = Modifier.testTag("LastName"),
-                label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) }
+                label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) },
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -175,7 +178,10 @@ fun ProfileCreationUI(
             Spacer(modifier = Modifier.weight(1f))
             // Save button
             OutlinedButton(
-                onClick = { onSave() },
+                onClick = {
+                    onSave()
+                    navAction.navigateTo(Routes.MAP)
+                },
                 modifier = Modifier.fillMaxWidth().testTag("Save")
             ) {
                 Text(text = stringResource(id = R.string.profile_creation_save_button))
