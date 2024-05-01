@@ -29,7 +29,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 class EventViewModelTest {
@@ -192,10 +191,8 @@ class EventViewModelTest {
         assertEquals(eventViewModel.event.value.organizer, null)
     }
 
-    @Ignore // not implemented
     @Test
-    fun setOrganizerNameAsOtherUserThrowError() {
-        mockLog()
+    fun setOrganizerNameAsNonExistingAssociationSetNull() {
         val testUserProfile =
             UserProfile(
                 TEST_EVENT.creator.userId,
@@ -208,12 +205,11 @@ class EventViewModelTest {
             )
         eventViewModel.setEvent(TEST_EVENT)
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
-        eventViewModel.setOrganizer("anothername")
+        eventViewModel.setOrganizer("anonexistingassociation")
         scheduler.runCurrent()
-        verify { Log.e(any(), any()) }
+        assertEquals(null, eventViewModel.event.value.organizer)
     }
 
-    @Ignore // not implemented
     @Test
     fun setOrganizerNameAsAssociationSetTheCorrectValue() {
         val testAssociation = Association("testAid", "testAname", "testDescription")
