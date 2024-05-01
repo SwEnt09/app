@@ -230,7 +230,7 @@ constructor(
         setOverlay(Overlay.EVENT_INFO_SHEET)
     }
 
-    /*
+    /* not needed for now
     /** Add the given tag to the filter tag list. */
     fun addTag(tag: Tag) {
         filterTagSet = filterTagSet.plus(tag)
