@@ -7,7 +7,8 @@ enum class Routes {
     LOGIN,
     REGISTER,
     MAP,
-    CREATE_EVENT
+    CREATE_EVENT,
+    EDIT_EVENT
 }
 
 /**
