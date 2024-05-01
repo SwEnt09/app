@@ -28,32 +28,34 @@ class HomeScreenViewModelTest {
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private lateinit var homeScreenViewModel: HomeScreenViewModel
     private val scheduler = TestCoroutineScheduler()
-    private val eventList = listOf(
-        Event(
-            eventId = "wow",
-            creator = EventCreator("a", ""),
-            organizer = Association("a", "a", ""),
-            title = "Bowling Event",
-            description = "",
-            location = Location("Location 1", MAP_CENTER.toGeoPoint()),
-            startDate = ZonedDateTime.now(),
-            endDate = ZonedDateTime.now(),
-            tags = setOf(Tag("1", "wow")),
-            participantCount = 5,
-            maxParticipants = 8,
-            imageId = 0
+    private val eventList =
+        listOf(
+            Event(
+                eventId = "wow",
+                creator = EventCreator("a", ""),
+                organizer = Association("a", "a", ""),
+                title = "Bowling Event",
+                description = "",
+                location = Location("Location 1", MAP_CENTER.toGeoPoint()),
+                startDate = ZonedDateTime.now(),
+                endDate = ZonedDateTime.now(),
+                tags = setOf(Tag("1", "wow")),
+                participantCount = 5,
+                maxParticipants = 8,
+                imageId = 0
+            )
         )
-    )
     private val tagSet = listOf(Tag("1", "wow"), Tag("2", "test"))
-    private val userProfile = UserProfile(
-        userId = "u0",
-        name = "John Doe",
-        semester = null,
-        section = null,
-        tags = setOf(),
-        committeeMember = setOf(),
-        associationsSubscriptions = setOf()
-    )
+    private val userProfile =
+        UserProfile(
+            userId = "u0",
+            name = "John Doe",
+            semester = null,
+            section = null,
+            tags = setOf(),
+            committeeMember = setOf(),
+            associationsSubscriptions = setOf()
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
