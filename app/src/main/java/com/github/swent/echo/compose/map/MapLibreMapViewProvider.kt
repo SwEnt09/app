@@ -2,7 +2,6 @@ package com.github.swent.echo.compose.map
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
 import org.maplibre.android.MapLibre
@@ -39,7 +38,6 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
     @SuppressLint("MissingPermission")
     private fun displayLocation(context: Context, map: MapLibreMap, style: Style) {
-        Log.i("ECHO RUNTIME", "Displaying location.")
         locationComponent = map.locationComponent
         val locationComponentOptions =
             LocationComponentOptions.builder(context).pulseEnabled(true).build()
@@ -68,7 +66,6 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     }
 
     override fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): MapView {
-        Log.i("ECHO RUNTIME", "Calling factory.")
         MapLibre.getInstance(context)
         val styleUrl =
             context.getString(R.string.maptiler_base_style_url) +
@@ -80,13 +77,8 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
         }
         mapView?.onCreate(null)
         mapView?.getMapAsync { map ->
-            Log.i("ECHO RUNTIME", "Factory got the map.")
             // Set the style after mapView was loaded
             map.setStyle(styleUrl) {
-                Log.i(
-                    "ECHO RUNTIME",
-                    "Style is ready" + if (withLocation) " with location." else "."
-                )
                 map.uiSettings.apply {
                     setAttributionMargins(15, 0, 0, 15)
                     isRotateGesturesEnabled = false
@@ -112,17 +104,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
         callback: (Event) -> Unit,
         withLocation: Boolean
     ) {
-        if (mapView != null)
-            Log.i("ECHO RUNTIME", "Calling update" + if (withLocation) " with location." else ".")
         view.getMapAsync { map ->
-            Log.i(
-                "ECHO RUNTIME",
-                "Update got the map" + if (withLocation) " with location." else "."
-            )
-            Log.i(
-                "ECHO RUNTIME",
-                if (map.style == null) "\tStyle is null." else "\tStyle is not null."
-            )
             redrawMarkers(map, events, callback)
             if (withLocation) {
                 map.style?.apply { displayLocation(view.context, map, this) }
