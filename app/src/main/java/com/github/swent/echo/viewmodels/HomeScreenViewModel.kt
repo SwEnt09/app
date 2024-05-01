@@ -73,7 +73,7 @@ constructor(
 
     init {
         viewModelScope.launch {
-            val userId = authenticationService.getCurrentUserID()!!
+            val userId = authenticationService.getCurrentUserID() ?: ""
             allEventsList = repository.getAllEvents()
             allTagSet = repository.getAllTags().toSet()
             semester = repository.getUserProfile(userId)?.semester?.name ?: ""
