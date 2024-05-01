@@ -120,7 +120,7 @@ fun ProfileCreationUI(
                     modifier = Modifier.size(35.dp)
                 )
             }
-            val maxChars = 26
+
             // First name and last name fields
             OutlinedTextField(
                 value = firstName,
