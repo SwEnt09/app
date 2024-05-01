@@ -6,8 +6,6 @@ import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.components.searchmenu.floatToDate
-import com.github.swent.echo.data.SAMPLE_EVENTS
-import com.github.swent.echo.data.SAMPLE_TAGS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
@@ -75,9 +73,9 @@ constructor(
 
     init {
         viewModelScope.launch {
-            val userId = authenticationService.getCurrentUserID() ?: ""
-            allEventsList = SAMPLE_EVENTS // repository.getAllEvents()
-            allTagSet = SAMPLE_TAGS // repository.getAllTags().toSet()
+            val userId = authenticationService.getCurrentUserID()!!
+            allEventsList = repository.getAllEvents()
+            allTagSet = repository.getAllTags().toSet()
             semester = repository.getUserProfile(userId)?.semester?.name ?: ""
             section = repository.getUserProfile(userId)?.section?.name ?: ""
             _profileClass.value =
@@ -175,37 +173,35 @@ constructor(
     // End of methods to set the filters container values
 
     private fun filterEvents() {
-        print("section : $section\n")
-        print("semester : $semester\n")
         _displayEventList.value =
             allEventsList
-                .filter { event ->
-                    // filter by tags
+                .asSequence()
+                .filter { event -> // filter by tags
                     event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
-                    // filter by time
-                    &&
-                        dateFilterConditions(event)
-                        // filter by scope of the event
-                        &&
-                        ((_filtersContainer.value.epflChecked &&
-                            event.tags.any { tag -> tag.name.lowercase() == "epfl" }) ||
-                            (_filtersContainer.value.sectionChecked &&
-                                event.tags.any { tag ->
-                                    tag.name.lowercase() == section.lowercase()
-                                }) ||
-                            (_filtersContainer.value.classChecked &&
-                                event.tags.any { tag ->
-                                    tag.name.lowercase() == semester.lowercase()
-                                }))
-                        // filter by status of the event (pending, confirmed, full)
-                        &&
-                        (_filtersContainer.value.pendingChecked &&
-                            event.participantCount < event.maxParticipants * 0.5 ||
-                            _filtersContainer.value.confirmedChecked &&
-                                (event.participantCount >= event.maxParticipants * 0.5 &&
-                                    event.participantCount < event.maxParticipants) ||
-                            _filtersContainer.value.fullChecked &&
-                                event.participantCount == event.maxParticipants)
+                }
+                .filter { event -> // filter by time
+                    dateFilterConditions(event)
+                }
+                .filter { event -> // filter by status of the event (pending, confirmed, full)
+                    (_filtersContainer.value.pendingChecked &&
+                        event.participantCount < event.maxParticipants * 0.5 ||
+                        _filtersContainer.value.confirmedChecked &&
+                            (event.participantCount >= event.maxParticipants * 0.5 &&
+                                event.participantCount < event.maxParticipants) ||
+                        _filtersContainer.value.fullChecked &&
+                            event.participantCount == event.maxParticipants)
+                }
+                .filter { event -> // filter by scope of the event
+                    ((_filtersContainer.value.epflChecked &&
+                        event.tags.any { tag -> tag.name.lowercase() == "epfl" }) ||
+                        (section != "" &&
+                            _filtersContainer.value.sectionChecked &&
+                            event.tags.any { tag ->
+                                tag.name.lowercase() == section.lowercase()
+                            }) ||
+                        (semester != "" &&
+                            _filtersContainer.value.classChecked &&
+                            event.tags.any { tag -> tag.name.lowercase() == semester.lowercase() }))
                 }
                 .sortedBy { event ->
                     event.startDate
@@ -216,6 +212,7 @@ constructor(
                         else ->
                     }*/
                 }
+                .toList()
 
         // reverse the list if the sort by is descending
         if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) {
