@@ -114,7 +114,7 @@ fun SelectLocationDialog(
                             onDismissRequest()
                         }
                     ) {
-                        Text(stringResource(R.string.edit_event_screen_confirm_location))
+                        Text(stringResource(R.string.edit_event_screen_confirm))
                     }
                 }
             }

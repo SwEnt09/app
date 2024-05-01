@@ -1,7 +1,10 @@
 package com.github.swent.echo.compose.event
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -35,7 +38,9 @@ val EVENT_PADDING_BETWEEN_INPUTS = 10.dp
 @Composable
 fun EventScreen(
     title: String,
+    canDelete: Boolean = false,
     onEventSaved: () -> Unit,
+    onEventDeleted: () -> Unit = {},
     onEventBackButtonPressed: () -> Unit,
     eventViewModel: EventViewModel
 ) {
@@ -79,17 +84,25 @@ fun EventScreen(
             // all the inputs for an event
             EventPropertiesFields(eventViewModel = eventViewModel)
             // save button
-            OutlinedButton(
-                modifier =
-                    Modifier.padding(30.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .testTag("Save-button"),
-                onClick = {
-                    eventViewModel.saveEvent()
-                    saveButtonClicked = true
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(EVENT_PADDING_BETWEEN_INPUTS),
+                horizontalArrangement = Arrangement.End
             ) {
-                Text(stringResource(saveButtonText))
+                if (canDelete) {
+                    DeleteEventButton {
+                        // TODO: delete the event in the repository
+                        onEventDeleted()
+                    }
+                }
+                OutlinedButton(
+                    modifier = Modifier.padding(10.dp).testTag("Save-button"),
+                    onClick = {
+                        eventViewModel.saveEvent()
+                        saveButtonClicked = true
+                    }
+                ) {
+                    Text(stringResource(saveButtonText))
+                }
             }
         }
     }
