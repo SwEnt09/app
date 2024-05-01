@@ -47,6 +47,16 @@ fun <T : View> EchoAndroidView(
     )
 }
 
+val PERMISSIONS =
+    arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+fun permissionsDenied(context: Context) =
+    PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED
+    }
+
 /**
  * This composable will draw a map that displays events.
  *
@@ -63,15 +73,6 @@ fun MapDrawer(
     callback: (Event) -> Unit = {},
     mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
 ) {
-    val permissions =
-        arrayOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-    fun permissionsDenied(context: Context) =
-        permissions.any {
-            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED
-        }
     var displayLocation by remember { mutableStateOf(false) }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p
@@ -84,7 +85,7 @@ fun MapDrawer(
     created before launching the permission request.
     */
     if (runBlocking { permissionsDenied(c) }) {
-        SideEffect { launcher.launch(permissions) }
+        SideEffect { launcher.launch(PERMISSIONS) }
     } else {
         SideEffect { displayLocation = true }
     }
