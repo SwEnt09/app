@@ -17,7 +17,9 @@ class SimpleMapViewProvider : IMapViewProvider<ComposeView> {
         withLocation: Boolean,
         onCreate: () -> Unit
     ): ComposeView {
-        return ComposeView(context)
+        val view = ComposeView(context)
+        onCreate()
+        return view
     }
 
     override fun update(

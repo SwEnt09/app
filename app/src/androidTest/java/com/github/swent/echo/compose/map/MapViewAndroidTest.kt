@@ -32,6 +32,7 @@ class MapViewAndroidTest {
                 factory = p::factory,
                 update = p::update,
                 events = e,
+                withLocation = true
             )
         }
     }
@@ -58,7 +59,6 @@ class MapViewAndroidTest {
     @Test
     fun mapLibreMapProviderShouldShowAndroidView() {
         val p = MapLibreMapViewProvider()
-        p.enableLocation()
         composeTestRule.setContent { DummyMapDrawer(p) }
         composeTestRule.onNodeWithTag("mapAndroidView").assertIsDisplayed()
     }

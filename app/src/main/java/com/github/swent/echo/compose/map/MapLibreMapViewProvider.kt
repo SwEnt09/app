@@ -112,7 +112,8 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
         callback: (Event) -> Unit,
         withLocation: Boolean
     ) {
-        Log.i("ECHO RUNTIME", "Calling update" + if (withLocation) " with location." else ".")
+        if (mapView != null)
+            Log.i("ECHO RUNTIME", "Calling update" + if (withLocation) " with location." else ".")
         view.getMapAsync { map ->
             Log.i(
                 "ECHO RUNTIME",
