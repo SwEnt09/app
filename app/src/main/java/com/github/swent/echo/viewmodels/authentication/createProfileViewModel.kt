@@ -3,6 +3,8 @@ package com.github.swent.echo.viewmodels.authentication
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.data.model.SectionEPFL
+import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
@@ -29,10 +31,10 @@ constructor(
     private val _lastName = MutableStateFlow("")
     val lastName = _lastName.asStateFlow()
 
-    private val _selectedSection = MutableStateFlow(null)
+    private val _selectedSection = MutableStateFlow<SectionEPFL?>(null)
     val selectedSection = _selectedSection.asStateFlow()
 
-    private val _selectedSemester = MutableStateFlow(null)
+    private val _selectedSemester = MutableStateFlow<SemesterEPFL?>(null)
     val selectedSemester = _selectedSemester.asStateFlow()
 
     private val _tagList = MutableStateFlow<List<Tag>>(listOf())
@@ -40,6 +42,24 @@ constructor(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
+
+    // functions to change the name of the private variables from outside the class.  (setters)
+
+    fun setFirstName(firstName: String) {
+        _firstName.value = firstName
+    }
+
+    fun setLastName(lastName: String) {
+        _lastName.value = lastName
+    }
+
+    fun setSelectedSection(section: SectionEPFL) {
+        _selectedSection.value = section
+    }
+
+    fun setSelectedSemester(semester: SemesterEPFL) {
+        _selectedSemester.value = semester
+    }
 
     // TODO: Save profile button => go to the home screen after saving the profile.
     fun profilesave() {
@@ -57,7 +77,7 @@ constructor(
                     repository.setUserProfile(
                         UserProfile(
                             userId,
-                            name = "$_firstName $_lastName",
+                            name = "${_firstName.value} ${_lastName.value}",
                             semester = _selectedSemester.value,
                             section = _selectedSection.value,
                             tags = _tagList.value.toSet()

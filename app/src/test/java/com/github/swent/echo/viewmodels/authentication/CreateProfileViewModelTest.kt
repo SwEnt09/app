@@ -5,14 +5,14 @@ import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
-import com.github.swent.echo.data.repository.Repository
+import com.github.swent.echo.data.repository.SimpleRepository
 import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -22,14 +22,16 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 class CreateProfileViewModelTest {
 
-    private val repository: Repository = mockk()
     private val authenticationService: AuthenticationService = mockk()
+    private val repository: SimpleRepository = mockk()
     private lateinit var viewModel: CreateProfileViewModel
 
     @Before
     fun setUp() {
-        viewModel = CreateProfileViewModel(authenticationService, repository)
+        // authenticationService.userID = "userId"
         Dispatchers.setMain(UnconfinedTestDispatcher())
+        viewModel = CreateProfileViewModel(authenticationService, repository)
+        // scheduler.runCurrent()
     }
 
     @Test
@@ -42,28 +44,51 @@ class CreateProfileViewModelTest {
     }
 
     @Test
-    fun loggedInUser() = runTest {
+    fun loggedInUser() = runBlocking {
         val userId = "userId"
-        val firstName = "John"
-        val lastName = "Doe"
-        val section = SectionEPFL.AR
-        val semester = SemesterEPFL.BA2
-        val tags = listOf(Tag("tag1", "Sports"), Tag("tag2", "Music"))
-        val userProfile =
-            UserProfile(userId, "$firstName $lastName", semester, section, tags.toSet())
-
+        // whenever(authenticationService.getCurrentUserID()).thenReturn(userId)
         coEvery { authenticationService.getCurrentUserID() } returns userId
-        coEvery { repository.setUserProfile(any()) } just runs
+
+        viewModel.setFirstName("John")
+        viewModel.setLastName("Doe")
+        viewModel.setSelectedSection(SectionEPFL.IN)
+        viewModel.setSelectedSemester(SemesterEPFL.BA3)
+
+        viewModel.addTag(Tag("tag1", "Sports"))
+        viewModel.addTag(Tag("tag2", "Music"))
+
+        val userProfile =
+            UserProfile(
+                userId,
+                "John Doe",
+                SemesterEPFL.BA3,
+                SectionEPFL.IN,
+                setOf(Tag("tag1", "Sports"), Tag("tag2", "Music"))
+            )
+
+        coEvery { repository.getUserProfile(any()) } returns userProfile
+        coEvery { repository.setUserProfile(userProfile) } returns Unit
+
         viewModel.profilesave()
-        coVerify { repository.setUserProfile(userProfile) }
+
+        val actual_userProfile = repository.getUserProfile(userId)
+
+        assertEquals(userProfile.userId, actual_userProfile?.userId)
+        assertEquals(userProfile.name, actual_userProfile?.name)
+        assertEquals(userProfile.semester, actual_userProfile?.semester)
+        assertEquals(userProfile.section, actual_userProfile?.section)
+        assertEquals(userProfile.tags, actual_userProfile?.tags)
+
+        assertEquals(actual_userProfile, userProfile)
+        // println("Expected UserProfile: $userProfile")
+
     }
 
     @Test
     fun addTagTest() {
         val tag = Tag("tag3", "Dance")
-        val initialTags = listOf(Tag("tag1", "Sports"), Tag("tag2", "Music"))
-        val viewModel = CreateProfileViewModel(authenticationService, repository)
         viewModel.addTag(tag)
-        assert(viewModel.tagList.value == initialTags + tag)
+        val tagList = viewModel.tagList.value
+        assertTrue(tagList.contains(tag))
     }
 }
