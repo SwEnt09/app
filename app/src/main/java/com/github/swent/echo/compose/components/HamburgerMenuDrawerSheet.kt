@@ -66,49 +66,40 @@ fun HamburgerMenuDrawerSheet(
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_my_profile),
                 selectedIcon = Icons.Filled.Person,
-                unselectedIcon = Icons.Outlined.Person
             ),
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_my_events),
                 selectedIcon = Icons.Filled.DateRange,
-                unselectedIcon = Icons.Outlined.DateRange,
             ),
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_friends),
                 selectedIcon = Icons.Filled.Face,
-                unselectedIcon = Icons.Outlined.Face,
-                badgeCount = 3
             ),
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_settings),
                 selectedIcon = Icons.Filled.Settings,
-                unselectedIcon = Icons.Outlined.Settings,
             ),
 
              */
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_create_event),
                 selectedIcon = Icons.Filled.AddCircle,
-                unselectedIcon = Icons.Outlined.AddCircle,
                 navOnClick = { navActions.navigateTo(Routes.CREATE_EVENT) }
             ),
             /*
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_add_friends),
                 selectedIcon = Icons.Filled.Add,
-                unselectedIcon = Icons.Outlined.Add,
             ),
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_help),
                 selectedIcon = Icons.Filled.Build,
-                unselectedIcon = Icons.Outlined.Build,
             )
 
              */
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_log_out),
                 selectedIcon = Icons.Filled.Close,
-                unselectedIcon = Icons.Outlined.Close,
                 navOnClick = { onSignOutPressed() }
             )
         )
@@ -146,10 +137,7 @@ fun HamburgerMenuDrawerSheet(
             }
             // Close button for the hamburger menu
             IconButton(
-                onClick = {
-                    selectedItemIndex = 0
-                    scope.launch { drawerState.close() }
-                },
+                onClick = { scope.launch { drawerState.close() } },
                 modifier =
                     Modifier.align(Alignment.TopEnd)
                         .padding(8.dp)
@@ -165,24 +153,12 @@ fun HamburgerMenuDrawerSheet(
         items.forEachIndexed { index, item ->
             NavigationDrawerItem(
                 label = { Text(text = item.title) },
-                selected = index == selectedItemIndex,
                 onClick = {
-                    selectedItemIndex = index
                     scope.launch { drawerState.close() }
                     item.navOnClick?.invoke()
                 },
-                icon = {
-                    Icon(
-                        imageVector =
-                            if (index == selectedItemIndex) {
-                                item.selectedIcon
-                            } else {
-                                item.unselectedIcon
-                            },
-                        contentDescription = item.title
-                    )
-                },
-                badge = { item.badgeCount?.let { Text(text = item.badgeCount.toString()) } },
+                selected = false,
+                icon = { Icon(imageVector = item.selectedIcon, contentDescription = item.title) },
                 modifier =
                     Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                         .testTag("navigation_item_$index")
@@ -196,14 +172,10 @@ fun HamburgerMenuDrawerSheet(
  *
  * @param title the title of the navigation item
  * @param selectedIcon the icon to display when the item is selected
- * @param unselectedIcon the icon to display when the item is not selected
- * @param badgeCount the count to display as a badge on the item (for example friends requests)
  * @param navOnClick the action to perform when the item is clicked
  */
 data class NavigationItem(
     val title: String,
     val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val badgeCount: Int? = null,
     val navOnClick: (() -> Unit)? = {}
 )
