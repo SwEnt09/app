@@ -241,4 +241,24 @@ class EventViewModelTest {
         assertEquals(EventStatus.Saved, eventViewModel.status.value)
         coVerify { mockedRepository.setEvent(modifiedExistingEvent) }
     }
+
+    @Test
+    fun saveNewEventCreateNewEventInRepository() {
+        coEvery { mockedRepository.createEvent(TEST_EVENT) } returns TEST_EVENT.eventId
+        eventViewModel.setEvent(TEST_EVENT)
+        eventViewModel.saveEvent()
+        scheduler.runCurrent()
+        coVerify { mockedRepository.createEvent(TEST_EVENT) }
+        assertEquals(TEST_EVENT.eventId, eventViewModel.event.value.eventId)
+    }
+
+    @Test
+    fun eventViewModelWhileLoggedOutLogError() {
+        mockLog()
+        val mockedAuth = mockk<AuthenticationService>()
+        every { mockedAuth.getCurrentUserID() } returns null
+        runBlocking { eventViewModel = EventViewModel(mockedRepository, mockedAuth, savedEventId) }
+        scheduler.runCurrent()
+        verify { Log.e(any(), any() as String) }
+    }
 }
