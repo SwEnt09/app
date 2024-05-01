@@ -256,9 +256,9 @@ constructor(
     // Allows the users to see events that are happening in the next 14 days, and more if
     // the slider is full on the right
     private fun dateFilterConditions(event: Event): Boolean {
-        var result = event.startDate.isAfter(floatToDate(_filtersContainer.value.from))
+        var result = event.startDate.isAfter(floatToDate(_filtersContainer.value.from - 1))
         if (_filtersContainer.value.to.roundToInt() != 14) {
-            result = event.endDate.isBefore(floatToDate(_filtersContainer.value.to))
+            result = result && event.startDate.isBefore(floatToDate(_filtersContainer.value.to))
         }
         return result
     }
