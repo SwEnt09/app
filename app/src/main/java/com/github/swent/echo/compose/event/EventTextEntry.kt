@@ -4,12 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,12 +38,11 @@ fun EventTextEntry(
 fun EventEntryName(name: String) {
     Text(
         text = name,
-        modifier = Modifier.width(210.dp).height(30.dp),
+        modifier = Modifier.height(30.dp),
         fontSize = 20.sp,
         style =
             TextStyle(
                 fontWeight = FontWeight(400),
-                color = Color(0xFF000000),
                 textAlign = TextAlign.Justify,
             )
     )

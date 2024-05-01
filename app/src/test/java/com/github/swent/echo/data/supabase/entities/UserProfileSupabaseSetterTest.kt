@@ -1,5 +1,6 @@
 package com.github.swent.echo.data.supabase.entities
 
+import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
@@ -14,7 +15,9 @@ class UserProfileSupabaseSetterTest {
             "name",
             SemesterEPFL.BA6,
             SectionEPFL.IN,
-            setOf(Tag("tagId", "tagName"))
+            setOf(Tag("tagId", "tagName")),
+            setOf(Association("associationId", "associationName", "associationDescription")),
+            setOf(Association("associationId", "associationName", "associationDescription")),
         )
 
     val userProfileSupabaseSetter =

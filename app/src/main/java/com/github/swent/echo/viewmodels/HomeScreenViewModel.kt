@@ -5,14 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
+import com.github.swent.echo.compose.components.searchmenu.floatToDate
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.SAMPLE_TAGS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.ZonedDateTime
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -47,6 +48,8 @@ constructor(
     val displayEventList = _displayEventList.asStateFlow()
     private val _displayEventInfo = MutableStateFlow<Event?>(null)
     val displayEventInfo = _displayEventInfo.asStateFlow()
+    private val _canUserModifyEvent = MutableStateFlow<Boolean>(false)
+    val canUserModifyEvent = _canUserModifyEvent.asStateFlow()
     private val _filtersContainer =
         MutableStateFlow(
             FiltersContainer(
@@ -57,8 +60,8 @@ constructor(
                 pendingChecked = true,
                 confirmedChecked = true,
                 fullChecked = true,
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now().plusDays(365),
+                from = 0f,
+                to = 14f,
                 sortBy = SortBy.NONE
             )
         )
@@ -73,7 +76,6 @@ constructor(
 
     init {
         viewModelScope.launch {
-            val userid = authenticationService.getCurrentUserID()
             allEventsList = SAMPLE_EVENTS // repository.getAllEvents()
             allTagSet = SAMPLE_TAGS // repository.getAllTags()
             refreshFiltersContainer()
@@ -124,13 +126,8 @@ constructor(
         refreshFiltersContainer()
     }
 
-    fun onFromChanged(from: ZonedDateTime) {
-        _filtersContainer.value = _filtersContainer.value.copy(from = from)
-        refreshFiltersContainer()
-    }
-
-    fun onToChanged(to: ZonedDateTime) {
-        _filtersContainer.value = _filtersContainer.value.copy(to = to)
+    fun onDateFilterChanged(from: Float, to: Float) {
+        _filtersContainer.value = _filtersContainer.value.copy(from = from, to = to)
         refreshFiltersContainer()
     }
 
@@ -162,8 +159,8 @@ constructor(
                 pendingChecked = true,
                 confirmedChecked = true,
                 fullChecked = true,
-                from = ZonedDateTime.now(),
-                to = ZonedDateTime.now().plusDays(365),
+                from = 0f,
+                to = 14f,
                 sortBy = SortBy.NONE
             )
         refreshFiltersContainer()
@@ -179,8 +176,7 @@ constructor(
                     event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
                     // filter by time
                     &&
-                        event.startDate.isAfter(_filtersContainer.value.from) &&
-                        event.endDate.isBefore(_filtersContainer.value.to)
+                        dateFilterConditions(event)
                         // filter by scope of the event
                         &&
                         (_filtersContainer.value.epflChecked &&
@@ -221,6 +217,7 @@ constructor(
     /** Displays the event info sheet for the given event. Set the overlay to EVENT_INFO_SHEET. */
     fun onEventSelected(event: Event) {
         _displayEventInfo.value = event
+        _canUserModifyEvent.value = authenticationService.getCurrentUserID() == event.creator.userId
         setOverlay(Overlay.EVENT_INFO_SHEET)
     }
 
@@ -254,5 +251,15 @@ constructor(
     fun switchMode() {
         _mode.value =
             if (_mode.value == MapOrListMode.MAP) MapOrListMode.LIST else MapOrListMode.MAP
+    }
+
+    // Allows the users to see events that are happening in the next 14 days, and more if
+    // the slider is full on the right
+    private fun dateFilterConditions(event: Event): Boolean {
+        var result = event.startDate.isAfter(floatToDate(_filtersContainer.value.from - 1))
+        if (_filtersContainer.value.to.roundToInt() != 14) {
+            result = result && event.startDate.isBefore(floatToDate(_filtersContainer.value.to))
+        }
+        return result
     }
 }

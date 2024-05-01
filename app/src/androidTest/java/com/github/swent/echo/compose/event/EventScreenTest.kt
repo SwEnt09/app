@@ -3,6 +3,7 @@ package com.github.swent.echo.compose.event
 import androidx.activity.compose.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -11,6 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.requestFocus
 import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.R
@@ -22,6 +24,7 @@ import com.github.swent.echo.viewmodels.event.EventViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.mockk
+import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Assert
 import org.junit.Before
@@ -171,5 +174,28 @@ class EventScreenTest {
         firstTag.performClick()
         composeTestRule.onNodeWithTag("tag-dialog").assertDoesNotExist()
         assertTrue(eventViewModel.event.value.tags.contains(tag1))
+    }
+
+    @Test
+    fun changeEventParticipantLimitChangeItInViewModel() {
+        setCompose(eventViewModel)
+        val nbParticipants = 500
+        composeTestRule
+            .onNodeWithTag("nb-participant-field")
+            .performTextReplacement(nbParticipants.toString())
+        composeTestRule.onNodeWithTag("Title-field").requestFocus()
+        composeTestRule.onNodeWithTag("nb-participant-field").assertIsNotFocused()
+        Assert.assertTrue(eventViewModel.event.value.maxParticipants == nbParticipants)
+    }
+
+    @Test
+    fun inputLettersInParticipantLimitInputFieldDoesntChangeValue() {
+        setCompose(eventViewModel)
+        val NotANumber = "aString"
+        val maxParticipants = eventViewModel.event.value.maxParticipants
+        composeTestRule.onNodeWithTag("nb-participant-field").performTextReplacement(NotANumber)
+        composeTestRule.onNodeWithTag("Title-field").requestFocus()
+        composeTestRule.onNodeWithTag("nb-participant-field").assertIsNotFocused()
+        assertEquals(maxParticipants, eventViewModel.event.value.maxParticipants)
     }
 }

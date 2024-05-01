@@ -50,6 +50,8 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
                     SemesterEPFL.BA3,
                     SectionEPFL.IN,
                     emptySet(),
+                    emptySet(),
+                    emptySet(),
                 )
             )
         }
@@ -64,6 +66,8 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
                     SemesterEPFL.BA3,
                     SectionEPFL.IN,
                     tags.take(2).toSet(),
+                    emptySet(),
+                    emptySet(),
                 )
             )
         }
