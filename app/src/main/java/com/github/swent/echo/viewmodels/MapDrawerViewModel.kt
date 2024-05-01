@@ -12,12 +12,9 @@ import javax.inject.Inject
 class MapDrawerViewModel @Inject constructor(private val provider: IMapViewProvider<View>) :
     ViewModel() {
 
-    fun factory(context: Context): View = provider.factory(context)
+    fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): View =
+        provider.factory(context, withLocation, onCreate)
 
-    fun update(view: View, events: List<Event>, callback: (Event) -> Unit) =
-        provider.update(view, events, callback)
-
-    fun enableLocation() = provider.enableLocation()
-
-    fun disableLocation() = provider.disableLocation()
+    fun update(view: View, events: List<Event>, callback: (Event) -> Unit, withLocation: Boolean) =
+        provider.update(view, events, callback, withLocation)
 }

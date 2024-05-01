@@ -41,7 +41,7 @@ class OsmdroidMapViewProvider : IMapViewProvider<MapView> {
         invalidate()
     }
 
-    override fun factory(context: Context): MapView {
+    override fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): MapView {
         Configuration.getInstance().apply {
             userAgentValue = context.packageName
             osmdroidBasePath = context.cacheDir
@@ -58,7 +58,12 @@ class OsmdroidMapViewProvider : IMapViewProvider<MapView> {
         return mapView
     }
 
-    override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
+    override fun update(
+        view: MapView,
+        events: List<Event>,
+        callback: (Event) -> Unit,
+        withLocation: Boolean
+    ) {
         view.apply { drawAllMarkers(events, callback) }
     }
 }
