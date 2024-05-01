@@ -23,14 +23,13 @@ class EventInfoSheetTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     private var joinClicked = 0
-    private var peopleClicked = 0
     private var dismissed = 0
     private var extended = 0
+    private var modified = 0
 
-    private fun setUp(peopleMax: Int = 0) {
+    private fun setUp(peopleMax: Int = 0, canModifyEvent: Boolean = false) {
         composeTestRule.setContent {
             joinClicked = 0
-            peopleClicked = 0
             dismissed = 0
 
             val event =
@@ -52,9 +51,10 @@ class EventInfoSheetTest {
             EventInfoSheet(
                 event = event,
                 onJoinButtonPressed = { joinClicked++ },
-                onShowPeopleButtonPressed = { peopleClicked++ },
                 onDismiss = { dismissed++ },
-                onFullyExtended = { extended++ }
+                onFullyExtended = { extended++ },
+                canModifyEvent = canModifyEvent,
+                onModifyEvent = { modified++ }
             )
         }
     }
@@ -98,26 +98,40 @@ class EventInfoSheetTest {
     @Test
     fun shouldCallJoinButtonPressedWhenJoinButtonClicked() {
         setUp()
-        composeTestRule.onNodeWithTag("join_button").performClick()
+        composeTestRule.onNodeWithTag("join_button_event_info_sheet").performClick()
         assertThat(joinClicked, equalTo(1))
     }
 
     @Test
-    fun shouldCallShowPeopleButtonPressedWhenPeopleButtonClicked() {
+    fun shouldShowPeopleIcon() {
         setUp()
-        composeTestRule.onNodeWithTag("people_button").performClick()
-        assertThat(peopleClicked, equalTo(1))
-    }
-
-    @Test
-    fun shouldShowEventImage() {
-        setUp()
-        composeTestRule.onNodeWithTag("event_image").assertExists()
+        composeTestRule.onNodeWithTag("people_icon").assertExists()
     }
 
     @Test
     fun shouldShowPeopleCorrectlyWhenMaxPeopleIsNotZero() {
         setUp(5)
         composeTestRule.onNodeWithText("0/5").assertExists()
+    }
+
+    @Test
+    fun shouldNotShowModifyButtonWhenUserCannotModifyEvent() {
+        setUp(canModifyEvent = false)
+        composeTestRule.onNodeWithTag("modify_button").assertDoesNotExist()
+    }
+
+    @Test
+    fun shouldShowModifyButtonWhenUserCanModifyEvent() {
+        setUp(canModifyEvent = true)
+        composeTestRule.onNodeWithTag("modify_button").assertExists()
+
+        composeTestRule.onNodeWithTag("modify_button").performClick()
+        assertThat(modified, equalTo(1))
+    }
+
+    @Test
+    fun shouldShowModifyButtonLabel() {
+        setUp(canModifyEvent = true)
+        composeTestRule.onNodeWithText("Modify Event").assertExists()
     }
 }

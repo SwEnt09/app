@@ -1,7 +1,9 @@
 package com.github.swent.echo.compose.event
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -49,10 +51,11 @@ fun EventDateEntry(
     Row(
         modifier =
             Modifier.padding(
-                horizontal = EVENT_PADDING_BETWEEN_INPUTS - 1.dp, // enough space for two buttons
-                vertical = EVENT_PADDING_BETWEEN_INPUTS
-            ),
-        // horizontalArrangement = Arrangement.SpaceAround
+                    horizontal = EVENT_PADDING_BETWEEN_INPUTS,
+                    vertical = EVENT_PADDING_BETWEEN_INPUTS
+                )
+                .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         EventDateEntryUnit(
             label = stringResource(R.string.edit_event_screen_start_date),

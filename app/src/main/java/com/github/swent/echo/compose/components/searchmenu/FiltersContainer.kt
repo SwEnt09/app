@@ -1,7 +1,6 @@
 package com.github.swent.echo.compose.components.searchmenu
 
 import com.github.swent.echo.R
-import java.time.ZonedDateTime
 
 data class FiltersContainer(
     var searchEntry: String,
@@ -11,8 +10,8 @@ data class FiltersContainer(
     var pendingChecked: Boolean,
     var confirmedChecked: Boolean,
     var fullChecked: Boolean,
-    var from: ZonedDateTime,
-    var to: ZonedDateTime,
+    var from: Float,
+    var to: Float,
     var sortBy: SortBy,
 )
 

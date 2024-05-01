@@ -77,7 +77,7 @@ fun SelectLocationDialog(
 
     Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties()) {
         Card(modifier = Modifier.fillMaxWidth().testTag("Location-dialog")) {
-            Column {
+            Column(modifier = Modifier.padding(5.dp)) {
                 EventEntryName(name = stringResource(R.string.event_location_latitude))
                 TextField(
                     value = lat,

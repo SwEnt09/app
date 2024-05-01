@@ -12,7 +12,9 @@ data class UserProfileSupabase(
     val name: String,
     val semester: Semester?,
     val section: Section?,
-    @SerialName("user_tags") val tags: List<TagHelper>
+    @SerialName("user_tags") val tags: List<TagHelper>,
+    @SerialName("committee_members") val committeeMembers: List<AssociationHelper>,
+    @SerialName("association_subscriptions") val associationSubscriptions: List<AssociationHelper>,
 ) {
     constructor(
         userProfile: UserProfile
@@ -21,7 +23,11 @@ data class UserProfileSupabase(
         userProfile.name,
         userProfile.semester,
         userProfile.section,
-        userProfile.tags.map { tag -> TagHelper(tag) }
+        userProfile.tags.map { tag -> TagHelper(tag) },
+        userProfile.committeeMember.map { committeeMember -> AssociationHelper(committeeMember) },
+        userProfile.associationsSubscriptions.map { associationSubscriptions ->
+            AssociationHelper(associationSubscriptions)
+        },
     )
 
     fun toUserProfile(): UserProfile {
@@ -31,6 +37,10 @@ data class UserProfileSupabase(
             semester,
             section,
             tags.map { tagHelper -> tagHelper.tag }.toHashSet(),
+            committeeMembers.map { associationHelper -> associationHelper.association }.toHashSet(),
+            associationSubscriptions
+                .map { associationHelper -> associationHelper.association }
+                .toHashSet(),
         )
     }
 }

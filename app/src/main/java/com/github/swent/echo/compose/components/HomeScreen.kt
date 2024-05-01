@@ -75,6 +75,7 @@ private fun Content(
     val displayEventList by homeScreenViewModel.displayEventList.collectAsState()
 
     val filters by homeScreenViewModel.filtersContainer.collectAsState()
+    val canUserModifyEvent by homeScreenViewModel.canUserModifyEvent.collectAsState()
 
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
@@ -90,9 +91,10 @@ private fun Content(
             EventInfoSheet(
                 event = displayEventInfo!!,
                 onJoinButtonPressed = {},
-                onShowPeopleButtonPressed = {},
                 onDismiss = homeScreenViewModel::clearOverlay,
-                onFullyExtended = {}
+                onFullyExtended = {},
+                canModifyEvent = canUserModifyEvent,
+                onModifyEvent = {}
             )
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info
@@ -111,7 +113,8 @@ private fun Content(
                 confirmedCallback = homeScreenViewModel::onConfirmedCheckedSwitch,
                 fullCallback = homeScreenViewModel::onFullCheckedSwitch,
                 sortByCallback = homeScreenViewModel::onSortByChanged,
-                resetFiltersCallback = homeScreenViewModel::resetFiltersContainer
+                resetFiltersCallback = homeScreenViewModel::resetFiltersContainer,
+                timeFilterCallback = homeScreenViewModel::onDateFilterChanged
             )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu

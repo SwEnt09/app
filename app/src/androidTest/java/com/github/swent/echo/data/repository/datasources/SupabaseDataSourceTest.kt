@@ -50,15 +50,23 @@ class SupabaseDataSourceTest {
             "Dummy Event",
             "blabla description",
             Location("testLocation", 0.0, 0.0),
-            ZonedDateTime.of(2024, 4, 25, 14, 54, 51, 0, ZoneId.of("UTC")),
-            ZonedDateTime.of(2024, 4, 25, 14, 54, 51, 0, ZoneId.of("UTC")),
+            ZonedDateTime.of(2024, 4, 25, 14, 54, 51, 0, ZoneId.systemDefault()),
+            ZonedDateTime.of(2024, 4, 25, 14, 54, 51, 0, ZoneId.systemDefault()),
             HashSet<Tag>(Arrays.asList(tag)),
             0,
             0,
             0
         )
     private val userProfile =
-        UserProfile("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759", "Dummy User", null, null, setOf(tag))
+        UserProfile(
+            "39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759",
+            "Dummy User",
+            null,
+            null,
+            setOf(tag),
+            setOf(association),
+            setOf(association)
+        )
 
     @Before
     fun instanciate() {
