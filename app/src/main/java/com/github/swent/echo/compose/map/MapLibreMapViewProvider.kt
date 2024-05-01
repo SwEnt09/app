@@ -2,11 +2,14 @@ package com.github.swent.echo.compose.map
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
 import org.maplibre.android.MapLibre
 import org.maplibre.android.annotations.MarkerOptions
 import org.maplibre.android.camera.CameraPosition
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.location.LocationComponent
 import org.maplibre.android.location.LocationComponentActivationOptions
 import org.maplibre.android.location.LocationComponentOptions
 import org.maplibre.android.location.engine.LocationEngineRequest
@@ -17,7 +20,9 @@ import org.maplibre.android.maps.Style
 
 class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
-    private var canDisplayLocation = false
+    private var mapView: MapView? = null
+    private var locationComponent: LocationComponent? = null
+    private var firstRecenter = true
 
     private fun redrawMarkers(map: MapLibreMap, events: List<Event>, callback: (Event) -> Unit) {
         map.markers.forEach { map.removeMarker(it) }
@@ -34,7 +39,8 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
     @SuppressLint("MissingPermission")
     private fun displayLocation(context: Context, map: MapLibreMap, style: Style) {
-        val locationComponent = map.locationComponent
+        Log.i("ECHO RUNTIME", "Displaying location.")
+        locationComponent = map.locationComponent
         val locationComponentOptions =
             LocationComponentOptions.builder(context).pulseEnabled(true).build()
         val locationComponentActivationOptions =
@@ -48,50 +54,78 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                         .build()
                 )
                 .build()
-        locationComponent.activateLocationComponent(locationComponentActivationOptions)
-        locationComponent.isLocationComponentEnabled = true
-        locationComponent.cameraMode = CameraMode.NONE
-        // locationComponent!!.forceLocationUpdate(lastLocation)
+        locationComponent!!.activateLocationComponent(locationComponentActivationOptions)
+        locationComponent!!.isLocationComponentEnabled = true
+        locationComponent!!.cameraMode = CameraMode.NONE
+        locationComponent?.lastKnownLocation?.apply {
+            if (firstRecenter) {
+                firstRecenter = false
+                val pos = LatLng(latitude, longitude)
+                map.cameraPosition =
+                    CameraPosition.Builder().target(pos).zoom(DEFAULT_ZOOM).bearing(0.0).build()
+            }
+        }
     }
 
-    override fun factory(context: Context): MapView {
+    override fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): MapView {
+        Log.i("ECHO RUNTIME", "Calling factory.")
         MapLibre.getInstance(context)
-        val mapView = MapView(context)
         val styleUrl =
             context.getString(R.string.maptiler_base_style_url) +
                 context.getString(R.string.maptiler_api_key)
-        mapView.onCreate(null)
-        mapView.getMapAsync { map ->
+        val isInit = (mapView == null)
+        if (isInit) {
+            // Creating the map for the first time
+            mapView = MapView(context)
+        }
+        mapView?.onCreate(null)
+        mapView?.getMapAsync { map ->
+            Log.i("ECHO RUNTIME", "Factory got the map.")
             // Set the style after mapView was loaded
             map.setStyle(styleUrl) {
+                Log.i(
+                    "ECHO RUNTIME",
+                    "Style is ready" + if (withLocation) " with location." else "."
+                )
                 map.uiSettings.apply {
                     setAttributionMargins(15, 0, 0, 15)
                     isRotateGesturesEnabled = false
                 }
-                // Set the map view center
-                map.cameraPosition =
-                    CameraPosition.Builder()
-                        .target(MAP_CENTER.toLatLng())
-                        .zoom(DEFAULT_ZOOM)
-                        .bearing(0.0)
-                        .build()
-                if (canDisplayLocation) {
-                    displayLocation(context, map, it)
+                // Set the map view center if we're creating the view
+                if (isInit) {
+                    map.cameraPosition =
+                        CameraPosition.Builder()
+                            .target(MAP_CENTER.toLatLng())
+                            .zoom(DEFAULT_ZOOM)
+                            .bearing(0.0)
+                            .build()
                 }
+                onCreate()
             }
         }
-        return mapView
+        return mapView!!
     }
 
-    override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
-        view.getMapAsync { redrawMarkers(it, events, callback) }
-    }
-
-    override fun enableLocation() {
-        canDisplayLocation = true
-    }
-
-    override fun disableLocation() {
-        canDisplayLocation = false
+    override fun update(
+        view: MapView,
+        events: List<Event>,
+        callback: (Event) -> Unit,
+        withLocation: Boolean
+    ) {
+        Log.i("ECHO RUNTIME", "Calling update" + if (withLocation) " with location." else ".")
+        view.getMapAsync { map ->
+            Log.i(
+                "ECHO RUNTIME",
+                "Update got the map" + if (withLocation) " with location." else "."
+            )
+            Log.i(
+                "ECHO RUNTIME",
+                if (map.style == null) "\tStyle is null." else "\tStyle is not null."
+            )
+            redrawMarkers(map, events, callback)
+            if (withLocation) {
+                map.style?.apply { displayLocation(view.context, map, this) }
+            }
+        }
     }
 }
