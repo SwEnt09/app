@@ -22,8 +22,9 @@ class MapDrawerViewModelTest {
     @Test
     fun `factory should call provider factory`() {
         val context = mockk<Context>()
-        viewModel.factory(context, false, {})
-        verify { provider.factory(context, false, {}) }
+        val onCreate = {}
+        viewModel.factory(context, false, onCreate)
+        verify { provider.factory(context, false, onCreate) }
     }
 
     @Test

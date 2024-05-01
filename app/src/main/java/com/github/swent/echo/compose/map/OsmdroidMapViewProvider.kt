@@ -12,6 +12,7 @@ import org.osmdroid.views.overlay.Marker
  * Provides a [MapView] to be displayed by an
  * [AndroidView][androidx.compose.ui.viewinterop.AndroidView].
  */
+@Deprecated("No longer supported.", ReplaceWith("MapLibreMapViewProvider"))
 class OsmdroidMapViewProvider : IMapViewProvider<MapView> {
 
     companion object {
@@ -55,6 +56,7 @@ class OsmdroidMapViewProvider : IMapViewProvider<MapView> {
                 controller.setZoom(DEFAULT_ZOOM)
                 controller.setCenter(MAP_CENTER.toGeoPoint())
             }
+        onCreate()
         return mapView
     }
 
