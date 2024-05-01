@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
+import kotlinx.coroutines.runBlocking
 
 val MAP_CENTER = Location("EPFL", 46.5191, 6.5668)
 const val DEFAULT_ZOOM = 13.0
@@ -28,15 +29,21 @@ const val DEFAULT_ZOOM = 13.0
 @Composable
 fun <T : View> EchoAndroidView(
     modifier: Modifier = Modifier,
-    factory: (Context) -> T,
-    update: (T, List<Event>, (Event) -> Unit) -> Unit,
+    factory: (Context, Boolean, (() -> Unit)) -> T,
+    update: (T, List<Event>, (Event) -> Unit, Boolean) -> Unit,
     events: List<Event>,
-    callback: (Event) -> Unit = {}
+    callback: (Event) -> Unit = {},
+    withLocation: Boolean
 ) {
+    var trigger by remember { mutableStateOf(false) }
     AndroidView(
         modifier = modifier.testTag("mapAndroidView"),
-        factory = factory,
-        update = { update(it, events, callback) }
+        factory = { factory(it, withLocation) { trigger = true } },
+        update = {
+            if (trigger) {
+                update(it, events, callback, withLocation)
+            }
+        }
     )
 }
 
@@ -71,17 +78,15 @@ fun MapDrawer(
             ->
             displayLocation = displayLocation || p.values.any { it }
         }
-
-    if (permissionsDenied(LocalContext.current)) {
+    val c = LocalContext.current
+    /*
+    This has to be blocking as we don't want the `EchoAndroidView` to be
+    created before launching the permission request.
+    */
+    if (runBlocking { permissionsDenied(c) }) {
         SideEffect { launcher.launch(permissions) }
     } else {
-        displayLocation = true
-    }
-
-    if (displayLocation) {
-        SideEffect { mapDrawerViewModel.enableLocation() }
-    } else {
-        SideEffect { mapDrawerViewModel.disableLocation() }
+        SideEffect { displayLocation = true }
     }
     EchoAndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
@@ -91,6 +96,7 @@ fun MapDrawer(
         // AndroidView will recompose whenever said state changes
         update = mapDrawerViewModel::update,
         events = events,
-        callback = callback
+        callback = callback,
+        withLocation = displayLocation
     )
 }
