@@ -39,11 +39,7 @@ fun <T : View> EchoAndroidView(
     AndroidView(
         modifier = modifier.testTag("mapAndroidView"),
         factory = { factory(it, withLocation) { trigger = true } },
-        update = {
-            if (trigger) {
-                update(it, events, callback, withLocation)
-            }
-        }
+        update = { update(it, events, callback, trigger && withLocation) }
     )
 }
 
@@ -72,17 +68,19 @@ fun MapDrawer(
     mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
 ) {
     var displayLocation by remember { mutableStateOf(false) }
+    var permissionWasDenied = false
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p
             ->
-            displayLocation = displayLocation || p.values.any { it }
+            permissionWasDenied = !p.values.any { it }
+            displayLocation = displayLocation || !permissionWasDenied
         }
     val c = LocalContext.current
     /*
     This has to be blocking as we don't want the `EchoAndroidView` to be
     created before launching the permission request.
     */
-    if (runBlocking { permissionsDenied(c) }) {
+    if (!permissionWasDenied && runBlocking { permissionsDenied(c) }) {
         SideEffect { launcher.launch(PERMISSIONS) }
     } else {
         SideEffect { displayLocation = true }
