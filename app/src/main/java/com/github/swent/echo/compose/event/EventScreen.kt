@@ -1,6 +1,5 @@
 package com.github.swent.echo.compose.event
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -12,12 +11,12 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,11 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
 import com.github.swent.echo.viewmodels.event.EventStatus
 import com.github.swent.echo.viewmodels.event.EventViewModel
-import kotlinx.coroutines.launch
 
 val EVENT_PADDING_BETWEEN_INPUTS = 10.dp
 /** This screen allows the user to create or edit an event. */
-@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun EventScreen(
     title: String,
@@ -43,26 +40,25 @@ fun EventScreen(
     eventViewModel: EventViewModel
 ) {
     val focusManager = LocalFocusManager.current
-    val scope = rememberCoroutineScope()
     val snackBarHostState by remember { mutableStateOf(SnackbarHostState()) }
-    val eventStatus = eventViewModel.status.collectAsState()
+    val eventStatus by eventViewModel.status.collectAsState()
 
     var saveButtonText by remember { mutableIntStateOf(R.string.edit_event_screen_save) }
     var saveButtonClicked by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
 
-    if (saveButtonClicked && eventStatus.value is EventStatus.Saved) {
+    if (saveButtonClicked && eventStatus is EventStatus.Saved) {
         saveButtonClicked = false
         saveButtonText = R.string.edit_event_screen_save
         onEventSaved()
-    } else if (eventStatus.value is EventStatus.Error) {
-        scope.launch {
+    } else if (eventStatus is EventStatus.Error) {
+        LaunchedEffect(eventStatus) {
             val errorMessage =
-                localContext.resources.getString((eventStatus.value as EventStatus.Error).errorRef)
+                localContext.resources.getString((eventStatus as EventStatus.Error).errorRef)
             snackBarHostState.showSnackbar("Error : $errorMessage")
             eventViewModel.dismissError()
         }
-    } else if (eventStatus.value is EventStatus.Saving) {
+    } else if (eventStatus is EventStatus.Saving) {
         saveButtonText = R.string.edit_event_screen_saving
     }
 
