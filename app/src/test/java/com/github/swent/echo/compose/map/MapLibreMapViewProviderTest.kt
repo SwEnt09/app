@@ -20,7 +20,7 @@ class MapLibreMapViewProviderTest {
     fun `update should call getMapAsync`() {
         val mapView: MapView = mockk { every { getMapAsync(any()) } returns Unit }
 
-        mapLibreMapViewProvider.update(mapView, emptyList(), {})
+        mapLibreMapViewProvider.update(mapView, emptyList(), {}, false)
         verify { mapView.getMapAsync(any()) }
     }
 }

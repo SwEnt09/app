@@ -22,8 +22,8 @@ class MapDrawerViewModelTest {
     @Test
     fun `factory should call provider factory`() {
         val context = mockk<Context>()
-        viewModel.factory(context)
-        verify { provider.factory(context) }
+        viewModel.factory(context, false, {})
+        verify { provider.factory(context, false, {}) }
     }
 
     @Test
@@ -31,7 +31,7 @@ class MapDrawerViewModelTest {
         val view = mockk<View>()
         val events = emptyList<Event>()
         val callback = { _: Event -> }
-        viewModel.update(view, events, callback)
-        verify { provider.update(view, events, callback) }
+        viewModel.update(view, events, callback, false)
+        verify { provider.update(view, events, callback, false) }
     }
 }
