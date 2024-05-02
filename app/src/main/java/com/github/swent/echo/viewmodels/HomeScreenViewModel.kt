@@ -52,12 +52,12 @@ constructor(
         MutableStateFlow(
             FiltersContainer(
                 searchEntry = "",
-                epflChecked = true,
-                sectionChecked = true,
-                classChecked = true,
-                pendingChecked = true,
-                confirmedChecked = true,
-                fullChecked = true,
+                epflChecked = false,
+                sectionChecked = false,
+                classChecked = false,
+                pendingChecked = false,
+                confirmedChecked = false,
+                fullChecked = false,
                 from = 0f,
                 to = 14f,
                 sortBy = SortBy.NONE
@@ -157,12 +157,12 @@ constructor(
         _filtersContainer.value =
             FiltersContainer(
                 searchEntry = "",
-                epflChecked = true,
-                sectionChecked = true,
-                classChecked = true,
-                pendingChecked = true,
-                confirmedChecked = true,
-                fullChecked = true,
+                epflChecked = false,
+                sectionChecked = false,
+                classChecked = false,
+                pendingChecked = false,
+                confirmedChecked = false,
+                fullChecked = false,
                 from = 0f,
                 to = 14f,
                 sortBy = SortBy.NONE
@@ -182,26 +182,33 @@ constructor(
                 .filter { event -> // filter by time
                     dateFilterConditions(event)
                 }
+                // TODO : later add a radio button to filter only by one, and rewrite this like the
+                // scope
                 .filter { event -> // filter by status of the event (pending, confirmed, full)
-                    (_filtersContainer.value.pendingChecked &&
-                        event.participantCount < event.maxParticipants * 0.5 ||
-                        _filtersContainer.value.confirmedChecked &&
-                            (event.participantCount >= event.maxParticipants * 0.5 &&
-                                event.participantCount < event.maxParticipants) ||
-                        _filtersContainer.value.fullChecked &&
-                            event.participantCount == event.maxParticipants)
+                    (!_filtersContainer.value.confirmedChecked &&
+                        !_filtersContainer.value.pendingChecked &&
+                        !_filtersContainer.value.fullChecked) ||
+                        (_filtersContainer.value.pendingChecked &&
+                            event.participantCount < event.maxParticipants * 0.5 ||
+                            _filtersContainer.value.confirmedChecked &&
+                                (event.participantCount >= event.maxParticipants * 0.5 &&
+                                    event.participantCount < event.maxParticipants) ||
+                            _filtersContainer.value.fullChecked &&
+                                event.participantCount == event.maxParticipants)
                 }
-                .filter { event -> // filter by scope of the event
-                    ((_filtersContainer.value.epflChecked &&
-                        event.tags.any { tag -> tag.name.lowercase() == "epfl" }) ||
-                        (section != "" &&
-                            _filtersContainer.value.sectionChecked &&
-                            event.tags.any { tag ->
-                                tag.name.lowercase() == section.lowercase()
-                            }) ||
-                        (semester != "" &&
-                            _filtersContainer.value.classChecked &&
-                            event.tags.any { tag -> tag.name.lowercase() == semester.lowercase() }))
+                .filter { event ->
+                    !_filtersContainer.value.epflChecked ||
+                        event.tags.any { tag -> tag.name.lowercase() == "epfl" }
+                }
+                .filter { event ->
+                    !_filtersContainer.value.sectionChecked ||
+                        section == "" ||
+                        event.tags.any { tag -> tag.name.lowercase() == section.lowercase() }
+                }
+                .filter { event ->
+                    !_filtersContainer.value.classChecked ||
+                        semester == "" ||
+                        event.tags.any { tag -> tag.name.lowercase() == semester.lowercase() }
                 }
                 .sortedBy { event ->
                     event.startDate
