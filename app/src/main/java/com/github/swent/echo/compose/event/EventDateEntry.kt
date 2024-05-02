@@ -9,13 +9,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +32,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /** date & time buttons with a label (e.g. start date) above it */
 val MILLISECINDAY = 24 * 60 * 60 * 1000
@@ -80,16 +80,15 @@ fun EventDateEntryUnit(
     currentDate: ZonedDateTime,
     onDateChanged: (newDate: ZonedDateTime) -> Unit
 ) {
-    var date by remember { mutableStateOf(currentDate.toLocalDate()) }
+    var date = currentDate.toLocalDate()
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState =
-        rememberDatePickerState(
-            date.toEpochDay() * MILLISECINDAY,
-            null,
-            IntRange(LocalDate.now().year, LocalDate.now().year + YEARRANGE),
-            DisplayMode.Picker
+        DatePickerState(
+            locale = Locale.getDefault(),
+            initialSelectedDateMillis = date.toEpochDay() * MILLISECINDAY,
+            yearRange = IntRange(LocalDate.now().year, LocalDate.now().year + YEARRANGE)
         )
-    var time by remember { mutableStateOf(currentDate.toLocalTime()) }
+    var time = currentDate.toLocalTime()
     var showTimePicker by remember { mutableStateOf(false) }
     Column {
         EventEntryName(name = label)
