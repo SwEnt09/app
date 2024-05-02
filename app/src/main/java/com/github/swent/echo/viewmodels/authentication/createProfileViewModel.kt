@@ -37,7 +37,7 @@ constructor(
     private val _selectedSemester = MutableStateFlow<SemesterEPFL?>(null)
     val selectedSemester = _selectedSemester.asStateFlow()
 
-    private val _tagList = MutableStateFlow<List<Tag>>(listOf())
+    private val _tagList = MutableStateFlow<Set<Tag>>(setOf())
     val tagList = _tagList.asStateFlow()
 
     private val _errorMessage = MutableStateFlow<String?>(null)
@@ -80,7 +80,9 @@ constructor(
                             name = "${_firstName.value} ${_lastName.value}",
                             semester = _selectedSemester.value,
                             section = _selectedSection.value,
-                            tags = _tagList.value.toSet()
+                            tags = _tagList.value,
+                            committeeMember = setOf() ,
+                            associationsSubscriptions = setOf()
                         )
                     )
             }

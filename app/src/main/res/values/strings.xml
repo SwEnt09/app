@@ -69,6 +69,9 @@
     <string name="list_drawer_view_on_map">View On Map</string>
     <string name="list_drawer_join_event">Join Event</string>
 
+    <string name="profile_creation_dismiss">Dismiss</string>
+    <string name="profile_creation_empty_fields_error">Both First name and Last name must be filled in!</string>
+   <!-- <string name="profile_creation_error">Profile creation error: Not logged in</string> -->
     <string name="profile_creation_first_name">First name</string>
     <string name="profile_creation_last_name">Last name</string>
     <string name="profile_creation_save_button">Save</string>

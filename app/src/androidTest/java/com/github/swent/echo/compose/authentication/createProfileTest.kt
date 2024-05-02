@@ -1,7 +1,5 @@
 package com.github.swent.echo.compose.authentication
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -27,7 +25,7 @@ class CreateProfileTest {
             ProfileCreationUI(
                 listOf(SectionEPFL.AR, SectionEPFL.IN, SectionEPFL.SC, SectionEPFL.GM),
                 listOf(SemesterEPFL.BA1, SemesterEPFL.BA2),
-                listOf(Tag("1", "Sports"), Tag("2", "Music")),
+                setOf(Tag("1", "Sports"), Tag("2", "Music")),
                 {},
                 {},
                 navAction = NavigationActions(navController = rememberNavController())

@@ -63,23 +63,25 @@ class CreateProfileViewModelTest {
                 "John Doe",
                 SemesterEPFL.BA3,
                 SectionEPFL.IN,
-                setOf(Tag("tag1", "Sports"), Tag("tag2", "Music"))
-            )
+                setOf(Tag("tag1", "Sports"), Tag("tag2", "Music")),
+                    setOf(), setOf()
+                )
+
 
         coEvery { repository.getUserProfile(any()) } returns userProfile
         coEvery { repository.setUserProfile(userProfile) } returns Unit
 
         viewModel.profilesave()
 
-        val actual_userProfile = repository.getUserProfile(userId)
+        val actualUserProfile = repository.getUserProfile(userId)
 
-        assertEquals(userProfile.userId, actual_userProfile?.userId)
-        assertEquals(userProfile.name, actual_userProfile?.name)
-        assertEquals(userProfile.semester, actual_userProfile?.semester)
-        assertEquals(userProfile.section, actual_userProfile?.section)
-        assertEquals(userProfile.tags, actual_userProfile?.tags)
+        assertEquals(userProfile.userId, actualUserProfile?.userId)
+        assertEquals(userProfile.name, actualUserProfile?.name)
+        assertEquals(userProfile.semester, actualUserProfile?.semester)
+        assertEquals(userProfile.section, actualUserProfile?.section)
+        assertEquals(userProfile.tags, actualUserProfile?.tags)
 
-        assertEquals(actual_userProfile, userProfile)
+        assertEquals(actualUserProfile, userProfile)
         // println("Expected UserProfile: $userProfile")
 
     }
