@@ -17,7 +17,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +36,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.github.swent.echo.R
+import com.github.swent.echo.compose.components.colorClass
+import com.github.swent.echo.compose.components.colorEpfl
+import com.github.swent.echo.compose.components.colorSection
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -54,17 +57,6 @@ fun SearchMenuFilters(
     sortByCallback: (SortBy) -> Unit,
     timeFilterCallback: (Float, Float) -> Unit
 ) {
-    // Color of the events for icons
-    val primaryColor = MaterialTheme.colorScheme.primaryContainer
-    val derivedPrimaryColor =
-        primaryColor.copy(
-            red = primaryColor.red * 0.6f,
-            green = primaryColor.green * 0.6f,
-            blue = primaryColor.blue * 0.6f
-        )
-    val epflColor = derivedPrimaryColor.copy(red = 0.8f)
-    val sectionColor = derivedPrimaryColor.copy(blue = 0.8f)
-    val classColor = derivedPrimaryColor.copy(green = 0.8f)
     // Content of the Events for filters
     val eventsForItems =
         listOf(
@@ -72,7 +64,7 @@ fun SearchMenuFilters(
                 painterResource(id = R.drawable.paint),
                 stringResource(id = R.string.search_menu_filters_epfl),
                 filters.epflChecked,
-                tint = epflColor
+                tint = colorEpfl
             ) {
                 epflCallback()
             },
@@ -80,7 +72,7 @@ fun SearchMenuFilters(
                 painterResource(id = R.drawable.paint),
                 stringResource(id = R.string.search_menu_filters_section),
                 filters.sectionChecked,
-                tint = sectionColor
+                tint = colorSection
             ) {
                 sectionCallback()
             },
@@ -88,7 +80,7 @@ fun SearchMenuFilters(
                 painterResource(id = R.drawable.paint),
                 stringResource(id = R.string.search_menu_filters_class),
                 filters.classChecked,
-                tint = classColor
+                tint = colorClass
             ) {
                 classCallback()
             }
@@ -100,21 +92,24 @@ fun SearchMenuFilters(
             CheckBoxItems(
                 painterResource(id = R.drawable.pending),
                 stringResource(id = R.string.search_menu_filters_pending),
-                filters.pendingChecked
+                filters.pendingChecked,
+                LocalContentColor.current
             ) {
                 pendingCallback()
             },
             CheckBoxItems(
                 painterResource(id = R.drawable.confirmed),
                 stringResource(id = R.string.search_menu_filters_confirmed),
-                filters.confirmedChecked
+                filters.confirmedChecked,
+                LocalContentColor.current
             ) {
                 confirmedCallback()
             },
             CheckBoxItems(
                 painterResource(id = R.drawable.full),
                 stringResource(id = R.string.search_menu_filters_full),
-                filters.fullChecked
+                filters.fullChecked,
+                LocalContentColor.current
             ) {
                 fullCallback()
             }
@@ -161,7 +156,7 @@ data class CheckBoxItems(
     val icon: Painter,
     val contentDescription: String,
     val checked: Boolean,
-    val tint: Color = Color.Black,
+    val tint: Color,
     val callback: () -> Unit
 )
 
