@@ -68,21 +68,20 @@ fun EventListItem(
     onJoinButtonPressed: () -> Unit
 ) {
     // Colors for the background of the list item
-    val fraction1 = 0.8f
-    val fraction2 = 0.6f
-    val listColor1 = MaterialTheme.colorScheme.primaryContainer
-    val listColor2 =
-        listColor1.copy(
-            red = listColor1.red * fraction1,
-            green = listColor1.green * fraction1,
-            blue = listColor1.blue * fraction1
+    val darkFractionMiddleCircle = 0.8f
+    val darkFraction2ndFloor = 0.6f
+    val colorBorderCircles = MaterialTheme.colorScheme.secondaryContainer
+    val colorMiddleCircle =
+        colorBorderCircles.copy(
+            red = colorBorderCircles.red * darkFractionMiddleCircle,
+            green = colorBorderCircles.green * darkFractionMiddleCircle,
+            blue = colorBorderCircles.blue * darkFractionMiddleCircle
         )
-    val listColor3 =
-        listColor1.copy(
-            alpha = 0.8f,
-            red = listColor1.red * fraction2,
-            green = listColor1.green * fraction2,
-            blue = listColor1.blue * fraction2
+    val color2ndFloor =
+        colorBorderCircles.copy(
+            red = colorBorderCircles.red * darkFraction2ndFloor,
+            green = colorBorderCircles.green * darkFraction2ndFloor,
+            blue = colorBorderCircles.blue * darkFraction2ndFloor
         )
     // Main container for the list item, two floor : the first is the general information of the
     // event and
@@ -95,25 +94,25 @@ fun EventListItem(
                 .drawBehind {
                     // First floor
                     drawCircle(
-                        color = listColor1,
+                        color = colorBorderCircles,
                         radius = 130.dp.toPx(),
                         center = Offset(260.dp.toPx(), 40.dp.toPx())
                     )
                     drawCircle(
-                        color = listColor2,
+                        color = colorMiddleCircle,
                         radius = 130.dp.toPx(),
                         center = Offset(130.dp.toPx(), 40.dp.toPx())
                     )
                     drawCircle(
-                        color = listColor1,
+                        color = colorBorderCircles,
                         radius = 130.dp.toPx(),
                         center = Offset(0.dp.toPx(), 40.dp.toPx())
                     )
                     // Second floor
                     drawRect(
-                        color = listColor3,
+                        color = color2ndFloor,
                         topLeft = Offset(0.dp.toPx(), 80.dp.toPx()),
-                        size = Size(400.dp.toPx(), 80.dp.toPx())
+                        size = Size(400.dp.toPx(), 1000.dp.toPx())
                     )
                 }
                 // Handle the selection of items
@@ -125,7 +124,7 @@ fun EventListItem(
                 // others
                 .border(
                     if (selectedEvent.value == event.eventId) 2.dp else (-1).dp,
-                    listColor3,
+                    color2ndFloor,
                     RoundedCornerShape(5.dp)
                 )
                 .testTag("list_event_item_${event.eventId}")
@@ -209,12 +208,12 @@ fun EventListItem(
                             .width(60.dp)
                             .background(
                                 if (event.tags.any { tag -> tag.name.lowercase() == "epfl" })
-                                    listColor3.copy(alpha = 1f, red = 0.8f)
+                                    colorEpfl
                                 else if (event.tags.any { tag -> tag.name.lowercase() == "in" })
-                                    listColor3.copy(alpha = 1f, blue = 0.8f)
+                                    colorSection
                                 else if (event.tags.any { tag -> tag.name.lowercase() == "ba6" })
-                                    listColor3.copy(alpha = 1f, green = 0.8f)
-                                else listColor3
+                                    colorClass
+                                else color2ndFloor
                             )
                 ) {
                     Text(
