@@ -3,7 +3,7 @@ agp = "8.3.1"
 credentials = "1.2.2"
 googleid = "1.1.0"
 hiltNavigationCompose = "1.2.0"
-androidSdk = "11.0.0-pre4"
+androidSdk = "11.0.0-pre6"
 kotlinxSerializationJson = "1.6.3"
 ktorClientAndroid = "2.3.9"
 robolectric = "4.12"
@@ -24,7 +24,6 @@ navigationRuntimeKtx = "2.7.7"
 navigationCompose = "2.7.7"
 navigationTesting = "2.7.7"
 hilt = "2.48"
-osmdroidAndroid = "6.1.18"
 
 [libraries]
 android-sdk = { module = "org.maplibre.gl:android-sdk", version.ref = "androidSdk" }
@@ -65,7 +64,6 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
