@@ -64,9 +64,9 @@ class CreateProfileViewModelTest {
                 SemesterEPFL.BA3,
                 SectionEPFL.IN,
                 setOf(Tag("tag1", "Sports"), Tag("tag2", "Music")),
-                    setOf(), setOf()
-                )
-
+                setOf(),
+                setOf()
+            )
 
         coEvery { repository.getUserProfile(any()) } returns userProfile
         coEvery { repository.setUserProfile(userProfile) } returns Unit
