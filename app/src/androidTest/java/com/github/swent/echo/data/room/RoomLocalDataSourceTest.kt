@@ -25,6 +25,10 @@ fun ZonedDateTime.round(): ZonedDateTime {
 @RunWith(AndroidJUnit4::class)
 class RoomLocalDataSourceTest {
 
+    companion object {
+        const val SYNCED_SECONDS_AGO = 0L
+    }
+
     private lateinit var localDataSource: RoomLocalDataSource
 
     private val associations = SAMPLE_EVENTS.mapNotNull { it.organizer }.distinct()
@@ -58,7 +62,7 @@ class RoomLocalDataSourceTest {
 
         localDataSource.setAssociations(associations)
 
-        val actual = localDataSource.getAllAssociations()
+        val actual = localDataSource.getAllAssociations(SYNCED_SECONDS_AGO)
         assertEquals(associations, actual)
     }
 
@@ -69,7 +73,7 @@ class RoomLocalDataSourceTest {
         val expected = events.first()
         localDataSource.setEvent(expected)
 
-        val actual = localDataSource.getEvent(expected.eventId)
+        val actual = localDataSource.getEvent(expected.eventId, SYNCED_SECONDS_AGO)
         assertEquals(expected, actual)
     }
 
@@ -79,7 +83,7 @@ class RoomLocalDataSourceTest {
 
         localDataSource.setEvents(events)
 
-        val actual = localDataSource.getAllEvents()
+        val actual = localDataSource.getAllEvents(SYNCED_SECONDS_AGO)
         assertEquals(events, actual)
     }
 
@@ -90,7 +94,7 @@ class RoomLocalDataSourceTest {
         val expected = tags.first()
         localDataSource.setTag(expected)
 
-        val actual = localDataSource.getTag(expected.tagId)
+        val actual = localDataSource.getTag(expected.tagId, SYNCED_SECONDS_AGO)
         assertEquals(expected, actual)
     }
 
@@ -100,7 +104,7 @@ class RoomLocalDataSourceTest {
 
         localDataSource.setTags(tags)
 
-        val actual = localDataSource.getAllTags()
+        val actual = localDataSource.getAllTags(SYNCED_SECONDS_AGO)
         assertEquals(tags, actual)
     }
 
@@ -115,7 +119,7 @@ class RoomLocalDataSourceTest {
 
         localDataSource.setTags(tags)
 
-        val actual = localDataSource.getSubTags("0")
+        val actual = localDataSource.getSubTags("0", SYNCED_SECONDS_AGO)
         val expected =
             listOf(
                 Tag("1", "SUB1", "0"),
@@ -142,7 +146,7 @@ class RoomLocalDataSourceTest {
 
         localDataSource.setUserProfile(expected)
 
-        val actual = localDataSource.getUserProfile(expected.userId)
+        val actual = localDataSource.getUserProfile(expected.userId, SYNCED_SECONDS_AGO)
         assertEquals(expected, actual)
     }
 }
