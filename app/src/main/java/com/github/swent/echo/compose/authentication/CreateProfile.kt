@@ -113,7 +113,10 @@ fun ProfileCreationUI(
     onAdd: () -> Unit,
     navAction: NavigationActions,
 ) {
-    Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(16.dp).testTag("profile-creation"),
+        contentAlignment = Alignment.Center
+    ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
         ) {

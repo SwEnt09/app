@@ -58,8 +58,8 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("password-field").performTextInput(password)
         composeTestRule.onNodeWithTag("action-button").performClick()
 
-        // The map screen should be displayed
-        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+        // The profile-creation should be displayed
+        composeTestRule.onNodeWithTag("profile-creation").assertIsDisplayed()
     }
 
     @Test
@@ -68,8 +68,8 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
         composeTestRule.onNodeWithTag("google-sign-in-button").performClick()
 
-        // The map screen should be displayed
-        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+        // The profile creation screen should be displayed
+        composeTestRule.onNodeWithTag("profile-creation").assertIsDisplayed()
     }
 
     @Test
