@@ -2,6 +2,7 @@ package com.github.swent.echo.viewmodels.event
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
@@ -28,7 +29,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 class EventViewModelTest {
@@ -45,7 +45,7 @@ class EventViewModelTest {
             endDate = ZonedDateTime.now(),
             tags = setOf(Tag("1", "tag1")),
             0,
-            0,
+            15,
             0
         )
 
@@ -134,6 +134,23 @@ class EventViewModelTest {
     }
 
     @Test
+    fun saveWhileNotLoggedInChangeStatusToError() {
+        mockLog()
+        val mockedAuthService = mockk<AuthenticationService>()
+        every { mockedAuthService.getCurrentUserID() } returns null
+        runBlocking {
+            eventViewModel = EventViewModel(mockedRepository, mockedAuthService, savedEventId)
+        }
+        scheduler.runCurrent()
+        assertTrue(eventViewModel.status.value is EventStatus.Error)
+        eventViewModel.dismissError()
+        assertTrue(eventViewModel.status.value !is EventStatus.Error)
+        eventViewModel.setEvent(TEST_EVENT.copy(creator = EventCreator.EMPTY))
+        eventViewModel.saveEvent()
+        assertTrue(eventViewModel.status.value is EventStatus.Error)
+    }
+
+    @Test
     fun getOrganizerListReturnsCorrectUsername() {
         val testUserProfile =
             UserProfile(
@@ -174,10 +191,8 @@ class EventViewModelTest {
         assertEquals(eventViewModel.event.value.organizer, null)
     }
 
-    @Ignore // not implemented
     @Test
-    fun setOrganizerNameAsOtherUserThrowError() {
-        mockLog()
+    fun setOrganizerNameAsNonExistingAssociationSetNull() {
         val testUserProfile =
             UserProfile(
                 TEST_EVENT.creator.userId,
@@ -190,12 +205,11 @@ class EventViewModelTest {
             )
         eventViewModel.setEvent(TEST_EVENT)
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
-        eventViewModel.setOrganizer("anothername")
+        eventViewModel.setOrganizer("anonexistingassociation")
         scheduler.runCurrent()
-        verify { Log.e(any(), any()) }
+        assertEquals(null, eventViewModel.event.value.organizer)
     }
 
-    @Ignore // not implemented
     @Test
     fun setOrganizerNameAsAssociationSetTheCorrectValue() {
         val testAssociation = Association("testAid", "testAname", "testDescription")
@@ -226,5 +240,25 @@ class EventViewModelTest {
         scheduler.runCurrent()
         assertEquals(EventStatus.Saved, eventViewModel.status.value)
         coVerify { mockedRepository.setEvent(modifiedExistingEvent) }
+    }
+
+    @Test
+    fun saveNewEventCreateNewEventInRepository() {
+        coEvery { mockedRepository.createEvent(TEST_EVENT) } returns TEST_EVENT.eventId
+        eventViewModel.setEvent(TEST_EVENT)
+        eventViewModel.saveEvent()
+        scheduler.runCurrent()
+        coVerify { mockedRepository.createEvent(TEST_EVENT) }
+        assertEquals(TEST_EVENT.eventId, eventViewModel.event.value.eventId)
+    }
+
+    @Test
+    fun eventViewModelWhileLoggedOutLogError() {
+        mockLog()
+        val mockedAuth = mockk<AuthenticationService>()
+        every { mockedAuth.getCurrentUserID() } returns null
+        runBlocking { eventViewModel = EventViewModel(mockedRepository, mockedAuth, savedEventId) }
+        scheduler.runCurrent()
+        verify { Log.e(any(), any() as String) }
     }
 }

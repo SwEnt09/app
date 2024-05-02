@@ -31,7 +31,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
 
     companion object {
         const val QUERY_EVENT =
-            "event_id, user_profiles!public_events_creator_id_fkey(user_id, name), associations(association_id, name, description), title, description, event_tags(tags(tag_id, name, parent_id)), location_name, location_lat, location_long, start_date, end_date, participant_count, max_participants, image_id"
+            "event_id, user_profiles!public_events_creator_id_fkey(user_id, name), associations!public_events_organizer_id_fkey(association_id, name, description), title, description, event_tags!event_tags_event_id_fkey(tags!event_tags_tag_id_fkey(tag_id, name, parent_id)), location_name, location_lat, location_long, start_date, end_date, participant_count, max_participants, image_id"
     }
 
     override suspend fun getEvent(eventId: String): Event {
@@ -43,12 +43,27 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         return event.toEvent()
     }
 
+    override suspend fun createEvent(event: Event): String {
+        val eventSupabase = EventSupabaseSetter(event).copy(eventId = null)
+        val eventId =
+            supabase
+                .from("events")
+                .insert(eventSupabase) { select() }
+                .decodeSingle<EventSupabaseSetter>()
+                .eventId!!
+        setEventTagRelations(eventId, event.tags)
+        return eventId
+    }
+
     override suspend fun setEvent(event: Event) {
         val eventSupabase = EventSupabaseSetter(event)
         supabase.from("events").upsert(eventSupabase, onConflict = "event_id")
+        setEventTagRelations(event.eventId, event.tags)
+    }
 
-        val eventTags = event.tags.map { tag -> EventTagSupabase(tag.tagId, event.eventId) }
-        supabase.from("event_tags").upsert(eventTags)
+    private suspend fun setEventTagRelations(eventId: String, tags: Set<Tag>) {
+        val eventTags = tags.map { tag -> EventTagSupabase(tag.tagId, eventId) }
+        supabase.from("event_tags").upsert(eventTags, onConflict = "tag_id,event_id")
     }
 
     override suspend fun getAllEvents(): List<Event> {
@@ -71,7 +86,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                 .from("user_profiles")
                 .select(
                     Columns.raw(
-                        "user_id, name, semester, section, user_tags(tags(tag_id, name, parent_id)), committee_members(associations(association_id, name, description)), association_subscriptions(associations(association_id, name, description))"
+                        "user_id, name, semester, section, user_tags!user_tags_user_id_fkey(tags!user_tags_tag_id_fkey(tag_id, name, parent_id)), committee_members!public_associationMembers_user_id_fkey(associations!public_associationMembers_association_id_fkey(association_id, name, description)), association_subscriptions!association_subscription_user_id_fkey(associations!association_subscription_association_id_fkey(association_id, name, description))"
                     )
                 ) {
                     filter { eq("user_id", userId) }

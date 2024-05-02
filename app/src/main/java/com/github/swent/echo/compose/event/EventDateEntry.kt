@@ -148,6 +148,7 @@ fun EventDateEntryUnit(
                                     .testTag("$label-time-dialog-button"),
                             onClick = {
                                 time = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                                onDateChanged(time.atDate(date).atZone(ZoneId.systemDefault()))
                                 showTimePicker = false
                             }
                         ) {

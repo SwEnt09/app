@@ -1,24 +1,36 @@
 package com.github.swent.echo.compose.event
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
+import com.github.swent.echo.viewmodels.event.EventStatus
 import com.github.swent.echo.viewmodels.event.EventViewModel
 
 val EVENT_PADDING_BETWEEN_INPUTS = 10.dp
@@ -26,27 +38,72 @@ val EVENT_PADDING_BETWEEN_INPUTS = 10.dp
 @Composable
 fun EventScreen(
     title: String,
-    onEventSaveButtonPressed: () -> Unit,
+    canDelete: Boolean = false,
+    onEventSaved: () -> Unit,
+    onEventDeleted: () -> Unit = {},
     onEventBackButtonPressed: () -> Unit,
     eventViewModel: EventViewModel
 ) {
     val focusManager = LocalFocusManager.current
-    Column(
-        modifier =
-            Modifier.verticalScroll(rememberScrollState()).pointerInput(Unit) {
-                detectTapGestures(onTap = { focusManager.clearFocus() })
-            }
-    ) {
-        EventTitleAndBackButton(title = title, onBackButtonPressed = onEventBackButtonPressed)
-        // all the inputs for an event
-        EventPropertiesFields(eventViewModel = eventViewModel)
-        // save button
-        OutlinedButton(
+    val snackBarHostState by remember { mutableStateOf(SnackbarHostState()) }
+    val eventStatus by eventViewModel.status.collectAsState()
+
+    var saveButtonText by remember { mutableIntStateOf(R.string.edit_event_screen_save) }
+    var saveButtonClicked by remember { mutableStateOf(false) }
+    val localContext = LocalContext.current
+
+    if (saveButtonClicked && eventStatus is EventStatus.Saved) {
+        saveButtonClicked = false
+        saveButtonText = R.string.edit_event_screen_save
+        onEventSaved()
+    } else if (eventStatus is EventStatus.Error) {
+        LaunchedEffect(eventStatus) {
+            val errorMessage =
+                localContext.resources.getString((eventStatus as EventStatus.Error).errorRef)
+            snackBarHostState.showSnackbar("Error : $errorMessage")
+            eventViewModel.dismissError()
+        }
+    } else if (eventStatus is EventStatus.Saving) {
+        saveButtonText = R.string.edit_event_screen_saving
+    }
+
+    Scaffold(
+        topBar = {
+            EventTitleAndBackButton(title = title, onBackButtonPressed = onEventBackButtonPressed)
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState, modifier = Modifier.testTag("snackbar"))
+        }
+    ) { padding ->
+        Column(
             modifier =
-                Modifier.padding(30.dp).align(Alignment.CenterHorizontally).testTag("Save-button"),
-            onClick = onEventSaveButtonPressed
+                Modifier.padding(padding).verticalScroll(rememberScrollState()).pointerInput(Unit) {
+                    detectTapGestures(onTap = { focusManager.clearFocus() })
+                }
         ) {
-            Text(stringResource(R.string.edit_event_screen_save))
+            // all the inputs for an event
+            EventPropertiesFields(eventViewModel = eventViewModel)
+            // save button
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(EVENT_PADDING_BETWEEN_INPUTS),
+                horizontalArrangement = Arrangement.End
+            ) {
+                if (canDelete) {
+                    DeleteEventButton {
+                        // TODO: delete the event in the repository
+                        onEventDeleted()
+                    }
+                }
+                OutlinedButton(
+                    modifier = Modifier.padding(10.dp).testTag("Save-button"),
+                    onClick = {
+                        eventViewModel.saveEvent()
+                        saveButtonClicked = true
+                    }
+                ) {
+                    Text(stringResource(saveButtonText))
+                }
+            }
         }
     }
 }

@@ -1,33 +1,55 @@
 package com.github.swent.echo.compose.map
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.view.View
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
+import kotlinx.coroutines.runBlocking
 
-val MAP_CENTER = Location("Lausanne Center", 46.5197, 6.6323)
-const val DEFAULT_ZOOM = 15.0
+val MAP_CENTER = Location("EPFL", 46.5191, 6.5668)
+const val DEFAULT_ZOOM = 13.0
 
 @Composable
 fun <T : View> EchoAndroidView(
     modifier: Modifier = Modifier,
-    factory: (Context) -> T,
-    update: (T, List<Event>, (Event) -> Unit) -> Unit,
+    factory: (Context, Boolean, (() -> Unit)) -> T,
+    update: (T, List<Event>, (Event) -> Unit, Boolean) -> Unit,
     events: List<Event>,
-    callback: (Event) -> Unit = {}
+    callback: (Event) -> Unit = {},
+    withLocation: Boolean
 ) {
+    var trigger by remember { mutableStateOf(false) }
     AndroidView(
         modifier = modifier.testTag("mapAndroidView"),
-        factory = factory,
-        update = { update(it, events, callback) }
+        factory = { factory(it, withLocation) { trigger = true } },
+        update = { update(it, events, callback, trigger && withLocation) }
     )
 }
+
+val PERMISSIONS =
+    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+
+fun permissionsDenied(context: Context) =
+    PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED
+    }
 
 /**
  * This composable will draw a map that displays events.
@@ -45,6 +67,24 @@ fun MapDrawer(
     callback: (Event) -> Unit = {},
     mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
 ) {
+    var displayLocation by remember { mutableStateOf(false) }
+    var permissionWasDenied = false
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p
+            ->
+            permissionWasDenied = !p.values.any { it }
+            displayLocation = displayLocation || !permissionWasDenied
+        }
+    val c = LocalContext.current
+    /*
+    This has to be blocking as we don't want the `EchoAndroidView` to be
+    created before launching the permission request.
+    */
+    if (!permissionWasDenied && runBlocking { permissionsDenied(c) }) {
+        SideEffect { launcher.launch(PERMISSIONS) }
+    } else {
+        SideEffect { displayLocation = true }
+    }
     EchoAndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
         factory = mapDrawerViewModel::factory,
@@ -53,6 +93,7 @@ fun MapDrawer(
         // AndroidView will recompose whenever said state changes
         update = mapDrawerViewModel::update,
         events = events,
-        callback = callback
+        callback = callback,
+        withLocation = displayLocation
     )
 }

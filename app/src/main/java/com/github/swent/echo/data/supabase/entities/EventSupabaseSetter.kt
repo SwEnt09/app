@@ -6,7 +6,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EventSupabaseSetter(
-    @SerialName("event_id") val eventId: String,
+
+    // having the default value set to null here is needed so that the serializer
+    // completely ignores the attribute on insertion when we want supabase to generate the
+    // uuid eventId
+    @SerialName("event_id") val eventId: String? = null,
     @SerialName("creator_id") val creatorId: String,
     @SerialName("organizer_id") val organizerId: String?,
     val title: String,

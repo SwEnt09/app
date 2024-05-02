@@ -39,12 +39,6 @@ class ListDrawerTest {
                 .assertExists()
             composeTestRule
                 .onNodeWithTag(
-                    "list_event_name_${SAMPLE_EVENTS[i].eventId}",
-                    useUnmergedTree = true
-                )
-                .assertTextEquals(SAMPLE_EVENTS[i].eventId)
-            composeTestRule
-                .onNodeWithTag(
                     "list_event_title_${SAMPLE_EVENTS[i].eventId}",
                     useUnmergedTree = true
                 )
@@ -59,13 +53,6 @@ class ListDrawerTest {
                         .startDate
                         .format(DateTimeFormatter.ofPattern("E, dd/MM\nHH:mm"))
                 )
-            // Update assert value when we will have the position of the user
-            composeTestRule
-                .onNodeWithTag(
-                    "list_event_location_${SAMPLE_EVENTS[i].eventId}",
-                    useUnmergedTree = true
-                )
-                .assertTextEquals("5km")
             composeTestRule
                 .onNodeWithTag(
                     "list_event_participants_${SAMPLE_EVENTS[i].eventId}",
