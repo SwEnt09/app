@@ -71,6 +71,12 @@ class RepositoryImplTest {
     }
 
     @Test
+    fun createEventTest() {
+        runBlocking { repositoryImpl.createEvent(event) }
+        verify { runBlocking { repositoryImpl.createEvent(event) } }
+    }
+
+    @Test
     fun setEventTest() {
         runBlocking { repositoryImpl.setEvent(event) }
         verify { runBlocking { repositoryImpl.setEvent(event) } }

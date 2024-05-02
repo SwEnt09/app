@@ -19,7 +19,7 @@ class OsmdroidMapViewProviderTest {
     fun `update should call invalidate`() {
         val mapView: MapView = mockk(relaxed = true)
 
-        osmdroidMapViewProvider.update(mapView, emptyList(), {})
+        osmdroidMapViewProvider.update(mapView, emptyList(), {}, false)
         verify { mapView.invalidate() }
     }
 }

@@ -12,6 +12,7 @@ import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import com.github.swent.echo.compose.authentication.RegisterScreen
 import com.github.swent.echo.compose.components.HomeScreen
 import com.github.swent.echo.compose.event.CreateEventScreen
+import com.github.swent.echo.compose.event.EditEventScreen
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 
@@ -49,12 +50,19 @@ fun AppNavigationHost(
         composable(Routes.CREATE_EVENT.name) {
             CreateEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
         }
+
         composable(Routes.PROFILE_CREATION.name) {
             ProfileCreationScreen(
                 viewModel = hiltViewModel(),
                 navAction = navActions,
                 tagviewModel = hiltViewModel()
             )
+
+
+        composable(Routes.EDIT_EVENT.name) {
+            // TODO: set the event id in the eventViewModel as a savedStateHandle with key "eventId"
+            EditEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
+
         }
     }
 }

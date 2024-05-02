@@ -6,8 +6,6 @@ import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.components.searchmenu.floatToDate
-import com.github.swent.echo.data.SAMPLE_EVENTS
-import com.github.swent.echo.data.SAMPLE_TAGS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
@@ -29,6 +27,8 @@ enum class MapOrListMode {
     LIST
 }
 
+const val STATUS_THRESHOLD = 0.5
+
 @HiltViewModel
 class HomeScreenViewModel
 @Inject
@@ -36,7 +36,6 @@ constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
 ) : ViewModel() {
-
     private val _overlay = MutableStateFlow<Overlay>(Overlay.NONE)
     val overlay = _overlay.asStateFlow()
     private val _mode = MutableStateFlow<MapOrListMode>(MapOrListMode.MAP)
@@ -54,30 +53,36 @@ constructor(
         MutableStateFlow(
             FiltersContainer(
                 searchEntry = "",
-                epflChecked = true,
-                sectionChecked = true,
-                classChecked = true,
-                pendingChecked = true,
-                confirmedChecked = true,
-                fullChecked = true,
+                epflChecked = false,
+                sectionChecked = false,
+                classChecked = false,
+                pendingChecked = false,
+                confirmedChecked = false,
+                fullChecked = false,
                 from = 0f,
                 to = 14f,
                 sortBy = SortBy.NONE
             )
         )
     val filtersContainer = _filtersContainer.asStateFlow()
-
-    private val _profileName =
-        MutableStateFlow<String>("John Doe") // placeholder until we have user profiles
+    private val _profileName = MutableStateFlow<String>("")
     val profileName = _profileName.asStateFlow()
-    private val _profileClass =
-        MutableStateFlow<String>("IN - BA6") // placeholder until we have user profiles
+    private val _profileClass = MutableStateFlow<String>("")
     val profileClass = _profileClass.asStateFlow()
+    private var section = ""
+    private var semester = ""
 
     init {
         viewModelScope.launch {
-            allEventsList = SAMPLE_EVENTS // repository.getAllEvents()
-            allTagSet = SAMPLE_TAGS // repository.getAllTags()
+            val userId = authenticationService.getCurrentUserID() ?: ""
+            allEventsList = repository.getAllEvents()
+            allTagSet = repository.getAllTags().toSet()
+            semester = repository.getUserProfile(userId)?.semester?.name ?: ""
+            section = repository.getUserProfile(userId)?.section?.name ?: ""
+            _profileClass.value =
+                if (semester == "") section
+                else if (section == "") semester else "$section - $semester"
+            _profileName.value = repository.getUserProfile(userId)?.name ?: ""
             refreshFiltersContainer()
         }
     }
@@ -140,7 +145,7 @@ constructor(
         viewModelScope.launch { authenticationService.signOut() }
     }
 
-    fun refreshFiltersContainer() {
+    private fun refreshFiltersContainer() {
         val listOfWords = _filtersContainer.value.searchEntry.lowercase().split(" ")
         filterTagSet =
             allTagSet
@@ -153,12 +158,12 @@ constructor(
         _filtersContainer.value =
             FiltersContainer(
                 searchEntry = "",
-                epflChecked = true,
-                sectionChecked = true,
-                classChecked = true,
-                pendingChecked = true,
-                confirmedChecked = true,
-                fullChecked = true,
+                epflChecked = false,
+                sectionChecked = false,
+                classChecked = false,
+                pendingChecked = false,
+                confirmedChecked = false,
+                fullChecked = false,
                 from = 0f,
                 to = 14f,
                 sortBy = SortBy.NONE
@@ -171,42 +176,55 @@ constructor(
     private fun filterEvents() {
         _displayEventList.value =
             allEventsList
-                .filter { event ->
-                    // filter by tags
-                    event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
-                    // filter by time
-                    &&
-                        dateFilterConditions(event)
-                        // filter by scope of the event
-                        &&
-                        (_filtersContainer.value.epflChecked &&
-                            event.tags.any { tag -> tag.name.lowercase() == "epfl" } ||
-                            _filtersContainer.value.sectionChecked &&
-                                event.tags.any { tag -> tag.name.lowercase() == "in" } ||
-                            _filtersContainer.value.classChecked &&
-                                event.tags.any { tag ->
-                                    tag.name.lowercase() == "ba6"
-                                }) // change when we have the userProfile (take their class and
-                        // section
-                        // as strings)
-                        // filter by status of the event (pending, confirmed, full)
-                        &&
+                .asSequence()
+                .filter { event -> // filter by tags
+                    _filtersContainer.value.searchEntry == "" ||
+                        event.tags.any { tag ->
+                            filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
+                        }
+                }
+                .filter { event -> // filter by time
+                    dateFilterConditions(event)
+                }
+                // TODO : later add a radio button to filter only by one, and rewrite this like the
+                // scope
+                .filter { event -> // filter by status of the event (pending, confirmed, full)
+                    (!_filtersContainer.value.confirmedChecked &&
+                        !_filtersContainer.value.pendingChecked &&
+                        !_filtersContainer.value.fullChecked) ||
                         (_filtersContainer.value.pendingChecked &&
-                            event.participantCount < event.maxParticipants * 0.5 ||
+                            event.participantCount < event.maxParticipants * STATUS_THRESHOLD ||
                             _filtersContainer.value.confirmedChecked &&
-                                (event.participantCount >= event.maxParticipants * 0.5 &&
+                                (event.participantCount >=
+                                    event.maxParticipants * STATUS_THRESHOLD &&
                                     event.participantCount < event.maxParticipants) ||
                             _filtersContainer.value.fullChecked &&
                                 event.participantCount == event.maxParticipants)
                 }
+                .filter { event ->
+                    !_filtersContainer.value.epflChecked ||
+                        event.tags.any { tag -> tag.name.lowercase() == "epfl" }
+                }
+                .filter { event ->
+                    !_filtersContainer.value.sectionChecked ||
+                        section == "" ||
+                        event.tags.any { tag -> tag.name.lowercase() == section.lowercase() }
+                }
+                .filter { event ->
+                    !_filtersContainer.value.classChecked ||
+                        semester == "" ||
+                        event.tags.any { tag -> tag.name.lowercase() == semester.lowercase() }
+                }
                 .sortedBy { event ->
                     event.startDate
+                    // when we can sort by distance, update this
                     /*when (_filtersContainer.value.sortBy) {
                         SortBy.DATE_ASC -> event.startDate
                         SortBy.DATE_DESC ->
                         else ->
                     }*/
                 }
+                .toList()
 
         // reverse the list if the sort by is descending
         if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) {
@@ -221,6 +239,7 @@ constructor(
         setOverlay(Overlay.EVENT_INFO_SHEET)
     }
 
+    /* not needed for now
     /** Add the given tag to the filter tag list. */
     fun addTag(tag: Tag) {
         filterTagSet = filterTagSet.plus(tag)
@@ -231,7 +250,7 @@ constructor(
     fun removeTag(tag: Tag) {
         filterTagSet = filterTagSet.minus(tag)
         filterEvents()
-    }
+    }*/
 
     /**
      * Set the overlay to the given overlay. (EVENT_INFO_SHEET, SEARCH_SHEET or NONE)s

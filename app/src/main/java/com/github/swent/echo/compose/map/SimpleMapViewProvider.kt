@@ -12,11 +12,22 @@ import com.github.swent.echo.data.model.Event
  * in this implementation.
  */
 class SimpleMapViewProvider : IMapViewProvider<ComposeView> {
-    override fun factory(context: android.content.Context): ComposeView {
-        return ComposeView(context)
+    override fun factory(
+        context: android.content.Context,
+        withLocation: Boolean,
+        onCreate: () -> Unit
+    ): ComposeView {
+        val view = ComposeView(context)
+        onCreate()
+        return view
     }
 
-    override fun update(view: ComposeView, events: List<Event>, callback: (Event) -> Unit) {
+    override fun update(
+        view: ComposeView,
+        events: List<Event>,
+        callback: (Event) -> Unit,
+        withLocation: Boolean
+    ) {
         view.setContent {
             Column {
                 events.forEach { event ->

@@ -2,7 +2,6 @@ package com.github.swent.echo.compose.map
 
 import android.content.Context
 import com.github.swent.echo.data.model.Event
-import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -13,19 +12,12 @@ import org.osmdroid.views.overlay.Marker
  * Provides a [MapView] to be displayed by an
  * [AndroidView][androidx.compose.ui.viewinterop.AndroidView].
  */
-class OsmdroidMapViewProvider() : IMapViewProvider<MapView> {
+@Deprecated("No longer supported.", ReplaceWith("MapLibreMapViewProvider"))
+class OsmdroidMapViewProvider : IMapViewProvider<MapView> {
 
     companion object {
         private val tileSource = TileSourceFactory.MAPNIK
     }
-
-    private lateinit var mapView: MapView
-
-    fun getCenter(): IGeoPoint = mapView.mapCenter
-
-    fun getZoom() = mapView.zoomLevelDouble
-
-    fun getClipToOutline() = mapView.clipToOutline
 
     private fun MapView.drawMarker(e: Event, callback: (Event) -> Unit) {
         val marker = Marker(this)
@@ -50,12 +42,12 @@ class OsmdroidMapViewProvider() : IMapViewProvider<MapView> {
         invalidate()
     }
 
-    override fun factory(context: Context): MapView {
+    override fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): MapView {
         Configuration.getInstance().apply {
             userAgentValue = context.packageName
             osmdroidBasePath = context.cacheDir
         }
-        mapView =
+        val mapView =
             MapView(context, MapTileProviderBasic(context)).apply {
                 setTileSource(tileSource)
                 setMultiTouchControls(true)
@@ -64,10 +56,16 @@ class OsmdroidMapViewProvider() : IMapViewProvider<MapView> {
                 controller.setZoom(DEFAULT_ZOOM)
                 controller.setCenter(MAP_CENTER.toGeoPoint())
             }
+        onCreate()
         return mapView
     }
 
-    override fun update(view: MapView, events: List<Event>, callback: (Event) -> Unit) {
+    override fun update(
+        view: MapView,
+        events: List<Event>,
+        callback: (Event) -> Unit,
+        withLocation: Boolean
+    ) {
         view.apply { drawAllMarkers(events, callback) }
     }
 }

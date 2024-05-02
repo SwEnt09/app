@@ -28,7 +28,9 @@
     <string name="app_title">Echo</string>
     <string name="event_info_sheet_join_event_button_text">Join Event</string>
     <string name="create_event_screen_title">Create event</string>
+    <string name="edit_event_screen_name">Edit event</string>
     <string name="edit_event_screen_save">Save</string>
+    <string name="edit_event_screen_saving">Saving</string>
     <string name="edit_event_screen_confirm_date">OK</string>
     <string name="edit_event_screen_title">Title</string>
     <string name="edit_event_screen_description">Description</string>
@@ -44,6 +46,7 @@
     <string name="event_creation_error_not_logged_in">You are not logged in</string>
     <string name="event_creation_error_end_date_before_start_date">The end date is before the start date</string>
     <string name="event_creation_error_empty_title">The title is empty</string>
+    <string name="event_creation_error_max_participant">The maximum number of participants is too low</string>
     <string name="search_menu_filters_epfl">EPFL</string>
     <string name="search_menu_filters_section">Section</string>
     <string name="search_menu_filters_class">Class</string>
@@ -65,7 +68,7 @@
     <string name="event_location_latitude">Latitude</string>
     <string name="event_location_longitude">Longitude</string>
     <string name="edit_event_screen_cancel">Cancel</string>
-    <string name="edit_event_screen_confirm_location">OK</string>
+    <string name="edit_event_screen_confirm">OK</string>
     <string name="list_drawer_view_on_map">View On Map</string>
     <string name="list_drawer_join_event">Join Event</string>
 
@@ -81,6 +84,12 @@
 
     <string name="event_successfully_joined">Event successfully joined!</string>
     <string name="event_info_sheet_modify_event">Modify Event</string>
+
+
+
+    <string name="list_drawer_event_status">Event Status</string>
+    <string name="edit_event_screen_alert_deletion_message">You will delete permanently this event !</string>
+    <string name="edit_event_screen_delete_button">Delete</string>
 
 </resources>
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,22 +44,24 @@ constructor(
                 _status.value = EventStatus.Error(R.string.event_creation_error_not_logged_in)
                 Log.e("create event", "the user is not logged in")
             } else {
-                val username = repository.getUserProfile(userid)!!.name
+                val userProfile = repository.getUserProfile(userid)
+                if (userProfile == null) {
+                    throw Exception(
+                        "Error: you can't edit or create an event with a null user profile"
+                    )
+                }
+                val username = userProfile.name
+                _organizerList.value =
+                    userProfile.committeeMember.map { association -> association.name } + username
                 if (savedEventId.contains("eventId")) {
                     _isEventNew.value = false
                     _event.value = repository.getEvent(savedEventId.get<String>("eventId")!!)
                     _status.value = EventStatus.Saved
                 } else {
                     _event.value =
-                        _event.value.copy(
-                            creator = repository.getUserProfile(userid)!!.toEventCreator(),
-                            organizer = null
-                        )
+                        _event.value.copy(creator = userProfile.toEventCreator(), organizer = null)
                     _status.value = EventStatus.Modified
                 }
-                // TODO: also add the associations linked to the user to the organizerList (not
-                // in repository yet)
-                _organizerList.value = listOf(username)
             }
             allTagsList = repository.getAllTags()
         }
@@ -70,9 +73,14 @@ constructor(
             if (organizerName == _event.value.creator.name) {
                 setEvent(event.value.copy(organizer = null))
             } else {
-                // TODO: check if it's an association linked to the user (no method or attribute
-                // available)
-                TODO("Set organizer as association not implemented")
+                setEvent(
+                    event.value.copy(
+                        organizer =
+                            repository.getAllAssociations().find { association ->
+                                association.name == organizerName
+                            }
+                    )
+                )
             }
         }
     }
@@ -98,15 +106,22 @@ constructor(
                 _status.value = EventStatus.Saving
                 viewModelScope.launch {
                     if (isEventNew.value) {
-                        // TODO: get new eventId for new events (not implemented yet in the
-                        // repository)
+                        val eventId = repository.createEvent(event.value)
+                        _event.value = event.value.copy(eventId = eventId)
                     } else {
-                        repository.setEvent(_event.value)
+                        repository.setEvent(event.value)
                     }
                     _isEventNew.value = false
                     _status.value = EventStatus.Saved
                 }
             }
+        }
+    }
+
+    /** change event status from error to modified */
+    fun dismissError() {
+        if (_status.value is EventStatus.Error) {
+            _status.value = EventStatus.Modified
         }
     }
 
@@ -119,6 +134,12 @@ constructor(
         }
         if (event.title.isBlank()) {
             _status.value = EventStatus.Error(R.string.event_creation_error_empty_title)
+        }
+        if (event.maxParticipants <= 0) {
+            _status.value = EventStatus.Error(R.string.event_creation_error_max_participant)
+        }
+        if (event.creator == EventCreator.EMPTY) {
+            _status.value = EventStatus.Error(R.string.event_creation_error_not_logged_in)
         }
         return _status.value !is EventStatus.Error
     }

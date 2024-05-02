@@ -13,7 +13,7 @@ import com.github.swent.echo.data.model.Event
  * @author alejandrocalles
  */
 interface IMapViewProvider<T : View> {
-    fun factory(context: Context): T
+    fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): T
 
-    fun update(view: T, events: List<Event>, callback: (Event) -> Unit)
+    fun update(view: T, events: List<Event>, callback: (Event) -> Unit, withLocation: Boolean)
 }

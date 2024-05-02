@@ -7,13 +7,15 @@ import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.event.EventViewModel
 
-/** This screen allow the user to create an event. */
+/** This screen allow the user to edit an event. */
 @Composable
-fun CreateEventScreen(eventViewModel: EventViewModel, navigationActions: NavigationActions) {
+fun EditEventScreen(eventViewModel: EventViewModel, navigationActions: NavigationActions) {
     EventScreen(
         title = stringResource(R.string.create_event_screen_title),
+        canDelete = true,
         onEventBackButtonPressed = navigationActions::goBack,
         onEventSaved = { navigationActions.navigateTo(Routes.MAP) },
+        onEventDeleted = { navigationActions.navigateTo(Routes.MAP) },
         eventViewModel = eventViewModel
     )
 }
