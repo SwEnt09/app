@@ -7,12 +7,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.authentication.LoginScreen
 import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import com.github.swent.echo.compose.authentication.RegisterScreen
 import com.github.swent.echo.compose.components.HomeScreen
 import com.github.swent.echo.compose.event.CreateEventScreen
 import com.github.swent.echo.compose.event.EditEventScreen
+import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 
@@ -26,8 +28,10 @@ import com.github.swent.echo.ui.navigation.Routes
 fun AppNavigationHost(
     userIsLoggedIn: Boolean,
     navController: NavHostController = rememberNavController(),
+    authenticationService: AuthenticationService,
+    repository: Repository,
 ) {
-    val navActions = NavigationActions(navController)
+    val navActions = NavigationActions(navController, authenticationService, repository)
 
     NavHost(
         navController = navController,
