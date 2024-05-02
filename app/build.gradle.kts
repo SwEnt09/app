@@ -106,9 +106,6 @@ dependencies {
     implementation (libs.googleid)
     implementation(libs.supabase.compose.auth)
 
-    // Open Street Map
-    implementation(libs.osmdroid.android)
-
     // Map Libre
     implementation(libs.android.sdk)
     

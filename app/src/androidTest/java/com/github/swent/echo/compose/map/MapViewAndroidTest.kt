@@ -10,21 +10,15 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.github.swent.echo.data.SAMPLE_EVENTS
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.osmdroid.config.Configuration
 
 @RunWith(AndroidJUnit4::class)
 class MapViewAndroidTest {
 
     companion object {
-
-        private val context = InstrumentationRegistry.getInstrumentation().targetContext
-
         @Composable
         private fun <T : View> DummyMapDrawer(p: IMapViewProvider<T>) {
             val e by remember { mutableStateOf(SAMPLE_EVENTS) }
@@ -38,23 +32,6 @@ class MapViewAndroidTest {
     }
 
     @get:Rule val composeTestRule = createComposeRule()
-
-    @Test
-    fun osmdroidConfigShouldHaveCorrectValues() {
-        val p = OsmdroidMapViewProvider()
-        composeTestRule.setContent { DummyMapDrawer(p) }
-        Configuration.getInstance().apply {
-            assertEquals(osmdroidBasePath, context.cacheDir)
-            assertEquals(userAgentValue, context.packageName)
-        }
-    }
-
-    @Test
-    fun osmdroidMapProviderShouldShowAndroidView() {
-        val p = OsmdroidMapViewProvider()
-        composeTestRule.setContent { DummyMapDrawer(p) }
-        composeTestRule.onNodeWithTag("mapAndroidView").assertIsDisplayed()
-    }
 
     @Test
     fun mapLibreMapProviderShouldShowAndroidView() {
