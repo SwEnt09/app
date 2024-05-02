@@ -2,11 +2,13 @@ package com.github.swent.echo.compose.components
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -25,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
@@ -76,38 +79,42 @@ fun EventInfoSheet(
                     .fillMaxHeight(0.5f)
                     .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 32.dp)
         ) {
-            Text(
-                text = event.title,
-                style = MaterialTheme.typography.displaySmall,
-                maxLines = 1,
-            )
-            Text(
-                modifier = Modifier.padding(top = 38.dp),
-                text = event.organizer?.name ?: event.creator.name,
-                style =
-                    MaterialTheme.typography.titleLarge.copy(
-                        color = MaterialTheme.colorScheme.secondary
-                    ),
-                maxLines = 1,
-            )
-            Text(
-                modifier = Modifier.padding(top = 62.dp),
-                text = event.location.name,
-                style =
-                    MaterialTheme.typography.titleLarge.copy(
-                        color = MaterialTheme.colorScheme.secondary
-                    ),
-                maxLines = 1,
-            )
+            Column(modifier = Modifier.align(Alignment.TopStart).fillMaxWidth(0.7f)) {
+                Text(
+                    text = event.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = event.organizer?.name ?: event.creator.name,
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = event.location.name,
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = event.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             Text(
                 modifier = Modifier.align(Alignment.TopEnd),
                 text = displayDate,
-                style = MaterialTheme.typography.displaySmall
-            )
-            Text(
-                modifier = Modifier.padding(top = 100.dp),
-                text = event.description,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.headlineLarge,
             )
 
             Row(
