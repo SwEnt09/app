@@ -2,9 +2,11 @@ package com.github.swent.echo.compose.authentication
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,14 +14,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,6 +64,7 @@ import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.ui.navigation.NavigationActions
+import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.CreateProfileViewModel
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
@@ -97,19 +103,24 @@ fun ProfileCreationScreen(
  * @param semList The list of semesters to be displayed in the dropdown menu.
  * @param tagList The list of tags to be displayed as chips.
  */
+@OptIn(ExperimentalLayoutApi::class)
+@SuppressLint("RestrictedApi")
 @Composable
 fun ProfileCreationUI(
     sectionList: List<Section>,
     semList: List<Semester>,
-    tagList: List<Tag>,
+    tagList: Set<Tag>,
     onSave: () -> Unit,
     onAdd: () -> Unit,
     navAction: NavigationActions,
 ) {
     Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
+        ) {
             var firstName by remember { mutableStateOf("") }
             var lastName by remember { mutableStateOf("") }
+            var showError by remember { mutableStateOf(false) }
 
             // Back button
             IconButton(onClick = { navAction.goBack() }, modifier = Modifier.testTag("Back")) {
@@ -125,7 +136,9 @@ fun ProfileCreationUI(
                 value = firstName,
                 onValueChange = { firstName = it },
                 modifier = Modifier.testTag("FirstName"),
-                label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) }
+                label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) },
+                singleLine = true,
+                isError = firstName.isBlank()
             )
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -134,7 +147,9 @@ fun ProfileCreationUI(
                 value = lastName,
                 onValueChange = { lastName = it },
                 modifier = Modifier.testTag("LastName"),
-                label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) }
+                label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) },
+                singleLine = true,
+                isError = lastName.isBlank()
             )
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -155,12 +170,10 @@ fun ProfileCreationUI(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Row() {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 for (tag in tagList) {
                     InputChipFun(tag.name) {}
-                    Spacer(modifier = Modifier.width(5.dp))
                 }
-                Spacer(modifier = Modifier.width(5.dp))
 
                 // Add tag button
                 SmallFloatingActionButton(
@@ -175,10 +188,30 @@ fun ProfileCreationUI(
             Spacer(modifier = Modifier.weight(1f))
             // Save button
             OutlinedButton(
-                onClick = { onSave() },
+                onClick = {
+                    if (firstName.isBlank() || lastName.isBlank()) {
+                        showError = true
+                        return@OutlinedButton
+                    } else {
+                        onSave()
+                        navAction.navigateTo(Routes.MAP)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth().testTag("Save")
             ) {
                 Text(text = stringResource(id = R.string.profile_creation_save_button))
+            }
+            if (showError) {
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    action = {
+                        Button(onClick = { showError = false }) {
+                            Text(stringResource(id = R.string.profile_creation_dismiss))
+                        }
+                    }
+                ) {
+                    Text(stringResource(id = R.string.profile_creation_empty_fields_error))
+                }
             }
         }
     }
