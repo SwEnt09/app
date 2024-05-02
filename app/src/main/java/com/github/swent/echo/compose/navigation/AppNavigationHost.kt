@@ -57,12 +57,11 @@ fun AppNavigationHost(
                 navAction = navActions,
                 tagviewModel = hiltViewModel()
             )
-
+        }
 
         composable(Routes.EDIT_EVENT.name) {
             // TODO: set the event id in the eventViewModel as a savedStateHandle with key "eventId"
             EditEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
-
         }
     }
 }
