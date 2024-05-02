@@ -94,7 +94,9 @@ private fun Content(
                 onDismiss = homeScreenViewModel::clearOverlay,
                 onFullyExtended = {},
                 canModifyEvent = canUserModifyEvent,
-                onModifyEvent = {}
+                onModifyEvent = {
+                    navActions.navigateTo(Routes.EDIT_EVENT.build(displayEventInfo!!.eventId))
+                }
             )
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info
