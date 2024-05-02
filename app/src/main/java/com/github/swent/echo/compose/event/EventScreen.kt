@@ -99,6 +99,7 @@ fun EventScreen(
                 OutlinedButton(
                     modifier = Modifier.padding(10.dp).testTag("Save-button"),
                     onClick = {
+                        focusManager.clearFocus()
                         eventViewModel.saveEvent()
                         saveButtonClicked = true
                     }
