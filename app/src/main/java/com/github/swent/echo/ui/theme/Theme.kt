@@ -54,7 +54,6 @@ private val DarkColorScheme =
         surfaceContainerHighest = surfaceContainerHighestDark,
     )
 
-
 private val LightColorScheme =
     lightColorScheme(
         primary = primaryLight,
@@ -93,7 +92,6 @@ private val LightColorScheme =
         surfaceContainerHigh = surfaceContainerHighLight,
         surfaceContainerHighest = surfaceContainerHighestLight,
     )
-
 
 @Composable
 fun EchoTheme(
