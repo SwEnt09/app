@@ -55,23 +55,5 @@ class CreateProfileTest {
         composeTestRule.onNodeWithTag("BA1").assertExists()
         composeTestRule.onNodeWithTag("BA2").assertExists()
     }
-    /*
-       @Test
-       fun profileCreationScreen_SaveButtonClicked() {
-           var saveButtonClicked = false
-           val saveOnClick: () -> Unit = { saveButtonClicked = true }
 
-           composeTestRule.setContent {
-               ProfileCreationUI(
-                   emptyList(),
-                   emptyList(),
-                   emptyList(),
-                   navAction = NavigationActions(navController = rememberNavController())
-               )
-           }
-           // Simulate a click on the Save button
-           composeTestRule.onNodeWithText("Save").performClick()
-           assert(saveButtonClicked)
-       }
-    */
 }

@@ -20,9 +20,6 @@ class CreateProfileViewModel
 constructor(
     private val authenticationService: AuthenticationService,
     private val repository: Repository,
-
-    // private val navAction: NavigationActions,
-
 ) : ViewModel() {
 
     private val _firstName = MutableStateFlow("")
@@ -72,19 +69,18 @@ constructor(
             } else {
                 // TODO: this is the logic for creating a userProfile, changes are required in the
                 // getUserProfile function so that it returns null if a user has not yet created a
-                // user profile
-                val userProfile =
-                    repository.setUserProfile(
-                        UserProfile(
-                            userId,
-                            name = "${_firstName.value} ${_lastName.value}",
-                            semester = _selectedSemester.value,
-                            section = _selectedSection.value,
-                            tags = _tagList.value,
-                            committeeMember = setOf(),
-                            associationsSubscriptions = setOf()
-                        )
+               
+                repository.setUserProfile(
+                    UserProfile(
+                        userId,
+                        name = "${_firstName.value} ${_lastName.value}",
+                        semester = _selectedSemester.value,
+                        section = _selectedSection.value,
+                        tags = _tagList.value,
+                        committeeMember = setOf(),
+                        associationsSubscriptions = setOf()
                     )
+                )
             }
         }
     }

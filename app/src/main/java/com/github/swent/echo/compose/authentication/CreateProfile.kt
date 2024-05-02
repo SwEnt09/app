@@ -291,18 +291,4 @@ fun InputChipFun(
         }
     )
 }
-/*
-@ExcludeFromJacocoGeneratedReport
-@Preview
-@Composable
-fun ProfileCreationPreview() {
-  ProfileCreationUI(
-      sectionList = SectionEPFL.entries,
-      semList = listOf(SemesterEPFL.BA1, SemesterEPFL.BA2),
-      tagList = listOf(Tag("1", "Tag 1"), Tag("2", "Tag 2")),
-      onSave = {},
-      onAdd = {},
-      navAction = NavigationActions(navController = rememberNavController()))
-}
 
- */
