@@ -37,8 +37,8 @@ data class EventSupabaseSetter(
         event.location.long,
         event.startDate.toEpochSecond(),
         event.endDate.toEpochSecond(),
-        event.maxParticipants,
         event.participantCount,
+        event.maxParticipants,
         event.imageId
     )
 }
