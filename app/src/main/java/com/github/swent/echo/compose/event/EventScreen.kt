@@ -65,6 +65,8 @@ fun EventScreen(
         }
     } else if (eventStatus is EventStatus.Saving) {
         saveButtonText = R.string.edit_event_screen_saving
+    } else {
+        saveButtonText = R.string.edit_event_screen_save
     }
 
     Scaffold(
@@ -97,6 +99,7 @@ fun EventScreen(
                 OutlinedButton(
                     modifier = Modifier.padding(10.dp).testTag("Save-button"),
                     onClick = {
+                        focusManager.clearFocus()
                         eventViewModel.saveEvent()
                         saveButtonClicked = true
                     }

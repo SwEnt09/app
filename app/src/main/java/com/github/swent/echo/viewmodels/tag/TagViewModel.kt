@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 class TagViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     // max tag tree depth
-    val maxDepth = 3
+    val maxDepth = 2
     // the root tag is hardcoded here as in the database
     private val rootTag = Tag("1d253a7e-eb8c-4546-bc98-1d3adadcffe8", "ROOT TAG: DO NOT DELETE")
     private val _allTags = MutableStateFlow<List<Tag>>(listOf())
