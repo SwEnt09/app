@@ -21,11 +21,11 @@ class EventSupabaseSetterTest {
             "description",
             Location("locationName", 0.2, 0.3),
             ZonedDateTime.ofInstant(Instant.ofEpochSecond(1714056891), ZoneId.systemDefault()),
-            ZonedDateTime.ofInstant(Instant.ofEpochSecond(1714056891), ZoneId.systemDefault()),
+            ZonedDateTime.ofInstant(Instant.ofEpochSecond(1714066891), ZoneId.systemDefault()),
             setOf(Tag("tagId", "tagName")),
-            0,
-            0,
-            0,
+            12,
+            25,
+            2,
         )
 
     val eventSupabaseSetter =

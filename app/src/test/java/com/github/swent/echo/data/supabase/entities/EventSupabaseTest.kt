@@ -23,9 +23,9 @@ class EventSupabaseTest {
             ZonedDateTime.ofInstant(Instant.ofEpochSecond(1714056891), ZoneId.systemDefault()),
             ZonedDateTime.ofInstant(Instant.ofEpochSecond(1714056891), ZoneId.systemDefault()),
             setOf(Tag("tagId", "tagName")),
-            0,
-            0,
-            0,
+            2,
+            25,
+            2,
         )
 
     val eventSupabase =

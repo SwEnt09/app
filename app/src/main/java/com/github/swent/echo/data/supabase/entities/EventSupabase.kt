@@ -41,8 +41,8 @@ data class EventSupabase(
         event.startDate.toEpochSecond(),
         event.endDate.toEpochSecond(),
         event.tags.map { tag -> TagHelper(tag) },
-        event.maxParticipants,
         event.participantCount,
+        event.maxParticipants,
         event.imageId
     )
 

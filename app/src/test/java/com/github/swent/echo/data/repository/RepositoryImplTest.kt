@@ -22,7 +22,7 @@ class RepositoryImplTest {
     private lateinit var repositoryImpl: RepositoryImpl
 
     private val association = Association("testAssoc", "Dummy Assoc", "blabla description")
-    private val tag = Tag("testTag", "Dummy Tag")
+    private val tag = Tag("testTag", "Dummy Tag", "testTag")
     private val event =
         Event(
             "testEvent",
@@ -94,6 +94,13 @@ class RepositoryImplTest {
         every { runBlocking { mockedRemoteDataSource.getTag("testTag") } } returns tag
         val tagResult = runBlocking { repositoryImpl.getTag("testTag") }
         assertEquals(tag, tagResult)
+    }
+
+    @Test
+    fun getSubTagsTest() {
+        every { runBlocking { mockedRemoteDataSource.getSubTags("testTag") } } returns listOf(tag)
+        val tagResult = runBlocking { repositoryImpl.getSubTags("testTag") }
+        assertEquals(listOf(tag), tagResult)
     }
 
     @Test

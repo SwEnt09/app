@@ -35,6 +35,10 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
         return remoteDataSource.getTag(tagId)
     }
 
+    override suspend fun getSubTags(tagId: String): List<Tag> {
+        return remoteDataSource.getSubTags(tagId)
+    }
+
     override suspend fun getAllTags(): List<Tag> {
         return remoteDataSource.getAllTags()
     }

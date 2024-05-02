@@ -37,9 +37,7 @@ interface Repository {
      * @param tagId The id of the tag.
      * @return The list of sub-tags.
      */
-    suspend fun getSubTags(tagId: String): List<Tag> {
-        return emptyList()
-    }
+    suspend fun getSubTags(tagId: String): List<Tag>
 
     suspend fun getAllTags(): List<Tag>
 

@@ -20,6 +20,8 @@ interface RemoteDataSource {
 
     suspend fun getTag(tagId: String): Tag
 
+    suspend fun getSubTags(tagId: String): List<Tag>
+
     suspend fun getAllTags(): List<Tag>
 
     suspend fun getUserProfile(userId: String): UserProfile
