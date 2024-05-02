@@ -1,7 +1,6 @@
 package com.github.swent.echo.viewmodels.authentication
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
@@ -12,7 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @HiltViewModel
 class CreateProfileViewModel
@@ -61,15 +60,17 @@ constructor(
     // TODO: Save profile button => go to the home screen after saving the profile.
     fun profilesave() {
 
-        viewModelScope.launch {
-            val userId = authenticationService.getCurrentUserID()
-            if (userId == null) {
-                _errorMessage.value = "Profile creation error: Not logged in"
-                // TODO: handle error later on. Will this ever be the case?
-            } else {
-                // TODO: this is the logic for creating a userProfile, changes are required in the
-                // getUserProfile function so that it returns null if a user has not yet created a
+        // viewModelScope.launch {
+        val userId = authenticationService.getCurrentUserID()
+        if (userId == null) {
+            _errorMessage.value = "Profile creation error: Not logged in"
+            // TODO: handle error later on. Will this ever be the case?
+        } else {
+            // TODO: this is the logic for creating a userProfile, changes are required in the
+            // getUserProfile function so that it returns null if a user has not yet created a
 
+            // TODO: show loading animation while saving the profile
+            runBlocking {
                 repository.setUserProfile(
                     UserProfile(
                         userId,
@@ -83,6 +84,7 @@ constructor(
                 )
             }
         }
+        // }
     }
 
     // Add tag button
