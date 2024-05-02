@@ -27,7 +27,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     private val tagDao = db.tagDao()
     private val userProfileDao = db.userProfileDao()
 
-    override suspend fun getAssociation(associationId: String): Association? {
+    override suspend fun getAssociation(
+        associationId: String,
+        syncedSecondsAgo: Long
+    ): Association? {
         return associationDao.get(associationId)?.toAssociation()
     }
 
@@ -35,7 +38,7 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         associationDao.insert(AssociationRoom(association))
     }
 
-    override suspend fun getAllAssociations(): List<Association> {
+    override suspend fun getAllAssociations(syncedSecondsAgo: Long): List<Association> {
         return associationDao.getAll().map { it.toAssociation() }
     }
 
@@ -43,7 +46,7 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         associationDao.insertAll(associations.map { AssociationRoom(it) })
     }
 
-    override suspend fun getEvent(eventId: String): Event? {
+    override suspend fun getEvent(eventId: String, syncedSecondsAgo: Long): Event? {
         return eventDao.get(eventId)?.toEvent()
     }
 
@@ -56,7 +59,7 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         eventDao.insert(EventRoom(event))
     }
 
-    override suspend fun getAllEvents(): List<Event> {
+    override suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event> {
         return eventDao.getAll().map { it.toEvent() }
     }
 
@@ -72,7 +75,7 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         eventDao.insertAll(events.map { EventRoom(it) })
     }
 
-    override suspend fun getTag(tagId: String): Tag? {
+    override suspend fun getTag(tagId: String, syncedSecondsAgo: Long): Tag? {
         return tagDao.get(tagId)?.toTag()
     }
 
@@ -80,11 +83,11 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         tagDao.insert(TagRoom(tag))
     }
 
-    override suspend fun getSubTags(tagId: String): List<Tag> {
+    override suspend fun getSubTags(tagId: String, syncedSecondsAgo: Long): List<Tag> {
         return tagDao.getSubTags(tagId).toTagList()
     }
 
-    override suspend fun getAllTags(): List<Tag> {
+    override suspend fun getAllTags(syncedSecondsAgo: Long): List<Tag> {
         return tagDao.getAll().map { it.toTag() }
     }
 
@@ -92,7 +95,7 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         tagDao.insertAll(tags.map { TagRoom(it) })
     }
 
-    override suspend fun getUserProfile(userId: String): UserProfile? {
+    override suspend fun getUserProfile(userId: String, syncedSecondsAgo: Long): UserProfile? {
         return userProfileDao.get(userId)?.toUserProfile()
     }
 
