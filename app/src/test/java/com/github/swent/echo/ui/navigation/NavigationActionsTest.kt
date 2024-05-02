@@ -19,7 +19,15 @@ class NavigationActionsTest {
 
     @Test
     fun `should navigate to the correct route`() {
-        for (route in Routes.entries) {
+        val routes =
+            listOf(
+                Routes.LOGIN,
+                Routes.REGISTER,
+                Routes.MAP,
+                Routes.CREATE_EVENT,
+                Routes.EDIT_EVENT.build("1234")
+            )
+        for (route in routes) {
             navigationActions.navigateTo(route)
             verify { navController.navigate(route.name) }
         }
