@@ -39,6 +39,9 @@ class CreateProfileTest {
         composeTestRule.onNodeWithTag("LastName").assertExists()
         composeTestRule.onNodeWithTag("Music").assertExists()
         composeTestRule.onNodeWithTag("Sports").assertExists()
+        composeTestRule.onNodeWithTag("Sports").performClick()
+        composeTestRule.onNodeWithTag("Sports").assertDoesNotExist()
+
         composeTestRule.onNodeWithTag("Section").assertExists()
         composeTestRule.onNodeWithTag("Semester").assertExists()
         composeTestRule.onAllNodesWithContentDescription("list dropdown")[0].performClick()
@@ -47,6 +50,7 @@ class CreateProfileTest {
         composeTestRule.onNodeWithTag("IN").assertExists()
         // composeTestRule.onNodeWithTag("Math").assertExists()
         composeTestRule.onNodeWithTag("GM").assertExists()
+
         composeTestRule.onAllNodesWithContentDescription("list dropdown")[1].performClick()
         composeTestRule.onNodeWithTag("BA1").assertExists()
         composeTestRule.onNodeWithTag("BA2").assertExists()
