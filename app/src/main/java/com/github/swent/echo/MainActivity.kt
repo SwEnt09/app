@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.navigation.AppNavigationHost
+import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.theme.EchoTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -19,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 class MainActivity : ComponentActivity() {
 
     @Inject lateinit var authenticationService: AuthenticationService
+    @Inject lateinit var repository: Repository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigationHost(userIsLoggedIn = authenticationService.userIsLoggedIn())
+                    AppNavigationHost(
+                        userIsLoggedIn = authenticationService.userIsLoggedIn(),
+                        authenticationService = authenticationService,
+                        repository = repository,
+                    )
                 }
             }
         }

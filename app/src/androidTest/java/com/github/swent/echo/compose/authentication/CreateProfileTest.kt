@@ -4,12 +4,11 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
-import com.github.swent.echo.ui.navigation.NavigationActions
+import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,7 +27,7 @@ class CreateProfileTest {
                 setOf(Tag("1", "Sports"), Tag("2", "Music")),
                 {},
                 {},
-                navAction = NavigationActions(navController = rememberNavController())
+                navAction = mockk(relaxed = true),
             )
         }
         // Assert that certain elements are present on the screen
