@@ -27,6 +27,8 @@ enum class MapOrListMode {
     LIST
 }
 
+const val STATUS_THRESHOLD = 0.5
+
 @HiltViewModel
 class HomeScreenViewModel
 @Inject
@@ -34,7 +36,6 @@ constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
 ) : ViewModel() {
-
     private val _overlay = MutableStateFlow<Overlay>(Overlay.NONE)
     val overlay = _overlay.asStateFlow()
     private val _mode = MutableStateFlow<MapOrListMode>(MapOrListMode.MAP)
@@ -192,9 +193,10 @@ constructor(
                         !_filtersContainer.value.pendingChecked &&
                         !_filtersContainer.value.fullChecked) ||
                         (_filtersContainer.value.pendingChecked &&
-                            event.participantCount < event.maxParticipants * 0.5 ||
+                            event.participantCount < event.maxParticipants * STATUS_THRESHOLD ||
                             _filtersContainer.value.confirmedChecked &&
-                                (event.participantCount >= event.maxParticipants * 0.5 &&
+                                (event.participantCount >=
+                                    event.maxParticipants * STATUS_THRESHOLD &&
                                     event.participantCount < event.maxParticipants) ||
                             _filtersContainer.value.fullChecked &&
                                 event.participantCount == event.maxParticipants)
