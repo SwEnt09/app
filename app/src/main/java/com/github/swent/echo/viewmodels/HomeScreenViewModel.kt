@@ -177,7 +177,10 @@ constructor(
             allEventsList
                 .asSequence()
                 .filter { event -> // filter by tags
-                    event.tags.any { tag -> filterTagSet.any { tag2 -> tag.tagId == tag2.tagId } }
+                    _filtersContainer.value.searchEntry == "" ||
+                        event.tags.any { tag ->
+                            filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
+                        }
                 }
                 .filter { event -> // filter by time
                     dateFilterConditions(event)
