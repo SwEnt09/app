@@ -7,8 +7,21 @@ import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import java.time.ZonedDateTime
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
+import org.maplibre.android.geometry.LatLng
 
 // This should come from the repository
+
+val x: android.location.Location = android.location.Location("")
+
+fun LatLng.toDestPt(distanceInMeters: Double, bearingInDegrees: Double): LatLng {
+    val d = distanceInMeters * 8.983e-6
+    val la = d * cos(bearingInDegrees * PI / 180.0)
+    val lo = d * sin(bearingInDegrees * PI / 180.0)
+    return LatLng(this.latitude + la, this.longitude + lo)
+}
 
 val SAMPLE_EVENTS: List<Event> =
     listOf(
@@ -18,7 +31,7 @@ val SAMPLE_EVENTS: List<Event> =
             organizer = Association("a", "a", ""),
             title = "Bowling Event",
             description = "",
-            location = Location("Location 1", MAP_CENTER.toGeoPoint()),
+            location = Location("Location 1", MAP_CENTER.toLatLng()),
             startDate = ZonedDateTime.now().plusDays(2),
             endDate = ZonedDateTime.now().plusDays(3),
             tags = setOf(Tag("64", "Bowling"), Tag("1", "Sport"), Tag("65", "EPFL")),
@@ -32,8 +45,7 @@ val SAMPLE_EVENTS: List<Event> =
             organizer = Association("a", "a", ""),
             title = "Swimming Event",
             description = "",
-            location =
-                Location("Location 2", MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 0.0)),
+            location = Location("Location 2", MAP_CENTER.toLatLng().toDestPt(1000.0, 0.0)),
             startDate = ZonedDateTime.now().plusDays(3),
             endDate = ZonedDateTime.now().plusDays(6),
             tags = setOf(Tag("63", "Swimming"), Tag("1", "Sport"), Tag("66", "IN")),
@@ -50,7 +62,7 @@ val SAMPLE_EVENTS: List<Event> =
             location =
                 Location(
                     "Third lamppost on the right",
-                    MAP_CENTER.toGeoPoint().destinationPoint(1000.0, 90.0)
+                    MAP_CENTER.toLatLng().toDestPt(1000.0, 90.0)
                 ),
             startDate = ZonedDateTime.now().plusDays(4),
             endDate = ZonedDateTime.now().plusDays(200),
@@ -65,8 +77,7 @@ val SAMPLE_EVENTS: List<Event> =
             organizer = null,
             title = "D&D oneshot",
             description = "Come play D&D with us ! We have cookies.",
-            location =
-                Location("Baldur's Gate", MAP_CENTER.toGeoPoint().destinationPoint(500.0, 30.0)),
+            location = Location("Baldur's Gate", MAP_CENTER.toLatLng().toDestPt(500.0, 30.0)),
             startDate = ZonedDateTime.now().plusDays(1),
             endDate = ZonedDateTime.now().plusDays(2),
             tags =

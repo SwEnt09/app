@@ -2,19 +2,11 @@ package com.github.swent.echo.data.model
 
 import kotlinx.serialization.Serializable
 import org.maplibre.android.geometry.LatLng
-import org.osmdroid.util.GeoPoint
 
 @Serializable
 data class Location(val name: String, val lat: Double, val long: Double) {
-    constructor(name: String, point: GeoPoint) : this(name, point.latitude, point.longitude)
 
     constructor(name: String, point: LatLng) : this(name, point.latitude, point.longitude)
-    /**
-     * Transform this location into a [GeoPoint].
-     *
-     * @return The respective [GeoPoint].
-     */
-    fun toGeoPoint() = GeoPoint(lat, long)
 
     /**
      * Transform this location into a [LatLng].
