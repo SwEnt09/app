@@ -69,7 +69,7 @@ constructor(
             } else {
                 // TODO: this is the logic for creating a userProfile, changes are required in the
                 // getUserProfile function so that it returns null if a user has not yet created a
-               
+
                 repository.setUserProfile(
                     UserProfile(
                         userId,

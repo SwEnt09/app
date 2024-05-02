@@ -55,5 +55,4 @@ class CreateProfileTest {
         composeTestRule.onNodeWithTag("BA1").assertExists()
         composeTestRule.onNodeWithTag("BA2").assertExists()
     }
-
 }
