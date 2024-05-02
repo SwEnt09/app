@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.ui.navigation.NavigationActions
@@ -123,3 +124,7 @@ private fun Content(
         }
     }
 }
+
+val colorEpfl = Color.Red.copy(0.6f)
+val colorSection = Color.Blue.copy(0.6f)
+val colorClass = Color.Green.copy(0.6f)
