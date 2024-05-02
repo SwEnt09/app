@@ -76,6 +76,10 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         return supabase.from("tags").select() { filter { eq("tag_id", tagId) } }.decodeSingle()
     }
 
+    override suspend fun getSubTags(tagId: String): List<Tag> {
+        return supabase.from("tags").select() { filter { eq("parent_id", tagId) } }.decodeList()
+    }
+
     override suspend fun getAllTags(): List<Tag> {
         return supabase.from("tags").select().decodeList<Tag>()
     }
