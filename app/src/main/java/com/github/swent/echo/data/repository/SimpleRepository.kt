@@ -65,7 +65,7 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
                     "John Doe",
                     SemesterEPFL.BA3,
                     SectionEPFL.IN,
-                    tags.take(2).toSet(),
+                    emptySet(),
                     emptySet(),
                     emptySet(),
                 )

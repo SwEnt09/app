@@ -81,6 +81,7 @@ fun EventInfoSheet(
         ) {
             Column(modifier = Modifier.align(Alignment.TopStart).fillMaxWidth(0.7f)) {
                 Text(
+                    modifier = Modifier.testTag("event_info_sheet_title"),
                     text = event.title,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 2,

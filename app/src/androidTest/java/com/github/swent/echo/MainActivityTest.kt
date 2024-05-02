@@ -1,12 +1,17 @@
 package com.github.swent.echo
 
 import android.content.pm.ActivityInfo
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.requestFocus
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.SectionEPFL
@@ -18,6 +23,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -157,5 +163,97 @@ class MainActivityTest {
 
         // Join the event
         composeTestRule.onNodeWithTag("join_button_event_info_sheet").performClick()
+    }
+
+    @Test
+    fun endToEndTestUserFlowEventCreation() {
+        // Starting point is the register screen
+        composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
+
+        // Registers with google sign in
+        composeTestRule.onNodeWithTag("google-sign-in-button").performClick()
+
+        // TODO: Use create profile page once we have it
+        runBlocking {
+            val userId = authenticationService.getCurrentUserID()
+            assertNotNull(userId)
+            repository.setUserProfile(
+                UserProfile(
+                    userId!!,
+                    "Colin Berger",
+                    null,
+                    null,
+                    emptySet(),
+                    emptySet(),
+                    emptySet(),
+                )
+            )
+        }
+
+        // Redirected to the home screen
+        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+
+        // Click on the hamburger menu
+        composeTestRule.onNodeWithTag("menu_button").performClick()
+
+        // Click on the profile creation button
+        composeTestRule.onNodeWithText("Create Event").performClick()
+
+        // Fill the event creation form
+        val title = "This is a test event title"
+        val description = "This is a test event description"
+        composeTestRule.onNodeWithTag("Title-field").performTextInput(title)
+        composeTestRule.onNodeWithTag("Description-field").performTextInput(description)
+        composeTestRule.onNodeWithTag("nb-participant-field").performTextReplacement("10")
+
+        // Click outside of the text field
+        composeTestRule.onNodeWithTag("Title-field").requestFocus()
+
+        // Click on the save button
+        composeTestRule
+            .onNodeWithTag("Save-button")
+            .performScrollTo()
+            .assertIsDisplayed()
+            .performClick()
+
+        // Should be redirected to the map screen
+        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+
+        // Check that the event was added to the repository
+        val eventId = runBlocking {
+            val event =
+                repository.getAllEvents().find {
+                    it.title == title && it.description == description
+                }
+            assertNotNull(event)
+
+            event!!.eventId
+        }
+
+        // Click on the event marker
+        composeTestRule.onNodeWithTag("event_marker_$eventId").performClick()
+
+        // Check that the modify button is displayed
+        composeTestRule.onNodeWithTag("modify_button").performClick()
+
+        // Check that the title and description are correctly displayed
+        composeTestRule.onNodeWithTag("Title-field").assert(hasText(title))
+        composeTestRule.onNodeWithTag("Description-field").assert(hasText(description))
+
+        // Modify the title
+        val newTitle = "This is a new test event title"
+        composeTestRule.onNodeWithTag("Title-field").performTextReplacement(newTitle)
+
+        // Click on the save button
+        composeTestRule.onNodeWithTag("Save-button").performScrollTo().performClick()
+
+        // Should be redirected to the map screen
+        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+
+        // Check that the event was updated in the repository
+        runBlocking {
+            val event = repository.getEvent(eventId)
+            assertEquals(newTitle, event.title)
+        }
     }
 }
