@@ -12,13 +12,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -53,27 +54,41 @@ fun SearchMenuFilters(
     sortByCallback: (SortBy) -> Unit,
     timeFilterCallback: (Float, Float) -> Unit
 ) {
+    // Color of the events for icons
+    val primaryColor = MaterialTheme.colorScheme.primaryContainer
+    val derivedPrimaryColor =
+        primaryColor.copy(
+            red = primaryColor.red * 0.6f,
+            green = primaryColor.green * 0.6f,
+            blue = primaryColor.blue * 0.6f
+        )
+    val epflColor = derivedPrimaryColor.copy(red = 0.8f)
+    val sectionColor = derivedPrimaryColor.copy(blue = 0.8f)
+    val classColor = derivedPrimaryColor.copy(green = 0.8f)
     // Content of the Events for filters
     val eventsForItems =
         listOf(
             CheckBoxItems(
-                Icons.Filled.Face,
+                painterResource(id = R.drawable.paint),
                 stringResource(id = R.string.search_menu_filters_epfl),
-                filters.epflChecked
+                filters.epflChecked,
+                tint = epflColor
             ) {
                 epflCallback()
             },
             CheckBoxItems(
-                Icons.Filled.Face,
+                painterResource(id = R.drawable.paint),
                 stringResource(id = R.string.search_menu_filters_section),
-                filters.sectionChecked
+                filters.sectionChecked,
+                tint = sectionColor
             ) {
                 sectionCallback()
             },
             CheckBoxItems(
-                Icons.Filled.Face,
+                painterResource(id = R.drawable.paint),
                 stringResource(id = R.string.search_menu_filters_class),
-                filters.classChecked
+                filters.classChecked,
+                tint = classColor
             ) {
                 classCallback()
             }
@@ -83,21 +98,21 @@ fun SearchMenuFilters(
     val eventsStatusItems =
         listOf(
             CheckBoxItems(
-                Icons.Filled.Person,
+                painterResource(id = R.drawable.pending),
                 stringResource(id = R.string.search_menu_filters_pending),
                 filters.pendingChecked
             ) {
                 pendingCallback()
             },
             CheckBoxItems(
-                Icons.Filled.Person,
+                painterResource(id = R.drawable.confirmed),
                 stringResource(id = R.string.search_menu_filters_confirmed),
                 filters.confirmedChecked
             ) {
                 confirmedCallback()
             },
             CheckBoxItems(
-                Icons.Filled.Person,
+                painterResource(id = R.drawable.full),
                 stringResource(id = R.string.search_menu_filters_full),
                 filters.fullChecked
             ) {
@@ -143,9 +158,10 @@ fun SearchMenuFilters(
 
 /** Data class for the checkboxes */
 data class CheckBoxItems(
-    val icon: ImageVector,
+    val icon: Painter,
     val contentDescription: String,
     val checked: Boolean,
+    val tint: Color = Color.Black,
     val callback: () -> Unit
 )
 
@@ -157,7 +173,11 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
         Spacer(modifier = Modifier.height(10.dp))
         checkBoxItems.forEach { checkBoxItem ->
             Row(modifier = Modifier.testTag("${checkBoxItem.contentDescription}_checkbox_row")) {
-                Icon(checkBoxItem.icon, contentDescription = checkBoxItem.contentDescription)
+                Icon(
+                    checkBoxItem.icon,
+                    contentDescription = checkBoxItem.contentDescription,
+                    tint = checkBoxItem.tint
+                )
                 Checkbox(
                     checked = checkBoxItem.checked,
                     onCheckedChange = { checkBoxItem.callback() },
