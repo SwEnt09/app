@@ -43,8 +43,12 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
         return remoteDataSource.getAllTags()
     }
 
-    override suspend fun getUserProfile(userId: String): UserProfile {
-        return remoteDataSource.getUserProfile(userId)
+    override suspend fun getUserProfile(userId: String): UserProfile? {
+        return try {
+            remoteDataSource.getUserProfile(userId)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     override suspend fun setUserProfile(userProfile: UserProfile) {
