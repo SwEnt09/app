@@ -1,0 +1,143 @@
+Title	URL	Assignees	Status
+As a user potentially interested in an event, I want to be able to click on the events to see their description.	https://github.com/echo-swent/echo/issues/224		Done in sprint 4
+Create Tables with RLS on Supabase	https://github.com/echo-swent/echo/issues/51	octogradiste, violoncelloCH	Done in sprint 4
+Add the repository to the event viewmodel	https://github.com/echo-swent/echo/issues/60	unglazedstamp	Done in sprint 4
+Create an event screen	https://github.com/echo-swent/echo/issues/23	unglazedstamp	Done in sprint 4
+Create "create event" screen composable	https://github.com/echo-swent/echo/issues/59	unglazedstamp	Done in sprint 4
+Add getSubTags method on repository	https://github.com/echo-swent/echo/issues/67	octogradiste	Done in sprint 4
+Redesign the `Event` data class.	https://github.com/echo-swent/echo/issues/79	alejandrocalles, violoncelloCH	Done in sprint 4
+Modify the `Event` and `UserProfile` data classes.	https://github.com/echo-swent/echo/pull/84	alejandrocalles	Done in sprint 4
+Make the filters work on HomeScreen			Product backlog
+As a user I want to be able to filter and search events, so I can find them efficiently			Product backlog
+As a user who has limited internet connection, I want to be able to use the app offline.			Product backlog
+Implement the default/light/dark mode	https://github.com/echo-swent/echo/issues/64	srsingh04	Product backlog
+Remove the `SAMPLE_EVENTS` once we can fetch events from the repository.	https://github.com/echo-swent/echo/issues/100	alejandrocalles	Product backlog
+As a user, I want to be able to navigate through the app efficiently.			Product backlog
+As an event organizer, I want to be able to create and broadcast an event so that students who may be interested are notified.			Product backlog
+Simplify the `MapViewProvider` hierarchy	https://github.com/echo-swent/echo/issues/133	alejandrocalles	Product backlog
+Discuss the filters and improve the UX		Greenade, ntissieres	Sprint Backlog
+Discuss in the team the repository interface		octogradiste, unglazedstamp, violoncelloCH	Sprint Backlog
+Adapt the repository interface		octogradiste, violoncelloCH	Sprint Backlog
+Discuss how to use the local data source not only for the offline mode, but also for caching.		octogradiste, unglazedstamp, violoncelloCH	Sprint Backlog
+allow to subscribe/join to Events	https://github.com/echo-swent/echo/issues/192	octogradiste, violoncelloCH	Sprint Backlog
+Show saving animation while the user profile is saved before navigating to the home screen		srsingh04	Sprint Backlog
+state object which holds the current network state, for composables and repository	https://github.com/echo-swent/echo/issues/190		Sprint Backlog
+App crashes when clicking on the compass icon at the top right of the map screen	https://github.com/echo-swent/echo/issues/163	alejandrocalles	Sprint Backlog
+Fix bugs in create / edit event screen	https://github.com/echo-swent/echo/issues/220	unglazedstamp	Sprint Backlog
+Mockup "my events" screen	https://github.com/echo-swent/echo/issues/215	Greenade	Sprint Backlog
+Mockup "joined events" screen	https://github.com/echo-swent/echo/issues/216	Greenade	Sprint Backlog
+As a user I want to be able to see how many participants are participating in a certain event in order to know if there is still place for me and my friends to register.			Product backlog
+Create a loading screen to initialize the `AuthenticationService`	https://github.com/echo-swent/echo/issues/105	octogradiste	Product backlog
+Differentiate or merge the login and register screens.	https://github.com/echo-swent/echo/issues/101	octogradiste	Product backlog
+Image for events	https://github.com/echo-swent/echo/issues/165	octogradiste, violoncelloCH	Product backlog
+As an event organizer, I want people to be able to join my events, so that I have an idea of how many attendees to expect			Product backlog
+As a user, I want to have an event feed, so that I can see what events are currently going on			Product backlog
+As a user, I want to be able to modify my personal profile, so I can update my preferences			Product backlog
+As a student that has specific interests, I want to be able to follow associations so that their events show up in my feed first.			Product backlog
+As a user I want to be able to pull-to-refresh on the event detail screen, so that I have the latest data.	https://github.com/echo-swent/echo/issues/166		Product backlog
+the map's view (position/scale) should be preserved when switching to other screen (e.g. list screen) and back			Product backlog
+As a student whose best friend is a UNIL student, I would like to be able to share my live location so that she can find the event easily on the campus and we can find each other amongst the crowd in big events scattered over multiple locations on campus			Product backlog
+As curious potential user I want to start using the app without having to create an account: just discover events based on what I like. Then later on when I want to perform an action requiring sign-up I can create an account keeping all the data			Product backlog
+As an association we want to be certified, so that we have more visibility and can be trusted by the users			Product backlog
+As a user I want to be able to add friends, so I can see what my friends are doing			Product backlog
+As a new user, I want to create an account so that my data is kept across sessions.	https://github.com/echo-swent/echo/issues/226		Done in sprint 6
+Credit OpenStreetMap.	https://github.com/echo-swent/echo/issues/39	alejandrocalles	Done in sprint 6
+SupabaseDataSource: select systemDefault as Timezone when creating the ZonedDateTime objects	https://github.com/echo-swent/echo/issues/162	violoncelloCH	Done in sprint 6
+Add edit event to the user flow	https://github.com/echo-swent/echo/issues/227	octogradiste	Done in sprint 6
+Write new end-to-end test for the user flows	https://github.com/echo-swent/echo/issues/150	octogradiste	Done in sprint 6
+As a user I want to be able to efficiently find the suitable tags by being able to write the fewest possible letters in the search bar	https://github.com/echo-swent/echo/issues/93	unglazedstamp	Done in sprint 6
+Change the color of the theme	https://github.com/echo-swent/echo/issues/130	ntissieres	Done in sprint 6
+fix the bug with the filter time bar	https://github.com/echo-swent/echo/issues/186	ntissieres	Done in sprint 6
+SCRUM Master	https://github.com/echo-swent/echo/issues/156	octogradiste	Done in sprint 6
+Update buttons in the Hamburger menu to keep only the used one + add log out button			Done in sprint 6
+As a user with constraints on my schedule, I want to easily find events that respect them.	https://github.com/echo-swent/echo/issues/225		Done in sprint 6
+explicitely specify fkey relations in supabase queries to prevent errors in possible future ambigous situations	https://github.com/echo-swent/echo/issues/161	violoncelloCH	Done in sprint 6
+modify the search tags UI and write the logic for filtering tags	https://github.com/echo-swent/echo/issues/70	srsingh04	Done in sprint 6
+add getSubTask() method to SupabaseDataSource	https://github.com/echo-swent/echo/issues/204	violoncelloCH	Done in sprint 6
+finish the composable for the profile creation along with the tests	https://github.com/echo-swent/echo/issues/71	srsingh04	Done in sprint 6
+Create sample data in Supabase	https://github.com/echo-swent/echo/issues/148	unglazedstamp	Done in sprint 6
+Create a v1 of the logo	https://github.com/echo-swent/echo/issues/146	Greenade	Done in sprint 6
+Removing persistant highlighting of items in hamburger menu	https://github.com/echo-swent/echo/issues/184	ntissieres	Done in sprint 6
+Better design for the list mode	https://github.com/echo-swent/echo/issues/139	ntissieres	Done in sprint 6
+Default view of the map on the EPFL	https://github.com/echo-swent/echo/issues/129	alejandrocalles	Done in sprint 6
+Fix Map not showing after navigating to event list and back.	https://github.com/echo-swent/echo/issues/178	alejandrocalles	Done in sprint 6
+Add "edit event" screen	https://github.com/echo-swent/echo/issues/181	unglazedstamp	Done in sprint 6
+Display the location and fix tests.	https://github.com/echo-swent/echo/pull/172	alejandrocalles	Done in sprint 6
+Display the location of the user on the map.	https://github.com/echo-swent/echo/issues/89	alejandrocalles	Done in sprint 6
+Fix `MapDrawerAndroidTest`.	https://github.com/echo-swent/echo/issues/127	alejandrocalles	Done in sprint 6
+Integrate modify event screen	https://github.com/echo-swent/echo/pull/201	octogradiste	Done in sprint 6
+handle user input errors in the create event screen	https://github.com/echo-swent/echo/issues/138	unglazedstamp	Done in sprint 6
+implement: add create endpoints to repository	https://github.com/echo-swent/echo/issues/102	violoncelloCH	Done in sprint 6
+Repository: local DB for caching	https://github.com/echo-swent/echo/issues/50	octogradiste	Done in sprint 6
+slider for time range selection on filtering ui	https://github.com/echo-swent/echo/issues/147	ntissieres	Done in sprint 6
+The `EventInfoSheet` should not crash if the `organizer` is `null`.	https://github.com/echo-swent/echo/issues/98	Greenade	Done in sprint 6
+graphical update of the event info sheet	https://github.com/echo-swent/echo/issues/131	Greenade	Done in sprint 6
+Add a participant limit entry in the event creation screen	https://github.com/echo-swent/echo/issues/151	unglazedstamp	Done in sprint 6
+Update the Architecture diagram	https://github.com/echo-swent/echo/issues/152	octogradiste	Done in sprint 6
+allow for userProfiles to be associated to associations (i.e. members of comittee & association subscriptions)	https://github.com/echo-swent/echo/issues/104	violoncelloCH	Done in sprint 6
+Force portrait mode for the app	https://github.com/echo-swent/echo/issues/135	unglazedstamp	Done in sprint 6
+Separate the wireframe and the mockup in Figma	https://github.com/echo-swent/echo/issues/153	octogradiste, unglazedstamp	Done in sprint 6
+Add `EMTPY` objects for each data class.	https://github.com/echo-swent/echo/issues/99	unglazedstamp	Done in sprint 6
+Map bugfix events are not refreshed	https://github.com/echo-swent/echo/issues/149	alejandrocalles	Done in sprint 6
+Delete existing markers when the list of events is updated.	https://github.com/echo-swent/echo/pull/154	alejandrocalles	Done in sprint 6
+finish the homescreen viewmodel	https://github.com/echo-swent/echo/issues/142	Greenade	Done in sprint 6
+update the HomeScreenViewModel to use the repository	https://github.com/echo-swent/echo/issues/177	Greenade	Done in sprint 6
+refactor Event dataclass to add "scope" (EPFL, section, or class)			Product backlog
+As a curious user, I want to discover new activities around a specific category.			Product backlog
+as a user interested in an event, I want to be able to join it.			Product backlog
+SCRUM Master		alejandrocalles	Done in sprint 4
+Synchronisation mechanism in Repository between Supabase and Room	https://github.com/echo-swent/echo/issues/103	violoncelloCH	In progress
+Create docs folder	https://github.com/echo-swent/echo/issues/65	Greenade	Done in sprint 4
+create new icons and add them to the drawables	https://github.com/echo-swent/echo/issues/66	Greenade	Done in sprint 4
+👌 IMPROVE: update Supabase DB table names and attributes to snake_cas…	https://github.com/echo-swent/echo/pull/87	violoncelloCH	Done in sprint 4
+Change the bottom sheet for the strings.xml file (so that we don't write strings directly in the code), and add the place of the event to it, also remove the forced colors.	https://github.com/echo-swent/echo/issues/63	Greenade	Done in sprint 4
+Update the top bar with new icons and the strings.xml file	https://github.com/echo-swent/echo/issues/62	Greenade	Done in sprint 4
+Display authentication error messages	https://github.com/echo-swent/echo/issues/81	octogradiste	Done in sprint 4
+As a logged in user, I want to be redirected directly to the map screen when I start the app, so I don't have to login every time.	https://github.com/echo-swent/echo/issues/83	octogradiste	Done in sprint 4
+add robolectric for faster ui testing	https://github.com/echo-swent/echo/issues/21	octogradiste	Done in sprint 4
+navigation drawer should sensitive to touch gesture			Product backlog
+[repository] implement tags and participant relation for event and userProfile and fetch them correctly from supbase	https://github.com/echo-swent/echo/issues/68	violoncelloCH	Done in sprint 5
+Feature/tag selection viewmodel	https://github.com/echo-swent/echo/pull/111	unglazedstamp	Done in sprint 5
+SCRUM Master	https://github.com/echo-swent/echo/issues/155	unglazedstamp	Done in sprint 5
+create dialog composable to select tag	https://github.com/echo-swent/echo/issues/61	unglazedstamp	Done in sprint 5
+Update the HomeScreen with the repository / create a viewModel	https://github.com/echo-swent/echo/issues/92	Greenade	Done in sprint 5
+Implementation List of Event	https://github.com/echo-swent/echo/issues/126	ntissieres	Done in sprint 5
+create select tag viewmodel	https://github.com/echo-swent/echo/issues/94	unglazedstamp	Done in sprint 5
+Implement a simple repository for now	https://github.com/echo-swent/echo/issues/128	octogradiste	Done in sprint 5
+Move all compose tests (which work with robolectric) to the test folder	https://github.com/echo-swent/echo/pull/137	octogradiste	Done in sprint 5
+As a UNIL student I want to be able to easily find the precise details (date, time, exact location on the campus etc.) of all the events taking place on the EPFL campus			Done in sprint 5
+Cleanup all unecessary button in the HamburgerMenu and add a LogOut button	https://github.com/echo-swent/echo/issues/123	ntissieres	Done in sprint 5
+Implementation search menu	https://github.com/echo-swent/echo/issues/132	ntissieres	Done in sprint 4
+Categorisation tags	https://github.com/echo-swent/echo/issues/134	ntissieres	Done in sprint 4
+Revert "Fix testRegistrationProcess"	https://github.com/echo-swent/echo/pull/119	octogradiste	Done in sprint 5
+Adapt the event and tag data class to fit the backend	https://github.com/echo-swent/echo/pull/116	octogradiste	Done in sprint 5
+Define the interface of the local data source	https://github.com/echo-swent/echo/pull/112	octogradiste	Done in sprint 5
+Add support for callbacks on the `MapLibreMapViewProvider`.	https://github.com/echo-swent/echo/pull/78	alejandrocalles	Done in sprint 5
+Clean up and/or modularize the `ModalNavigationDrawer`.	https://github.com/echo-swent/echo/issues/75	ntissieres	Done in sprint 5
+Find a way to add callbacks on `MapLibre` markers.	https://github.com/echo-swent/echo/issues/57	alejandrocalles	Done in sprint 5
+Adapt semester and section to be easier to parse	https://github.com/echo-swent/echo/pull/115	octogradiste	Done in sprint 5
+Fix testRegistrationProcess	https://github.com/echo-swent/echo/pull/118	octogradiste	Done in sprint 5
+Mockup list of events	https://github.com/echo-swent/echo/issues/114	ntissieres	Done in sprint 5
+Integrate the select tag dialog to the create event screen	https://github.com/echo-swent/echo/issues/95	unglazedstamp	Done in sprint 6
+Extend the local data source to support better syncing strategies	https://github.com/echo-swent/echo/pull/167	octogradiste	In review
+ProfileCreationScreen and ProfileCreationUI: have `Modifier` as first parameter so that any parent can pass down style	https://github.com/echo-swent/echo/issues/206		Sprint Backlog
+CreateProfile: have error types in enum	https://github.com/echo-swent/echo/issues/207		Sprint Backlog
+CreateProfile: remove unneeded onDismiss argument	https://github.com/echo-swent/echo/issues/208		Sprint Backlog
+CreateProfile: rename enabled1 to selected	https://github.com/echo-swent/echo/issues/209		Sprint Backlog
+Remove `Osmdroid`.	https://github.com/echo-swent/echo/pull/211	alejandrocalles	Sprint Backlog
+make SupabaseDataSource return null if object not found	https://github.com/echo-swent/echo/issues/217	violoncelloCH	Sprint Backlog
+Mockup Association		ntissieres	Sprint Backlog
+Create the logic for the associations in the app		ntissieres	Sprint Backlog
+Update the local data source to support better syncing		octogradiste	Sprint Backlog
+Edit the user profile		srsingh04	Sprint Backlog
+support deleting events on Supabase	https://github.com/echo-swent/echo/issues/219	violoncelloCH	Sprint Backlog
+Connect the list view to the bottom sheet on the map			Sprint Backlog
+Implement a screen to show the associations I've joined and one for the association in which I'm a committee member.		unglazedstamp	Sprint Backlog
+Connect the screens to show the associations I've joined and the association in which I'm a committee member to the app		unglazedstamp	Sprint Backlog
+Make the location selection composable for event creation	https://github.com/echo-swent/echo/issues/221	alejandrocalles	Sprint Backlog
+Implementation Discover mode	https://github.com/echo-swent/echo/issues/213	ntissieres	Sprint Backlog
+Bug Fix : DateFilter slider	https://github.com/echo-swent/echo/issues/222	ntissieres	Sprint Backlog
+List Mode adaptative display for the scope of the events	https://github.com/echo-swent/echo/issues/223	ntissieres	Sprint Backlog
+Ensure user has profile	https://github.com/echo-swent/echo/pull/210	octogradiste	Done in sprint 6
+Update/list mode new design	https://github.com/echo-swent/echo/pull/197	ntissieres	Done in sprint 6
+SCRUM master		violoncelloCH	Ready
