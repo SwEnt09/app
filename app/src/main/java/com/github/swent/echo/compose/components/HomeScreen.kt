@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import com.github.swent.echo.compose.ConnectivityStatus
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
@@ -59,6 +60,7 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
             Content(paddingValues, navActions, homeScreenViewModel)
         }
     }
+    ConnectivityStatus()
 }
 
 @Composable
