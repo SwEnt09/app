@@ -173,22 +173,15 @@ class MainActivityTest {
         // Registers with google sign in
         composeTestRule.onNodeWithTag("google-sign-in-button").performClick()
 
-        // TODO: Use create profile page once we have it
-        runBlocking {
-            val userId = authenticationService.getCurrentUserID()
-            assertNotNull(userId)
-            repository.setUserProfile(
-                UserProfile(
-                    userId!!,
-                    "Colin Berger",
-                    null,
-                    null,
-                    emptySet(),
-                    emptySet(),
-                    emptySet(),
-                )
-            )
-        }
+        // The profile creation screen should be displayed
+        composeTestRule.onNodeWithTag("profile-creation").assertIsDisplayed()
+
+        // Insert first and last name
+        composeTestRule.onNodeWithTag("FirstName").performTextInput("John")
+        composeTestRule.onNodeWithTag("LastName").performTextInput("Doe")
+
+        // Click on the save button
+        composeTestRule.onNodeWithTag("Save").performClick()
 
         // Redirected to the home screen
         composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
