@@ -30,8 +30,9 @@ interface LocalDataSource {
      *
      * @param syncedSecondsAgo The amount of seconds before which the associations should be
      *   deleted.
+     * @return The list of the deleted association ids.
      */
-    suspend fun deleteAssociations(syncedSecondsAgo: Long) {
+    suspend fun deleteAssociations(syncedSecondsAgo: Long): List<String> {
         throw NotImplementedError("This method is not implemented.")
     }
 
@@ -49,8 +50,9 @@ interface LocalDataSource {
      * Deletes all the events that have been synced before a certain amount of seconds.
      *
      * @param syncedSecondsAgo The amount of seconds before which the events should be deleted.
+     * @return The list of the deleted event ids.
      */
-    suspend fun deleteEvents(syncedSecondsAgo: Long) {
+    suspend fun deleteEvents(syncedSecondsAgo: Long): List<String> {
         throw NotImplementedError("This method is not implemented.")
     }
 
@@ -74,8 +76,9 @@ interface LocalDataSource {
      * Deletes all the tags that have been synced before a certain amount of seconds.
      *
      * @param syncedSecondsAgo The amount of seconds before which the tags should be deleted.
+     * @return The list of the deleted tag ids.
      */
-    suspend fun deleteTags(syncedSecondsAgo: Long) {
+    suspend fun deleteTags(syncedSecondsAgo: Long): List<String> {
         throw NotImplementedError("This method is not implemented.")
     }
 
@@ -91,8 +94,9 @@ interface LocalDataSource {
      *
      * @param syncedSecondsAgo The amount of seconds before which the user profiles should be
      *   deleted.
+     * @return The list of the deleted user profile ids.
      */
-    suspend fun deleteUserProfiles(syncedSecondsAgo: Long) {
+    suspend fun deleteUserProfiles(syncedSecondsAgo: Long): List<String> {
         throw NotImplementedError("This method is not implemented.")
     }
 }
