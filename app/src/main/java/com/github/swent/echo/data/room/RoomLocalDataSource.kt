@@ -55,8 +55,8 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
 
         event.organizer?.let { associationDao.insert(AssociationRoom(it)) }
         tagDao.insertAll(event.tags.toTagRoomList())
-        eventDao.insertEventTagCrossRegs(crossRefs)
         eventDao.insert(EventRoom(event))
+        eventDao.insertEventTagCrossRegs(crossRefs)
     }
 
     override suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event> {
@@ -71,8 +71,8 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
 
         associationDao.insertAll(associations.map { AssociationRoom(it) })
         tagDao.insertAll(tags.toTagRoomList())
-        eventDao.insertEventTagCrossRegs(crossRefs)
         eventDao.insertAll(events.map { EventRoom(it) })
+        eventDao.insertEventTagCrossRegs(crossRefs)
     }
 
     override suspend fun getTag(tagId: String, syncedSecondsAgo: Long): Tag? {
@@ -116,16 +116,15 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
             }
 
         tagDao.insertAll(tags)
-        userProfileDao.insertUserProfileTagCrossRefs(tagCrossRefs)
-
         associationDao.insertAll(committeeMemberAssociations)
-        userProfileDao.insertUserProfileCommitteeMemberCrossRefs(committeeMemberCrossRefs)
-
         associationDao.insertAll(associationSubscriptions)
+        userProfileDao.insert(UserProfileRoom(userProfile))
+
+        userProfileDao.insertUserProfileTagCrossRefs(tagCrossRefs)
+        userProfileDao.insertUserProfileCommitteeMemberCrossRefs(committeeMemberCrossRefs)
         userProfileDao.insertUserProfileAssociationSubscriptionCrossRefs(
             associationSubscriptionCrossRefs
         )
 
-        userProfileDao.insert(UserProfileRoom(userProfile))
     }
 }
