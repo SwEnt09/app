@@ -30,6 +30,9 @@ interface UserProfileRoomDao {
     )
 
     @Transaction
-    @Query("SELECT * FROM UserProfileRoom WHERE userId = :userId")
-    suspend fun get(userId: String): UserProfileWithTagsCommitteeMemberAndAssociationSubscription?
+    @Query("SELECT * FROM UserProfileRoom WHERE userId = :userId AND timestamp >= :after")
+    suspend fun get(
+        userId: String,
+        after: Long
+    ): UserProfileWithTagsCommitteeMemberAndAssociationSubscription?
 }

@@ -19,10 +19,10 @@ interface EventRoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertAll(events: List<EventRoom>)
 
     @Transaction
-    @Query("SELECT * FROM EventRoom WHERE eventId = :eventId")
-    suspend fun get(eventId: String): EventWithOrganizerAndTags?
+    @Query("SELECT * FROM EventRoom WHERE eventId = :eventId AND timestamp >= :after")
+    suspend fun get(eventId: String, after: Long): EventWithOrganizerAndTags?
 
     @Transaction
-    @Query("SELECT * FROM EventRoom")
-    suspend fun getAll(): List<EventWithOrganizerAndTags>
+    @Query("SELECT * FROM EventRoom WHERE timestamp >= :after")
+    suspend fun getAll(after: Long): List<EventWithOrganizerAndTags>
 }
