@@ -12,10 +12,12 @@ interface TagRoomDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertAll(tags: List<TagRoom>)
 
-    @Query("SELECT * FROM TagRoom WHERE tagId = :tagId") suspend fun get(tagId: String): TagRoom?
+    @Query("SELECT * FROM TagRoom WHERE tagId = :tagId AND timestamp >= :after")
+    suspend fun get(tagId: String, after: Long): TagRoom?
 
-    @Query("SELECT * FROM TagRoom") suspend fun getAll(): List<TagRoom>
+    @Query("SELECT * FROM TagRoom WHERE timestamp >= :after")
+    suspend fun getAll(after: Long): List<TagRoom>
 
-    @Query("SELECT * FROM TagRoom WHERE parentId = :tagId")
-    suspend fun getSubTags(tagId: String): List<TagRoom>
+    @Query("SELECT * FROM TagRoom WHERE parentId = :tagId AND timestamp >= :after")
+    suspend fun getSubTags(tagId: String, after: Long): List<TagRoom>
 }
