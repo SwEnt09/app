@@ -9,8 +9,12 @@ import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import java.time.ZonedDateTime
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -25,10 +29,6 @@ fun ZonedDateTime.round(): ZonedDateTime {
 @RunWith(AndroidJUnit4::class)
 class RoomLocalDataSourceTest {
 
-    companion object {
-        const val SYNCED_SECONDS_AGO = 0L
-    }
-
     private lateinit var localDataSource: RoomLocalDataSource
 
     private val associations = SAMPLE_EVENTS.mapNotNull { it.organizer }.distinct()
@@ -38,74 +38,114 @@ class RoomLocalDataSourceTest {
         }
     private val tags = SAMPLE_EVENTS.flatMap { it.tags }.distinct()
 
+    private val time = ZonedDateTime.parse("2024-01-01T00:00:00Z")
+    private val syncedSecondsAgo = 60L
+
     @Before
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
         localDataSource = RoomLocalDataSource(db)
+
+        mockkStatic(ZonedDateTime::class)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(ZonedDateTime::class)
     }
 
     @Test
     fun testGetAndSetAssociation() = runBlocking {
         assertTrue(associations.isNotEmpty())
 
+        every { ZonedDateTime.now() } returns time
         val expected = associations.first()
         localDataSource.setAssociation(expected)
 
-        val actual = localDataSource.getAssociation(expected.associationId)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual = localDataSource.getAssociation(expected.associationId, syncedSecondsAgo)
         assertEquals(expected, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertNull(localDataSource.getAssociation(expected.associationId, syncedSecondsAgo))
     }
 
     @Test
     fun testGetAndSetAssociations() = runBlocking {
         assertTrue(associations.isNotEmpty())
 
+        every { ZonedDateTime.now() } returns time
         localDataSource.setAssociations(associations)
 
-        val actual = localDataSource.getAllAssociations(SYNCED_SECONDS_AGO)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual = localDataSource.getAllAssociations(syncedSecondsAgo)
         assertEquals(associations, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertTrue(localDataSource.getAllAssociations(syncedSecondsAgo).isEmpty())
     }
 
     @Test
     fun testGetAndSetEvent() = runBlocking {
         assertTrue(events.isNotEmpty())
 
+        every { ZonedDateTime.now() } returns time
         val expected = events.first()
         localDataSource.setEvent(expected)
 
-        val actual = localDataSource.getEvent(expected.eventId, SYNCED_SECONDS_AGO)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual = localDataSource.getEvent(expected.eventId, syncedSecondsAgo)
         assertEquals(expected, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertNull(localDataSource.getEvent(expected.eventId, syncedSecondsAgo))
     }
 
     @Test
     fun testGetAndSetEvents() = runBlocking {
         assertTrue(events.isNotEmpty())
 
+        every { ZonedDateTime.now() } returns time
         localDataSource.setEvents(events)
 
-        val actual = localDataSource.getAllEvents(SYNCED_SECONDS_AGO)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual = localDataSource.getAllEvents(syncedSecondsAgo)
         assertEquals(events, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertTrue(localDataSource.getAllEvents(syncedSecondsAgo).isEmpty())
     }
 
     @Test
     fun testGetAndSetTag() = runBlocking {
         assertTrue(tags.isNotEmpty())
 
+        every { ZonedDateTime.now() } returns time
         val expected = tags.first()
         localDataSource.setTag(expected)
 
-        val actual = localDataSource.getTag(expected.tagId, SYNCED_SECONDS_AGO)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual = localDataSource.getTag(expected.tagId, syncedSecondsAgo)
         assertEquals(expected, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertNull(localDataSource.getTag(expected.tagId, syncedSecondsAgo))
     }
 
     @Test
     fun testGetAndSetTags() = runBlocking {
         assertTrue(tags.isNotEmpty())
 
+        every { ZonedDateTime.now() } returns time
         localDataSource.setTags(tags)
 
-        val actual = localDataSource.getAllTags(SYNCED_SECONDS_AGO)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual = localDataSource.getAllTags(syncedSecondsAgo)
         assertEquals(tags, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertTrue(localDataSource.getAllTags(syncedSecondsAgo).isEmpty())
     }
 
     @Test
@@ -117,15 +157,20 @@ class RoomLocalDataSourceTest {
                 Tag("2", "SUB2", "0"),
             )
 
+        every { ZonedDateTime.now() } returns time
         localDataSource.setTags(tags)
 
-        val actual = localDataSource.getSubTags("0", SYNCED_SECONDS_AGO)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual = localDataSource.getSubTags("0", syncedSecondsAgo)
         val expected =
             listOf(
                 Tag("1", "SUB1", "0"),
                 Tag("2", "SUB2", "0"),
             )
         assertEquals(expected, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertTrue(localDataSource.getSubTags("0", syncedSecondsAgo).isEmpty())
     }
 
     @Test
@@ -144,9 +189,14 @@ class RoomLocalDataSourceTest {
                 setOf(associations.first()),
             )
 
+        every { ZonedDateTime.now() } returns time
         localDataSource.setUserProfile(expected)
 
-        val actual = localDataSource.getUserProfile(expected.userId, SYNCED_SECONDS_AGO)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual = localDataSource.getUserProfile(expected.userId, syncedSecondsAgo)
         assertEquals(expected, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertNull(localDataSource.getUserProfile(expected.userId, syncedSecondsAgo))
     }
 }
