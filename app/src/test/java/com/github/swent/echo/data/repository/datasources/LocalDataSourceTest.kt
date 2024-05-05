@@ -20,28 +20,28 @@ class LocalDataSourceTest {
     @Test
     fun `deleteAssociations should throw NotImplementedError`() {
         assertThrows(InvocationTargetException::class.java) {
-            runBlocking { localDataSource.deleteAssociations(0) }
+            runBlocking { localDataSource.getAllAssociationsSyncedBefore(0) }
         }
     }
 
     @Test
     fun `deleteEvents should throw NotImplementedError`() {
         assertThrows(InvocationTargetException::class.java) {
-            runBlocking { localDataSource.deleteEvents(0) }
+            runBlocking { localDataSource.getAllEventsSyncedBefore(0) }
         }
     }
 
     @Test
     fun `deleteTags should throw NotImplementedError`() {
         assertThrows(InvocationTargetException::class.java) {
-            runBlocking { localDataSource.deleteTags(0) }
+            runBlocking { localDataSource.getAllTagsSyncedBefore(0) }
         }
     }
 
     @Test
     fun `deleteUserProfiles should throw NotImplementedError`() {
         assertThrows(InvocationTargetException::class.java) {
-            runBlocking { localDataSource.deleteUserProfiles(0) }
+            runBlocking { localDataSource.getAllUserProfilesSyncedBefore(0) }
         }
     }
 }
