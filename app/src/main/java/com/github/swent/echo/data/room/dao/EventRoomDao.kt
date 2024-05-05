@@ -25,4 +25,7 @@ interface EventRoomDao {
     @Transaction
     @Query("SELECT * FROM EventRoom WHERE timestamp >= :after")
     suspend fun getAll(after: Long): List<EventWithOrganizerAndTags>
+
+    @Query("SELECT eventId FROM EventRoom WHERE timestamp <= :before")
+    suspend fun getAllBefore(before: Long): List<String>
 }

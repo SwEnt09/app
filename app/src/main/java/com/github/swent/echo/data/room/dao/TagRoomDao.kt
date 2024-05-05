@@ -18,6 +18,9 @@ interface TagRoomDao {
     @Query("SELECT * FROM TagRoom WHERE timestamp >= :after")
     suspend fun getAll(after: Long): List<TagRoom>
 
+    @Query("SELECT tagId FROM TagRoom WHERE timestamp <= :before")
+    suspend fun getAllBefore(before: Long): List<String>
+
     @Query("SELECT * FROM TagRoom WHERE parentId = :tagId AND timestamp >= :after")
     suspend fun getSubTags(tagId: String, after: Long): List<TagRoom>
 }

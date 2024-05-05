@@ -21,4 +21,7 @@ interface AssociationRoomDao {
 
     @Query("SELECT * FROM AssociationRoom WHERE timestamp >= :after")
     suspend fun getAll(after: Long): List<AssociationRoom>
+
+    @Query("SELECT associationId FROM AssociationRoom WHERE timestamp <= :before")
+    suspend fun getAllBefore(before: Long): List<String>
 }
