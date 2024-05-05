@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,7 @@ fun EventMaxNumberOfParticipantsEntry(
     onMaxNbParticipantsChange: (newNumberOfParticipants: Int) -> Unit
 ) {
     var nbParticipants by remember { mutableStateOf(maxNumberOfParticipants.toString()) }
+    LaunchedEffect(maxNumberOfParticipants) { nbParticipants = maxNumberOfParticipants.toString() }
     Column(modifier = Modifier.fillMaxWidth().padding(EVENT_PADDING_BETWEEN_INPUTS)) {
         EventEntryName(stringResource(R.string.edit_event_screen_max_participants))
         TextField(
