@@ -87,6 +87,21 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
+    fun testGetAllAssociationsSyncedBefore() = runBlocking {
+        assertTrue(associations.isNotEmpty())
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setAssociations(associations)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        val actual = localDataSource.getAllAssociationsSyncedBefore(syncedSecondsAgo)
+        assertEquals(associations.map { it.associationId }, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        assertTrue(localDataSource.getAllAssociationsSyncedBefore(syncedSecondsAgo).isEmpty())
+    }
+
+    @Test
     fun testGetAndSetEvent() = runBlocking {
         assertTrue(events.isNotEmpty())
 
@@ -118,6 +133,21 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
+    fun testGetAllEventsSyncedBefore() = runBlocking {
+        assertTrue(events.isNotEmpty())
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setEvents(events)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        val actual = localDataSource.getAllEventsSyncedBefore(syncedSecondsAgo)
+        assertEquals(events.map { it.eventId }, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        assertTrue(localDataSource.getAllEventsSyncedBefore(syncedSecondsAgo).isEmpty())
+    }
+
+    @Test
     fun testGetAndSetTag() = runBlocking {
         assertTrue(tags.isNotEmpty())
 
@@ -146,6 +176,21 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertTrue(localDataSource.getAllTags(syncedSecondsAgo).isEmpty())
+    }
+
+    @Test
+    fun testGetAllTagsSyncedBefore() = runBlocking {
+        assertTrue(tags.isNotEmpty())
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setTags(tags)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        val actual = localDataSource.getAllTagsSyncedBefore(syncedSecondsAgo)
+        assertEquals(tags.map { it.tagId }, actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        assertTrue(localDataSource.getAllTagsSyncedBefore(syncedSecondsAgo).isEmpty())
     }
 
     @Test
@@ -198,5 +243,33 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertNull(localDataSource.getUserProfile(expected.userId, syncedSecondsAgo))
+    }
+
+    @Test
+    fun testGetAllUserProfilesSyncedBefore() = runBlocking {
+        assertTrue(tags.isNotEmpty())
+        assertTrue(associations.isNotEmpty())
+
+        val expected =
+            UserProfile(
+                "0",
+                "John Doe",
+                SemesterEPFL.BA1,
+                SectionEPFL.IN,
+                setOf(tags.first()),
+                setOf(associations.first()),
+                setOf(associations.first()),
+            )
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setUserProfile(expected)
+        localDataSource.setUserProfile(expected.copy(userId = "1"))
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        val actual = localDataSource.getAllUserProfilesSyncedBefore(syncedSecondsAgo)
+        assertEquals(listOf("0", "1"), actual)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        assertTrue(localDataSource.getAllUserProfilesSyncedBefore(syncedSecondsAgo).isEmpty())
     }
 }
