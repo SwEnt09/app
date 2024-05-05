@@ -35,4 +35,7 @@ interface UserProfileRoomDao {
         userId: String,
         after: Long
     ): UserProfileWithTagsCommitteeMemberAndAssociationSubscription?
+
+    @Query("SELECT userId FROM UserProfileRoom WHERE timestamp <= :before")
+    suspend fun getAllBefore(before: Long): List<String>
 }
