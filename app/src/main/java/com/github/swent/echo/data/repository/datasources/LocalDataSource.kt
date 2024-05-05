@@ -25,9 +25,7 @@ interface LocalDataSource {
 
     suspend fun getAllAssociations(syncedSecondsAgo: Long): List<Association>
 
-    suspend fun getAllAssociationsSyncedBefore(secondsAgo: Long): List<String> {
-        throw NotImplementedError("This method is not implemented.")
-    }
+    suspend fun getAllAssociationsSyncedBefore(secondsAgo: Long): List<String>
 
     suspend fun setAssociations(associations: List<Association>)
 
@@ -37,9 +35,7 @@ interface LocalDataSource {
 
     suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event>
 
-    suspend fun getAllEventsSyncedBefore(secondsAgo: Long): List<String> {
-        throw NotImplementedError("This method is not implemented.")
-    }
+    suspend fun getAllEventsSyncedBefore(secondsAgo: Long): List<String>
 
     suspend fun setEvents(events: List<Event>)
 
@@ -57,9 +53,7 @@ interface LocalDataSource {
 
     suspend fun getAllTags(syncedSecondsAgo: Long): List<Tag>
 
-    suspend fun getAllTagsSyncedBefore(secondsAgo: Long): List<String> {
-        throw NotImplementedError("This method is not implemented.")
-    }
+    suspend fun getAllTagsSyncedBefore(secondsAgo: Long): List<String>
 
     suspend fun setTags(tags: List<Tag>)
 
@@ -70,7 +64,5 @@ interface LocalDataSource {
 
     suspend fun setUserProfile(userProfile: UserProfile)
 
-    suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String> {
-        throw NotImplementedError("This method is not implemented.")
-    }
+    suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String>
 }

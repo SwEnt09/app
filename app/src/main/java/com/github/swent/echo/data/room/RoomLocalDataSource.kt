@@ -49,6 +49,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         return associationDao.getAll(after).map { it.toAssociation() }
     }
 
+    override suspend fun getAllAssociationsSyncedBefore(secondsAgo: Long): List<String> {
+        return associationDao.getAllBefore(computeTimestamp(secondsAgo))
+    }
+
     override suspend fun setAssociations(associations: List<Association>) {
         associationDao.insertAll(associations.map { AssociationRoom(it) })
     }
@@ -70,6 +74,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     override suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event> {
         val after = computeTimestamp(syncedSecondsAgo)
         return eventDao.getAll(after).map { it.toEvent() }
+    }
+
+    override suspend fun getAllEventsSyncedBefore(secondsAgo: Long): List<String> {
+        return eventDao.getAllBefore(computeTimestamp(secondsAgo))
     }
 
     override suspend fun setEvents(events: List<Event>) {
@@ -101,6 +109,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     override suspend fun getAllTags(syncedSecondsAgo: Long): List<Tag> {
         val after = computeTimestamp(syncedSecondsAgo)
         return tagDao.getAll(after).map { it.toTag() }
+    }
+
+    override suspend fun getAllTagsSyncedBefore(secondsAgo: Long): List<String> {
+        return tagDao.getAllBefore(computeTimestamp(secondsAgo))
     }
 
     override suspend fun setTags(tags: List<Tag>) {
@@ -138,5 +150,9 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         userProfileDao.insertUserProfileAssociationSubscriptionCrossRefs(
             associationSubscriptionCrossRefs
         )
+    }
+
+    override suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String> {
+        return userProfileDao.getAllBefore(computeTimestamp(secondsAgo))
     }
 }
