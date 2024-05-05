@@ -25,14 +25,7 @@ interface LocalDataSource {
 
     suspend fun getAllAssociations(syncedSecondsAgo: Long): List<Association>
 
-    /**
-     * Deletes all the associations that have been synced before a certain amount of seconds.
-     *
-     * @param syncedSecondsAgo The amount of seconds before which the associations should be
-     *   deleted.
-     * @return The list of the deleted association ids.
-     */
-    suspend fun deleteAssociations(syncedSecondsAgo: Long): List<String> {
+    suspend fun getAllAssociationsSyncedBefore(secondsAgo: Long): List<String> {
         throw NotImplementedError("This method is not implemented.")
     }
 
@@ -44,17 +37,11 @@ interface LocalDataSource {
 
     suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event>
 
-    suspend fun setEvents(events: List<Event>)
-
-    /**
-     * Deletes all the events that have been synced before a certain amount of seconds.
-     *
-     * @param syncedSecondsAgo The amount of seconds before which the events should be deleted.
-     * @return The list of the deleted event ids.
-     */
-    suspend fun deleteEvents(syncedSecondsAgo: Long): List<String> {
+    suspend fun getAllEventsSyncedBefore(secondsAgo: Long): List<String> {
         throw NotImplementedError("This method is not implemented.")
     }
+
+    suspend fun setEvents(events: List<Event>)
 
     suspend fun getTag(tagId: String, syncedSecondsAgo: Long): Tag?
 
@@ -70,17 +57,11 @@ interface LocalDataSource {
 
     suspend fun getAllTags(syncedSecondsAgo: Long): List<Tag>
 
-    suspend fun setTags(tags: List<Tag>)
-
-    /**
-     * Deletes all the tags that have been synced before a certain amount of seconds.
-     *
-     * @param syncedSecondsAgo The amount of seconds before which the tags should be deleted.
-     * @return The list of the deleted tag ids.
-     */
-    suspend fun deleteTags(syncedSecondsAgo: Long): List<String> {
+    suspend fun getAllTagsSyncedBefore(secondsAgo: Long): List<String> {
         throw NotImplementedError("This method is not implemented.")
     }
+
+    suspend fun setTags(tags: List<Tag>)
 
     suspend fun getUserProfile(
         userId: String,
@@ -89,14 +70,7 @@ interface LocalDataSource {
 
     suspend fun setUserProfile(userProfile: UserProfile)
 
-    /**
-     * Deletes all the user profiles that have been synced before a certain amount of seconds.
-     *
-     * @param syncedSecondsAgo The amount of seconds before which the user profiles should be
-     *   deleted.
-     * @return The list of the deleted user profile ids.
-     */
-    suspend fun deleteUserProfiles(syncedSecondsAgo: Long): List<String> {
+    suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String> {
         throw NotImplementedError("This method is not implemented.")
     }
 }
