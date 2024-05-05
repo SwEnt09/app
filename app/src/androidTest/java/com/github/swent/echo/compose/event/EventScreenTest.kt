@@ -23,6 +23,8 @@ import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.viewmodels.event.EventViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
@@ -204,5 +206,28 @@ class EventScreenTest {
         setCompose(eventViewModel)
         composeTestRule.onNodeWithTag("Save-button").performScrollTo().performClick()
         composeTestRule.onNodeWithTag("snackbar").assertIsDisplayed()
+    }
+
+    @Test
+    fun eventMaxParticipantIsCorrectOnEdit() {
+        val maxParticipants = 50
+        coEvery { mockedRepository.getEvent(any()) } returns
+            Event.EMPTY.copy(maxParticipants = maxParticipants)
+        every { mockedAuthenticationService.getCurrentUserID() } returns "testUser"
+        savedEventId.set("eventId", "testEvent")
+        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService, savedEventId)
+        composeTestRule.activity.setContent {
+            EventScreen(
+                stringResource(R.string.edit_event_screen_name),
+                canDelete = true,
+                onEventSaved = {},
+                onEventBackButtonPressed = {},
+                eventViewModel = eventViewModel
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule
+            .onNodeWithTag("nb-participant-field")
+            .assertTextContains(maxParticipants.toString())
     }
 }
