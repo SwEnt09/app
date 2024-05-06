@@ -3,9 +3,13 @@ agp = "8.3.1"
 credentials = "1.2.2"
 googleid = "1.1.0"
 hiltNavigationCompose = "1.2.0"
-androidSdk = "11.0.0-pre6"
+#####################
+# Do not upgrade
+androidSdk = "10.2.0"
+#####################
 kotlinxSerializationJson = "1.6.3"
 ktorClientAndroid = "2.3.9"
+ramaniMaplibre = "0.3.0"
 robolectric = "4.12"
 roomRuntime = "2.6.1"
 slf4jSimple = "1.7.36"
@@ -42,6 +46,7 @@ hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", vers
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+ramani-maplibre = { module = "org.ramani-maps:ramani-maplibre", version.ref = "ramaniMaplibre" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
 supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabase" }

@@ -6,11 +6,11 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
+import com.mapbox.mapboxsdk.geometry.LatLng
 import java.time.ZonedDateTime
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
-import org.maplibre.android.geometry.LatLng
 
 // This should come from the repository
 

@@ -4,18 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
-import org.maplibre.android.MapLibre
-import org.maplibre.android.annotations.MarkerOptions
-import org.maplibre.android.camera.CameraPosition
-import org.maplibre.android.geometry.LatLng
-import org.maplibre.android.location.LocationComponent
-import org.maplibre.android.location.LocationComponentActivationOptions
-import org.maplibre.android.location.LocationComponentOptions
-import org.maplibre.android.location.engine.LocationEngineRequest
-import org.maplibre.android.location.modes.CameraMode
-import org.maplibre.android.maps.MapLibreMap
-import org.maplibre.android.maps.MapView
-import org.maplibre.android.maps.Style
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.location.LocationComponent
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
+import com.mapbox.mapboxsdk.location.LocationComponentOptions
+import com.mapbox.mapboxsdk.location.engine.LocationEngineRequest
+import com.mapbox.mapboxsdk.location.modes.CameraMode
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.Style
 
 class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
@@ -23,7 +23,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     private var locationComponent: LocationComponent? = null
     private var firstRecenter = true
 
-    private fun redrawMarkers(map: MapLibreMap, events: List<Event>, callback: (Event) -> Unit) {
+    private fun redrawMarkers(map: MapboxMap, events: List<Event>, callback: (Event) -> Unit) {
         map.markers.forEach { map.removeMarker(it) }
         events.forEach {
             val markerBuilder = MarkerOptions().setPosition(it.location.toLatLng()).title(it.title)
@@ -37,7 +37,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     }
 
     @SuppressLint("MissingPermission")
-    private fun displayLocation(context: Context, map: MapLibreMap, style: Style) {
+    private fun displayLocation(context: Context, map: MapboxMap, style: Style) {
         locationComponent = map.locationComponent
         val locationComponentOptions =
             LocationComponentOptions.builder(context).pulseEnabled(true).build()
@@ -66,7 +66,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     }
 
     override fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): MapView {
-        MapLibre.getInstance(context)
+        Mapbox.getInstance(context)
         val styleUrl =
             context.getString(R.string.maptiler_base_style_url) +
                 context.getString(R.string.maptiler_api_key)

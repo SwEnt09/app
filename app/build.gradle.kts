@@ -108,6 +108,7 @@ dependencies {
 
     // Map Libre
     implementation(libs.android.sdk)
+    implementation(libs.ramani.maplibre)
     
     // Hilt
     implementation(libs.hilt.android)
