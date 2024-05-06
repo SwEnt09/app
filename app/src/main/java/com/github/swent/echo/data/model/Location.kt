@@ -1,7 +1,7 @@
 package com.github.swent.echo.data.model
 
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.serialization.Serializable
-import org.maplibre.android.geometry.LatLng
 
 @Serializable
 data class Location(val name: String, val lat: Double, val long: Double) {
