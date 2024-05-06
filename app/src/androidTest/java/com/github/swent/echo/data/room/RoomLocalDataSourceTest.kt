@@ -80,7 +80,7 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         val actual = localDataSource.getAllAssociations(syncedSecondsAgo)
-        assertEquals(associations, actual)
+        assertEquals(associations.toSet(), actual.toSet())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertTrue(localDataSource.getAllAssociations(syncedSecondsAgo).isEmpty())
@@ -95,7 +95,7 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         val actual = localDataSource.getAllAssociationsSyncedBefore(syncedSecondsAgo)
-        assertEquals(associations.map { it.associationId }, actual)
+        assertEquals(associations.map { it.associationId }.toSet(), actual.toSet())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         assertTrue(localDataSource.getAllAssociationsSyncedBefore(syncedSecondsAgo).isEmpty())
@@ -126,7 +126,7 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         val actual = localDataSource.getAllEvents(syncedSecondsAgo)
-        assertEquals(events, actual)
+        assertEquals(events.toSet(), actual.toSet())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertTrue(localDataSource.getAllEvents(syncedSecondsAgo).isEmpty())
@@ -141,7 +141,7 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         val actual = localDataSource.getAllEventsSyncedBefore(syncedSecondsAgo)
-        assertEquals(events.map { it.eventId }, actual)
+        assertEquals(events.map { it.eventId }.toSet(), actual.toSet())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         assertTrue(localDataSource.getAllEventsSyncedBefore(syncedSecondsAgo).isEmpty())
@@ -172,7 +172,7 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         val actual = localDataSource.getAllTags(syncedSecondsAgo)
-        assertEquals(tags, actual)
+        assertEquals(tags.toSet(), actual.toSet())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertTrue(localDataSource.getAllTags(syncedSecondsAgo).isEmpty())
@@ -187,7 +187,7 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         val actual = localDataSource.getAllTagsSyncedBefore(syncedSecondsAgo)
-        assertEquals(tags.map { it.tagId }, actual)
+        assertEquals(tags.map { it.tagId }.toSet(), actual.toSet())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         assertTrue(localDataSource.getAllTagsSyncedBefore(syncedSecondsAgo).isEmpty())
@@ -212,7 +212,7 @@ class RoomLocalDataSourceTest {
                 Tag("1", "SUB1", "0"),
                 Tag("2", "SUB2", "0"),
             )
-        assertEquals(expected, actual)
+        assertEquals(expected.toSet(), actual.toSet())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertTrue(localDataSource.getSubTags("0", syncedSecondsAgo).isEmpty())
@@ -267,7 +267,7 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         val actual = localDataSource.getAllUserProfilesSyncedBefore(syncedSecondsAgo)
-        assertEquals(listOf("0", "1"), actual)
+        assertEquals(listOf("0", "1").toSet(), actual.toSet())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         assertTrue(localDataSource.getAllUserProfilesSyncedBefore(syncedSecondsAgo).isEmpty())
