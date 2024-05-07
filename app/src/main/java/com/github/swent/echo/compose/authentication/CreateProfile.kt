@@ -38,6 +38,7 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.TagSelectionDialog
 import com.github.swent.echo.data.model.Section
@@ -82,6 +84,7 @@ fun ProfileCreationScreen(
         onSave = viewModel::profilesave,
         onAdd = { dialogVisible = true },
         navAction = navAction,
+        viewModel = viewModel,
     )
 
     if (dialogVisible) {
@@ -112,17 +115,24 @@ fun ProfileCreationUI(
     onSave: () -> Unit,
     onAdd: () -> Unit,
     navAction: NavigationActions,
+    viewModel: CreateProfileViewModel
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().padding(16.dp).testTag("profile-creation"),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .testTag("profile-creation"),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            var firstName by remember { mutableStateOf("") }
-            var lastName by remember { mutableStateOf("") }
-            var showError by remember { mutableStateOf(false) }
+            var firstName = viewModel.firstName.collectAsState()
+            var lastName = viewModel.lastName.collectAsState()
+            var showError = viewModel.errorMessage.collectAsState()
 
             // Back button
             IconButton(onClick = { navAction.goBack() }, modifier = Modifier.testTag("Back")) {
@@ -135,31 +145,31 @@ fun ProfileCreationUI(
 
             // First name and last name fields
             OutlinedTextField(
-                value = firstName,
-                onValueChange = { firstName = it },
+                value = firstName.value,
+                onValueChange = {viewModel.setFirstName(it) },
                 modifier = Modifier.testTag("FirstName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) },
                 singleLine = true,
-                isError = firstName.isBlank()
+                isError = firstName.value.isBlank()
             )
 
             Spacer(modifier = Modifier.height(5.dp))
 
             OutlinedTextField(
-                value = lastName,
-                onValueChange = { lastName = it },
+                value = lastName.value,
+                onValueChange = { viewModel.setLastName(it) },
                 modifier = Modifier.testTag("LastName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) },
                 singleLine = true,
-                isError = lastName.isBlank()
+                isError = lastName.value.isBlank()
             )
 
             Spacer(modifier = Modifier.height(5.dp))
 
             // Section and semester dropdown menus
-            DropDownListFunctionWrapper(sectionList, R.string.profile_creation_section)
+            DropDownListFunctionWrapper(sectionList, R.string.profile_creation_section, viewModel.selectedSection.collectAsState(), { viewModel.setSelectedSection(it) })
             Spacer(modifier = Modifier.height(5.dp))
-            DropDownListFunctionWrapper(semList, R.string.profile_creation_semester)
+            DropDownListFunctionWrapper(semList, R.string.profile_creation_semester, viewModel.selectedSemester.collectAsState(), { viewModel.setSelectedSemester(it)})
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -191,7 +201,7 @@ fun ProfileCreationUI(
             // Save button
             OutlinedButton(
                 onClick = {
-                    if (firstName.isBlank() || lastName.isBlank()) {
+                    if (firstName.value.isBlank() || lastName.value.isBlank()) {
                         showError = true
                         return@OutlinedButton
                     } else {
@@ -199,7 +209,9 @@ fun ProfileCreationUI(
                         navAction.navigateTo(Routes.MAP)
                     }
                 },
-                modifier = Modifier.fillMaxWidth().testTag("Save")
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("Save")
             ) {
                 Text(text = stringResource(id = R.string.profile_creation_save_button))
             }
@@ -220,22 +232,22 @@ fun ProfileCreationUI(
 }
 
 @Composable
-fun DropDownListFunctionWrapper(elementList: List<Any>, label: Int) {
+fun DropDownListFunctionWrapper(elementList: List<Any>, label: Int, selectedField: State<Any>, onChange: (Any) -> Unit) {
     var showDropdown by remember { mutableStateOf(false) }
-    var selectedField by remember { mutableStateOf("") }
     var selectedFieldSize by remember { mutableStateOf(Size.Zero) }
     val icon = if (showDropdown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
     Column {
         Box() {
             OutlinedTextField(
                 value = selectedField,
-                onValueChange = { selectedField = it },
+                onValueChange = { onChange(it) },
                 modifier =
-                    Modifier.onGloballyPositioned { coordinates ->
-                            selectedFieldSize = coordinates.size.toSize()
-                        }
-                        .clickable { showDropdown = !showDropdown }
-                        .testTag(stringResource(id = label)),
+                Modifier
+                    .onGloballyPositioned { coordinates ->
+                        selectedFieldSize = coordinates.size.toSize()
+                    }
+                    .clickable { showDropdown = !showDropdown }
+                    .testTag(stringResource(id = label)),
                 readOnly = true,
                 label = { Text(stringResource(id = label)) },
                 trailingIcon = {
@@ -247,9 +259,10 @@ fun DropDownListFunctionWrapper(elementList: List<Any>, label: Int) {
                 expanded = showDropdown,
                 onDismissRequest = { showDropdown = false },
                 modifier =
-                    Modifier.align(Alignment.TopStart)
-                        .heightIn(max = 200.dp)
-                        .widthIn(with(LocalDensity.current) { selectedFieldSize.width.toDp() }),
+                Modifier
+                    .align(Alignment.TopStart)
+                    .heightIn(max = 200.dp)
+                    .widthIn(with(LocalDensity.current) { selectedFieldSize.width.toDp() }),
                 offset = DpOffset(0.dp, 0.dp)
             ) {
                 elementList.forEach { elem ->
