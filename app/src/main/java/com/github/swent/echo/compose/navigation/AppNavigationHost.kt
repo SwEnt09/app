@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.compose.association.AssociationSubscriptionsScreen
 import com.github.swent.echo.compose.authentication.LoginScreen
 import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import com.github.swent.echo.compose.authentication.RegisterScreen
@@ -66,6 +67,13 @@ fun AppNavigationHost(
         composable(Routes.EDIT_EVENT.name) {
             // TODO: set the event id in the eventViewModel as a savedStateHandle with key "eventId"
             EditEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
+        }
+
+        composable(Routes.ASSOCIATION_SUBSCRIPTIONS.name) {
+            AssociationSubscriptionsScreen(
+                userProfileViewModel = hiltViewModel(),
+                navigationActions = navActions
+            )
         }
     }
 }
