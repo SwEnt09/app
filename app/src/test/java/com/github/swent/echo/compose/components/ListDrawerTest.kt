@@ -85,6 +85,12 @@ class ListDrawerTest {
                 .assertExists()
             composeTestRule
                 .onNodeWithTag(
+                    "list_join_event_${SAMPLE_EVENTS[i].eventId}",
+                    useUnmergedTree = true
+                )
+                .performClick()
+            composeTestRule
+                .onNodeWithTag(
                     "list_event_description_${SAMPLE_EVENTS[i].eventId}",
                     useUnmergedTree = true
                 )

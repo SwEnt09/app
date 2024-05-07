@@ -283,7 +283,8 @@ fun EventListItem(
                                 )
                                 .show()
                         },
-                        modifier = Modifier.width(buttonWidth),
+                        modifier =
+                            Modifier.width(buttonWidth).testTag("list_join_event_${event.eventId}")
                     ) {
                         Text(stringResource(id = R.string.list_drawer_join_event))
                     }
