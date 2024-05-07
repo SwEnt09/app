@@ -31,11 +31,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuDiscover
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuFilters
 import com.github.swent.echo.compose.components.searchmenu.SortBy
+import com.github.swent.echo.viewmodels.tag.TagViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +58,8 @@ fun SearchMenuSheet(
 ) {
     // Search mode
     val searchMode = remember { mutableStateOf(SearchMode.FILTERS) }
+    // TagViewModel
+    val tagViewModel: TagViewModel = hiltViewModel()
 
     val sheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = false) { value ->
@@ -86,6 +90,7 @@ fun SearchMenuSheet(
                 modifier =
                     Modifier.align(Alignment.TopCenter)
                         .fillMaxWidth()
+                        .height(220.dp)
                         .absoluteOffset(y = 70.dp)
                         .testTag("search_menu_second_layer")
             ) {
@@ -102,7 +107,7 @@ fun SearchMenuSheet(
                         timeFilterCallback
                     )
                 } else {
-                    SearchMenuDiscover()
+                    SearchMenuDiscover(searchEntryCallback, tagViewModel)
                 }
             }
             // Close Search Button
@@ -113,18 +118,16 @@ fun SearchMenuSheet(
                         .absoluteOffset(y = 300.dp)
                         .testTag("search_menu_third_layer")
             ) {
-                ResetFiltersButton(resetFiltersCallback)
+                ResetFiltersButton(resetFiltersCallback, tagViewModel)
             }
         }
     }
 }
-
 /** Enum class for the different states of the search mode */
 enum class SearchMode(val switchToName: String, val switchToIcon: ImageVector) {
     FILTERS("search_menu_sheet_discover", Icons.Filled.ShoppingCart),
     DISCOVER("search_menu_sheet_filters", Icons.Filled.Settings)
 }
-
 // Function to get the string resource for the search mode
 fun stringResourceSearchMode(key: String): Int {
     return when (key) {
@@ -133,11 +136,9 @@ fun stringResourceSearchMode(key: String): Int {
         else -> throw IllegalArgumentException("Invalid string key")
     }
 }
-
 /** Composable for the search bar tags TODO : update this with yoan implementation */
 @Composable
 fun SearchBarTags(searched: String, searchEntryCallback: (String) -> Unit) {
-
     OutlinedTextField(
         label = { Text(stringResource(id = R.string.search_menu_sheet_search_interests)) },
         value = searched,
@@ -145,7 +146,6 @@ fun SearchBarTags(searched: String, searchEntryCallback: (String) -> Unit) {
         modifier = Modifier.width(240.dp).testTag("search_menu_search_bar_tags")
     )
 }
-
 /** Composable for the switch search mode button */
 @Composable
 fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
@@ -172,16 +172,21 @@ fun SwitchSearchModeButton(searchMode: MutableState<SearchMode>) {
         )
     }
 }
-
 /**
  * Composable for the reset filters button, inside a Box in order to hide content when we will
  * implement discover mode
  */
 // Todo : see how we want to handle this reset filters button
 @Composable
-fun ResetFiltersButton(callback: () -> Unit) {
+fun ResetFiltersButton(callback: () -> Unit, tagViewModel: TagViewModel) {
     Box(modifier = Modifier.fillMaxWidth().testTag("search_menu_reset_filters_button")) {
-        Button(onClick = callback, modifier = Modifier.align(Alignment.Center)) {
+        Button(
+            onClick = {
+                callback()
+                tagViewModel.reset()
+            },
+            modifier = Modifier.align(Alignment.Center)
+        ) {
             Text(stringResource(id = R.string.search_menu_sheet_reset_filters))
         }
     }
