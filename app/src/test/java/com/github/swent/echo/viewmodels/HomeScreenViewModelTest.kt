@@ -1,5 +1,6 @@
 package com.github.swent.echo.viewmodels
 
+import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
@@ -165,5 +166,15 @@ class HomeScreenViewModelTest {
         val v6 = homeScreenViewModel.filtersContainer.value.fullChecked
         homeScreenViewModel.onFullCheckedSwitch()
         assertEquals(homeScreenViewModel.filtersContainer.value.fullChecked, !v6)
+
+        val v7 = 2f
+        homeScreenViewModel.onDateFilterChanged(v7, 3f)
+        assertEquals(homeScreenViewModel.filtersContainer.value.from, v7)
+
+        val v8 = SortBy.DATE_ASC
+        homeScreenViewModel.onSortByChanged(v8)
+        assertEquals(homeScreenViewModel.filtersContainer.value.sortBy, v8)
+
+
     }
 }
