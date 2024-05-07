@@ -60,6 +60,7 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
             Content(paddingValues, navActions, homeScreenViewModel)
         }
     }
+    ConnectivityStatus()
 }
 
 @Composable

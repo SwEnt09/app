@@ -84,9 +84,8 @@
 
     <string name="event_successfully_joined">Event successfully joined!</string>
     <string name="event_info_sheet_modify_event">Modify Event</string>
-
-
-
+    <string name="Offline_mode">Offline Mode</string>
+    <string name="Online_mode">Back Online!</string>
     <string name="list_drawer_event_status">Event Status</string>
     <string name="edit_event_screen_alert_deletion_message">You will delete permanently this event !</string>
     <string name="edit_event_screen_delete_button">Delete</string>
