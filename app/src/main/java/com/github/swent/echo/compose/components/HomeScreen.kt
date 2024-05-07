@@ -78,9 +78,12 @@ private fun Content(
     val filters by homeScreenViewModel.filtersContainer.collectAsState()
     val canUserModifyEvent by homeScreenViewModel.canUserModifyEvent.collectAsState()
 
+    val section by homeScreenViewModel.section.collectAsState()
+    val semester by homeScreenViewModel.semester.collectAsState()
+
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
-            ListDrawer(displayEventList)
+            ListDrawer(displayEventList, section, semester)
         } else {
             MapDrawer(
                 events = displayEventList,
