@@ -174,7 +174,5 @@ class HomeScreenViewModelTest {
         val v8 = SortBy.DATE_ASC
         homeScreenViewModel.onSortByChanged(v8)
         assertEquals(homeScreenViewModel.filtersContainer.value.sortBy, v8)
-
-
     }
 }
