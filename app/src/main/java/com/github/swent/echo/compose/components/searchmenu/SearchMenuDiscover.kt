@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
@@ -86,16 +87,19 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
         }
     */
     // Main component of the discover mode
-    Column(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(5.dp).testTag("discover_main_component")) {
         // Display the parents of the current tag in order to go back in the hierarchy
         // when they are clicked
         Row(
             modifier = Modifier.fillMaxWidth().height(25.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // if else here to not display the root name if we are at the root, but select category
             if (currentDepth.value == 0) {
-                Text(stringResource(R.string.discover_select_a_category))
+                Text(
+                    stringResource(R.string.discover_select_a_category),
+                    modifier = Modifier.testTag("discover_select_category")
+                )
             } else {
                 // Format the display of the parents of the current tag. The last tag is not
                 // clickable because it is the current tag, that's why we take ...size - 1
@@ -116,7 +120,9 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
                             } else {
                                 tag.name
                             },
-                        modifier = Modifier.clickable(onClick = { onParentClicked(tag) }),
+                        modifier =
+                            Modifier.clickable(onClick = { onParentClicked(tag) })
+                                .testTag("discover_parent_${tag.name}"),
                         color = ButtonDefaults.buttonColors().containerColor
                     )
                 }
@@ -125,12 +131,13 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
                     " > ${tagParents.value.peek().name}",
                     modifier =
                         Modifier.clickable(
-                            // Reset the selected tag when the current tag is clicked
-                            onClick = {
-                                searchEntryCallback(tagParents.value.peek().name)
-                                selectedTag = ""
-                            }
-                        )
+                                // Reset the selected tag when the current tag is clicked
+                                onClick = {
+                                    searchEntryCallback(tagParents.value.peek().name)
+                                    selectedTag = ""
+                                }
+                            )
+                            .testTag("discover_parent_${tagParents.value.peek().name}")
                 )
             }
         }
@@ -139,6 +146,7 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
+            modifier = Modifier.testTag("discover_lazy_grid")
         ) {
             items(tags.value) { tag ->
                 SearchMenuDiscoverItem(tag, { onTagClicked(tag) }, selectedTag)
@@ -169,7 +177,8 @@ fun SearchMenuDiscoverItem(tag: Tag, onTagClicked: (Tag) -> Unit, selectedTag: S
                         MaterialTheme.colorScheme.secondaryContainer
                     }
                 )
-                .clickable(onClick = { onTagClicked(tag) }),
+                .clickable(onClick = { onTagClicked(tag) })
+                .testTag("discover_child_${tag.name}")
     ) {
         Column(
             modifier = Modifier.align(Alignment.Center),
