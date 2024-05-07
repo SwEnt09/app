@@ -1,19 +1,23 @@
 package com.github.swent.echo.compose.components
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.activity.compose.setContent
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.MainActivity
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+@HiltAndroidTest
 class SearchMenuSheetTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule(order = 0) val hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1) val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private var dismissed = 0
     private var extended = 0
@@ -34,7 +38,9 @@ class SearchMenuSheetTest {
 
     @Before
     fun setUp() {
-        composeTestRule.setContent {
+        hiltRule.inject()
+
+        composeTestRule.activity.setContent {
             dismissed = 0
             extended = 0
 
