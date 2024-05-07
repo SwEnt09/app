@@ -71,7 +71,6 @@
     <string name="edit_event_screen_confirm">OK</string>
     <string name="list_drawer_view_on_map">View On Map</string>
     <string name="list_drawer_join_event">Join Event</string>
-
     <string name="profile_creation_dismiss">Dismiss</string>
     <string name="profile_creation_empty_fields_error">Both First name and Last name must be filled in!</string>
    <!-- <string name="profile_creation_error">Profile creation error: Not logged in</string> -->
@@ -81,15 +80,12 @@
     <string name="profile_creation_section">Section</string>
     <string name="profile_creation_semester">Semester</string>
     <string name="profile_creation_tags">Tags</string>
-
     <string name="event_successfully_joined">Event successfully joined!</string>
     <string name="event_info_sheet_modify_event">Modify Event</string>
-
-
-
     <string name="list_drawer_event_status">Event Status</string>
     <string name="edit_event_screen_alert_deletion_message">You will delete permanently this event !</string>
     <string name="edit_event_screen_delete_button">Delete</string>
-
+    <string name="discover_select_a_category">Select a Category :</string>
+    <string name="discover_all">All</string>
 </resources>
 
