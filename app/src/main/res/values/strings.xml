@@ -91,6 +91,6 @@
 
     <string name="association_subscription_screen_title">Associations you follow</string>
     <string name="association_subscription_screen_unfollow">unfollow</string>
-
+    <string name="association_committee_member_screen_title">Your association memberships</string>
 </resources>
 
