@@ -87,5 +87,9 @@
     <string name="edit_event_screen_delete_button">Delete</string>
     <string name="discover_select_a_category">Select a Category :</string>
     <string name="discover_all">All</string>
+
+    <string name="association_subscription_screen_title">Associations you follow</string>
+    <string name="association_subscription_screen_unfollow">unfollow</string>
+
 </resources>
 
