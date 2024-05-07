@@ -216,7 +216,9 @@ constructor(
                 .filter { event ->
                     !_filtersContainer.value.classChecked ||
                         _semester.value == "" ||
-                        event.tags.any { tag -> tag.name.lowercase() == _semester.value.lowercase() }
+                        event.tags.any { tag ->
+                            tag.name.lowercase() == _semester.value.lowercase()
+                        }
                 }
                 .sortedBy { event ->
                     event.startDate

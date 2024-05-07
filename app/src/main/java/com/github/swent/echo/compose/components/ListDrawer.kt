@@ -37,16 +37,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
-import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.viewmodels.STATUS_THRESHOLD
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ListDrawer(eventsList: List<Event>) {
+fun ListDrawer(eventsList: List<Event>, section: String, semester: String) {
     val selectedEvent = remember { mutableStateOf("") }
     // Main column where every items will be displayed, scrollable
     LazyColumn(
@@ -55,7 +53,13 @@ fun ListDrawer(eventsList: List<Event>) {
     ) {
         // Iterate over the list of events and display them
         items(eventsList) { event ->
-            EventListItem(event = event, selectedEvent = selectedEvent, onJoinButtonPressed = {})
+            EventListItem(
+                event = event,
+                selectedEvent = selectedEvent,
+                onJoinButtonPressed = {},
+                section,
+                semester
+            )
             Spacer(modifier = Modifier.height(5.dp))
         }
     }
@@ -65,7 +69,9 @@ fun ListDrawer(eventsList: List<Event>) {
 fun EventListItem(
     event: Event,
     selectedEvent: MutableState<String>,
-    onJoinButtonPressed: () -> Unit
+    onJoinButtonPressed: () -> Unit,
+    section: String,
+    semester: String
 ) {
     // Colors for the background of the list item
     val darkFractionMiddleCircle = 0.8f
@@ -209,17 +215,31 @@ fun EventListItem(
                             .background(
                                 if (event.tags.any { tag -> tag.name.lowercase() == "epfl" })
                                     colorEpfl
-                                else if (event.tags.any { tag -> tag.name.lowercase() == "in" })
+                                else if (
+                                    event.tags.any { tag ->
+                                        tag.name.lowercase() == section.lowercase()
+                                    }
+                                )
                                     colorSection
-                                else if (event.tags.any { tag -> tag.name.lowercase() == "ba6" })
+                                else if (
+                                    event.tags.any { tag ->
+                                        tag.name.lowercase() == semester.lowercase()
+                                    }
+                                )
                                     colorClass
                                 else color2ndFloor
                             )
                 ) {
                     Text(
-                        if (event.tags.any { tag -> tag.name.lowercase() == "epfl" }) "epfl"
-                        else if (event.tags.any { tag -> tag.name.lowercase() == "in" }) "in"
-                        else if (event.tags.any { tag -> tag.name.lowercase() == "ba6" }) "ba6"
+                        if (event.tags.any { tag -> tag.name.lowercase() == "epfl" }) "EPFL"
+                        else if (
+                            event.tags.any { tag -> tag.name.lowercase() == section.lowercase() }
+                        )
+                            section
+                        else if (
+                            event.tags.any { tag -> tag.name.lowercase() == semester.lowercase() }
+                        )
+                            semester
                         else "other",
                         textAlign = TextAlign.Center,
                         modifier = Modifier.align(Alignment.Center)
@@ -271,10 +291,4 @@ fun EventListItem(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun ListDrawerPreview() {
-    ListDrawer(SAMPLE_EVENTS)
 }
