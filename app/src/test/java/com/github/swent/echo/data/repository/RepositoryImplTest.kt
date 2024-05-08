@@ -90,6 +90,32 @@ class RepositoryImplTest {
     }
 
     @Test
+    fun joinEventTest() {
+        every {
+            runBlocking { mockedRemoteDataSource.joinEvent(userProfile.userId, event.eventId) }
+        } returns true
+        val eventResult = runBlocking { repositoryImpl.joinEvent(userProfile.userId, event) }
+        assertTrue(eventResult)
+    }
+
+    @Test
+    fun leaveEventTest() {
+        every {
+            runBlocking { mockedRemoteDataSource.leaveEvent(userProfile.userId, event.eventId) }
+        } returns true
+        val eventResult = runBlocking { repositoryImpl.leaveEvent(userProfile.userId, event) }
+        assertTrue(eventResult)
+    }
+
+    @Test
+    fun getJoinedEventsTest() {
+        every { runBlocking { mockedRemoteDataSource.getJoinedEvents(userProfile.userId) } } returns
+            Arrays.asList(event)
+        val eventsResult = runBlocking { repositoryImpl.getJoinedEvents(userProfile.userId) }
+        assertEquals(Arrays.asList(event), eventsResult)
+    }
+
+    @Test
     fun getTagTest() {
         every { runBlocking { mockedRemoteDataSource.getTag("testTag") } } returns tag
         val tagResult = runBlocking { repositoryImpl.getTag("testTag") }

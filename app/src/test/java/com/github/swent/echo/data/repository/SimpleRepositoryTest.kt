@@ -67,6 +67,21 @@ class SimpleRepositoryTest {
     }
 
     @Test
+    fun `joinEvent and leaveEvent should add and remove Event to list returned by getJoinedEvents`() =
+        runBlocking {
+            val events = simpleRepository.getAllEvents()
+            val event = events.first()
+            val joined = simpleRepository.joinEvent(USER_ID, event)
+            assertTrue(joined)
+            val joinedEvents = simpleRepository.getJoinedEvents(USER_ID)
+            assertEquals(listOf(event), joinedEvents)
+            val left = simpleRepository.leaveEvent(USER_ID, event)
+            assertTrue(left)
+            val joinedEventsAfterLeave = simpleRepository.getJoinedEvents(USER_ID)
+            assertEquals(listOf<Event>(), joinedEventsAfterLeave)
+        }
+
+    @Test
     fun `getTag should return the tag with the given id`() = runBlocking {
         val tags = simpleRepository.getAllTags()
         val expected = tags.first()
