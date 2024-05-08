@@ -6,6 +6,7 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import com.github.swent.echo.data.supabase.entities.AssociationSubscriptionSupabase
+import com.github.swent.echo.data.supabase.entities.EventJoinSupabase
 import com.github.swent.echo.data.supabase.entities.EventSupabase
 import com.github.swent.echo.data.supabase.entities.EventSupabaseSetter
 import com.github.swent.echo.data.supabase.entities.EventTagSupabase
@@ -13,6 +14,7 @@ import com.github.swent.echo.data.supabase.entities.UserProfileSupabase
 import com.github.swent.echo.data.supabase.entities.UserProfileSupabaseSetter
 import com.github.swent.echo.data.supabase.entities.UserTagSupabase
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.exceptions.UnknownRestException
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 
@@ -69,6 +71,47 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
     override suspend fun getAllEvents(): List<Event> {
         var events =
             supabase.from("events").select(Columns.raw(QUERY_EVENT)).decodeList<EventSupabase>()
+        return events.map { event -> event.toEvent() }
+    }
+
+    override suspend fun joinEvent(userId: String, eventId: String): Boolean {
+        try {
+            supabase.from("event_joins").upsert(EventJoinSupabase(userId, eventId))
+        } catch (e: UnknownRestException) {
+            return false
+        }
+        return true
+    }
+
+    override suspend fun leaveEvent(userId: String, eventId: String): Boolean {
+        try {
+            supabase.from("event_joins").delete {
+                filter {
+                    and {
+                        eq("user_id", userId)
+                        eq("event_id", eventId)
+                    }
+                }
+            }
+        } catch (e: UnknownRestException) {
+            return false
+        }
+        return true
+    }
+
+    override suspend fun getJoinedEvents(userId: String): List<Event> {
+        var events =
+            supabase
+                .from("events")
+                .select(
+                    Columns.raw(
+                        QUERY_EVENT +
+                            ", event_joins!event_joins_event_id_fkey!inner(event_id, user_id)"
+                    )
+                ) {
+                    filter { eq("event_joins.user_id", userId) }
+                }
+                .decodeList<EventSupabase>()
         return events.map { event -> event.toEvent() }
     }
 

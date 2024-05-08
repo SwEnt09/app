@@ -18,6 +18,12 @@ interface RemoteDataSource {
 
     suspend fun getAllEvents(): List<Event>
 
+    suspend fun joinEvent(userId: String, eventId: String): Boolean
+
+    suspend fun leaveEvent(userId: String, eventId: String): Boolean
+
+    suspend fun getJoinedEvents(userId: String): List<Event>
+
     suspend fun getTag(tagId: String): Tag
 
     suspend fun getSubTags(tagId: String): List<Tag>
