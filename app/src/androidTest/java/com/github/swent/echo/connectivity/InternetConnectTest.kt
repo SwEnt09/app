@@ -28,7 +28,7 @@ class InternetConnectTest {
     // private lateinit var mockActivity: Activity
     // private lateinit var compositionContext: Composer
     // private lateinit var networkCallbackCaptor:
-    // ArgumentCaptor<ConnectivityManager.NetworkCallback>
+    // ArgumentCaptor<ConnectivityManager.NetworkCallback>/
     private val networkCallbackCaptor = slot<ConnectivityManager.NetworkCallback>()
 
     @get:Rule val composeTestRule = createComposeRule()
