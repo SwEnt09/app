@@ -117,6 +117,24 @@ class SupabaseDataSourceTest {
     }
 
     @Test
+    fun joinEventTest() {
+        val joined = runBlocking { source.joinEvent(userProfile.userId, event.eventId) }
+        assertTrue(joined)
+    }
+
+    @Test
+    fun leaveEventTest() {
+        val left = runBlocking { source.leaveEvent(userProfile.userId, event.eventId) }
+        assertTrue(left)
+    }
+
+    @Test
+    fun getJoinedEventsTest() {
+        val joinedEvents = runBlocking { source.getJoinedEvents(userProfile.userId) }
+        assertEquals(listOf(event.copy(participantCount = 1)), joinedEvents)
+    }
+
+    @Test
     fun getTagTest() {
         val tagFetched = runBlocking { source.getTag("daba142a-a276-4b7e-824d-43ca088633ff") }
         assertEquals(tag, tagFetched)
