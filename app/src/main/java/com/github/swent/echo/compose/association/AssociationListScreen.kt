@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,7 +34,8 @@ fun AssociationListScreen(
     associationList: List<Association>,
     hasActionButton: Boolean = false,
     actionButtonName: String = "",
-    onActionButtonClicked: (association: Association) -> Unit = {}
+    onActionButtonClicked: (association: Association) -> Unit = {},
+    displayDescription: Boolean
 ) {
     Scaffold(topBar = { EventTitleAndBackButton(title, onBackButtonClicked) }) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
@@ -41,7 +44,8 @@ fun AssociationListScreen(
                     association = associationList[index],
                     hasActionButton = hasActionButton,
                     actionButtonName = actionButtonName,
-                    onActionButtonClicked = { onActionButtonClicked(associationList[index]) }
+                    onActionButtonClicked = { onActionButtonClicked(associationList[index]) },
+                    displayDescription = displayDescription
                 )
             }
         }
@@ -55,14 +59,15 @@ fun AssociationListElement(
     association: Association,
     hasActionButton: Boolean,
     actionButtonName: String,
-    onActionButtonClicked: () -> Unit
+    onActionButtonClicked: () -> Unit,
+    displayDescription: Boolean
 ) {
     var expanded by remember { mutableStateOf(false) }
     ListItem(
         modifier =
-            Modifier.padding(vertical = 7.dp, horizontal = 15.dp).clickable {
-                expanded = !expanded
-            },
+            Modifier.padding(vertical = 7.dp, horizontal = 15.dp)
+                .clip(RoundedCornerShape(5.dp))
+                .clickable(enabled = displayDescription) { expanded = !expanded },
         overlineContent = { Spacer(modifier = Modifier) }, // used to align the icon and the button
         headlineContent = {
             Text(
@@ -72,18 +77,20 @@ fun AssociationListElement(
             )
         },
         supportingContent = {
-            Text(
-                modifier = Modifier.testTag("${association.associationId}-description"),
-                text = association.description,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines =
-                    if (expanded) {
-                        Int.MAX_VALUE
-                    } else {
-                        SHORT_DESCRIPTION_LINES
-                    },
-                overflow = TextOverflow.Ellipsis
-            )
+            if (displayDescription) {
+                Text(
+                    modifier = Modifier.testTag("${association.associationId}-description"),
+                    text = association.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines =
+                        if (expanded) {
+                            Int.MAX_VALUE
+                        } else {
+                            SHORT_DESCRIPTION_LINES
+                        },
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         },
         leadingContent = { Icon(painter = painterResource(R.drawable.confirmed), null) },
         tonalElevation = 5.dp,

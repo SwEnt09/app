@@ -28,7 +28,8 @@ class AssociationListScreenTest {
                 associationList = listOf(testAssociation),
                 hasActionButton = true,
                 actionButtonName = "test action",
-                onActionButtonClicked = {}
+                onActionButtonClicked = {},
+                displayDescription = true
             )
         }
         composeTestRule
@@ -53,7 +54,8 @@ class AssociationListScreenTest {
                 associationList = listOf(testAssociation),
                 hasActionButton = true,
                 actionButtonName = "test-action",
-                onActionButtonClicked = { actionClicked = true }
+                onActionButtonClicked = { actionClicked = true },
+                displayDescription = true
             )
         }
         composeTestRule
@@ -67,7 +69,12 @@ class AssociationListScreenTest {
     @Test
     fun associationScreenWithoutActionButton() {
         composeTestRule.setContent {
-            AssociationListScreen(title = "test", {}, associationList = listOf(testAssociation))
+            AssociationListScreen(
+                title = "test",
+                {},
+                associationList = listOf(testAssociation),
+                displayDescription = true
+            )
         }
         composeTestRule
             .onNodeWithTag("${testAssociation.associationId}-action-button", true)
