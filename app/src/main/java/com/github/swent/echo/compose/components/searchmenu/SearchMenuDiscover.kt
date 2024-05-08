@@ -145,7 +145,7 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
         // Display the tags
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
+            contentPadding = PaddingValues(16.dp),
             modifier = Modifier.testTag("discover_lazy_grid")
         ) {
             items(tags.value) { tag ->
@@ -166,7 +166,7 @@ fun SearchMenuDiscoverItem(tag: Tag, onTagClicked: (Tag) -> Unit, selectedTag: S
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .height(120.dp)
+                .height(60.dp)
                 .padding(3.dp)
                 .clip(RoundedCornerShape(8.dp))
                 // Change the background color of the tag if it is selected
