@@ -78,6 +78,9 @@ private fun Content(
     val filters by homeScreenViewModel.filtersContainer.collectAsState()
     val canUserModifyEvent by homeScreenViewModel.canUserModifyEvent.collectAsState()
 
+    val tags by homeScreenViewModel.followedTags.collectAsState()
+    val selectedTagId by homeScreenViewModel.selectedTagId.collectAsState()
+
     val section by homeScreenViewModel.section.collectAsState()
     val semester by homeScreenViewModel.semester.collectAsState()
 
@@ -90,7 +93,13 @@ private fun Content(
                 callback = homeScreenViewModel::onEventSelected,
             )
         }
-        // add the tag filtering here
+
+        TagUI(
+            tags = tags,
+            selectedTagId = selectedTagId,
+            onTagClick = homeScreenViewModel::onFollowedTagClicked
+        )
+
         if (overlay == Overlay.EVENT_INFO_SHEET && displayEventInfo != null) {
             EventInfoSheet(
                 event = displayEventInfo!!,

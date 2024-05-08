@@ -64,6 +64,18 @@ constructor(
                 sortBy = SortBy.NONE
             )
         )
+    private val defaultFiltersContainer = FiltersContainer(
+        searchEntry = "",
+        epflChecked = false,
+        sectionChecked = false,
+        classChecked = false,
+        pendingChecked = false,
+        confirmedChecked = false,
+        fullChecked = false,
+        from = 0f,
+        to = 14f,
+        sortBy = SortBy.NONE
+    )
     val filtersContainer = _filtersContainer.asStateFlow()
     private val _profileName = MutableStateFlow("")
     val profileName = _profileName.asStateFlow()
@@ -73,6 +85,10 @@ constructor(
     val section = _section.asStateFlow()
     private val _semester = MutableStateFlow("")
     val semester = _semester.asStateFlow()
+    private val _followedTags = MutableStateFlow<List<Tag>>(listOf())
+    val followedTags = _followedTags.asStateFlow()
+    private val _selectedTagId = MutableStateFlow<String?>(null)
+    val selectedTagId = _selectedTagId.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -86,8 +102,16 @@ constructor(
                 else if (_section.value == "") _semester.value
                 else "${section.value} - ${semester.value}"
             _profileName.value = repository.getUserProfile(userId)?.name ?: ""
+            _followedTags.value = repository.getUserProfile(userId)?.tags?.toList() ?: allTagSet.toList()
             refreshFiltersContainer()
         }
+    }
+
+    fun onFollowedTagClicked(tag: Tag) {
+        if(_followedTags.value.contains(tag)) {
+            _selectedTagId.value = tag.tagId
+        }
+        filterEvents()
     }
 
     fun onSearchEntryChanged(searchEntry: String) {
@@ -158,82 +182,82 @@ constructor(
     }
 
     fun resetFiltersContainer() {
-        _filtersContainer.value =
-            FiltersContainer(
-                searchEntry = "",
-                epflChecked = false,
-                sectionChecked = false,
-                classChecked = false,
-                pendingChecked = false,
-                confirmedChecked = false,
-                fullChecked = false,
-                from = 0f,
-                to = 14f,
-                sortBy = SortBy.NONE
-            )
+        _filtersContainer.value = defaultFiltersContainer
         refreshFiltersContainer()
     }
 
     // End of methods to set the filters container values
 
     private fun filterEvents() {
-        _displayEventList.value =
-            allEventsList
-                .asSequence()
-                .filter { event -> // filter by tags
-                    _filtersContainer.value.searchEntry == "" ||
-                        event.tags.any { tag ->
-                            filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
-                        }
+        if(_filtersContainer.value == defaultFiltersContainer){
+            _displayEventList.value = if(selectedTagId.value == null){
+                allEventsList.filter { event ->
+                    event.tags.any { tag ->
+                        _followedTags.value.any { tag2 -> tag.tagId == tag2.tagId }
+                    }
                 }
-                .filter { event -> // filter by time
-                    dateFilterConditions(event)
+            } else {
+                allEventsList.filter { event ->
+                    event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
                 }
-                // TODO : later add a radio button to filter only by one, and rewrite this like the
-                // scope
-                .filter { event -> // filter by status of the event (pending, confirmed, full)
-                    (!_filtersContainer.value.confirmedChecked &&
-                        !_filtersContainer.value.pendingChecked &&
-                        !_filtersContainer.value.fullChecked) ||
-                        (_filtersContainer.value.pendingChecked &&
-                            event.participantCount < event.maxParticipants * STATUS_THRESHOLD ||
-                            _filtersContainer.value.confirmedChecked &&
-                                (event.participantCount >=
-                                    event.maxParticipants * STATUS_THRESHOLD &&
-                                    event.participantCount < event.maxParticipants) ||
-                            _filtersContainer.value.fullChecked &&
-                                event.participantCount == event.maxParticipants)
-                }
-                .filter { event ->
-                    !_filtersContainer.value.epflChecked ||
-                        event.tags.any { tag -> tag.name.lowercase() == "epfl" }
-                }
-                .filter { event ->
-                    !_filtersContainer.value.sectionChecked ||
-                        _section.value == "" ||
-                        event.tags.any { tag -> tag.name.lowercase() == _section.value.lowercase() }
-                }
-                .filter { event ->
-                    !_filtersContainer.value.classChecked ||
-                        _semester.value == "" ||
-                        event.tags.any { tag ->
-                            tag.name.lowercase() == _semester.value.lowercase()
-                        }
-                }
-                .sortedBy { event ->
-                    event.startDate
-                    // when we can sort by distance, update this
-                    /*when (_filtersContainer.value.sortBy) {
-                        SortBy.DATE_ASC -> event.startDate
-                        SortBy.DATE_DESC ->
-                        else ->
-                    }*/
-                }
-                .toList()
+            }
+        } else {
+            _displayEventList.value =
+                allEventsList
+                    .asSequence()
+                    .filter { event -> // filter by tags
+                        _filtersContainer.value.searchEntry == "" ||
+                                event.tags.any { tag ->
+                                    filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
+                                }
+                    }
+                    .filter { event -> // filter by time
+                        dateFilterConditions(event)
+                    }
+                    // TODO : later add a radio button to filter only by one, and rewrite this like the
+                    // scope
+                    .filter { event -> // filter by status of the event (pending, confirmed, full)
+                        (!_filtersContainer.value.confirmedChecked &&
+                                !_filtersContainer.value.pendingChecked &&
+                                !_filtersContainer.value.fullChecked) ||
+                                (_filtersContainer.value.pendingChecked &&
+                                        event.participantCount < event.maxParticipants * STATUS_THRESHOLD ||
+                                        _filtersContainer.value.confirmedChecked &&
+                                        (event.participantCount >=
+                                                event.maxParticipants * STATUS_THRESHOLD &&
+                                                event.participantCount < event.maxParticipants) ||
+                                        _filtersContainer.value.fullChecked &&
+                                        event.participantCount == event.maxParticipants)
+                    }
+                    .filter { event ->
+                        !_filtersContainer.value.epflChecked ||
+                                event.tags.any { tag -> tag.name.lowercase() == "epfl" }
+                    }
+                    .filter { event ->
+                        !_filtersContainer.value.sectionChecked ||
+                                section.value == "" ||
+                                event.tags.any { tag -> tag.name.lowercase() == section.value.lowercase() }
+                    }
+                    .filter { event ->
+                        !_filtersContainer.value.classChecked ||
+                                semester.value == "" ||
+                                event.tags.any { tag -> tag.name.lowercase() == semester.value.lowercase() }
+                    }
+                    .sortedBy { event ->
+                        event.startDate
+                        // when we can sort by distance, update this
+                        /*when (_filtersContainer.value.sortBy) {
+                            SortBy.DATE_ASC -> event.startDate
+                            SortBy.DATE_DESC ->
+                            else ->
+                        }*/
+                    }
+                    .toList()
 
-        // reverse the list if the sort by is descending
-        if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) {
-            _displayEventList.value = _displayEventList.value.reversed()
+            // reverse the list if the sort by is descending
+            if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) {
+                _displayEventList.value = _displayEventList.value.reversed()
+            }
         }
     }
 
