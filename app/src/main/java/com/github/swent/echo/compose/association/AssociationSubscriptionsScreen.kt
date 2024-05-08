@@ -29,6 +29,7 @@ fun AssociationSubscriptionsScreen(
                     associationsSubscriptions = newAssociationSubscriptions.toSet()
                 )
             )
-        }
+        },
+        displayDescription = true
     )
 }

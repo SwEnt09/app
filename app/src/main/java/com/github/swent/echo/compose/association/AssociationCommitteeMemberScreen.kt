@@ -19,6 +19,7 @@ fun AssociationCommitteeMemberScreen(
         title = stringResource(R.string.association_committee_member_screen_title),
         onBackButtonClicked = { navigationActions.goBack() },
         associationList = associationsCommitteeMemberList,
-        hasActionButton = false
+        hasActionButton = false,
+        displayDescription = false
     )
 }
