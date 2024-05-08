@@ -31,6 +31,18 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
         return remoteDataSource.getAllEvents()
     }
 
+    override suspend fun joinEvent(userId: String, event: Event): Boolean {
+        return remoteDataSource.joinEvent(userId, event.eventId)
+    }
+
+    override suspend fun leaveEvent(userId: String, event: Event): Boolean {
+        return remoteDataSource.leaveEvent(userId, event.eventId)
+    }
+
+    override suspend fun getJoinedEvents(userId: String): List<Event> {
+        return remoteDataSource.getJoinedEvents(userId)
+    }
+
     override suspend fun getTag(tagId: String): Tag {
         return remoteDataSource.getTag(tagId)
     }
