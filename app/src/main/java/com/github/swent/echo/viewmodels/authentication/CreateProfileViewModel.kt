@@ -1,5 +1,6 @@
 package com.github.swent.echo.viewmodels.authentication
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Association
@@ -68,11 +69,12 @@ constructor(
     //TO ASK: how to display the associations a user is subscribe to?
 
     // TODO: Save profile button => go to the home screen after saving the profile.
-    fun profilesave() {
+    fun profileSave() {
 
         // viewModelScope.launch {
         val userId = authenticationService.getCurrentUserID()
         if (userId == null) {
+            Log.d("nullUserId", "User ID is null")
             _errorMessage.value = "Profile creation error: Not logged in"
             // TODO: handle error later on. Will this ever be the case?
         } else {
@@ -83,6 +85,7 @@ constructor(
 
             runBlocking {
                 val userProfile = repository.getUserProfile(userId)
+
                 if (userProfile != null) {
                     _firstName.value = userProfile.name.split(" ")[0]
                     _lastName.value = userProfile.name.split(" ")[1]
@@ -92,10 +95,12 @@ constructor(
                     _committeeMember.value = userProfile.committeeMember
                     _associationSubscriptions.value = userProfile.associationsSubscriptions
                 }
+
+                Log.d("CreateProfileViewModel_FN", "User profile: ${_firstName.value} ${_lastName.value}")
                 repository.setUserProfile(
                     UserProfile(
                         userId,
-                        name = "${_firstName.value} ${_lastName.value}",
+                        name = "$firstName $lastName",
                         semester = _selectedSemester.value,
                         section = _selectedSection.value,
                         tags = _tagList.value,

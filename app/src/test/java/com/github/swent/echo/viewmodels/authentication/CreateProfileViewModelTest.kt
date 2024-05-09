@@ -38,7 +38,7 @@ class CreateProfileViewModelTest {
     fun loggedinErrorMessage() = runTest {
         coEvery { authenticationService.getCurrentUserID() } returns null
 
-        viewModel.profilesave()
+        viewModel.profileSave()
 
         assert(viewModel.errorMessage.value == "Profile creation error: Not logged in")
     }
@@ -71,7 +71,7 @@ class CreateProfileViewModelTest {
         coEvery { repository.getUserProfile(any()) } returns userProfile
         coEvery { repository.setUserProfile(userProfile) } returns Unit
 
-        viewModel.profilesave()
+        viewModel.profileSave()
 
         val actualUserProfile = repository.getUserProfile(userId)
 
