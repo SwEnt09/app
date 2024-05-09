@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.github.swent.echo.data.room.entity.UserProfileAssociationSubscriptionCrossRef
 import com.github.swent.echo.data.room.entity.UserProfileCommitteeMemberCrossRef
 import com.github.swent.echo.data.room.entity.UserProfileRoom
@@ -13,18 +14,17 @@ import com.github.swent.echo.data.room.entity.UserProfileWithTagsCommitteeMember
 
 @Dao
 interface UserProfileRoomDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(userProfile: UserProfileRoom)
+    @Upsert suspend fun insert(userProfile: UserProfileRoom)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertUserProfileTagCrossRefs(userProfileTagCrossRef: List<UserProfileTagCrossRef>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertUserProfileCommitteeMemberCrossRefs(
         userProfileCommitteeMemberCrossRef: List<UserProfileCommitteeMemberCrossRef>
     )
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertUserProfileAssociationSubscriptionCrossRefs(
         userProfileAssociationSubscriptionCrossRef: List<UserProfileAssociationSubscriptionCrossRef>
     )
