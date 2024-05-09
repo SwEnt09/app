@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -49,7 +48,7 @@ fun ListDrawer(eventsList: List<Event>, section: String, semester: String) {
     // Main column where every items will be displayed, scrollable
     LazyColumn(
         modifier =
-            Modifier.fillMaxSize().background(Color.White).padding(5.dp).testTag("list_drawer")
+            Modifier.fillMaxSize().padding(5.dp).testTag("list_drawer")
     ) {
         // Iterate over the list of events and display them
         items(eventsList) { event ->
