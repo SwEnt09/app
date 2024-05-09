@@ -182,10 +182,7 @@ constructor(
 
     private fun refreshFiltersContainer() {
         filterWordList = _filtersContainer.value.searchEntry.lowercase().split(" ")
-        filterTagSet =
-            allTagSet
-                .filter { tag -> areWordsInTag(tag,filterWordList) }
-                .toSet()
+        filterTagSet = allTagSet.filter { tag -> areWordsInTag(tag, filterWordList) }.toSet()
         filterEvents()
     }
 
@@ -262,14 +259,14 @@ constructor(
                     }
                     .filter { event ->
                         !_filtersContainer.value.sectionChecked ||
-                            section.value == "" ||
+                            _section.value == "" ||
                             event.tags.any { tag ->
                                 tag.name.lowercase() == section.value.lowercase()
                             }
                     }
                     .filter { event ->
                         !_filtersContainer.value.classChecked ||
-                            semester.value == "" ||
+                            _semester.value == "" ||
                             event.tags.any { tag ->
                                 tag.name.lowercase() == semester.value.lowercase()
                             }
