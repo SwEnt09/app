@@ -81,7 +81,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
             map.setStyle(styleUrl) {
                 map.uiSettings.apply {
                     setAttributionMargins(15, 0, 0, 15)
-                    isRotateGesturesEnabled = false
+                    isRotateGesturesEnabled = true
                 }
                 // Set the map view center if we're creating the view
                 if (isInit) {
