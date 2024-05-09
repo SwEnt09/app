@@ -15,8 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +31,6 @@ import com.github.swent.echo.data.model.Tag
 @Composable
 fun TagUI(tags: List<Tag>, selectedTagId: String?, onTagClick: (Tag) -> Unit) {
     val lazyListState = rememberLazyListState()
-    var selectTag by remember { mutableStateOf(selectedTagId) }
 
     Column(modifier = Modifier) {
         LazyRow(
@@ -44,11 +41,8 @@ fun TagUI(tags: List<Tag>, selectedTagId: String?, onTagClick: (Tag) -> Unit) {
             items(tags) { tag ->
                 TagItem(
                     tag = tag,
-                    isSelected = tag.tagId == selectTag,
-                    onClick = {
-                        selectTag = tag.tagId
-                        onTagClick(tag)
-                    }
+                    isSelected = tag.tagId == selectedTagId,
+                    onClick = { onTagClick(tag) }
                 )
             }
         }
