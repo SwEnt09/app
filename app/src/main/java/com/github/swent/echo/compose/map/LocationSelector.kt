@@ -26,11 +26,10 @@ fun LocationSelector(
         context.getString(R.string.maptiler_base_style_url) +
             context.getString(R.string.maptiler_api_key)
     var markerCenter by remember { mutableStateOf(initialLocation) }
-    var mapCenter by remember { mutableStateOf(initialLocation) }
     MapLibre(
         modifier = modifier.testTag("location-selector-map-libre"),
         styleUrl = styleUrl,
-        cameraPosition = CameraPosition(target = mapCenter, zoom = DEFAULT_ZOOM)
+        cameraPosition = CameraPosition(target = initialLocation, zoom = DEFAULT_ZOOM)
     ) {
         Circle(
             center = markerCenter,
@@ -40,10 +39,7 @@ fun LocationSelector(
             opacity = 0.1F,
             zIndex = 1,
             onCenterDragged = { markerCenter = it },
-            onDragFinished = {
-                mapCenter = it
-                locationCallback(it)
-            }
+            onDragFinished = locationCallback
         )
         Symbol(
             center = markerCenter,
