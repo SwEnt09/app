@@ -35,8 +35,8 @@ fun AppNavigationHost(
 
     NavHost(
         navController = navController,
-        startDestination = Routes.PROFILE_CREATION.name,
-        // startDestination = if (userIsLoggedIn) Routes.MAP.name else Routes.REGISTER.name,
+        //  startDestination = Routes.PROFILE_CREATION.name,
+        startDestination = if (userIsLoggedIn) Routes.MAP.name else Routes.REGISTER.name,
     ) {
         composable(Routes.LOGIN.name) {
             LoginScreen(loginViewModel = hiltViewModel(), navActions = navActions)
