@@ -28,16 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.swent.echo.R
 import com.github.swent.echo.connectivity.ConnectionState
-import com.github.swent.echo.connectivity.connectivityState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 
 @ExperimentalCoroutinesApi
 @Composable
-fun ConnectivityStatus() {
+fun ConnectivityStatus(connection: ConnectionState) {
     Log.d("ConnectivityStatus", "ConnectivityStatus started")
     // This will cause re-composition on every network state change
-    val connection by connectivityState()
+    //  val connection by connectivityState()
 
     val isConnected = connection === ConnectionState.Available
 

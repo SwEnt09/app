@@ -27,7 +27,7 @@ class OfflineUITest {
 
     @Test
     fun connectivityStatus_initialRendering_connectedState() {
-        composeTestRule.setContent { ConnectivityStatus() }
+        composeTestRule.setContent { ConnectivityStatus(ConnectionState.Available) }
         composeTestRule.onNodeWithTag("ConnectivityStatusBox").assertDoesNotExist()
     }
 
