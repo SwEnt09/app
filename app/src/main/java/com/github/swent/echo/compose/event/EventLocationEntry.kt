@@ -1,11 +1,12 @@
 package com.github.swent.echo.compose.event
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Card
@@ -13,7 +14,6 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,11 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.github.swent.echo.R
+import com.github.swent.echo.compose.map.LocationSelector
 import com.github.swent.echo.data.model.Location
 
 /** this composable contains the Location title, text field and button */
@@ -72,26 +72,14 @@ fun SelectLocationDialog(
     onDismissRequest: () -> Unit,
     onSelectLocation: (newLocation: Location) -> Unit
 ) {
-    var lat by remember { mutableStateOf(currentLocation.lat.toString()) }
-    var long by remember { mutableStateOf(currentLocation.long.toString()) }
+    var point by remember { mutableStateOf(currentLocation.toLatLng()) }
 
     Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties()) {
         Card(modifier = Modifier.fillMaxWidth().testTag("Location-dialog")) {
             Column(modifier = Modifier.padding(5.dp)) {
-                EventEntryName(name = stringResource(R.string.event_location_latitude))
-                TextField(
-                    value = lat,
-                    onValueChange = { lat = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.testTag("event_latitude_text_field")
-                )
-                EventEntryName(name = stringResource(R.string.event_location_longitude))
-                TextField(
-                    value = long,
-                    onValueChange = { long = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.testTag("event_longitude_text_field")
-                )
+                Box(modifier = Modifier.aspectRatio(1F)) {
+                    LocationSelector(initialLocation = point) { point = it }
+                }
                 Row {
                     OutlinedButton(onClick = onDismissRequest) {
                         Text(stringResource(R.string.edit_event_screen_cancel))
@@ -101,11 +89,7 @@ fun SelectLocationDialog(
                         onClick = {
                             var newLocation = currentLocation
                             try {
-                                newLocation =
-                                    currentLocation.copy(
-                                        lat = lat.toDouble(),
-                                        long = long.toDouble()
-                                    )
+                                newLocation = Location(currentLocation.name, point)
                             } catch (e: Exception) {
                                 // doesn't change location
                                 Log.w("edit event select location", e)

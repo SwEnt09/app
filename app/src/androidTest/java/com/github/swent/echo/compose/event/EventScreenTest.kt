@@ -141,20 +141,6 @@ class EventScreenTest {
     }
 
     @Test
-    fun changeEventLocationDialogValueChangeItInViewModel() {
-        setCompose(eventViewModel)
-        val testLocation = eventViewModel.event.value.location.copy(lat = 15.5, long = 15.5)
-        composeTestRule.onNodeWithTag("Location-button").performClick()
-        val latInput = composeTestRule.onNodeWithTag("event_latitude_text_field")
-        val longInput = composeTestRule.onNodeWithTag("event_longitude_text_field")
-        val okButton = composeTestRule.onNodeWithTag("event_location_confirm_button")
-        latInput.performTextReplacement(testLocation.lat.toString())
-        longInput.performTextReplacement(testLocation.long.toString())
-        okButton.performClick()
-        Assert.assertTrue(eventViewModel.event.value.location == testLocation)
-    }
-
-    @Test
     fun clickOnTagDeleteIt() {
         setCompose(eventViewModel)
         val tag = Tag("test", "test")
