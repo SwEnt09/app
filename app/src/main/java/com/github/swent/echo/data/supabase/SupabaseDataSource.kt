@@ -32,6 +32,13 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         }
     }
 
+    override suspend fun getAssociations(associations: List<String>): List<Association> {
+        return supabase
+            .from("associations")
+            .select { filter { isIn("association_id", associations) } }
+            .decodeList()
+    }
+
     override suspend fun getAllAssociations(): List<Association> {
         return supabase.from("associations").select().decodeList<Association>()
     }

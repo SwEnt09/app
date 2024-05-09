@@ -13,38 +13,64 @@ class RepositoryImpl(
     private val isOnline: () -> Boolean
 ) : Repository {
 
+    companion object {
+        const val ASSOCIATION_CACHE_TTL: Long = 60 * 60
+        const val EVENT_CACHE_TTL: Long = 60 * 5
+        const val TAG_CACHE_TTL: Long = 60 * 60 * 24
+        const val USERPROFILE_CACHE_TTL: Long = 60 * 15
+        const val FETCH_ALL = Long.MAX_VALUE
+    }
+
     override suspend fun getAssociation(associationId: String): Association? {
         if (isOnline()) {
-            val association = remoteDataSource.getAssociation(associationId)
-            localDataSource.setAssociation(association)
-            return association
+            val localResult = localDataSource.getAssociation(associationId, ASSOCIATION_CACHE_TTL)
+            if (localResult == null) {
+                val remoteResult = remoteDataSource.getAssociation(associationId)
+                localDataSource.setAssociation(remoteResult)
+                return remoteResult
+            }
+            return localResult
         } else {
-            return localDataSource.getAssociation(associationId)
+            return localDataSource.getAssociation(associationId, FETCH_ALL)
         }
     }
 
     override suspend fun getAllAssociations(): List<Association> {
         if (isOnline()) {
-            val associations = remoteDataSource.getAllAssociations()
-            localDataSource.setAssociations(associations)
-            return associations
+            val expired = localDataSource.getAllAssociationsSyncedBefore(ASSOCIATION_CACHE_TTL)
+            if (expired.isNotEmpty()) {
+
+                val remoteUpdate = remoteDataSource.getAssociations(expired)
+                localDataSource.setAssociations(remoteUpdate)
+            }
+            return localDataSource.getAllAssociations(FETCH_ALL)
         } else {
-            return localDataSource.getAllAssociations()
+            return localDataSource.getAllAssociations(FETCH_ALL)
         }
     }
 
     override suspend fun getEvent(eventId: String): Event? {
         if (isOnline()) {
-            val event = remoteDataSource.getEvent(eventId)
-            localDataSource.setEvent(event)
-            return event
+            val localResult = localDataSource.getEvent(eventId, EVENT_CACHE_TTL)
+            if (localResult == null) {
+                val remoteResult = remoteDataSource.getEvent(eventId)
+                localDataSource.setEvent(remoteResult)
+                return remoteResult
+            }
+            return localResult
         } else {
-            return localDataSource.getEvent(eventId)
+            return localDataSource.getEvent(eventId, FETCH_ALL)
         }
     }
 
     override suspend fun createEvent(event: Event): String {
-        return remoteDataSource.createEvent(event)
+        if (isOnline()) {
+            val newEventId = remoteDataSource.createEvent(event)
+            localDataSource.setEvent(event.copy(eventId = newEventId))
+            return newEventId
+        } else {
+            throw RepositoryStoreWhileNoInternetException("Event")
+        }
     }
 
     override suspend fun setEvent(event: Event) {
