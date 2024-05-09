@@ -6,11 +6,11 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 
 interface RemoteDataSource {
-    suspend fun getAssociation(associationId: String): Association
+    suspend fun getAssociation(associationId: String): Association?
 
     suspend fun getAllAssociations(): List<Association>
 
-    suspend fun getEvent(eventId: String): Event
+    suspend fun getEvent(eventId: String): Event?
 
     suspend fun createEvent(event: Event): String
 
@@ -24,13 +24,13 @@ interface RemoteDataSource {
 
     suspend fun getJoinedEvents(userId: String): List<Event>
 
-    suspend fun getTag(tagId: String): Tag
+    suspend fun getTag(tagId: String): Tag?
 
     suspend fun getSubTags(tagId: String): List<Tag>
 
     suspend fun getAllTags(): List<Tag>
 
-    suspend fun getUserProfile(userId: String): UserProfile
+    suspend fun getUserProfile(userId: String): UserProfile?
 
     suspend fun setUserProfile(userProfile: UserProfile)
 }

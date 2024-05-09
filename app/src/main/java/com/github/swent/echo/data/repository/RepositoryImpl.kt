@@ -7,7 +7,7 @@ import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 
 class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repository {
-    override suspend fun getAssociation(associationId: String): Association {
+    override suspend fun getAssociation(associationId: String): Association? {
         return remoteDataSource.getAssociation(associationId)
     }
 
@@ -15,7 +15,7 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
         return remoteDataSource.getAllAssociations()
     }
 
-    override suspend fun getEvent(eventId: String): Event {
+    override suspend fun getEvent(eventId: String): Event? {
         return remoteDataSource.getEvent(eventId)
     }
 
@@ -43,7 +43,7 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
         return remoteDataSource.getJoinedEvents(userId)
     }
 
-    override suspend fun getTag(tagId: String): Tag {
+    override suspend fun getTag(tagId: String): Tag? {
         return remoteDataSource.getTag(tagId)
     }
 
@@ -56,11 +56,7 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource) : Repositor
     }
 
     override suspend fun getUserProfile(userId: String): UserProfile? {
-        return try {
-            remoteDataSource.getUserProfile(userId)
-        } catch (e: Exception) {
-            null
-        }
+        return remoteDataSource.getUserProfile(userId)
     }
 
     override suspend fun setUserProfile(userProfile: UserProfile) {
