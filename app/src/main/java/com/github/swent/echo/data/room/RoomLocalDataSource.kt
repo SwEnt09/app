@@ -157,28 +157,55 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         return userProfileDao.getAllBefore(computeTimestamp(secondsAgo))
     }
 
-    override suspend fun joinEvent(userId: String, eventId: String) {
-        eventDao.insertJoinedEvent(JoinedEventRoom(userId, eventId))
+    override suspend fun joinEvent(
+        userId: String,
+        eventId: String,
+    ) {
+        eventDao.insertJoinedEvent(
+            JoinedEventRoom(
+                userId,
+                eventId,
+            ),
+        )
     }
 
-    override suspend fun leaveEvent(userId: String, eventId: String) {
-        eventDao.deleteJoinedEvent(JoinedEventRoom(userId, eventId))
+    override suspend fun leaveEvent(
+        userId: String,
+        eventId: String,
+    ) {
+        eventDao.deleteJoinedEvent(
+            JoinedEventRoom(
+                userId,
+                eventId,
+            ),
+        )
     }
 
-    override suspend fun getJoinedEvents(userId: String): List<Event> {
+    override suspend fun getJoinedEvents(
+        userId: String,
+    ): List<Event> {
         val eventIds = eventDao.getJoinedEvents(userId)
         return eventDao.getEventsByIds(eventIds).map { it.toEvent() }
     }
 
-    override suspend fun joinAssociation(userId: String, associationId: String) {
+    override suspend fun joinAssociation(
+        userId: String,
+        associationId: String,
+    ) {
         userProfileDao.joinAssociation(
-            UserProfileAssociationSubscriptionCrossRef(userId, associationId)
+            UserProfileAssociationSubscriptionCrossRef(
+                userId,
+                associationId,
+            )
         )
     }
 
     override suspend fun leaveAssociation(userId: String, associationId: String) {
         userProfileDao.leaveAssociation(
-            UserProfileAssociationSubscriptionCrossRef(userId, associationId)
+            UserProfileAssociationSubscriptionCrossRef(
+                userId,
+                associationId,
+            )
         )
     }
 }
