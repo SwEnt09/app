@@ -13,18 +13,14 @@ Firstly, let's see some user stories linked to associations and then how we coul
 ### Dataclass Association
 We already have a dataclass called Association. Currently, it has the following attributes : an "associationId", a "name" and a "description". We can add to this :
 - "relatedTags: Set<Tag>", set of all tags related to the association
-- "moderators: Set<User>", set of people who have the right to publish feeds, modify association description, add members and create events in name of the association
-- TO DISCUSS : "members: Set<User>", list of all approved members of the association
-- "e-mail : String", a reference to the e-mail of the association if users want to contact them
-- "website: String? = "" ", a reference to the website of the association for those who have one
-- "instagram: String? = "" ", a reference to the instagram of the association for those who have one
+- "associationURL : URL", the most important URL of the association (website, facebook, instagram, ...)
 ### AssociationsScreen
 In the hamburger menu, we can add a route to go to an AssociationsScreen where we can find everything related to them. 
-The first thing a user sees is the recent activities of each association she/he follows, just like a feed (For simplicity, instead of the latest stories, we can firstly just show all events created by the association). 
-On top of this page, we have two buttons : one with "Followed Associations" which leads to a list of followed associations by a user and one with "My Associations" which leads to a list of associations to which the user belongs. 
+The first thing a user sees is the active events of each association she/he follows. Reuse the ListDrawer. 
+On top of this page, we have two buttons (or better MD component) : one with "Followed Associations" which leads to a list of followed associations by a user and one with "My Associations" which leads to a list of associations to which the user belongs. 
 At the bottom right, there is a search button (like the one in HomeScreen) which allows the user to search an association. 
 ### FollowedAssociationsPage
-Already designed by Yoan (just needs little update), it consists of the list of all followed associations under the form of a list. Each item of the list have an unsubscribe button. If an item of the list is clicked, it leads the user to the specific AssociationPage.
+Already designed by Yoan (just needs little update), it consists of the list of all followed associations under the form of a list. If an item of the list is clicked, it leads the user to the specific AssociationPage.
 ### CommitteeAssociationsPage
 Already designed by Yoan (just needs little update), it consists of the list of all associations to which the user belongs. If an item of the list is clicked, it leads the user to the specific AssociationPage.
 ### SearchMenuAssociations
@@ -34,4 +30,4 @@ On top, we have the choice of two pages : a "Description" default page and a "Ev
 #### DescriptionPage
 This page consists of the title and description of the association. On top right, there is a button to follow/unfollow the association. If we scroll down, we can see a link to the association website, then a link to the instagram, and an e-mail to contact if the user is interested in joining the association (or for whatever question). If the user belongs to the moderators, she/he has an additional "Edit" button to modify the displayed information.
 #### ActualityPage
-This page shows the history of all posts of the association. If the user belongs to the moderators, they can post new stories in the associations feed for the followers.(For simplicity, instead of news feed, we can firstly just show all events created by the associations)
+This page shows the history of all events of the association in chronological order. Reuse the ListDrawer already implemented in HomeScreen, filtered to display only events of the association.
