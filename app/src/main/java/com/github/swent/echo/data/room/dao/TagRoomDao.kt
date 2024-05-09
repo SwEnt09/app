@@ -1,16 +1,15 @@
 package com.github.swent.echo.data.room.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import com.github.swent.echo.data.room.entity.TagRoom
 
 @Dao
 interface TagRoomDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insert(tags: TagRoom)
+    @Upsert suspend fun insert(tags: TagRoom)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertAll(tags: List<TagRoom>)
+    @Upsert suspend fun insertAll(tags: List<TagRoom>)
 
     @Query("SELECT * FROM TagRoom WHERE tagId = :tagId AND timestamp >= :after")
     suspend fun get(tagId: String, after: Long): TagRoom?
