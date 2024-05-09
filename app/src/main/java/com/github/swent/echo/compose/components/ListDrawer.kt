@@ -46,10 +46,7 @@ import java.time.format.DateTimeFormatter
 fun ListDrawer(eventsList: List<Event>, section: String, semester: String) {
     val selectedEvent = remember { mutableStateOf("") }
     // Main column where every items will be displayed, scrollable
-    LazyColumn(
-        modifier =
-            Modifier.fillMaxSize().padding(5.dp).testTag("list_drawer")
-    ) {
+    LazyColumn(modifier = Modifier.fillMaxSize().padding(5.dp).testTag("list_drawer")) {
         // Iterate over the list of events and display them
         items(eventsList) { event ->
             EventListItem(

@@ -88,7 +88,7 @@ private fun Content(
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
             Column {
-                if(tags.isNotEmpty()){
+                if (tags.isNotEmpty()) {
                     TagUI(
                         tags = tags,
                         selectedTagId = selectedTagId,
