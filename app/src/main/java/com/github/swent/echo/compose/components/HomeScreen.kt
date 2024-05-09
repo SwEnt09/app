@@ -1,6 +1,7 @@
 package com.github.swent.echo.compose.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
@@ -86,19 +87,27 @@ private fun Content(
 
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
-            ListDrawer(displayEventList, section, semester)
+            Column {
+                if(tags.isNotEmpty()){
+                    TagUI(
+                        tags = tags,
+                        selectedTagId = selectedTagId,
+                        onTagClick = homeScreenViewModel::onFollowedTagClicked
+                    )
+                }
+                ListDrawer(displayEventList, section, semester)
+            }
         } else {
             MapDrawer(
                 events = displayEventList,
                 callback = homeScreenViewModel::onEventSelected,
             )
+            TagUI(
+                tags = tags,
+                selectedTagId = selectedTagId,
+                onTagClick = homeScreenViewModel::onFollowedTagClicked
+            )
         }
-
-        TagUI(
-            tags = tags,
-            selectedTagId = selectedTagId,
-            onTagClick = homeScreenViewModel::onFollowedTagClicked
-        )
 
         if (overlay == Overlay.EVENT_INFO_SHEET && displayEventInfo != null) {
             EventInfoSheet(
