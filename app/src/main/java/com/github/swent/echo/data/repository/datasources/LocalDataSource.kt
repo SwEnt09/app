@@ -11,14 +11,13 @@ import com.github.swent.echo.data.model.UserProfile
  * Note that all the getters return null when the data is not found locally.
  *
  * The `syncedSecondsAgo` parameter is used to filter out the data that has been synced before a
- * certain amount of seconds. By default it's set to [Long.MAX_VALUE] which means that all the data
- * will be returned. The timestamp of the last sync is updated at every set operation.
+ * certain amount of seconds.
  */
 interface LocalDataSource {
 
     suspend fun getAssociation(
         associationId: String,
-        syncedSecondsAgo: Long = Long.MAX_VALUE,
+        syncedSecondsAgo: Long,
     ): Association?
 
     suspend fun setAssociation(association: Association)
