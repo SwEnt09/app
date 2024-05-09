@@ -193,7 +193,10 @@ constructor(
     private fun filterEvents() {
         if (_filtersContainer.value == defaultFiltersContainer) {
             _displayEventList.value =
-                if (selectedTagId.value == null) {
+                // special case, if the user follows no tags, display everything
+                if (_followedTags.value.isEmpty()) {
+                    allEventsList
+                } else if (selectedTagId.value == null) {
                     allEventsList.filter { event ->
                         event.tags.any { tag ->
                             _followedTags.value.any { tag2 -> tag.tagId == tag2.tagId }
