@@ -111,7 +111,12 @@ constructor(
 
     fun onFollowedTagClicked(tag: Tag) {
         if (_followedTags.value.contains(tag)) {
-            _selectedTagId.value = tag.tagId
+            if (_selectedTagId.value == tag.tagId) {
+                _selectedTagId.value = null
+                println("tagId: ${_selectedTagId.value}\n")
+            } else {
+                _selectedTagId.value = tag.tagId
+            }
         }
         filterEvents()
     }
