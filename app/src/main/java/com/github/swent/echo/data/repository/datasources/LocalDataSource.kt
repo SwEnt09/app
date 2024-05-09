@@ -65,4 +65,14 @@ interface LocalDataSource {
     suspend fun setUserProfile(userProfile: UserProfile)
 
     suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String>
+
+    suspend fun joinEvent(userId: String, eventId: String)
+
+    suspend fun leaveEvent(userId: String, eventId: String)
+
+    suspend fun getJoinedEvents(userId: String): List<Event>
+
+    suspend fun joinAssociation(userId: String, associationId: String)
+
+    suspend fun leaveAssociation(userId: String, associationId: String)
 }
