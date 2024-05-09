@@ -81,7 +81,7 @@ fun ProfileCreationScreen(
         sectionList = SectionEPFL.entries,
         semList = SemesterEPFL.entries,
         tagList = viewModel.tagList.collectAsState().value,
-        onSave = viewModel::profilesave,
+        onSave = viewModel::profileSave,
         onAdd = { dialogVisible = true },
         tagDelete = viewModel::removeTag,
         navAction = navAction,
