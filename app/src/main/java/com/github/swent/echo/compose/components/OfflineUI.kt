@@ -57,11 +57,11 @@ fun ConnectivityStatus() {
         visibility =
             if (!isConnected) {
                 true
-                // Show UI when connectivity is available
+                // Show UI for No Internet Connectivity
             } else {
                 delay(5000) // in ms
                 false
-                // Show UI for No Internet Connectivity
+                // Show UI when connectivity is available for 5 seconds
             }
     }
 }

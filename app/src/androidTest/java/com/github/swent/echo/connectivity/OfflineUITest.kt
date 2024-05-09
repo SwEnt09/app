@@ -27,7 +27,6 @@ class OfflineUITest {
 
     @Test
     fun connectivityStatus_initialRendering_connectedState() {
-        // val context = InstrumentationRegistry.getInstrumentation().targetContext
         composeTestRule.setContent { ConnectivityStatus() }
         composeTestRule.onNodeWithTag("ConnectivityStatusBox").assertDoesNotExist()
     }
