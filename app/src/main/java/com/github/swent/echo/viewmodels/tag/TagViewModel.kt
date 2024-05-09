@@ -67,7 +67,7 @@ class TagViewModel @Inject constructor(private val repository: Repository) : Vie
     // return the tag associated to a tagId
     fun getTag(tagId: String): StateFlow<Tag> {
         val tag = MutableStateFlow<Tag>(Tag("", ""))
-        viewModelScope.launch { tag.value = repository.getTag(tagId) }
+        viewModelScope.launch { tag.value = repository.getTag(tagId)!! }
         return tag
     }
 
