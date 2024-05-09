@@ -37,6 +37,16 @@ class RoomLocalDataSourceTest {
             event.copy(startDate = event.startDate.round(), endDate = event.endDate.round())
         }
     private val tags = SAMPLE_EVENTS.flatMap { it.tags }.distinct()
+    private val userProfile =
+        UserProfile(
+            "0",
+            "John Doe",
+            SemesterEPFL.BA1,
+            SectionEPFL.IN,
+            setOf(tags.first()),
+            setOf(associations.first()),
+            setOf(associations.first()),
+        )
 
     private val time = ZonedDateTime.parse("2024-01-01T00:00:00Z")
     private val syncedSecondsAgo = 60L
@@ -223,16 +233,7 @@ class RoomLocalDataSourceTest {
         assertTrue(tags.isNotEmpty())
         assertTrue(associations.isNotEmpty())
 
-        val expected =
-            UserProfile(
-                "0",
-                "John Doe",
-                SemesterEPFL.BA1,
-                SectionEPFL.IN,
-                setOf(tags.first()),
-                setOf(associations.first()),
-                setOf(associations.first()),
-            )
+        val expected = userProfile
 
         every { ZonedDateTime.now() } returns time
         localDataSource.setUserProfile(expected)
@@ -250,16 +251,7 @@ class RoomLocalDataSourceTest {
         assertTrue(tags.isNotEmpty())
         assertTrue(associations.isNotEmpty())
 
-        val expected =
-            UserProfile(
-                "0",
-                "John Doe",
-                SemesterEPFL.BA1,
-                SectionEPFL.IN,
-                setOf(tags.first()),
-                setOf(associations.first()),
-                setOf(associations.first()),
-            )
+        val expected = userProfile
 
         every { ZonedDateTime.now() } returns time
         localDataSource.setUserProfile(expected)
@@ -271,5 +263,69 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         assertTrue(localDataSource.getAllUserProfilesSyncedBefore(syncedSecondsAgo).isEmpty())
+    }
+
+    @Test
+    fun testJoinAndLeaveEvent() {
+        assertTrue(events.size >= 2)
+        val event1 = events[0]
+        val event2 = events[1]
+        assertTrue(event1.eventId != event2.eventId)
+
+        val userId = userProfile.userId
+
+        runBlocking {
+            localDataSource.setUserProfile(userProfile)
+            localDataSource.setEvent(event1)
+            localDataSource.setEvent(event2)
+            localDataSource.joinEvent(userId, event1.eventId)
+            localDataSource.joinEvent(userId, event2.eventId)
+        }
+
+        val joinedEvents = runBlocking { localDataSource.getJoinedEvents(userId) }
+        assertEquals(2, joinedEvents.size)
+        assertEquals(setOf(event1, event2), joinedEvents.toSet())
+
+        runBlocking { localDataSource.leaveEvent(userId, event1.eventId) }
+
+        val joinedEventsAfterLeaving = runBlocking { localDataSource.getJoinedEvents(userId) }
+        assertEquals(1, joinedEventsAfterLeaving.size)
+        assertTrue(joinedEventsAfterLeaving.contains(event2))
+    }
+
+    @Test
+    fun testJoinAndLeaveAssociation() {
+        assertTrue(associations.size >= 2)
+        val association1 = associations[0]
+        val association2 = associations[1]
+        assertTrue(association1.associationId != association2.associationId)
+
+        val userId = userProfile.userId
+
+        runBlocking {
+            localDataSource.setUserProfile(userProfile)
+            localDataSource.setAssociation(association1)
+            localDataSource.setAssociation(association2)
+            localDataSource.joinAssociation(userId, association1.associationId)
+            localDataSource.joinAssociation(userId, association2.associationId)
+        }
+
+        val newUserProfile = runBlocking {
+            localDataSource.getUserProfile(userId, syncedSecondsAgo)
+        }
+        assertNotNull(newUserProfile)
+
+        assertEquals(2, newUserProfile!!.associationsSubscriptions.size)
+        assertEquals(setOf(association1, association2), newUserProfile.associationsSubscriptions)
+
+        runBlocking { localDataSource.leaveAssociation(userId, association1.associationId) }
+
+        val newUserProfileAfterLeaving = runBlocking {
+            localDataSource.getUserProfile(userId, syncedSecondsAgo)
+        }
+        assertNotNull(newUserProfileAfterLeaving)
+
+        assertEquals(1, newUserProfileAfterLeaving!!.associationsSubscriptions.size)
+        assertTrue(newUserProfileAfterLeaving.associationsSubscriptions.contains(association2))
     }
 }
