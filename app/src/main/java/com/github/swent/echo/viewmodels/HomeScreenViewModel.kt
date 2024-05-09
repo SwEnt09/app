@@ -41,6 +41,7 @@ constructor(
     private val _mode = MutableStateFlow(MapOrListMode.MAP)
     val mode = _mode.asStateFlow()
     private var filterTagSet: Set<Tag> = setOf()
+    private var filterWordList = listOf<String>()
     private lateinit var allEventsList: List<Event>
     private lateinit var allTagSet: Set<Tag>
     private val _displayEventList = MutableStateFlow<List<Event>>(listOf())
@@ -180,12 +181,24 @@ constructor(
     }
 
     private fun refreshFiltersContainer() {
-        val listOfWords = _filtersContainer.value.searchEntry.lowercase().split(" ")
+        filterWordList = _filtersContainer.value.searchEntry.lowercase().split(" ")
         filterTagSet =
             allTagSet
-                .filter { tag -> listOfWords.any { word -> tag.name.lowercase().contains(word) } }
+                .filter { tag -> areWordsInTag(tag,filterWordList) }
                 .toSet()
         filterEvents()
+    }
+
+    private fun areWordsInTag(tag: Tag, listOfWords: List<String>): Boolean {
+        return listOfWords.any { word -> tag.name.lowercase().contains(word) }
+    }
+
+    private fun areWordsInTitle(event: Event, listOfWords: List<String>): Boolean {
+        return listOfWords.any { word -> event.title.lowercase().contains(word) }
+    }
+
+    private fun areWordsInDescription(event: Event, listOfWords: List<String>): Boolean {
+        return listOfWords.any { word -> event.description.lowercase().contains(word) }
     }
 
     fun resetFiltersContainer() {
@@ -216,11 +229,13 @@ constructor(
             _displayEventList.value =
                 allEventsList
                     .asSequence()
-                    .filter { event -> // filter by tags
+                    .filter { event -> // filter by tags, title or description
                         _filtersContainer.value.searchEntry == "" ||
                             event.tags.any { tag ->
                                 filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
                             }
+                                || areWordsInTitle(event, filterWordList)
+                                || areWordsInDescription(event, filterWordList)
                     }
                     .filter { event -> // filter by time
                         dateFilterConditions(event)
