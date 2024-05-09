@@ -64,18 +64,19 @@ constructor(
                 sortBy = SortBy.NONE
             )
         )
-    private val defaultFiltersContainer = FiltersContainer(
-        searchEntry = "",
-        epflChecked = false,
-        sectionChecked = false,
-        classChecked = false,
-        pendingChecked = false,
-        confirmedChecked = false,
-        fullChecked = false,
-        from = 0f,
-        to = 14f,
-        sortBy = SortBy.NONE
-    )
+    private val defaultFiltersContainer =
+        FiltersContainer(
+            searchEntry = "",
+            epflChecked = false,
+            sectionChecked = false,
+            classChecked = false,
+            pendingChecked = false,
+            confirmedChecked = false,
+            fullChecked = false,
+            from = 0f,
+            to = 14f,
+            sortBy = SortBy.NONE
+        )
     val filtersContainer = _filtersContainer.asStateFlow()
     private val _profileName = MutableStateFlow("")
     val profileName = _profileName.asStateFlow()
@@ -102,13 +103,14 @@ constructor(
                 else if (_section.value == "") _semester.value
                 else "${section.value} - ${semester.value}"
             _profileName.value = repository.getUserProfile(userId)?.name ?: ""
-            _followedTags.value = repository.getUserProfile(userId)?.tags?.toList() ?: allTagSet.toList()
+            _followedTags.value =
+                repository.getUserProfile(userId)?.tags?.toList() ?: allTagSet.toList()
             refreshFiltersContainer()
         }
     }
 
     fun onFollowedTagClicked(tag: Tag) {
-        if(_followedTags.value.contains(tag)) {
+        if (_followedTags.value.contains(tag)) {
             _selectedTagId.value = tag.tagId
         }
         filterEvents()
@@ -189,59 +191,65 @@ constructor(
     // End of methods to set the filters container values
 
     private fun filterEvents() {
-        if(_filtersContainer.value == defaultFiltersContainer){
-            _displayEventList.value = if(selectedTagId.value == null){
-                allEventsList.filter { event ->
-                    event.tags.any { tag ->
-                        _followedTags.value.any { tag2 -> tag.tagId == tag2.tagId }
+        if (_filtersContainer.value == defaultFiltersContainer) {
+            _displayEventList.value =
+                if (selectedTagId.value == null) {
+                    allEventsList.filter { event ->
+                        event.tags.any { tag ->
+                            _followedTags.value.any { tag2 -> tag.tagId == tag2.tagId }
+                        }
+                    }
+                } else {
+                    allEventsList.filter { event ->
+                        event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
                     }
                 }
-            } else {
-                allEventsList.filter { event ->
-                    event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
-                }
-            }
         } else {
             _displayEventList.value =
                 allEventsList
                     .asSequence()
                     .filter { event -> // filter by tags
                         _filtersContainer.value.searchEntry == "" ||
-                                event.tags.any { tag ->
-                                    filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
-                                }
+                            event.tags.any { tag ->
+                                filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
+                            }
                     }
                     .filter { event -> // filter by time
                         dateFilterConditions(event)
                     }
-                    // TODO : later add a radio button to filter only by one, and rewrite this like the
+                    // TODO : later add a radio button to filter only by one, and rewrite this like
+                    // the
                     // scope
                     .filter { event -> // filter by status of the event (pending, confirmed, full)
                         (!_filtersContainer.value.confirmedChecked &&
-                                !_filtersContainer.value.pendingChecked &&
-                                !_filtersContainer.value.fullChecked) ||
-                                (_filtersContainer.value.pendingChecked &&
-                                        event.participantCount < event.maxParticipants * STATUS_THRESHOLD ||
-                                        _filtersContainer.value.confirmedChecked &&
-                                        (event.participantCount >=
-                                                event.maxParticipants * STATUS_THRESHOLD &&
-                                                event.participantCount < event.maxParticipants) ||
-                                        _filtersContainer.value.fullChecked &&
-                                        event.participantCount == event.maxParticipants)
+                            !_filtersContainer.value.pendingChecked &&
+                            !_filtersContainer.value.fullChecked) ||
+                            (_filtersContainer.value.pendingChecked &&
+                                event.participantCount < event.maxParticipants * STATUS_THRESHOLD ||
+                                _filtersContainer.value.confirmedChecked &&
+                                    (event.participantCount >=
+                                        event.maxParticipants * STATUS_THRESHOLD &&
+                                        event.participantCount < event.maxParticipants) ||
+                                _filtersContainer.value.fullChecked &&
+                                    event.participantCount == event.maxParticipants)
                     }
                     .filter { event ->
                         !_filtersContainer.value.epflChecked ||
-                                event.tags.any { tag -> tag.name.lowercase() == "epfl" }
+                            event.tags.any { tag -> tag.name.lowercase() == "epfl" }
                     }
                     .filter { event ->
                         !_filtersContainer.value.sectionChecked ||
-                                section.value == "" ||
-                                event.tags.any { tag -> tag.name.lowercase() == section.value.lowercase() }
+                            section.value == "" ||
+                            event.tags.any { tag ->
+                                tag.name.lowercase() == section.value.lowercase()
+                            }
                     }
                     .filter { event ->
                         !_filtersContainer.value.classChecked ||
-                                semester.value == "" ||
-                                event.tags.any { tag -> tag.name.lowercase() == semester.value.lowercase() }
+                            semester.value == "" ||
+                            event.tags.any { tag ->
+                                tag.name.lowercase() == semester.value.lowercase()
+                            }
                     }
                     .sortedBy { event ->
                         event.startDate
