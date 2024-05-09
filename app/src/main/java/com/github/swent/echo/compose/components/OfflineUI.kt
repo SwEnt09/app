@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandHorizontally
@@ -34,6 +35,7 @@ import kotlinx.coroutines.delay
 @ExperimentalCoroutinesApi
 @Composable
 fun ConnectivityStatus() {
+    Log.d("ConnectivityStatus", "ConnectivityStatus started")
     // This will cause re-composition on every network state change
     val connection by connectivityState()
 
@@ -46,6 +48,8 @@ fun ConnectivityStatus() {
         enter = expandHorizontally(),
         exit = shrinkHorizontally()
     ) {
+        Log.d("ConnectivityStatus", "ConnectivityStatusBox rendered")
+
         ConnectivityStatusBox(isConnected = isConnected)
     }
 
@@ -63,7 +67,7 @@ fun ConnectivityStatus() {
 }
 
 @Composable
-fun ConnectivityStatusBox(isConnected: Boolean) {
+fun ConnectivityStatusBox(isConnected: Boolean, modifier: Modifier = Modifier) {
     val backgroundColor by animateColorAsState(if (!isConnected) Color.LightGray else Color.Green)
 
     val message = if (isConnected) R.string.Online_mode else R.string.Offline_mode
