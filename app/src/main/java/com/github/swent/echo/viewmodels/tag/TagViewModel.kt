@@ -18,24 +18,24 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel
 class TagViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
-
     // max tag tree depth
     val maxDepth = 2
     // the root tag is hardcoded here as in the database
-    private val rootTag = Tag("1d253a7e-eb8c-4546-bc98-1d3adadcffe8", "ROOT TAG: DO NOT DELETE")
+    val rootTag = Tag("1d253a7e-eb8c-4546-bc98-1d3adadcffe8", "ROOT TAG: DO NOT DELETE")
     private val _allTags = MutableStateFlow<List<Tag>>(listOf())
     val allTags = _allTags.asStateFlow()
     private val _tags = MutableStateFlow<List<Tag>>(listOf())
     val tags = _tags.asStateFlow()
     private var _currentDepth = MutableStateFlow(0)
     val currentDepth = _currentDepth.asStateFlow()
-    private val tagParents = Stack<Tag>()
+    private var _tagParents = MutableStateFlow(Stack<Tag>())
+    val tagParents = _tagParents.asStateFlow()
 
     init {
         viewModelScope.launch {
             _allTags.value = repository.getAllTags()
             _tags.value = repository.getSubTags(rootTag.tagId)
-            tagParents.push(rootTag)
+            _tagParents.value.push(rootTag)
         }
     }
 
@@ -45,13 +45,14 @@ class TagViewModel @Inject constructor(private val repository: Repository) : Vie
         viewModelScope.launch { subTags.value = repository.getSubTags(tag.tagId) }
         return subTags.asStateFlow()
     }
-
     // goes up in the tag tree
     fun goUp() {
         if (_currentDepth.value > 0) {
             _currentDepth.value--
-            tagParents.pop()
-            viewModelScope.launch { _tags.value = repository.getSubTags(tagParents.peek().tagId) }
+            _tagParents.value.pop()
+            viewModelScope.launch {
+                _tags.value = repository.getSubTags(_tagParents.value.peek().tagId)
+            }
         }
     }
 
@@ -59,15 +60,22 @@ class TagViewModel @Inject constructor(private val repository: Repository) : Vie
     fun goDown(tag: Tag) {
         if (_currentDepth.value < maxDepth) {
             _currentDepth.value++
-            tagParents.push(tag)
+            _tagParents.value.push(tag)
             viewModelScope.launch { _tags.value = repository.getSubTags(tag.tagId) }
         }
     }
-
     // return the tag associated to a tagId
     fun getTag(tagId: String): StateFlow<Tag> {
         val tag = MutableStateFlow<Tag>(Tag("", ""))
         viewModelScope.launch { tag.value = repository.getTag(tagId) }
         return tag
+    }
+
+    // reset the tag tree
+    fun reset() {
+        _currentDepth.value = 0
+        _tagParents.value.clear()
+        _tagParents.value.push(rootTag)
+        viewModelScope.launch { _tags.value = repository.getSubTags(rootTag.tagId) }
     }
 }

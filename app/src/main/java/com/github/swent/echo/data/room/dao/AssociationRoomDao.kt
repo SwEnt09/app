@@ -14,8 +14,14 @@ interface AssociationRoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(associations: List<AssociationRoom>)
 
-    @Query("SELECT * FROM AssociationRoom WHERE associationId = :associationId")
-    suspend fun get(associationId: String): AssociationRoom?
+    @Query(
+        "SELECT * FROM AssociationRoom WHERE associationId = :associationId AND timestamp >= :after"
+    )
+    suspend fun get(associationId: String, after: Long): AssociationRoom?
 
-    @Query("SELECT * FROM AssociationRoom") suspend fun getAll(): List<AssociationRoom>
+    @Query("SELECT * FROM AssociationRoom WHERE timestamp >= :after")
+    suspend fun getAll(after: Long): List<AssociationRoom>
+
+    @Query("SELECT associationId FROM AssociationRoom WHERE timestamp <= :before")
+    suspend fun getAllBefore(before: Long): List<String>
 }

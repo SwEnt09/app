@@ -87,7 +87,7 @@ jobs:
       - name: Run tests
         run: |
           # To run the CI with debug information, add --info
-          ./gradlew check --parallel --build-cache
+          ./gradlew check --parallel --build-cache --info
 
       # Run connected tests on the emulator
       - name: run tests
@@ -99,7 +99,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedCheck --parallel --build-cache
+          script: ./gradlew connectedCheck --parallel --build-cache --info
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report

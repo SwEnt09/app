@@ -36,9 +36,9 @@ constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
 ) : ViewModel() {
-    private val _overlay = MutableStateFlow<Overlay>(Overlay.NONE)
+    private val _overlay = MutableStateFlow(Overlay.NONE)
     val overlay = _overlay.asStateFlow()
-    private val _mode = MutableStateFlow<MapOrListMode>(MapOrListMode.MAP)
+    private val _mode = MutableStateFlow(MapOrListMode.MAP)
     val mode = _mode.asStateFlow()
     private var filterTagSet: Set<Tag> = setOf()
     private lateinit var allEventsList: List<Event>
@@ -47,7 +47,7 @@ constructor(
     val displayEventList = _displayEventList.asStateFlow()
     private val _displayEventInfo = MutableStateFlow<Event?>(null)
     val displayEventInfo = _displayEventInfo.asStateFlow()
-    private val _canUserModifyEvent = MutableStateFlow<Boolean>(false)
+    private val _canUserModifyEvent = MutableStateFlow(false)
     val canUserModifyEvent = _canUserModifyEvent.asStateFlow()
     private val _filtersContainer =
         MutableStateFlow(
@@ -65,23 +65,26 @@ constructor(
             )
         )
     val filtersContainer = _filtersContainer.asStateFlow()
-    private val _profileName = MutableStateFlow<String>("")
+    private val _profileName = MutableStateFlow("")
     val profileName = _profileName.asStateFlow()
-    private val _profileClass = MutableStateFlow<String>("")
+    private val _profileClass = MutableStateFlow("")
     val profileClass = _profileClass.asStateFlow()
-    private var section = ""
-    private var semester = ""
+    private val _section = MutableStateFlow("")
+    val section = _section.asStateFlow()
+    private val _semester = MutableStateFlow("")
+    val semester = _semester.asStateFlow()
 
     init {
         viewModelScope.launch {
             val userId = authenticationService.getCurrentUserID() ?: ""
             allEventsList = repository.getAllEvents()
             allTagSet = repository.getAllTags().toSet()
-            semester = repository.getUserProfile(userId)?.semester?.name ?: ""
-            section = repository.getUserProfile(userId)?.section?.name ?: ""
+            _semester.value = repository.getUserProfile(userId)?.semester?.name ?: ""
+            _section.value = repository.getUserProfile(userId)?.section?.name ?: ""
             _profileClass.value =
-                if (semester == "") section
-                else if (section == "") semester else "$section - $semester"
+                if (_semester.value == "") _section.value
+                else if (_section.value == "") _semester.value
+                else "${section.value} - ${semester.value}"
             _profileName.value = repository.getUserProfile(userId)?.name ?: ""
             refreshFiltersContainer()
         }
@@ -207,13 +210,15 @@ constructor(
                 }
                 .filter { event ->
                     !_filtersContainer.value.sectionChecked ||
-                        section == "" ||
-                        event.tags.any { tag -> tag.name.lowercase() == section.lowercase() }
+                        _section.value == "" ||
+                        event.tags.any { tag -> tag.name.lowercase() == _section.value.lowercase() }
                 }
                 .filter { event ->
                     !_filtersContainer.value.classChecked ||
-                        semester == "" ||
-                        event.tags.any { tag -> tag.name.lowercase() == semester.lowercase() }
+                        _semester.value == "" ||
+                        event.tags.any { tag ->
+                            tag.name.lowercase() == _semester.value.lowercase()
+                        }
                 }
                 .sortedBy { event ->
                     event.startDate

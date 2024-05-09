@@ -16,6 +16,7 @@ import com.github.swent.echo.data.room.entity.UserProfileTagCrossRef
 import com.github.swent.echo.data.room.entity.toAssociationRoomList
 import com.github.swent.echo.data.room.entity.toTagList
 import com.github.swent.echo.data.room.entity.toTagRoomList
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,11 +28,16 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     private val tagDao = db.tagDao()
     private val userProfileDao = db.userProfileDao()
 
+    private fun computeTimestamp(secondsAgo: Long): Long {
+        return ZonedDateTime.now().minusSeconds(secondsAgo).toEpochSecond()
+    }
+
     override suspend fun getAssociation(
         associationId: String,
-        syncedSecondsAgo: Long
+        syncedSecondsAgo: Long,
     ): Association? {
-        return associationDao.get(associationId)?.toAssociation()
+        val after = computeTimestamp(syncedSecondsAgo)
+        return associationDao.get(associationId, after)?.toAssociation()
     }
 
     override suspend fun setAssociation(association: Association) {
@@ -39,7 +45,12 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     }
 
     override suspend fun getAllAssociations(syncedSecondsAgo: Long): List<Association> {
-        return associationDao.getAll().map { it.toAssociation() }
+        val after = computeTimestamp(syncedSecondsAgo)
+        return associationDao.getAll(after).map { it.toAssociation() }
+    }
+
+    override suspend fun getAllAssociationsSyncedBefore(secondsAgo: Long): List<String> {
+        return associationDao.getAllBefore(computeTimestamp(secondsAgo))
     }
 
     override suspend fun setAssociations(associations: List<Association>) {
@@ -47,7 +58,8 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     }
 
     override suspend fun getEvent(eventId: String, syncedSecondsAgo: Long): Event? {
-        return eventDao.get(eventId)?.toEvent()
+        val after = computeTimestamp(syncedSecondsAgo)
+        return eventDao.get(eventId, after)?.toEvent()
     }
 
     override suspend fun setEvent(event: Event) {
@@ -55,12 +67,17 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
 
         event.organizer?.let { associationDao.insert(AssociationRoom(it)) }
         tagDao.insertAll(event.tags.toTagRoomList())
-        eventDao.insertEventTagCrossRegs(crossRefs)
         eventDao.insert(EventRoom(event))
+        eventDao.insertEventTagCrossRegs(crossRefs)
     }
 
     override suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event> {
-        return eventDao.getAll().map { it.toEvent() }
+        val after = computeTimestamp(syncedSecondsAgo)
+        return eventDao.getAll(after).map { it.toEvent() }
+    }
+
+    override suspend fun getAllEventsSyncedBefore(secondsAgo: Long): List<String> {
+        return eventDao.getAllBefore(computeTimestamp(secondsAgo))
     }
 
     override suspend fun setEvents(events: List<Event>) {
@@ -71,12 +88,13 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
 
         associationDao.insertAll(associations.map { AssociationRoom(it) })
         tagDao.insertAll(tags.toTagRoomList())
-        eventDao.insertEventTagCrossRegs(crossRefs)
         eventDao.insertAll(events.map { EventRoom(it) })
+        eventDao.insertEventTagCrossRegs(crossRefs)
     }
 
     override suspend fun getTag(tagId: String, syncedSecondsAgo: Long): Tag? {
-        return tagDao.get(tagId)?.toTag()
+        val after = computeTimestamp(syncedSecondsAgo)
+        return tagDao.get(tagId, after)?.toTag()
     }
 
     override suspend fun setTag(tag: Tag) {
@@ -84,11 +102,17 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     }
 
     override suspend fun getSubTags(tagId: String, syncedSecondsAgo: Long): List<Tag> {
-        return tagDao.getSubTags(tagId).toTagList()
+        val after = computeTimestamp(syncedSecondsAgo)
+        return tagDao.getSubTags(tagId, after).toTagList()
     }
 
     override suspend fun getAllTags(syncedSecondsAgo: Long): List<Tag> {
-        return tagDao.getAll().map { it.toTag() }
+        val after = computeTimestamp(syncedSecondsAgo)
+        return tagDao.getAll(after).map { it.toTag() }
+    }
+
+    override suspend fun getAllTagsSyncedBefore(secondsAgo: Long): List<String> {
+        return tagDao.getAllBefore(computeTimestamp(secondsAgo))
     }
 
     override suspend fun setTags(tags: List<Tag>) {
@@ -96,7 +120,8 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     }
 
     override suspend fun getUserProfile(userId: String, syncedSecondsAgo: Long): UserProfile? {
-        return userProfileDao.get(userId)?.toUserProfile()
+        val after = computeTimestamp(syncedSecondsAgo)
+        return userProfileDao.get(userId, after)?.toUserProfile()
     }
 
     override suspend fun setUserProfile(userProfile: UserProfile) {
@@ -116,16 +141,18 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
             }
 
         tagDao.insertAll(tags)
-        userProfileDao.insertUserProfileTagCrossRefs(tagCrossRefs)
-
         associationDao.insertAll(committeeMemberAssociations)
-        userProfileDao.insertUserProfileCommitteeMemberCrossRefs(committeeMemberCrossRefs)
-
         associationDao.insertAll(associationSubscriptions)
+        userProfileDao.insert(UserProfileRoom(userProfile))
+
+        userProfileDao.insertUserProfileTagCrossRefs(tagCrossRefs)
+        userProfileDao.insertUserProfileCommitteeMemberCrossRefs(committeeMemberCrossRefs)
         userProfileDao.insertUserProfileAssociationSubscriptionCrossRefs(
             associationSubscriptionCrossRefs
         )
+    }
 
-        userProfileDao.insert(UserProfileRoom(userProfile))
+    override suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String> {
+        return userProfileDao.getAllBefore(computeTimestamp(secondsAgo))
     }
 }
