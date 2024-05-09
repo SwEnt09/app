@@ -20,6 +20,8 @@ fun AssociationCommitteeMemberScreen(
         onBackButtonClicked = { navigationActions.goBack() },
         associationList = associationsCommitteeMemberList,
         hasActionButton = false,
-        displayDescription = false
+        onAssociationClicked = {
+            // TODO: navigate to association detail screen
+        }
     )
 }

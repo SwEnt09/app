@@ -30,7 +30,7 @@ constructor(
         }
     }
 
-    // change the user profile
+    // change the user profile in the database
     fun setUserProfile(newUserProfile: UserProfile) {
         viewModelScope.launch {
             repository.setUserProfile(newUserProfile)

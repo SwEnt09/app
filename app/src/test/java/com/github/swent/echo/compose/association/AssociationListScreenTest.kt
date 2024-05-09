@@ -28,16 +28,12 @@ class AssociationListScreenTest {
                 associationList = listOf(testAssociation),
                 hasActionButton = true,
                 actionButtonName = "test action",
-                onActionButtonClicked = {},
-                displayDescription = true
+                onActionButtonClicked = {}
             )
         }
         composeTestRule
             .onNodeWithTag("${testAssociation.associationId}-name", true)
             .assertTextContains(testAssociation.name)
-        composeTestRule
-            .onNodeWithTag("${testAssociation.associationId}-description", true)
-            .assertTextContains(testAssociation.description)
         composeTestRule
             .onNodeWithTag("${testAssociation.associationId}-action-button-text", true)
             .assertTextContains("test action")
@@ -54,8 +50,7 @@ class AssociationListScreenTest {
                 associationList = listOf(testAssociation),
                 hasActionButton = true,
                 actionButtonName = "test-action",
-                onActionButtonClicked = { actionClicked = true },
-                displayDescription = true
+                onActionButtonClicked = { actionClicked = true }
             )
         }
         composeTestRule
@@ -69,12 +64,7 @@ class AssociationListScreenTest {
     @Test
     fun associationScreenWithoutActionButton() {
         composeTestRule.setContent {
-            AssociationListScreen(
-                title = "test",
-                {},
-                associationList = listOf(testAssociation),
-                displayDescription = true
-            )
+            AssociationListScreen(title = "test", {}, associationList = listOf(testAssociation))
         }
         composeTestRule
             .onNodeWithTag("${testAssociation.associationId}-action-button", true)
@@ -82,5 +72,25 @@ class AssociationListScreenTest {
         composeTestRule
             .onNodeWithTag("${testAssociation.associationId}-name", true)
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun associationSnackbarIsDisplayedWhenUnfollowClicked() {
+        var undoClicked = false
+        composeTestRule.setContent {
+            AssociationListScreen(
+                title = "test",
+                {},
+                associationList = listOf(testAssociation),
+                hasActionButton = true,
+                actionButtonName = "test-action",
+                onActionButtonClicked = {},
+                onUndoActionButtonClicked = { undoClicked = true }
+            )
+        }
+        composeTestRule
+            .onNodeWithTag("${testAssociation.associationId}-action-button", true)
+            .performClick()
+        composeTestRule.onNodeWithTag("snackbar").assertIsDisplayed()
     }
 }
