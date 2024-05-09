@@ -70,17 +70,20 @@ import com.github.swent.echo.viewmodels.tag.TagViewModel
 
 @Composable
 fun ProfileCreationScreen(
+    modifier: Modifier = Modifier,
     viewModel: CreateProfileViewModel,
     navAction: NavigationActions,
     tagviewModel: TagViewModel
 ) {
     var dialogVisible by remember { mutableStateOf(false) }
     ProfileCreationUI(
+        modifier = modifier,
         sectionList = SectionEPFL.entries,
         semList = SemesterEPFL.entries,
         tagList = viewModel.tagList.collectAsState().value,
         onSave = viewModel::profilesave,
         onAdd = { dialogVisible = true },
+        tagDelete = viewModel::removeTag,
         navAction = navAction,
     )
 
@@ -106,26 +109,29 @@ fun ProfileCreationScreen(
 @SuppressLint("RestrictedApi")
 @Composable
 fun ProfileCreationUI(
+    modifier: Modifier = Modifier,
     sectionList: List<Section>,
     semList: List<Semester>,
     tagList: Set<Tag>,
     onSave: () -> Unit,
     onAdd: () -> Unit,
+    tagDelete: (Tag) -> Unit,
     navAction: NavigationActions,
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().padding(16.dp).testTag("profile-creation"),
+        modifier = modifier.fillMaxSize().padding(16.dp).testTag("profile-creation"),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
+            modifier = modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
         ) {
             var firstName by remember { mutableStateOf("") }
             var lastName by remember { mutableStateOf("") }
             var showError by remember { mutableStateOf(false) }
+            var showErrorMessage by remember { mutableStateOf(0) }
 
             // Back button
-            IconButton(onClick = { navAction.goBack() }, modifier = Modifier.testTag("Back")) {
+            IconButton(onClick = { navAction.goBack() }, modifier = modifier.testTag("Back")) {
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = "go back",
@@ -137,31 +143,31 @@ fun ProfileCreationUI(
             OutlinedTextField(
                 value = firstName,
                 onValueChange = { firstName = it },
-                modifier = Modifier.testTag("FirstName"),
+                modifier = modifier.testTag("FirstName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) },
                 singleLine = true,
                 isError = firstName.isBlank()
             )
 
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = modifier.height(5.dp))
 
             OutlinedTextField(
                 value = lastName,
                 onValueChange = { lastName = it },
-                modifier = Modifier.testTag("LastName"),
+                modifier = modifier.testTag("LastName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) },
                 singleLine = true,
                 isError = lastName.isBlank()
             )
 
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = modifier.height(5.dp))
 
             // Section and semester dropdown menus
             DropDownListFunctionWrapper(sectionList, R.string.profile_creation_section)
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = modifier.height(5.dp))
             DropDownListFunctionWrapper(semList, R.string.profile_creation_semester)
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = modifier.height(10.dp))
 
             // Tags
             Text(
@@ -170,11 +176,11 @@ fun ProfileCreationUI(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = modifier.height(10.dp))
 
             FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 for (tag in tagList) {
-                    InputChipFun(tag.name) {}
+                    InputChipFun(tag.name) { tagDelete(tag) }
                 }
 
                 // Add tag button
@@ -182,37 +188,43 @@ fun ProfileCreationUI(
                     onClick = { onAdd() },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.testTag("AddTag")
+                    modifier = modifier.testTag("AddTag")
                 ) {
                     Icon(Icons.Default.Add, "Add tags")
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = modifier.weight(1f))
+
             // Save button
             OutlinedButton(
                 onClick = {
                     if (firstName.isBlank() || lastName.isBlank()) {
                         showError = true
+                         showErrorMessage = if (firstName.isBlank()) {
+                            ProfileCreationErrorKind.EMPTY_FIRST_NAME.errorMess
+                        } else {
+                            ProfileCreationErrorKind.EMPTY_LAST_NAME.errorMess
+                        }
                         return@OutlinedButton
                     } else {
                         onSave()
                         navAction.navigateTo(Routes.MAP)
                     }
                 },
-                modifier = Modifier.fillMaxWidth().testTag("Save")
+                modifier = modifier.fillMaxWidth().testTag("Save")
             ) {
                 Text(text = stringResource(id = R.string.profile_creation_save_button))
             }
             if (showError) {
                 Snackbar(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = modifier.padding(16.dp),
                     action = {
                         Button(onClick = { showError = false }) {
                             Text(stringResource(id = R.string.profile_creation_dismiss))
                         }
                     }
                 ) {
-                    Text(stringResource(id = R.string.profile_creation_empty_fields_error))
+                    Text(stringResource(id = showErrorMessage))
                 }
             }
         }
@@ -273,14 +285,14 @@ fun InputChipFun(
     text: String,
     onDismiss: () -> Unit,
 ) {
-    var enabled1 by remember { mutableStateOf(true) }
-    if (!enabled1) return
+    var selected by remember { mutableStateOf(true) }
+    if (!selected) return
 
     InputChip(
-        selected = enabled1,
+        selected = selected,
         onClick = {
             onDismiss()
-            enabled1 = !enabled1
+            selected = !selected
         },
         label = { Text(text) },
         modifier = Modifier.testTag(text),
@@ -293,4 +305,9 @@ fun InputChipFun(
             )
         }
     )
+}
+
+enum class ProfileCreationErrorKind(val errorMess: Int) {
+    EMPTY_FIRST_NAME(R.string.profile_creation_empty_FN),
+    EMPTY_LAST_NAME(R.string.profile_creation_empty_LN)
 }
