@@ -246,7 +246,7 @@ class MainActivityTest {
         // Check that the event was updated in the repository
         runBlocking {
             val event = repository.getEvent(eventId)
-            assertEquals(newTitle, event.title)
+            assertEquals(newTitle, event!!.title)
         }
     }
 }
