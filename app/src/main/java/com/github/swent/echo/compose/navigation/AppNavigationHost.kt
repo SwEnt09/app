@@ -34,17 +34,29 @@ fun AppNavigationHost(
     authenticationService: AuthenticationService,
     repository: Repository,
 ) {
-    val navActions = NavigationActions(navController, authenticationService, repository)
+    val navActions = NavigationActions(navController)
 
     // At application start, initialize the authentication service and navigate to the map screen.
     // The navigation actions will take care of navigating to the correct screen based on the
     // current user id and its profile.
     LaunchedEffect(navController) {
         // Make sure we initialize the authentication service. Otherwise, the current user id will
-        // always be null and the user will always be redirected to the login screen...
+        // always be null.
         authenticationService.initialize()
 
-        navActions.navigateTo(Routes.MAP)
+        // Get the current user id
+        val userId = authenticationService.getCurrentUserID()
+
+        // If the user is not logged in, navigate to the register screen. Else if the user is
+        // logged in but has no profile, navigate to the create profile screen. Otherwise, navigate
+        // to the map screen.
+        if (userId == null) {
+            navActions.navigateTo(Routes.REGISTER)
+        } else if (repository.getUserProfile(userId) == null) {
+            navActions.navigateTo(Routes.PROFILE_CREATION)
+        } else {
+            navActions.navigateTo(Routes.MAP)
+        }
     }
 
     NavHost(
