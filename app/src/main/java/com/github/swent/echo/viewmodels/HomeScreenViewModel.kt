@@ -87,6 +87,10 @@ constructor(
     val section = _section.asStateFlow()
     private val _semester = MutableStateFlow("")
     val semester = _semester.asStateFlow()
+    private val sectionTagId = "30f27641-bd63-42e7-9d95-6117ad997554"
+    private val semesterTagId = "319715cd-6210-4e62-a061-c533095bd098"
+    private lateinit var sectionTags: List<Tag>
+    private lateinit var semesterTags: List<Tag>
     private val _followedTags = MutableStateFlow<List<Tag>>(listOf())
     val followedTags = _followedTags.asStateFlow()
     private val _selectedTagId = MutableStateFlow<String?>(null)
@@ -106,6 +110,8 @@ constructor(
             _profileName.value = repository.getUserProfile(userId)?.name ?: ""
             _followedTags.value =
                 repository.getUserProfile(userId)?.tags?.toList() ?: allTagSet.toList()
+            sectionTags = repository.getSubTags(sectionTagId)
+            semesterTags = repository.getSubTags(semesterTagId)
             refreshFiltersContainer()
         }
     }
@@ -255,20 +261,21 @@ constructor(
                     }
                     .filter { event ->
                         !_filtersContainer.value.epflChecked ||
-                            event.tags.any { tag -> tag.name.lowercase() == "epfl" }
+                                (!event.tags.any { tag -> sectionTags.contains(tag) } &&
+                                        !event.tags.any { tag -> semesterTags.contains(tag) })
                     }
                     .filter { event ->
                         !_filtersContainer.value.sectionChecked ||
                             _section.value == "" ||
                             event.tags.any { tag ->
-                                tag.name.lowercase() == section.value.lowercase()
+                                tag.name.lowercase() == _section.value.lowercase()
                             }
                     }
                     .filter { event ->
                         !_filtersContainer.value.classChecked ||
                             _semester.value == "" ||
                             event.tags.any { tag ->
-                                tag.name.lowercase() == semester.value.lowercase()
+                                tag.name.lowercase() == _semester.value.lowercase()
                             }
                     }
                     .sortedBy { event ->
