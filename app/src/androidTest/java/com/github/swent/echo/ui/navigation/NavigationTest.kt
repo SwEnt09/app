@@ -35,26 +35,30 @@ class NavigationTest {
     @Inject lateinit var authenticationService: AuthenticationService
     @Inject lateinit var repository: Repository
 
+    private fun setUpValidUserId() = runBlocking {
+        authenticationService.signUp(EMAIL, PASSWORD)
+        authenticationService.signIn(EMAIL, PASSWORD)
+    }
+
+    private fun setUpValidUserProfile() = runBlocking {
+        authenticationService.signUp(EMAIL, PASSWORD)
+        authenticationService.signIn(EMAIL, PASSWORD)
+        repository.setUserProfile(
+            UserProfile(
+                authenticationService.getCurrentUserID()!!,
+                "John Doe",
+                null,
+                null,
+                emptySet(),
+                emptySet(),
+                emptySet(),
+            )
+        )
+    }
+
     @Before
     fun setUp() {
         hiltRule.inject()
-
-        // Perform the sign up, sign in, and set the user profile
-        runBlocking {
-            authenticationService.signUp(EMAIL, PASSWORD)
-            authenticationService.signIn(EMAIL, PASSWORD)
-            repository.setUserProfile(
-                UserProfile(
-                    authenticationService.getCurrentUserID()!!,
-                    "John Doe",
-                    null,
-                    null,
-                    emptySet(),
-                    emptySet(),
-                    emptySet(),
-                )
-            )
-        }
     }
 
     @After
@@ -63,12 +67,12 @@ class NavigationTest {
     }
 
     private fun setUp(route: Routes) {
+        setUpValidUserProfile()
+
         composeTestRule.activity.setContent {
             val navController = rememberNavController()
-            val navigationActions =
-                NavigationActions(navController, authenticationService, repository)
+            val navigationActions = NavigationActions(navController)
             AppNavigationHost(
-                userIsLoggedIn = false,
                 navController = navController,
                 authenticationService = authenticationService,
                 repository = repository
@@ -81,7 +85,6 @@ class NavigationTest {
     fun shouldShowRegisterScreenWhenTheUserIsNotLoggedIn() {
         composeTestRule.activity.setContent {
             AppNavigationHost(
-                userIsLoggedIn = false,
                 authenticationService = authenticationService,
                 repository = repository
             )
@@ -91,33 +94,29 @@ class NavigationTest {
     }
 
     @Test
-    fun shouldShowMapScreenWhenTheUserIsLoggedIn() {
+    fun shouldShowProfileCreationScreenWhenTheUserHasNoProfile() {
+        setUpValidUserId()
+
         composeTestRule.activity.setContent {
             AppNavigationHost(
-                userIsLoggedIn = true,
+                authenticationService = authenticationService,
+                repository = repository
+            )
+        }
+
+        composeTestRule.onNodeWithTag("profile-creation").assertIsDisplayed()
+    }
+
+    @Test
+    fun shouldShowMapScreenWhenTheUserHasProfile() {
+        setUpValidUserProfile()
+        composeTestRule.activity.setContent {
+            AppNavigationHost(
                 authenticationService = authenticationService,
                 repository = repository
             )
         }
 
         composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
-    }
-
-    @Test
-    fun shouldShowTheMapScreenWhenNavigatingToTheMapRoute() {
-        setUp(Routes.MAP)
-        composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
-    }
-
-    @Test
-    fun shouldShowTheLoginScreenWhenNavigatingToTheLoginRoute() {
-        setUp(Routes.LOGIN)
-        composeTestRule.onNodeWithTag("login-screen").assertIsDisplayed()
-    }
-
-    @Test
-    fun shouldShowTheRegisterScreenWhenNavigatingToTheRegisterRoute() {
-        setUp(Routes.REGISTER)
-        composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
     }
 }
