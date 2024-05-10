@@ -1,5 +1,6 @@
 package com.github.swent.echo.data.model
 
+import com.github.swent.echo.compose.map.MAP_CENTER
 import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.serialization.Serializable
 
@@ -16,6 +17,6 @@ data class Location(val name: String, val lat: Double, val long: Double) {
     fun toLatLng() = LatLng(lat, long)
 
     companion object {
-        val EMPTY = Location(name = "", lat = 0.0, long = 0.0)
+        val EMPTY = Location(name = "", 46.5191, 6.5668)
     }
 }

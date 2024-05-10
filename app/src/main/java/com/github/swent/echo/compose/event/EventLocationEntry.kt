@@ -78,7 +78,7 @@ fun SelectLocationDialog(
         Card(modifier = Modifier.fillMaxWidth().testTag("Location-dialog")) {
             Column(modifier = Modifier.padding(5.dp)) {
                 Box(modifier = Modifier.aspectRatio(1F)) {
-                    LocationSelector(initialLocation = point) { point = it }
+                    LocationSelector(initialLocation = currentLocation.toLatLng()) { point = it }
                 }
                 Row {
                     OutlinedButton(onClick = onDismissRequest) {
