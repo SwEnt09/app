@@ -79,9 +79,9 @@ fun EventScreen(
     ) { padding ->
         Column(
             modifier =
-                Modifier.padding(padding).verticalScroll(rememberScrollState()).pointerInput(Unit) {
-                    detectTapGestures(onTap = { focusManager.clearFocus() })
-                }
+                Modifier.padding(padding)
+                    .verticalScroll(state = rememberScrollState())
+                    .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
         ) {
             // all the inputs for an event
             EventPropertiesFields(eventViewModel = eventViewModel)

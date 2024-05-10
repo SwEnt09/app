@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.map
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +28,7 @@ fun LocationSelector(
             context.getString(R.string.maptiler_api_key)
     var markerCenter by remember { mutableStateOf(initialLocation) }
     MapLibre(
-        modifier = modifier.testTag("location-selector-map-libre"),
+        modifier = modifier.testTag("location-selector-map-libre").fillMaxSize(),
         styleUrl = styleUrl,
         cameraPosition = CameraPosition(target = initialLocation, zoom = DEFAULT_ZOOM)
     ) {
@@ -43,6 +44,27 @@ fun LocationSelector(
         )
         Symbol(
             center = markerCenter,
+            size = 0.5F,
+            color = "Red",
+            imageId = R.drawable.red_marker,
+            isDraggable = false
+        )
+    }
+}
+
+@Composable
+fun LocationDisplayer(modifier: Modifier = Modifier, position: LatLng = MAP_CENTER.toLatLng()) {
+    val context = LocalContext.current
+    val styleUrl =
+        context.getString(R.string.maptiler_base_style_url) +
+            context.getString(R.string.maptiler_api_key)
+    MapLibre(
+        modifier = modifier.testTag("location-displayer-map-libre").fillMaxSize(),
+        styleUrl = styleUrl,
+        cameraPosition = CameraPosition(target = position, zoom = DEFAULT_ZOOM)
+    ) {
+        Symbol(
+            center = position,
             size = 0.5F,
             color = "Red",
             imageId = R.drawable.red_marker,
