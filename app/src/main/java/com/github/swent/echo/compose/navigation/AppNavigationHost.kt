@@ -2,6 +2,7 @@ package com.github.swent.echo.compose.navigation
 
 // import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -10,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.association.AssociationCommitteeMemberScreen
 import com.github.swent.echo.compose.association.AssociationSubscriptionsScreen
+import com.github.swent.echo.compose.authentication.LoadingScreen
 import com.github.swent.echo.compose.authentication.LoginScreen
 import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import com.github.swent.echo.compose.authentication.RegisterScreen
@@ -28,18 +30,29 @@ import com.github.swent.echo.ui.navigation.Routes
  */
 @Composable
 fun AppNavigationHost(
-    userIsLoggedIn: Boolean,
     navController: NavHostController = rememberNavController(),
     authenticationService: AuthenticationService,
     repository: Repository,
 ) {
     val navActions = NavigationActions(navController, authenticationService, repository)
 
+    // At application start, initialize the authentication service and navigate to the map screen.
+    // The navigation actions will take care of navigating to the correct screen based on the
+    // current user id and its profile.
+    LaunchedEffect(navController) {
+        // Make sure we initialize the authentication service. Otherwise, the current user id will
+        // always be null and the user will always be redirected to the login screen...
+        authenticationService.initialize()
+
+        navActions.navigateTo(Routes.MAP)
+    }
+
     NavHost(
         navController = navController,
-        // startDestination = Routes.PROFILE_CREATION.name,
-        startDestination = if (userIsLoggedIn) Routes.MAP.name else Routes.REGISTER.name,
+        startDestination = Routes.LOADING.name,
     ) {
+        composable(Routes.LOADING.name) { LoadingScreen() }
+
         composable(Routes.LOGIN.name) {
             LoginScreen(loginViewModel = hiltViewModel(), navActions = navActions)
         }

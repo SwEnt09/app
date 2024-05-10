@@ -10,6 +10,7 @@ data class Routes(val name: String) {
 
     /** The different routes available */
     companion object {
+        val LOADING = Routes("loading")
         val LOGIN = Routes("login")
         val REGISTER = Routes("register")
         val MAP = Routes("map")

@@ -14,7 +14,6 @@ import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.theme.EchoTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -25,8 +24,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // This happens so quickly, I doesn't make sense to show a loading screen.
-        runBlocking { authenticationService.initialize() }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         setContent {
             EchoTheme {
@@ -36,7 +33,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     AppNavigationHost(
-                        userIsLoggedIn = authenticationService.userIsLoggedIn(),
                         authenticationService = authenticationService,
                         repository = repository,
                     )
