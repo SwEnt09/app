@@ -236,9 +236,9 @@ constructor(
                         _filtersContainer.value.searchEntry == "" ||
                             event.tags.any { tag ->
                                 filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
-                            }
-                                || areWordsInTitle(event, filterWordList)
-                                || areWordsInDescription(event, filterWordList)
+                            } ||
+                            areWordsInTitle(event, filterWordList) ||
+                            areWordsInDescription(event, filterWordList)
                     }
                     .filter { event -> // filter by time
                         dateFilterConditions(event)
@@ -261,8 +261,8 @@ constructor(
                     }
                     .filter { event ->
                         !_filtersContainer.value.epflChecked ||
-                                (!event.tags.any { tag -> sectionTags.contains(tag) } &&
-                                        !event.tags.any { tag -> semesterTags.contains(tag) })
+                            (!event.tags.any { tag -> sectionTags.contains(tag) } &&
+                                !event.tags.any { tag -> semesterTags.contains(tag) })
                     }
                     .filter { event ->
                         !_filtersContainer.value.sectionChecked ||
