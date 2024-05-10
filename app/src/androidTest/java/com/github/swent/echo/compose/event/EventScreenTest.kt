@@ -103,6 +103,7 @@ class EventScreenTest {
         button.performScrollTo()
         button.assertIsDisplayed()
         button.performClick()
+        dialog.assertExists()
         dialog.assertIsDisplayed()
     }
 

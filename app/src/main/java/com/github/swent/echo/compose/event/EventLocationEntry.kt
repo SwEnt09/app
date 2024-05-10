@@ -35,7 +35,6 @@ fun EventLocationEntry(location: Location, onLocationChanged: (Location) -> Unit
     var displayedLocation by remember { mutableStateOf(location) }
     if (editLocation) {
         SelectLocationDialog(
-            modifier = Modifier.testTag("Location-dialog"),
             currentLocation = location,
             onDismissRequest = { editLocation = false }
         ) {
@@ -80,7 +79,7 @@ fun SelectLocationDialog(
     var point by remember { mutableStateOf(currentLocation.toLatLng()) }
 
     Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties()) {
-        Card(modifier = Modifier.fillMaxWidth()) {
+        Card(modifier = Modifier.fillMaxWidth().testTag("Location-dialog")) {
             Column(modifier = Modifier.padding(5.dp)) {
                 Box(modifier = Modifier.aspectRatio(1F)) {
                     LocationSelector(initialLocation = currentLocation.toLatLng()) { point = it }
