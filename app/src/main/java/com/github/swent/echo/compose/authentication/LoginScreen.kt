@@ -27,7 +27,9 @@ fun LoginScreen(loginViewModel: LoginViewModel, navActions: NavigationActions) {
     val state by loginViewModel.state.collectAsState()
 
     if (state is AuthenticationState.SignedIn) {
-        LaunchedEffect(state) { navActions.navigateTo(Routes.MAP) }
+        LaunchedEffect(state) {
+            navActions.navigateTo((state as AuthenticationState.SignedIn).redirect)
+        }
     }
 
     Column(
