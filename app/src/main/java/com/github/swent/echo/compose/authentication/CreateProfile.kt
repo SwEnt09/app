@@ -85,6 +85,8 @@ fun ProfileCreationScreen(
         onAdd = { dialogVisible = true },
         tagDelete = viewModel::removeTag,
         navAction = navAction,
+        onFirstNameChange = viewModel::setFirstName,
+        onLastNameChange = viewModel::setLastName
     )
 
     if (dialogVisible) {
@@ -117,6 +119,8 @@ fun ProfileCreationUI(
     onAdd: () -> Unit,
     tagDelete: (Tag) -> Unit,
     navAction: NavigationActions,
+    onFirstNameChange: (String) -> Unit = {},
+    onLastNameChange: (String) -> Unit = {}
 ) {
     Box(
         modifier = modifier.fillMaxSize().padding(16.dp).testTag("profile-creation"),

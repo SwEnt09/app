@@ -100,7 +100,7 @@ constructor(
                 repository.setUserProfile(
                     UserProfile(
                         userId,
-                        name = "$firstName $lastName",
+                        name = "${firstName.value} ${lastName.value}",
                         semester = _selectedSemester.value,
                         section = _selectedSection.value,
                         tags = _tagList.value,
