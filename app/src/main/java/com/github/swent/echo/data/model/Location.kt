@@ -1,6 +1,5 @@
 package com.github.swent.echo.data.model
 
-import com.github.swent.echo.compose.map.MAP_CENTER
 import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.serialization.Serializable
 

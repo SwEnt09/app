@@ -100,6 +100,8 @@ class EventScreenTest {
         val button = composeTestRule.onNodeWithTag("Location-button")
         val dialog = composeTestRule.onNodeWithTag("Location-dialog")
         dialog.assertDoesNotExist()
+        button.performScrollTo()
+        button.assertIsDisplayed()
         button.performClick()
         dialog.assertIsDisplayed()
     }

@@ -4,7 +4,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,13 +13,15 @@ class LocationSelectorTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp() {
+    @Test
+    fun shouldDisplayLocationSelector() {
         composeTestRule.setContent { LocationSelector {} }
+        composeTestRule.onNodeWithTag("location-selector-map-libre").assertIsDisplayed()
     }
 
     @Test
-    fun shouldDisplayLocationSelector() {
-        composeTestRule.onNodeWithTag("location-selector-map-libre").assertIsDisplayed()
+    fun shouldDisplayLocationDisplayer() {
+        composeTestRule.setContent { LocationDisplayer() }
+        composeTestRule.onNodeWithTag("location-displayer-map-libre").assertIsDisplayed()
     }
 }
