@@ -2,12 +2,16 @@ package com.github.swent.echo.compose.navigation
 
 // import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.compose.association.AssociationCommitteeMemberScreen
+import com.github.swent.echo.compose.association.AssociationSubscriptionsScreen
+import com.github.swent.echo.compose.authentication.LoadingScreen
 import com.github.swent.echo.compose.authentication.LoginScreen
 import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import com.github.swent.echo.compose.authentication.RegisterScreen
@@ -26,18 +30,41 @@ import com.github.swent.echo.ui.navigation.Routes
  */
 @Composable
 fun AppNavigationHost(
-    userIsLoggedIn: Boolean,
     navController: NavHostController = rememberNavController(),
     authenticationService: AuthenticationService,
     repository: Repository,
 ) {
-    val navActions = NavigationActions(navController, authenticationService, repository)
+    val navActions = NavigationActions(navController)
+
+    // At application start, initialize the authentication service and navigate to the map screen.
+    // The navigation actions will take care of navigating to the correct screen based on the
+    // current user id and its profile.
+    LaunchedEffect(navController) {
+        // Make sure we initialize the authentication service. Otherwise, the current user id will
+        // always be null.
+        authenticationService.initialize()
+
+        // Get the current user id
+        val userId = authenticationService.getCurrentUserID()
+
+        // If the user is not logged in, navigate to the register screen. Else if the user is
+        // logged in but has no profile, navigate to the create profile screen. Otherwise, navigate
+        // to the map screen.
+        if (userId == null) {
+            navActions.navigateTo(Routes.REGISTER)
+        } else if (repository.getUserProfile(userId) == null) {
+            navActions.navigateTo(Routes.PROFILE_CREATION)
+        } else {
+            navActions.navigateTo(Routes.MAP)
+        }
+    }
 
     NavHost(
         navController = navController,
-        //  startDestination = Routes.PROFILE_CREATION.name,
-        startDestination = if (userIsLoggedIn) Routes.MAP.name else Routes.REGISTER.name,
+        startDestination = Routes.LOADING.name,
     ) {
+        composable(Routes.LOADING.name) { LoadingScreen() }
+
         composable(Routes.LOGIN.name) {
             LoginScreen(loginViewModel = hiltViewModel(), navActions = navActions)
         }
@@ -66,6 +93,20 @@ fun AppNavigationHost(
         composable(Routes.EDIT_EVENT.name) {
             // TODO: set the event id in the eventViewModel as a savedStateHandle with key "eventId"
             EditEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
+        }
+
+        composable(Routes.ASSOCIATION_SUBSCRIPTIONS.name) {
+            AssociationSubscriptionsScreen(
+                userProfileViewModel = hiltViewModel(),
+                navigationActions = navActions
+            )
+        }
+
+        composable(Routes.ASSOCIATION_MEMBERSHIPS.name) {
+            AssociationCommitteeMemberScreen(
+                userProfileViewModel = hiltViewModel(),
+                navigationActions = navActions
+            )
         }
     }
 }

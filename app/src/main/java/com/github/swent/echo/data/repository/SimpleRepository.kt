@@ -24,6 +24,7 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
 
     private val associations = mutableSetOf<Association>()
     private val events = mutableListOf<Event>()
+    private val eventJoins = mutableMapOf<String, List<Event>>()
     private val tags =
         mutableSetOf(
             Tag("1", "Sport", Repository.ROOT_TAG_ID),
@@ -98,6 +99,26 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
 
     override suspend fun getAllEvents(): List<Event> {
         return events
+    }
+
+    override suspend fun joinEvent(userId: String, event: Event): Boolean {
+        val userJoins = eventJoins.get(userId).orEmpty()
+        if (!userJoins.contains(event)) {
+            eventJoins.set(userId, userJoins + event)
+        }
+        return true
+    }
+
+    override suspend fun leaveEvent(userId: String, event: Event): Boolean {
+        val userJoins = eventJoins.get(userId).orEmpty()
+        if (userJoins.contains(event)) {
+            eventJoins.set(userId, userJoins - event)
+        }
+        return true
+    }
+
+    override suspend fun getJoinedEvents(userId: String): List<Event> {
+        return eventJoins.get(userId).orEmpty()
     }
 
     override suspend fun getTag(tagId: String): Tag {

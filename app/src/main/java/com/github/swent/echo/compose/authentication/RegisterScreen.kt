@@ -38,7 +38,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
     if (state is AuthenticationState.SignedIn) {
         LaunchedEffect(state) {
             if (usingGoogleAuthentication) {
-                navActions.navigateTo(Routes.MAP)
+                navActions.navigateTo((state as AuthenticationState.SignedIn).redirect)
             } else {
                 val message = context.getString(R.string.register_screen_confirm_your_email)
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()

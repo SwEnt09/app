@@ -53,7 +53,7 @@ class HomeScreenViewModelTest {
             name = "John Doe",
             semester = null,
             section = null,
-            tags = setOf(),
+            tags = tagSet.toSet(),
             committeeMember = setOf(),
             associationsSubscriptions = setOf()
         )
@@ -110,12 +110,25 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun profileNameTest() {
+    fun followedTagsTest() {
+        assertEquals(homeScreenViewModel.followedTags.value, tagSet)
+        assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
+        homeScreenViewModel.onFollowedTagClicked(Tag("1", "wow"))
+        assertEquals(homeScreenViewModel.selectedTagId.value, "1")
+        assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
+        homeScreenViewModel.onFollowedTagClicked(Tag("2", "test"))
+        assertEquals(homeScreenViewModel.selectedTagId.value, "2")
+        assertEquals(homeScreenViewModel.displayEventList.value.size, 0)
+        homeScreenViewModel.onFollowedTagClicked(Tag("3", "nonexistentTag"))
         assertEquals(
-            homeScreenViewModel.profileName.value,
-            "John Doe"
-        ) // /!\ this is a placeholder that needs to be changed when the repository is linked to the
-        // viewModel (mock the rep then)
+            homeScreenViewModel.selectedTagId.value,
+            "2"
+        ) // selected tag should not change if the tag is nonexistent
+    }
+
+    @Test
+    fun profileNameTest() {
+        assertEquals(homeScreenViewModel.profileName.value, "John Doe")
         assertEquals(homeScreenViewModel.profileClass.value, "")
     }
 

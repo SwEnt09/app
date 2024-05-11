@@ -10,6 +10,7 @@ import com.github.swent.echo.data.room.dao.UserProfileRoomDao
 import com.github.swent.echo.data.room.entity.AssociationRoom
 import com.github.swent.echo.data.room.entity.EventRoom
 import com.github.swent.echo.data.room.entity.EventTagCrossRef
+import com.github.swent.echo.data.room.entity.JoinedEventRoom
 import com.github.swent.echo.data.room.entity.TagRoom
 import com.github.swent.echo.data.room.entity.UserProfileAssociationSubscriptionCrossRef
 import com.github.swent.echo.data.room.entity.UserProfileCommitteeMemberCrossRef
@@ -22,6 +23,7 @@ import com.github.swent.echo.data.room.entity.UserProfileTagCrossRef
             AssociationRoom::class,
             EventRoom::class,
             EventTagCrossRef::class,
+            JoinedEventRoom::class,
             TagRoom::class,
             UserProfileRoom::class,
             UserProfileTagCrossRef::class,

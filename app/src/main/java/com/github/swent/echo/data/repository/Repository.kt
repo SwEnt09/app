@@ -29,6 +29,12 @@ interface Repository {
 
     suspend fun getAllEvents(): List<Event>
 
+    suspend fun joinEvent(userId: String, event: Event): Boolean
+
+    suspend fun leaveEvent(userId: String, event: Event): Boolean
+
+    suspend fun getJoinedEvents(userId: String): List<Event>
+
     suspend fun getTag(tagId: String): Tag
 
     /**

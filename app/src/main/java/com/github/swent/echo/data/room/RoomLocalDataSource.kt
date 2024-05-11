@@ -8,6 +8,7 @@ import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.room.entity.AssociationRoom
 import com.github.swent.echo.data.room.entity.EventRoom
 import com.github.swent.echo.data.room.entity.EventTagCrossRef
+import com.github.swent.echo.data.room.entity.JoinedEventRoom
 import com.github.swent.echo.data.room.entity.TagRoom
 import com.github.swent.echo.data.room.entity.UserProfileAssociationSubscriptionCrossRef
 import com.github.swent.echo.data.room.entity.UserProfileCommitteeMemberCrossRef
@@ -154,5 +155,57 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
 
     override suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String> {
         return userProfileDao.getAllBefore(computeTimestamp(secondsAgo))
+    }
+
+    override suspend fun joinEvent(
+        userId: String,
+        eventId: String,
+    ) {
+        eventDao.insertJoinedEvent(
+            JoinedEventRoom(
+                userId,
+                eventId,
+            ),
+        )
+    }
+
+    override suspend fun leaveEvent(
+        userId: String,
+        eventId: String,
+    ) {
+        eventDao.deleteJoinedEvent(
+            JoinedEventRoom(
+                userId,
+                eventId,
+            ),
+        )
+    }
+
+    override suspend fun getJoinedEvents(
+        userId: String,
+    ): List<Event> {
+        val eventIds = eventDao.getJoinedEvents(userId)
+        return eventDao.getEventsByIds(eventIds).map { it.toEvent() }
+    }
+
+    override suspend fun joinAssociation(
+        userId: String,
+        associationId: String,
+    ) {
+        userProfileDao.joinAssociation(
+            UserProfileAssociationSubscriptionCrossRef(
+                userId,
+                associationId,
+            )
+        )
+    }
+
+    override suspend fun leaveAssociation(userId: String, associationId: String) {
+        userProfileDao.leaveAssociation(
+            UserProfileAssociationSubscriptionCrossRef(
+                userId,
+                associationId,
+            )
+        )
     }
 }

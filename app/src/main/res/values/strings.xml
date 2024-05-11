@@ -25,6 +25,8 @@
     <!--<string name="hamburger_add_friends">Add Friends</string>
     <string name="hamburger_help">Help</string>-->
     <string name="hamburger_log_out">Log Out</string>
+    <string name="hamburger_association_subscriptions">Followed Associations</string>
+    <string name="hamburger_association_memberships">My Associations</string>
     <string name="app_title">Echo</string>
     <string name="event_info_sheet_join_event_button_text">Join Event</string>
     <string name="create_event_screen_title">Create event</string>
@@ -91,5 +93,11 @@
     <string name="edit_event_screen_delete_button">Delete</string>
     <string name="discover_select_a_category">Select a Category :</string>
     <string name="discover_all">All</string>
+
+    <string name="association_subscription_screen_title">Associations you follow</string>
+    <string name="association_subscription_screen_unfollow">unfollow</string>
+    <string name="association_subscription_screen_snackbar_message">You unfollowed&#160;</string>
+    <string name="association_subscription_screen_snackbar_undo">Undo</string>
+    <string name="association_committee_member_screen_title">Your association memberships</string>
 </resources>
 

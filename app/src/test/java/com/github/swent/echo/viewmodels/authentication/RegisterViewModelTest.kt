@@ -1,7 +1,14 @@
 package com.github.swent.echo.viewmodels.authentication
 
+import app.cash.turbine.test
 import com.github.swent.echo.authentication.AuthenticationResult
-import com.github.swent.echo.fakes.FakeAuthenticationService
+import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.repository.Repository
+import com.github.swent.echo.ui.navigation.Routes
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -13,18 +20,24 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RegisterViewModelTest {
-    private lateinit var fakeAuthenticationService: FakeAuthenticationService
+    private lateinit var authenticationService: AuthenticationService
+    private lateinit var repository: Repository
     private lateinit var viewModel: RegisterViewModel
 
     companion object {
         private const val EMAIL = "test@email.com"
         private const val PASSWORD = "password"
+        private const val ERROR_MESSAGE = "Error message"
+
+        private val USER_PROFILE =
+            UserProfile("id", "John Doe", null, null, emptySet(), emptySet(), emptySet())
     }
 
     @Before
     fun setUp() {
-        fakeAuthenticationService = FakeAuthenticationService()
-        viewModel = RegisterViewModel(fakeAuthenticationService)
+        authenticationService = mockk()
+        repository = mockk()
+        viewModel = RegisterViewModel(authenticationService, repository)
     }
 
     @Test
@@ -33,26 +46,56 @@ class RegisterViewModelTest {
     }
 
     @Test
-    fun `login should return success when successful`() = runTest {
-        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
-        Dispatchers.setMain(testDispatcher)
+    fun `register should return success with map route when successful and has a user profile`() =
+        runTest {
+            val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+            Dispatchers.setMain(testDispatcher)
 
-        viewModel.register(EMAIL, PASSWORD)
-        assertEquals(AuthenticationState.SigningIn, viewModel.state.value)
-        fakeAuthenticationService.completeSigningOperation(AuthenticationResult.Success)
-        assertEquals(AuthenticationState.SignedIn, viewModel.state.value)
-    }
+            every { authenticationService.getCurrentUserID() } returns USER_PROFILE.userId
+            coEvery { authenticationService.signUp(EMAIL, PASSWORD) } returns
+                AuthenticationResult.Success
+            coEvery { repository.getUserProfile(any()) } returns USER_PROFILE
+
+            viewModel.state.test {
+                assertEquals(AuthenticationState.SignedOut, awaitItem())
+                viewModel.register(EMAIL, PASSWORD)
+                assertEquals(AuthenticationState.SigningIn, awaitItem())
+                assertEquals(AuthenticationState.SignedIn(Routes.MAP), awaitItem())
+            }
+        }
+
+    @Test
+    fun `register should return success with profile creation route when successful and has no user profile`() =
+        runTest {
+            val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+            Dispatchers.setMain(testDispatcher)
+
+            every { authenticationService.getCurrentUserID() } returns USER_PROFILE.userId
+            coEvery { authenticationService.signUp(EMAIL, PASSWORD) } returns
+                AuthenticationResult.Success
+            coEvery { repository.getUserProfile(any()) } returns null
+
+            viewModel.state.test {
+                assertEquals(AuthenticationState.SignedOut, awaitItem())
+                viewModel.register(EMAIL, PASSWORD)
+                assertEquals(AuthenticationState.SigningIn, awaitItem())
+                assertEquals(AuthenticationState.SignedIn(Routes.PROFILE_CREATION), awaitItem())
+            }
+        }
 
     @Test
     fun `login should return error when failed`() = runTest {
         val testDispatcher = UnconfinedTestDispatcher(testScheduler)
         Dispatchers.setMain(testDispatcher)
 
-        viewModel.register(EMAIL, PASSWORD)
-        assertEquals(AuthenticationState.SigningIn, viewModel.state.value)
-        fakeAuthenticationService.completeSigningOperation(
-            AuthenticationResult.Error("Error message")
-        )
-        assertEquals(AuthenticationState.Error("Error message"), viewModel.state.value)
+        coEvery { authenticationService.signUp(EMAIL, PASSWORD) } returns
+            AuthenticationResult.Error(ERROR_MESSAGE)
+
+        viewModel.state.test {
+            assertEquals(AuthenticationState.SignedOut, awaitItem())
+            viewModel.register(EMAIL, PASSWORD)
+            assertEquals(AuthenticationState.SigningIn, awaitItem())
+            assertEquals(AuthenticationState.Error(ERROR_MESSAGE), awaitItem())
+        }
     }
 }
