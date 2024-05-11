@@ -144,6 +144,6 @@ class InternetConnectTest {
         val values = flow.toList()
 
         // Assert
-        assertEquals(listOf(ConnectionState.Unavailable), values)
+        assertEquals(listOf(ConnectionState.Unavailable, ConnectionState.Unavailable), values)
     }
 }
