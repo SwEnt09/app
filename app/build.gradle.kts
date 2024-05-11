@@ -130,6 +130,7 @@ dependencies {
     testImplementation(libs.slf4j.simple)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.turbine)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
