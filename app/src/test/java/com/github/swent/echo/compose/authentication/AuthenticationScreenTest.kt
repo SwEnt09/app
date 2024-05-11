@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.AuthenticationState
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -98,7 +99,7 @@ class AuthenticationScreenTest {
         composeTestRule.setContent {
             AuthenticationScreen(
                 ACTION,
-                AuthenticationState.SignedIn,
+                AuthenticationState.SignedIn(Routes.MAP),
                 this::onAuthenticate,
                 this::shouldHaveSigningInTextWhenIsSigningIn
             )
