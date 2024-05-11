@@ -132,6 +132,10 @@ dependencies {
     testImplementation(libs.androidx.ui.test.junit4)
     testImplementation(libs.turbine)
 
+    // Hilt
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.android.compiler)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
