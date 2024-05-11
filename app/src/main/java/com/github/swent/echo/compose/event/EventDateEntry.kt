@@ -27,9 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.swent.echo.R
-import java.time.LocalDate
+import java.time.Instant
 import java.time.LocalTime
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -80,13 +79,13 @@ fun EventDateEntryUnit(
     currentDate: ZonedDateTime,
     onDateChanged: (newDate: ZonedDateTime) -> Unit
 ) {
-    var date = currentDate.toLocalDate()
+    var date by remember { mutableStateOf(currentDate) }
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState =
         DatePickerState(
             locale = Locale.getDefault(),
-            initialSelectedDateMillis = date.toEpochDay() * MILLISECINDAY,
-            yearRange = IntRange(LocalDate.now().year, LocalDate.now().year + YEARRANGE)
+            initialSelectedDateMillis = currentDate.toEpochSecond() * 1000,
+            yearRange = IntRange(ZonedDateTime.now().year, ZonedDateTime.now().year + YEARRANGE)
         )
     var time = currentDate.toLocalTime()
     var showTimePicker by remember { mutableStateOf(false) }
@@ -103,10 +102,11 @@ fun EventDateEntryUnit(
                         Button(
                             onClick = {
                                 date =
-                                    LocalDate.ofEpochDay(
-                                        datePickerState.selectedDateMillis!! / MILLISECINDAY
+                                    ZonedDateTime.ofInstant(
+                                        Instant.ofEpochMilli(datePickerState.selectedDateMillis!!),
+                                        date.zone
                                     )
-                                onDateChanged(date.atTime(time).atZone(ZoneId.systemDefault()))
+                                onDateChanged(date)
                                 showDatePicker = false
                             }
                         ) {
@@ -120,7 +120,7 @@ fun EventDateEntryUnit(
                     )
                 }
             } else {
-                Text(date.toString())
+                Text(date.toLocalDate().toString())
             }
         }
 
@@ -147,7 +147,7 @@ fun EventDateEntryUnit(
                                     .testTag("$label-time-dialog-button"),
                             onClick = {
                                 time = LocalTime.of(timePickerState.hour, timePickerState.minute)
-                                onDateChanged(time.atDate(date).atZone(ZoneId.systemDefault()))
+                                onDateChanged(ZonedDateTime.of(date.toLocalDate(), time, date.zone))
                                 showTimePicker = false
                             }
                         ) {
