@@ -13,6 +13,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verifySequence
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -62,6 +63,7 @@ class InternetConnectTest {
         assert(state is ConnectionState.Unavailable)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun observeConnectivityAsFlowEmitsCorrectValues() = runBlocking {
         // Arrange
@@ -114,6 +116,7 @@ class InternetConnectTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun connectivityStateTesting() = runBlocking {
         // Arrange
