@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.ui.navigation.NavigationActions
@@ -15,8 +16,10 @@ import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
 @HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
 class HomeScreenTest {
 
     @get:Rule(order = 0) val hiltRule = HiltAndroidRule(this)
