@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.compose.components.ConnectivityStatus
 import com.github.swent.echo.compose.components.ConnectivityStatusBox
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith
 class OfflineUITest {
     @get:Rule val composeTestRule = createComposeRule()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun connectivityStatus_initialRendering_connectedState() {
         composeTestRule.setContent { ConnectivityStatus(ConnectionState.Available) }
