@@ -6,7 +6,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -14,24 +13,26 @@ import org.junit.runner.RunWith
 class NetworkServiceImplTest {
     private lateinit var networkService: NetworkServiceImpl
     private lateinit var connectivityManager: ConnectivityManager
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
-    @Before
-    fun setUp() {
+    fun setUp(hasInternetCapability: Boolean) {
         connectivityManager = mockk()
-    }
 
-    @Test
-    fun `should not be online when no network`() {
         every { connectivityManager.activeNetwork } returns mockk()
         every { connectivityManager.getNetworkCapabilities(any()) } returns
-            mockk { every { hasCapability(any()) } returns false }
+            mockk { every { hasCapability(any()) } returns hasInternetCapability }
 
         every {
             connectivityManager.registerNetworkCallback(
                 any<NetworkRequest>(),
                 any<ConnectivityManager.NetworkCallback>()
             )
-        } returns Unit
+        } answers { networkCallback = secondArg() }
+    }
+
+    @Test
+    fun `should not be online when no network`() {
+        setUp(hasInternetCapability = false)
 
         networkService = NetworkServiceImpl(connectivityManager)
         assertFalse(networkService.isOnlineNow())
@@ -39,16 +40,7 @@ class NetworkServiceImplTest {
 
     @Test
     fun `should be online when network is available`() {
-        every { connectivityManager.activeNetwork } returns mockk()
-        every { connectivityManager.getNetworkCapabilities(any()) } returns
-            mockk { every { hasCapability(any()) } returns true }
-
-        every {
-            connectivityManager.registerNetworkCallback(
-                any<NetworkRequest>(),
-                any<ConnectivityManager.NetworkCallback>()
-            )
-        } returns Unit
+        setUp(hasInternetCapability = true)
 
         networkService = NetworkServiceImpl(connectivityManager)
         assertTrue(networkService.isOnlineNow())
@@ -56,17 +48,7 @@ class NetworkServiceImplTest {
 
     @Test
     fun `should be online when onAvailable is called`() {
-        every { connectivityManager.activeNetwork } returns mockk()
-        every { connectivityManager.getNetworkCapabilities(any()) } returns
-            mockk { every { hasCapability(any()) } returns false }
-
-        lateinit var networkCallback: ConnectivityManager.NetworkCallback
-        every {
-            connectivityManager.registerNetworkCallback(
-                any<NetworkRequest>(),
-                any<ConnectivityManager.NetworkCallback>()
-            )
-        } answers { networkCallback = secondArg() }
+        setUp(hasInternetCapability = false)
 
         networkService = NetworkServiceImpl(connectivityManager)
         assertFalse(networkService.isOnlineNow())
@@ -77,17 +59,7 @@ class NetworkServiceImplTest {
 
     @Test
     fun `should be offline when onLost is called`() {
-        every { connectivityManager.activeNetwork } returns mockk()
-        every { connectivityManager.getNetworkCapabilities(any()) } returns
-            mockk { every { hasCapability(any()) } returns true }
-
-        lateinit var networkCallback: ConnectivityManager.NetworkCallback
-        every {
-            connectivityManager.registerNetworkCallback(
-                any<NetworkRequest>(),
-                any<ConnectivityManager.NetworkCallback>()
-            )
-        } answers { networkCallback = secondArg() }
+        setUp(hasInternetCapability = true)
 
         networkService = NetworkServiceImpl(connectivityManager)
         assertTrue(networkService.isOnlineNow())
