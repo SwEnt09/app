@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -46,11 +45,10 @@ fun EventLocationEntry(location: Location, onLocationChanged: (Location) -> Unit
         EventTextEntry(
             name = stringResource(R.string.edit_event_screen_location),
             value = location.name,
-            modifier = Modifier.fillMaxWidth(0.8f)
         ) {
             onLocationChanged(location.copy(name = it))
         }
-        Box(modifier = Modifier.aspectRatio(1.5F)) {
+        Box(modifier = Modifier.aspectRatio(1.5F).padding(EVENT_PADDING_BETWEEN_INPUTS)) {
             LocationDisplayer(position = displayedLocation.toLatLng())
             Box(
                 modifier =
@@ -58,12 +56,10 @@ fun EventLocationEntry(location: Location, onLocationChanged: (Location) -> Unit
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = {}
+                            onClick = { editLocation = true }
                         )
+                        .testTag("Location-button")
             )
-        }
-        Button(modifier = Modifier.testTag("Location-button"), onClick = { editLocation = true }) {
-            Text("Edit")
         }
     }
 }
