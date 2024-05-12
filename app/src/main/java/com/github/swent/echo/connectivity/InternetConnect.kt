@@ -1,24 +1,5 @@
 package com.github.swent.echo.connectivity
 
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
-import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.produceState
-import androidx.compose.ui.platform.LocalContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
-
 sealed class ConnectionState {
     data object Available : ConnectionState()
 
@@ -28,7 +9,7 @@ sealed class ConnectionState {
 /*
 Getting the current connectivity status.
 Checks whether the current network has capability to connect to the internet.
- */
+
 val Context.currentConnectivityState: ConnectionState
     get() {
         val connectivityManager =
@@ -45,10 +26,10 @@ private fun getCurrentConnectivityState(connectivityManager: ConnectivityManager
         }
 
     return if (connected) ConnectionState.Available else ConnectionState.Unavailable
-}
+} */
 /*
 Observe the connectivity status as a flow.
- */
+
 @ExperimentalCoroutinesApi
 fun Context.observeConnectivityAsFlow(): Flow<ConnectionState> {
     return callbackFlow {
@@ -98,8 +79,8 @@ fun NetworkCallback(callback: (ConnectionState) -> Unit): ConnectivityManager.Ne
             callback(ConnectionState.Unavailable)
         }
     }
-}
-
+}*/
+/*
 @ExperimentalCoroutinesApi
 @Composable
 fun connectivityState(): State<ConnectionState> {
@@ -111,3 +92,4 @@ fun connectivityState(): State<ConnectionState> {
         context.observeConnectivityAsFlow().collect { value = it }
     }
 }
+*/
