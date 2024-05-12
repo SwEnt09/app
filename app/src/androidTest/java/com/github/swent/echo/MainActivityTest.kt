@@ -12,7 +12,6 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.requestFocus
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.SectionEPFL
@@ -28,10 +27,8 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 @HiltAndroidTest
-@RunWith(AndroidJUnit4::class)
 class MainActivityTest {
 
     companion object {
