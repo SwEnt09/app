@@ -38,6 +38,8 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
     val profileName by homeScreenViewModel.profileName.collectAsState()
     val profileClass by homeScreenViewModel.profileClass.collectAsState()
 
+    val searchMode by homeScreenViewModel.searchMode.collectAsState()
+
     // Hamburger menu compose
     ModalNavigationDrawer(
         // Content of the hamburger menu
@@ -53,7 +55,16 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
     ) {
         Scaffold(
             modifier = Modifier.testTag("home_screen"),
-            topBar = { TopAppBar(scope, drawerState, mode, homeScreenViewModel::switchMode) },
+            topBar = {
+                TopAppBar(
+                    scope,
+                    drawerState,
+                    mode,
+                    searchMode,
+                    homeScreenViewModel::resetFiltersContainer,
+                    homeScreenViewModel::switchMode
+                )
+            },
             floatingActionButton = {
                 SearchButton(onClick = { homeScreenViewModel.setOverlay(Overlay.SEARCH_SHEET) })
             }
@@ -85,10 +96,12 @@ private fun Content(
     val section by homeScreenViewModel.section.collectAsState()
     val semester by homeScreenViewModel.semester.collectAsState()
 
+    val searchMode by homeScreenViewModel.searchMode.collectAsState()
+
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
             Column {
-                if (tags.isNotEmpty()) {
+                if (tags.isNotEmpty() && !searchMode) {
                     TagUI(
                         tags = tags,
                         selectedTagId = selectedTagId,
@@ -102,11 +115,13 @@ private fun Content(
                 events = displayEventList,
                 callback = homeScreenViewModel::onEventSelected,
             )
-            TagUI(
-                tags = tags,
-                selectedTagId = selectedTagId,
-                onTagClick = homeScreenViewModel::onFollowedTagClicked
-            )
+            if (!searchMode) {
+                TagUI(
+                    tags = tags,
+                    selectedTagId = selectedTagId,
+                    onTagClick = homeScreenViewModel::onFollowedTagClicked
+                )
+            }
         }
 
         if (overlay == Overlay.EVENT_INFO_SHEET && displayEventInfo != null) {

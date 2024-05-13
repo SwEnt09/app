@@ -233,23 +233,28 @@ constructor(
             _displayEventList.value =
                 // special case, if the user follows no tags, display everything
                 if (_followedTags.value.isEmpty()) {
-                    allEventsList.filter { event -> // filter by time to avoid displaying past events
+                    allEventsList.filter { event
+                        -> // filter by time to avoid displaying past events
                         dateFilterConditions(event)
                     }
                 } else if (selectedTagId.value == null) {
-                    allEventsList.filter { event ->
-                        event.tags.any { tag ->
-                            _followedTags.value.any { tag2 -> tag.tagId == tag2.tagId }
+                    allEventsList
+                        .filter { event ->
+                            event.tags.any { tag ->
+                                _followedTags.value.any { tag2 -> tag.tagId == tag2.tagId }
+                            }
                         }
-                    }.filter { event -> // filter by time to avoid displaying past events
-                        dateFilterConditions(event)
-                    }
+                        .filter { event -> // filter by time to avoid displaying past events
+                            dateFilterConditions(event)
+                        }
                 } else {
-                    allEventsList.filter { event ->
-                        event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
-                    }.filter { event -> // filter by time to avoid displaying past events
-                        dateFilterConditions(event)
-                    }
+                    allEventsList
+                        .filter { event ->
+                            event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
+                        }
+                        .filter { event -> // filter by time to avoid displaying past events
+                            dateFilterConditions(event)
+                        }
                 }
         } else {
             _displayEventList.value =
