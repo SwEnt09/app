@@ -37,7 +37,7 @@
     <string name="edit_event_screen_description">Description</string>
     <string name="edit_event_screen_tags">Tags</string>
     <string name="edit_event_screen_organizer">Organizer</string>
-    <string name="edit_event_screen_location">Location</string>
+    <string name="edit_event_screen_location">Name of place</string>
     <string name="edit_event_screen_start_date">Start date</string>
     <string name="edit_event_screen_end_date">End date</string>
     <string name="edit_event_screen_delete_tag_button">Delete tag </string>
