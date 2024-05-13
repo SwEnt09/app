@@ -1,6 +1,5 @@
 package com.github.swent.echo.compose.event
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,9 +28,6 @@ fun EventDropDownSelectOrganizer(
     enabled: Boolean,
     onOrganizerSelected: (organizer: String) -> Unit
 ) {
-    if (organizerList.size < 1) {
-        Log.e("Event Organizer", "the organizer list is too small: < 1")
-    }
     var listDisplayed by remember { mutableStateOf(false) }
     Column(modifier = Modifier.padding(EVENT_PADDING_BETWEEN_INPUTS).fillMaxWidth()) {
         EventEntryName(name = stringResource(R.string.edit_event_screen_organizer))
