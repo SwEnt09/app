@@ -84,9 +84,7 @@ fun ProfileCreationScreen(
         onSave = viewModel::profileSave,
         onAdd = { dialogVisible = true },
         tagDelete = viewModel::removeTag,
-        navAction = navAction,
-        onFirstNameChange = viewModel::setFirstName,
-        onLastNameChange = viewModel::setLastName
+        navAction = navAction
     )
 
     if (dialogVisible) {
@@ -115,12 +113,10 @@ fun ProfileCreationUI(
     sectionList: List<Section>,
     semList: List<Semester>,
     tagList: Set<Tag>,
-    onSave: () -> Unit,
+    onSave: (firstname: String, lastname: String) -> Unit,
     onAdd: () -> Unit,
     tagDelete: (Tag) -> Unit,
     navAction: NavigationActions,
-    onFirstNameChange: (String) -> Unit = {},
-    onLastNameChange: (String) -> Unit = {}
 ) {
     Box(
         modifier = modifier.fillMaxSize().padding(16.dp).testTag("profile-creation"),
@@ -131,6 +127,8 @@ fun ProfileCreationUI(
         ) {
             var firstName by remember { mutableStateOf("") }
             var lastName by remember { mutableStateOf("") }
+         //   var selectedSemester by remember { mutableStateOf<String?>(null) }
+          //  var selectedSection by remember { mutableStateOf<String?>(null) }
             var showError by remember { mutableStateOf(false) }
             var showErrorMessage by remember { mutableStateOf(0) }
 
@@ -146,7 +144,7 @@ fun ProfileCreationUI(
             // First name and last name fields
             OutlinedTextField(
                 value = firstName,
-                onValueChange = { firstName = it },
+                onValueChange =  { firstName = it } ,
                 modifier = modifier.testTag("FirstName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) },
                 singleLine = true,
@@ -211,7 +209,8 @@ fun ProfileCreationUI(
                         }
                         return@OutlinedButton
                     } else {
-                        onSave()
+                       // val selectedSem = SemesterEPFL.entries.firstOrNull { it.name == selectedSemester }
+                        onSave(firstName, lastName)
                         navAction.navigateTo(Routes.MAP)
                     }
                 },
@@ -245,7 +244,9 @@ fun DropDownListFunctionWrapper(elementList: List<Any>, label: Int) {
         Box() {
             OutlinedTextField(
                 value = selectedField,
-                onValueChange = { selectedField = it },
+                onValueChange = {
+                    selectedField = it
+                                },
                 modifier =
                     Modifier.onGloballyPositioned { coordinates ->
                             selectedFieldSize = coordinates.size.toSize()
