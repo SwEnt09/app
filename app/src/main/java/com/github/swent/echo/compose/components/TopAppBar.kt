@@ -30,6 +30,8 @@ fun TopAppBar(
     scope: CoroutineScope,
     drawerState: DrawerState,
     mode: MapOrListMode,
+    searchMode: Boolean,
+    resetSearch: () -> Unit,
     switchMode: () -> Unit
 ) {
     // Scroll behavior for the top app bar, makes it pinned
@@ -55,11 +57,19 @@ fun TopAppBar(
                 )
             }
         },
-        actions = { // mode switch icon
-            IconButton(
-                onClick = { switchMode() },
-                modifier = Modifier.testTag("list_map_mode_button")
-            ) {
+        actions = { // search reset button and list/map mode switch button
+            if (searchMode) {
+                IconButton(
+                    onClick = resetSearch,
+                    modifier = Modifier.testTag("search_reset_button")
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.search_off),
+                        contentDescription = "Search reset icon to reset the search field"
+                    )
+                }
+            }
+            IconButton(onClick = switchMode, modifier = Modifier.testTag("list_map_mode_button")) {
                 Icon(
                     painter =
                         if (mode == MapOrListMode.MAP) {
@@ -67,7 +77,8 @@ fun TopAppBar(
                         } else {
                             painterResource(id = R.drawable.map_icon)
                         },
-                    contentDescription = "Search icon to access the search screen"
+                    contentDescription =
+                        "list/map mode switch icon to switch between list and map mode"
                 )
             }
         },
