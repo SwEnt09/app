@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -25,7 +26,8 @@ class EventViewModel
 constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
-    private val savedState: SavedStateHandle
+    private val savedState: SavedStateHandle,
+    private val networkService: NetworkService
 ) : ViewModel() {
 
     private val _event = MutableStateFlow<Event>(Event.EMPTY)
@@ -37,6 +39,7 @@ constructor(
     val isEventNew = _isEventNew.asStateFlow()
     private val _organizerList = MutableStateFlow<List<String>>(listOf())
     val organizerList = _organizerList.asStateFlow()
+    val isOnline = networkService.isOnline
 
     // initialize async values
     init {

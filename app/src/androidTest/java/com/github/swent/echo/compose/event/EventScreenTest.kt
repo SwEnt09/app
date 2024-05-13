@@ -3,6 +3,8 @@ package com.github.swent.echo.compose.event
 import androidx.activity.compose.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
@@ -17,6 +19,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
@@ -28,6 +31,7 @@ import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
@@ -49,17 +53,27 @@ class EventScreenTest {
     private val mockedAuthenticationService = mockk<AuthenticationService>(relaxed = true)
     private lateinit var eventViewModel: EventViewModel
     private val savedEventId = SavedStateHandle(mapOf())
+    private val mockedNetworkService = mockk<NetworkService>(relaxed = true)
+    private val isOnline = MutableStateFlow(true)
 
     @Before
     fun init() {
-        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService, savedEventId)
+        every { mockedNetworkService.isOnline } returns isOnline
+        eventViewModel =
+            EventViewModel(
+                mockedRepository,
+                mockedAuthenticationService,
+                savedEventId,
+                mockedNetworkService
+            )
         hiltRule.inject()
     }
 
-    private fun setCompose(eventViewModel: EventViewModel) {
+    private fun setCompose(eventViewModel: EventViewModel, canDelete: Boolean = false) {
         composeTestRule.activity.setContent {
             EventScreen(
                 stringResource(R.string.create_event_screen_title),
+                canDelete = canDelete,
                 onEventSaved = {},
                 onEventBackButtonPressed = {},
                 eventViewModel = eventViewModel
@@ -204,19 +218,34 @@ class EventScreenTest {
             Event.EMPTY.copy(maxParticipants = maxParticipants)
         every { mockedAuthenticationService.getCurrentUserID() } returns "testUser"
         savedEventId.set("eventId", "testEvent")
-        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService, savedEventId)
-        composeTestRule.activity.setContent {
-            EventScreen(
-                stringResource(R.string.edit_event_screen_name),
-                canDelete = true,
-                onEventSaved = {},
-                onEventBackButtonPressed = {},
-                eventViewModel = eventViewModel
+        eventViewModel =
+            EventViewModel(
+                mockedRepository,
+                mockedAuthenticationService,
+                savedEventId,
+                mockedNetworkService
             )
-        }
+        setCompose(eventViewModel, true)
         composeTestRule.waitForIdle()
         composeTestRule
             .onNodeWithTag("nb-participant-field")
             .assertTextContains(maxParticipants.toString())
+    }
+
+    @Test
+    fun saveAndDeleteButtonsAvailableWhenOnline() {
+        setCompose(eventViewModel, true)
+        composeTestRule.onNodeWithTag("Save-button").assertIsEnabled()
+        composeTestRule.onNodeWithTag("delete-button").assertIsEnabled()
+        composeTestRule.onNodeWithTag("add-tag-button").assertIsEnabled()
+    }
+
+    @Test
+    fun saveAndDeleteButtonsNotAvailableWhenOffline() {
+        isOnline.value = false
+        setCompose(eventViewModel, true)
+        composeTestRule.onNodeWithTag("Save-button").assertIsNotEnabled()
+        composeTestRule.onNodeWithTag("delete-button").assertIsNotEnabled()
+        composeTestRule.onNodeWithTag("add-tag-button").assertIsNotEnabled()
     }
 }

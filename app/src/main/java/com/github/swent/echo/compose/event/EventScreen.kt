@@ -52,6 +52,8 @@ fun EventScreen(
     var saveButtonClicked by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
 
+    val isOnline by eventViewModel.isOnline.collectAsState()
+
     if (saveButtonClicked && eventStatus is EventStatus.Saved) {
         saveButtonClicked = false
         saveButtonText = R.string.edit_event_screen_save
@@ -84,19 +86,20 @@ fun EventScreen(
                     .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }
         ) {
             // all the inputs for an event
-            EventPropertiesFields(eventViewModel = eventViewModel)
+            EventPropertiesFields(eventViewModel = eventViewModel, isOnline = isOnline)
             // save button
             Row(
                 modifier = Modifier.fillMaxWidth().padding(EVENT_PADDING_BETWEEN_INPUTS),
                 horizontalArrangement = Arrangement.End
             ) {
                 if (canDelete) {
-                    DeleteEventButton {
+                    DeleteEventButton(enabled = isOnline) {
                         // TODO: delete the event in the repository
                         onEventDeleted()
                     }
                 }
                 OutlinedButton(
+                    enabled = isOnline,
                     modifier = Modifier.padding(10.dp).testTag("Save-button"),
                     onClick = {
                         focusManager.clearFocus()
@@ -115,7 +118,7 @@ fun EventScreen(
  * Modifiable fields of an event: title, description, tags, location, start date, end date, pictures
  */
 @Composable
-fun EventPropertiesFields(eventViewModel: EventViewModel) {
+fun EventPropertiesFields(eventViewModel: EventViewModel, isOnline: Boolean) {
     val event by eventViewModel.event.collectAsState()
     val organizerListState = eventViewModel.organizerList.collectAsState()
 
@@ -135,6 +138,7 @@ fun EventPropertiesFields(eventViewModel: EventViewModel) {
 
         EventTagEntry(
             tags = event.tags,
+            enabled = isOnline,
             onTagSelected = { addedTag ->
                 eventViewModel.setEvent(event.copy(tags = event.tags + addedTag))
             },
@@ -150,7 +154,8 @@ fun EventPropertiesFields(eventViewModel: EventViewModel) {
         }
         EventDropDownSelectOrganizer(
             organizerName = organizerName,
-            organizerList = organizerListState.value
+            organizerList = organizerListState.value,
+            enabled = isOnline
         ) {
             eventViewModel.setOrganizer(it)
         }
