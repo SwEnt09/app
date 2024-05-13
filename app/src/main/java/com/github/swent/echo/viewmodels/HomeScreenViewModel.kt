@@ -95,6 +95,8 @@ constructor(
     val followedTags = _followedTags.asStateFlow()
     private val _selectedTagId = MutableStateFlow<String?>(null)
     val selectedTagId = _selectedTagId.asStateFlow()
+    private var _searchMode = MutableStateFlow(false)
+    val searchMode = _searchMode.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -199,7 +201,12 @@ constructor(
     private fun refreshFiltersContainer() {
         filterWordList = _filtersContainer.value.searchEntry.lowercase().split(" ")
         filterTagSet = allTagSet.filter { tag -> areWordsInTag(tag, filterWordList) }.toSet()
+        updateSearchMode()
         filterEvents()
+    }
+
+    private fun updateSearchMode() {
+        _searchMode.value = _filtersContainer.value != defaultFiltersContainer
     }
 
     private fun areWordsInTag(tag: Tag, listOfWords: List<String>): Boolean {
@@ -222,20 +229,26 @@ constructor(
     // End of methods to set the filters container values
 
     private fun filterEvents() {
-        if (_filtersContainer.value == defaultFiltersContainer) {
+        if (!_searchMode.value) {
             _displayEventList.value =
                 // special case, if the user follows no tags, display everything
                 if (_followedTags.value.isEmpty()) {
-                    allEventsList
+                    allEventsList.filter { event -> // filter by time to avoid displaying past events
+                        dateFilterConditions(event)
+                    }
                 } else if (selectedTagId.value == null) {
                     allEventsList.filter { event ->
                         event.tags.any { tag ->
                             _followedTags.value.any { tag2 -> tag.tagId == tag2.tagId }
                         }
+                    }.filter { event -> // filter by time to avoid displaying past events
+                        dateFilterConditions(event)
                     }
                 } else {
                     allEventsList.filter { event ->
                         event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
+                    }.filter { event -> // filter by time to avoid displaying past events
+                        dateFilterConditions(event)
                     }
                 }
         } else {
@@ -253,11 +266,11 @@ constructor(
                     .filter { event -> // filter by time
                         dateFilterConditions(event)
                     }
-                    .filter {event ->
+                    .filter { event ->
                         !_filtersContainer.value.confirmedChecked ||
                             event.maxParticipants <= 0 ||
                             (event.participantCount >= event.maxParticipants * STATUS_THRESHOLD &&
-                            event.participantCount < event.maxParticipants)
+                                event.participantCount < event.maxParticipants)
                     }
                     .filter { event ->
                         !_filtersContainer.value.pendingChecked ||
