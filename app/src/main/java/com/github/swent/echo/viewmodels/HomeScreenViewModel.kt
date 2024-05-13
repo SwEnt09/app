@@ -154,21 +154,31 @@ constructor(
 
     fun onPendingCheckedSwitch() {
         _filtersContainer.value =
-            _filtersContainer.value.copy(pendingChecked = !_filtersContainer.value.pendingChecked)
+            _filtersContainer.value.copy(
+                pendingChecked = !_filtersContainer.value.pendingChecked,
+                confirmedChecked = false,
+                fullChecked = false
+            )
         refreshFiltersContainer()
     }
 
     fun onConfirmedCheckedSwitch() {
         _filtersContainer.value =
             _filtersContainer.value.copy(
-                confirmedChecked = !_filtersContainer.value.confirmedChecked
+                confirmedChecked = !_filtersContainer.value.confirmedChecked,
+                pendingChecked = false,
+                fullChecked = false
             )
         refreshFiltersContainer()
     }
 
     fun onFullCheckedSwitch() {
         _filtersContainer.value =
-            _filtersContainer.value.copy(fullChecked = !_filtersContainer.value.fullChecked)
+            _filtersContainer.value.copy(
+                fullChecked = !_filtersContainer.value.fullChecked,
+                confirmedChecked = false,
+                pendingChecked = false
+            )
         refreshFiltersContainer()
     }
 
@@ -243,21 +253,21 @@ constructor(
                     .filter { event -> // filter by time
                         dateFilterConditions(event)
                     }
-                    // TODO : later add a radio button to filter only by one, and rewrite this like
-                    // the
-                    // scope
-                    .filter { event -> // filter by status of the event (pending, confirmed, full)
-                        (!_filtersContainer.value.confirmedChecked &&
-                            !_filtersContainer.value.pendingChecked &&
-                            !_filtersContainer.value.fullChecked) ||
-                            (_filtersContainer.value.pendingChecked &&
-                                event.participantCount < event.maxParticipants * STATUS_THRESHOLD ||
-                                _filtersContainer.value.confirmedChecked &&
-                                    (event.participantCount >=
-                                        event.maxParticipants * STATUS_THRESHOLD &&
-                                        event.participantCount < event.maxParticipants) ||
-                                _filtersContainer.value.fullChecked &&
-                                    event.participantCount == event.maxParticipants)
+                    .filter {event ->
+                        !_filtersContainer.value.confirmedChecked ||
+                            event.maxParticipants <= 0 ||
+                            (event.participantCount >= event.maxParticipants * STATUS_THRESHOLD &&
+                            event.participantCount < event.maxParticipants)
+                    }
+                    .filter { event ->
+                        !_filtersContainer.value.pendingChecked ||
+                            event.maxParticipants <= 0 ||
+                            event.participantCount < event.maxParticipants * STATUS_THRESHOLD
+                    }
+                    .filter { event ->
+                        !_filtersContainer.value.fullChecked ||
+                            event.maxParticipants <= 0 ||
+                            event.participantCount == event.maxParticipants
                     }
                     .filter { event ->
                         !_filtersContainer.value.epflChecked ||
