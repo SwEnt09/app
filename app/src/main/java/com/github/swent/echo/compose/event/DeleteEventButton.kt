@@ -26,9 +26,10 @@ import com.github.swent.echo.R
 
 /** a button to delete an event */
 @Composable
-fun DeleteEventButton(onDelete: () -> Unit) {
+fun DeleteEventButton(enabled: Boolean, onDelete: () -> Unit) {
     var showConfirmDialog by remember { mutableStateOf(false) }
     OutlinedButton(
+        enabled = enabled,
         modifier = Modifier.padding(10.dp).testTag("delete-button"),
         onClick = { showConfirmDialog = true },
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)

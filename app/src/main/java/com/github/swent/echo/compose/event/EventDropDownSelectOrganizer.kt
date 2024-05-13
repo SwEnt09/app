@@ -26,6 +26,7 @@ import com.github.swent.echo.R
 fun EventDropDownSelectOrganizer(
     organizerName: String,
     organizerList: List<String>,
+    enabled: Boolean,
     onOrganizerSelected: (organizer: String) -> Unit
 ) {
     if (organizerList.size < 1) {
@@ -35,6 +36,7 @@ fun EventDropDownSelectOrganizer(
     Column(modifier = Modifier.padding(EVENT_PADDING_BETWEEN_INPUTS).fillMaxWidth()) {
         EventEntryName(name = stringResource(R.string.edit_event_screen_organizer))
         TextButton(
+            enabled = enabled,
             onClick = { listDisplayed = true },
             modifier = Modifier,
         ) {
@@ -47,7 +49,9 @@ fun EventDropDownSelectOrganizer(
                 DropdownMenuItem(
                     text = { Text(it) },
                     onClick = {
-                        onOrganizerSelected(it)
+                        if (enabled) {
+                            onOrganizerSelected(it)
+                        }
                         listDisplayed = false
                     }
                 )

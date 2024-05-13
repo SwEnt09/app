@@ -31,6 +31,7 @@ import com.github.swent.echo.data.model.Tag
 @Composable
 fun EventTagEntry(
     tags: Set<Tag>,
+    enabled: Boolean,
     onTagSelected: (tag: Tag) -> Unit,
     onTagDeleted: (tag: Tag) -> Unit
 ) {
@@ -55,6 +56,7 @@ fun EventTagEntry(
                 )
             }
             OutlinedIconButton(
+                enabled = enabled,
                 modifier = Modifier.testTag("add-tag-button"),
                 onClick = { dialogVisible = true }
             ) {
