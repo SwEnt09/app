@@ -4,7 +4,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.authentication.AuthenticationService
@@ -16,6 +15,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -69,19 +69,12 @@ class NavigationTest {
         runBlocking { authenticationService.signOut() }
     }
 
-    private fun setUp(route: Routes) {
-        setUpValidUserProfile()
+    private fun assertHardwareBackButtonClosesApp() {
+        // Press the back button
+        composeTestRule.activity.onBackPressedDispatcher.onBackPressed()
 
-        composeTestRule.activity.setContent {
-            val navController = rememberNavController()
-            val navigationActions = NavigationActions(navController)
-            AppNavigationHost(
-                navController = navController,
-                authenticationService = authenticationService,
-                repository = repository
-            )
-            navigationActions.navigateTo(route)
-        }
+        // Assert that the activity is finishing
+        assertTrue(composeTestRule.activity.isFinishing)
     }
 
     @Test
@@ -94,6 +87,8 @@ class NavigationTest {
         }
 
         composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
+
+        assertHardwareBackButtonClosesApp()
     }
 
     @Test
@@ -108,6 +103,8 @@ class NavigationTest {
         }
 
         composeTestRule.onNodeWithTag("profile-creation").assertIsDisplayed()
+
+        assertHardwareBackButtonClosesApp()
     }
 
     @Test
@@ -121,5 +118,7 @@ class NavigationTest {
         }
 
         composeTestRule.onNodeWithTag("home_screen").assertIsDisplayed()
+
+        assertHardwareBackButtonClosesApp()
     }
 }
