@@ -19,7 +19,7 @@ class ListDrawerTest {
 
     @Before
     fun setUp() {
-        composeTestRule.setContent { ListDrawer(SAMPLE_EVENTS, "", "") }
+        composeTestRule.setContent { ListDrawer(SAMPLE_EVENTS, "", "", true) }
     }
 
     @Test
