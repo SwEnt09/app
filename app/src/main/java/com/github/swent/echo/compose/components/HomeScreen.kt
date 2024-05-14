@@ -98,6 +98,8 @@ private fun Content(
 
     val searchMode by homeScreenViewModel.searchMode.collectAsState()
 
+    val isOnline by homeScreenViewModel.isOnline.collectAsState()
+
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
             Column {
@@ -108,7 +110,7 @@ private fun Content(
                         onTagClick = homeScreenViewModel::onFollowedTagClicked
                     )
                 }
-                ListDrawer(displayEventList, section, semester)
+                ListDrawer(displayEventList, section, semester, isOnline)
             }
         } else {
             MapDrawer(
@@ -133,7 +135,8 @@ private fun Content(
                 canModifyEvent = canUserModifyEvent,
                 onModifyEvent = {
                     navActions.navigateTo(Routes.EDIT_EVENT.build(displayEventInfo!!.eventId))
-                }
+                },
+                isOnline = isOnline
             )
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info

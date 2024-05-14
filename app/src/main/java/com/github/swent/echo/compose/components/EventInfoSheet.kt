@@ -50,6 +50,7 @@ fun EventInfoSheet(
     onFullyExtended: () -> Unit,
     canModifyEvent: Boolean,
     onModifyEvent: () -> Unit,
+    isOnline: Boolean,
 ) {
     val sheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = false) { value ->
@@ -147,6 +148,7 @@ fun EventInfoSheet(
             ) {
                 // button to join the event
                 Button(
+                    enabled = isOnline,
                     onClick = {
                         onJoinButtonPressed()
                         Toast.makeText(
@@ -169,6 +171,7 @@ fun EventInfoSheet(
                     Spacer(modifier = Modifier.width(10.dp))
 
                     Button(
+                        enabled = isOnline,
                         onClick = onModifyEvent,
                         modifier = Modifier.testTag("modify_button"),
                     ) {
