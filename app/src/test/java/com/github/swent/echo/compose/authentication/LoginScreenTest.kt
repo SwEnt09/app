@@ -35,6 +35,7 @@ class LoginScreenTest {
         navActions = mockk(relaxed = true)
         state = MutableStateFlow(AuthenticationState.SignedOut)
         every { loginViewModel.state } answers { state.asStateFlow() }
+        every { loginViewModel.isOnline } returns MutableStateFlow(true)
         composeTestRule.setContent { LoginScreen(loginViewModel, navActions) }
     }
 

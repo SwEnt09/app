@@ -35,6 +35,7 @@ class RegisterScreenTest {
         navActions = mockk(relaxed = true)
         state = MutableStateFlow(AuthenticationState.SignedOut)
         every { registerViewModel.state } answers { state.asStateFlow() }
+        every { registerViewModel.isOnline } returns MutableStateFlow(true)
         composeTestRule.setContent { RegisterScreen(registerViewModel, navActions) }
     }
 
