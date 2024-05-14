@@ -51,6 +51,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(
                 ACTION,
                 AuthenticationState.SignedOut,
+                true,
                 this::onAuthenticate,
                 this::onStartGoogleSignIn
             )
@@ -67,6 +68,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(
                 ACTION,
                 AuthenticationState.SignedOut,
+                true,
                 this::onAuthenticate,
                 this::onStartGoogleSignIn
             )
@@ -86,6 +88,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(
                 ACTION,
                 AuthenticationState.SigningIn,
+                true,
                 this::onAuthenticate,
                 this::shouldHaveSignedInTextWhenIsSignedIn
             )
@@ -100,6 +103,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(
                 ACTION,
                 AuthenticationState.SignedIn(Routes.MAP),
+                true,
                 this::onAuthenticate,
                 this::shouldHaveSigningInTextWhenIsSigningIn
             )
@@ -115,6 +119,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(
                 ACTION,
                 AuthenticationState.Error(message),
+                true,
                 this::onAuthenticate,
                 this::onStartGoogleSignIn
             )
@@ -129,6 +134,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(
                 ACTION,
                 AuthenticationState.Error(message),
+                true,
                 this::onAuthenticate,
                 this::onStartGoogleSignIn
             )
@@ -145,6 +151,7 @@ class AuthenticationScreenTest {
             AuthenticationScreen(
                 ACTION,
                 AuthenticationState.Error("Error"),
+                true,
                 this::onAuthenticate,
                 this::onStartGoogleSignIn
             )

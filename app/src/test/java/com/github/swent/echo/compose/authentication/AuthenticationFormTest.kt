@@ -42,7 +42,7 @@ class AuthenticationFormTest {
 
     @Test
     fun shouldDisplayLabelsAndActionButton() {
-        composeTestRule.setContent { AuthenticationForm(ACTION, this::onAuthenticate) }
+        composeTestRule.setContent { AuthenticationForm(ACTION, this::onAuthenticate, true) }
         composeTestRule.onNodeWithTag("action-button").assertExists()
         composeTestRule.onNodeWithText(ACTION).assertExists()
         composeTestRule.onNodeWithText("Email").assertExists()
@@ -51,7 +51,7 @@ class AuthenticationFormTest {
 
     @Test
     fun shouldCallOnAuthenticateWithCorrectParametersWhenActionButtonIsPressed() {
-        composeTestRule.setContent { AuthenticationForm(ACTION, this::onAuthenticate) }
+        composeTestRule.setContent { AuthenticationForm(ACTION, this::onAuthenticate, true) }
 
         composeTestRule.onNodeWithTag("email-field").performTextInput(EMAIL)
         composeTestRule.onNodeWithTag("password-field").performTextInput(PASSWORD)

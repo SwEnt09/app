@@ -3,6 +3,7 @@ package com.github.swent.echo.viewmodels.authentication
 import app.cash.turbine.test
 import com.github.swent.echo.authentication.AuthenticationResult
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.Routes
@@ -11,6 +12,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -22,6 +24,7 @@ import org.junit.Test
 class RegisterViewModelTest {
     private lateinit var authenticationService: AuthenticationService
     private lateinit var repository: Repository
+    private lateinit var networkService: NetworkService
     private lateinit var viewModel: RegisterViewModel
 
     companion object {
@@ -37,7 +40,8 @@ class RegisterViewModelTest {
     fun setUp() {
         authenticationService = mockk()
         repository = mockk()
-        viewModel = RegisterViewModel(authenticationService, repository)
+        networkService = mockk { every { isOnline } returns MutableStateFlow(true) }
+        viewModel = RegisterViewModel(authenticationService, repository, networkService)
     }
 
     @Test
