@@ -16,6 +16,7 @@ data class Routes(val name: String) {
         val PROFILE_CREATION = Routes("profile_creation")
         val ASSOCIATION_SUBSCRIPTIONS = Routes("association_subscriptions")
         val ASSOCIATION_MEMBERSHIPS = Routes("association_memberships")
+        val MY_EVENTS = Routes("my_events")
     }
 }
 
