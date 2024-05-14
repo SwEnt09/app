@@ -3,6 +3,7 @@ package com.github.swent.echo.viewmodels.authentication
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationResult
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,8 +17,11 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class RegisterViewModel
 @Inject
-constructor(override val auth: AuthenticationService, override val repository: Repository) :
-    AbstractAuthenticationViewModel() {
+constructor(
+    override val auth: AuthenticationService,
+    override val repository: Repository,
+    override val networkService: NetworkService,
+) : AbstractAuthenticationViewModel() {
 
     /**
      * Sign up with email and password.

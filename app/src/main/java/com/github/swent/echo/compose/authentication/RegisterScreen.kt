@@ -30,6 +30,7 @@ import com.github.swent.echo.viewmodels.authentication.RegisterViewModel
 @Composable
 fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationActions) {
     val state by registerViewModel.state.collectAsState()
+    val isOnline by registerViewModel.isOnline.collectAsState()
     val context = LocalContext.current
 
     var usingGoogleAuthentication by remember { mutableStateOf(false) }
@@ -59,6 +60,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
         }
         AuthenticationScreen(
             action = stringResource(R.string.register_screen_action_button),
+            isOnline = isOnline,
             state = state,
             onAuthenticate = registerViewModel::register,
             onStartGoogleSignIn = {
