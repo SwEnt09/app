@@ -21,6 +21,7 @@ import com.github.swent.echo.compose.authentication.RegisterScreen
 import com.github.swent.echo.compose.components.HomeScreen
 import com.github.swent.echo.compose.event.CreateEventScreen
 import com.github.swent.echo.compose.event.EditEventScreen
+import com.github.swent.echo.compose.myevents.MyEventsScreen
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
@@ -117,6 +118,8 @@ fun AppNavigationHost(
                 navigationActions = navActions
             )
         }
+
+        composable(Routes.MY_EVENTS.name) { MyEventsScreen(navActions = navActions) }
     }
 }
 

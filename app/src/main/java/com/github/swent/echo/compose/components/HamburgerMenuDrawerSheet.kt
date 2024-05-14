@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DrawerState
@@ -62,10 +63,13 @@ fun HamburgerMenuDrawerSheet(
                 title = stringResource(id = R.string.hamburger_my_profile),
                 selectedIcon = Icons.Filled.Person,
             ),
+             */
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_my_events),
                 selectedIcon = Icons.Filled.DateRange,
+                navOnClick = { navActions.navigateTo(Routes.MY_EVENTS) }
             ),
+            /*
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_friends),
                 selectedIcon = Icons.Filled.Face,
