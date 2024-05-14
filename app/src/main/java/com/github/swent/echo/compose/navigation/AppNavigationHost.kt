@@ -1,8 +1,11 @@
 package com.github.swent.echo.compose.navigation
 
 // import com.github.swent.echo.compose.authentication.ProfileCreationScreen
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -63,18 +66,23 @@ fun AppNavigationHost(
         navController = navController,
         startDestination = Routes.LOADING.name,
     ) {
-        composable(Routes.LOADING.name) { LoadingScreen() }
+        composable(Routes.LOADING.name) {
+            QuitAppOnHardwareBackButtonPressPress()
+            LoadingScreen()
+        }
 
         composable(Routes.LOGIN.name) {
+            QuitAppOnHardwareBackButtonPressPress()
             LoginScreen(loginViewModel = hiltViewModel(), navActions = navActions)
         }
 
         composable(Routes.REGISTER.name) {
+            QuitAppOnHardwareBackButtonPressPress()
             RegisterScreen(registerViewModel = hiltViewModel(), navActions = navActions)
         }
 
         composable(Routes.MAP.name) {
-            // placeholder for the map composable
+            QuitAppOnHardwareBackButtonPressPress()
             HomeScreen(homeScreenViewModel = hiltViewModel(), navActions = navActions)
         }
 
@@ -83,6 +91,7 @@ fun AppNavigationHost(
         }
 
         composable(Routes.PROFILE_CREATION.name) {
+            QuitAppOnHardwareBackButtonPressPress()
             ProfileCreationScreen(
                 viewModel = hiltViewModel(),
                 navAction = navActions,
@@ -109,4 +118,11 @@ fun AppNavigationHost(
             )
         }
     }
+}
+
+/** Quit the app when the hardware back button is pressed */
+@Composable
+fun QuitAppOnHardwareBackButtonPressPress() {
+    val activity = LocalContext.current as Activity
+    BackHandler(enabled = true) { activity.finish() }
 }
