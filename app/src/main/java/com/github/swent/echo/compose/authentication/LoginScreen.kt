@@ -25,6 +25,7 @@ import com.github.swent.echo.viewmodels.authentication.LoginViewModel
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, navActions: NavigationActions) {
     val state by loginViewModel.state.collectAsState()
+    val isOnline by loginViewModel.isOnline.collectAsState()
 
     if (state is AuthenticationState.SignedIn) {
         LaunchedEffect(state) {
@@ -44,6 +45,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, navActions: NavigationActions) {
         }
         AuthenticationScreen(
             action = stringResource(R.string.login_screen_action_button),
+            isOnline = isOnline,
             state = state,
             onAuthenticate = loginViewModel::login,
             onStartGoogleSignIn = loginViewModel.startGoogleSignInCallback(),

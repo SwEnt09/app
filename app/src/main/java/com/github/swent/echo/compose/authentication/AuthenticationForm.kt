@@ -33,6 +33,7 @@ import com.github.swent.echo.R
 fun AuthenticationForm(
     action: String,
     onAuthenticate: (email: String, password: String) -> Unit,
+    isOnline: Boolean,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -61,6 +62,7 @@ fun AuthenticationForm(
         )
         Spacer(modifier = Modifier.padding(16.dp))
         ElevatedButton(
+            enabled = isOnline,
             modifier = Modifier.fillMaxWidth().testTag("action-button"),
             onClick = { onAuthenticate(email, password) },
         ) {

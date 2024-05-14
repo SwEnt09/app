@@ -41,6 +41,7 @@ import com.github.swent.echo.viewmodels.authentication.AuthenticationState
 fun AuthenticationScreen(
     action: String,
     state: AuthenticationState,
+    isOnline: Boolean,
     onAuthenticate: (email: String, password: String) -> Unit,
     onStartGoogleSignIn: () -> Unit
 ) {
@@ -53,10 +54,11 @@ fun AuthenticationScreen(
                 ) {
                     AuthenticationForm(
                         action = action,
+                        isOnline = isOnline,
                         onAuthenticate = onAuthenticate,
                     )
                     AuthenticationMethodSeparator()
-                    GoogleSignInButton(onStartGoogleSignIn)
+                    GoogleSignInButton(isOnline, onStartGoogleSignIn)
                     if (state is AuthenticationState.Error) {
                         Spacer(modifier = Modifier.padding(12.dp))
                         Text(
@@ -78,8 +80,9 @@ fun AuthenticationScreen(
 }
 
 @Composable
-fun GoogleSignInButton(onClick: () -> Unit) {
+fun GoogleSignInButton(isOnline: Boolean, onClick: () -> Unit) {
     return OutlinedButton(
+        enabled = isOnline,
         onClick = onClick,
         modifier = Modifier.testTag("google-sign-in-button"),
     ) {
