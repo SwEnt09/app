@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.swent.echo.ExcludeFromJacocoGeneratedReport
@@ -27,12 +28,17 @@ import com.github.swent.echo.data.model.Tag
  */
 
 @Composable
-fun TagUI(tags: List<Tag>, selectedTagId: String?, onTagClick: (Tag) -> Unit) {
+fun TagUI(
+    tags: List<Tag>,
+    selectedTagId: String?,
+    leftPadding: Dp = 0.dp,
+    onTagClick: (Tag) -> Unit
+) {
     val lazyListState = rememberLazyListState()
 
     Column(modifier = Modifier) {
         LazyRow(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(leftPadding),
             state = lazyListState,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {

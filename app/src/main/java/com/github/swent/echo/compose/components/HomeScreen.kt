@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
@@ -107,6 +108,7 @@ private fun Content(
                     TagUI(
                         tags = tags,
                         selectedTagId = selectedTagId,
+                        leftPadding = 8.dp,
                         onTagClick = homeScreenViewModel::onFollowedTagClicked
                     )
                 }
@@ -121,6 +123,7 @@ private fun Content(
                 TagUI(
                     tags = tags,
                     selectedTagId = selectedTagId,
+                    leftPadding = 8.dp,
                     onTagClick = homeScreenViewModel::onFollowedTagClicked
                 )
             }
