@@ -17,9 +17,9 @@
     <string name="register_screen_login_link">Login</string>
     <string name="maptiler_api_key">8tGwLwPFCHwJ5D8g7pic</string>
     <string name="maptiler_base_style_url">https://api.maptiler.com/maps/streets-v2/style.json?key=</string>
-    <!--<string name="hamburger_my_profile">My Profile</string>
+    <!--<string name="hamburger_my_profile">My Profile</string>-->
     <string name="hamburger_my_events">My Events</string>
-    <string name="hamburger_friends">Friends</string>
+    <!--<string name="hamburger_friends">Friends</string>
     <string name="hamburger_settings">Settings</string>-->
     <string name="hamburger_create_event">Create Event</string>
     <!--<string name="hamburger_add_friends">Add Friends</string>
@@ -95,5 +95,7 @@
     <string name="association_subscription_screen_snackbar_message">You unfollowed&#160;</string>
     <string name="association_subscription_screen_snackbar_undo">Undo</string>
     <string name="association_committee_member_screen_title">Your association memberships</string>
+    <string name="my_events_joined_events">Joined Events</string>
+    <string name="my_events_created_events">Created Events</string>
 </resources>
 
