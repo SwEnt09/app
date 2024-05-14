@@ -6,6 +6,7 @@ import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.components.searchmenu.floatToDate
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
@@ -35,6 +36,7 @@ class HomeScreenViewModel
 constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
+    private val networkService: NetworkService
 ) : ViewModel() {
     private val _overlay = MutableStateFlow(Overlay.NONE)
     val overlay = _overlay.asStateFlow()
@@ -97,6 +99,7 @@ constructor(
     val selectedTagId = _selectedTagId.asStateFlow()
     private var _searchMode = MutableStateFlow(false)
     val searchMode = _searchMode.asStateFlow()
+    val isOnline = networkService.isOnline
 
     init {
         viewModelScope.launch {
