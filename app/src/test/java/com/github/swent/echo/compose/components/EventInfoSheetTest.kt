@@ -54,7 +54,8 @@ class EventInfoSheetTest {
                 onDismiss = { dismissed++ },
                 onFullyExtended = { extended++ },
                 canModifyEvent = canModifyEvent,
-                onModifyEvent = { modified++ }
+                onModifyEvent = { modified++ },
+                isOnline = true
             )
         }
     }

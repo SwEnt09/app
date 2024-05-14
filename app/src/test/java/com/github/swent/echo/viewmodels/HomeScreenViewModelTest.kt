@@ -2,6 +2,7 @@ package com.github.swent.echo.viewmodels
 
 import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.map.MAP_CENTER
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
@@ -11,10 +12,12 @@ import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.fakes.FakeAuthenticationService
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import java.time.ZonedDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
@@ -57,6 +60,8 @@ class HomeScreenViewModelTest {
             committeeMember = setOf(),
             associationsSubscriptions = setOf()
         )
+    private val mockedNetworkService = mockk<NetworkService>(relaxed = true)
+    private val isOnline = MutableStateFlow(true)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
@@ -66,8 +71,14 @@ class HomeScreenViewModelTest {
         coEvery { mockedRepository.getAllEvents() } returns eventList
         coEvery { mockedRepository.getAllTags() } returns tagSet
         coEvery { mockedRepository.getUserProfile("u0") } returns userProfile
+        every { mockedNetworkService.isOnline } returns isOnline
         runBlocking {
-            homeScreenViewModel = HomeScreenViewModel(mockedRepository, fakeAuthenticationService)
+            homeScreenViewModel =
+                HomeScreenViewModel(
+                    mockedRepository,
+                    fakeAuthenticationService,
+                    mockedNetworkService
+                )
         }
         scheduler.runCurrent()
     }
