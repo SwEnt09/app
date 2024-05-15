@@ -102,7 +102,7 @@ class EventScreenTest {
     @Test
     fun locationInputIsCorrect() {
         setCompose(eventViewModel)
-        val node = composeTestRule.onNodeWithTag("Location-field")
+        val node = composeTestRule.onNodeWithTag("Name of place-field")
         node.performTextInput(STRING_1)
         node.assertTextContains(STRING_1)
         node.assertTextEquals(eventViewModel.event.value.location.name)
@@ -150,7 +150,7 @@ class EventScreenTest {
         setCompose(eventViewModel)
         composeTestRule.onNodeWithTag("Title-field").performTextInput(STRING_1)
         composeTestRule.onNodeWithTag("Description-field").performTextInput(STRING_2)
-        composeTestRule.onNodeWithTag("Location-field").performTextInput(STRING_3)
+        composeTestRule.onNodeWithTag("Name of place-field").performTextInput(STRING_3)
         val event = eventViewModel.event
         Assert.assertTrue(event.value.title == STRING_1)
         Assert.assertTrue(event.value.description == STRING_2)

@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
@@ -27,6 +28,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.time.ZonedDateTime
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import org.junit.Before
 import org.junit.Rule
@@ -59,17 +61,25 @@ class EditEventScreenTest {
     private val mockedAuthenticationService = mockk<AuthenticationService>(relaxed = true)
     private lateinit var eventViewModel: EventViewModel
     private val savedEventId = SavedStateHandle(mapOf(Pair("eventId", TEST_EVENT.eventId)))
+    private val mockedNetworkService = mockk<NetworkService>(relaxed = true)
 
     val scheduler = TestCoroutineScheduler()
     val mockedNavActions = mockk<NavigationActions>(relaxed = true)
 
     @Before
     fun init() {
+        every { mockedNetworkService.isOnline } returns MutableStateFlow(true)
         every { mockedAuthenticationService.getCurrentUserID() } returns TEST_EVENT.eventId
         every { mockedNavActions.navigateTo(any()) } returns Unit
         every { mockedNavActions.goBack() } returns Unit
         coEvery { mockedRepository.getEvent(TEST_EVENT.eventId) } returns TEST_EVENT
-        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService, savedEventId)
+        eventViewModel =
+            EventViewModel(
+                mockedRepository,
+                mockedAuthenticationService,
+                savedEventId,
+                mockedNetworkService
+            )
         hiltRule.inject()
         composeTestRule.activity.setContent {
             EditEventScreen(eventViewModel = eventViewModel, navigationActions = mockedNavActions)
