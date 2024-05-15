@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.association.AssociationCommitteeMemberScreen
+import com.github.swent.echo.compose.association.AssociationScreen
 import com.github.swent.echo.compose.association.AssociationSubscriptionsScreen
 import com.github.swent.echo.compose.authentication.LoadingScreen
 import com.github.swent.echo.compose.authentication.LoginScreen
@@ -120,6 +121,10 @@ fun AppNavigationHost(
         }
 
         composable(Routes.MY_EVENTS.name) { MyEventsScreen(navActions = navActions) }
+
+        composable(Routes.ASSOCIATIONS.name) {
+            AssociationScreen(hiltViewModel(), navActions = navActions)
+        }
     }
 }
 
