@@ -57,18 +57,17 @@ abstract class AbstractAuthenticationViewModel : ViewModel() {
         }
     }
 
-    /**
-     * Returns the next route depending on the value of the user profile. If the profile is null, it
-     * returns [Routes.PROFILE_CREATION] and [Routes.MAP] otherwise. Note you should only call this
-     * function if the user has sucessfully logged as as it makes the assumption that the user id is
-     * not null.
-     */
+    /** Returns the next route depending on the value of the user id and the user profile. */
     protected suspend fun getNextRoute(): Routes {
-        val userId = auth.getCurrentUserID()!!
-        return if (repository.getUserProfile(userId) == null) {
-            Routes.PROFILE_CREATION
+        val userId = auth.getCurrentUserID()
+        return if (userId == null) {
+            Routes.LOGIN
         } else {
-            Routes.MAP
+            return if (repository.getUserProfile(userId) == null) {
+                Routes.PROFILE_CREATION
+            } else {
+                Routes.MAP
+            }
         }
     }
 }
