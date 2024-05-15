@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,12 +13,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,11 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.github.swent.echo.R
+import androidx.compose.ui.unit.sp
+import com.github.swent.echo.compose.components.TagHierarchyNavigableBar
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.viewmodels.tag.TagViewModel
+import kotlin.random.Random
 
 @Composable
 fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagViewModel) {
@@ -39,26 +42,25 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
     val tags = tagViewModel.tags.collectAsState()
     val currentDepth = tagViewModel.currentDepth.collectAsState()
     val tagParents = tagViewModel.tagParents.collectAsState()
-    // Check if the current tag has subtags. Not optimal because some hierarchy
-    // have less than maxDepth levels and it would be better to check the number
-    // of subtags, but getSubTags doesn't work for now
-    val hasSubTags = currentDepth.value < tagViewModel.maxDepth
+    val subTagsMap = tagViewModel.subTagsMap.collectAsState()
     // The selected tag
     var selectedTag by remember { mutableStateOf("") }
+    // a random seed for consistent random subtag list
+    val randomSeed by remember { mutableIntStateOf(Random.nextInt()) }
 
     // Function that is used when the user clicks on a parent tag
     // at the top of the discover mode
     fun onParentClicked(tag: Tag) {
-        // while(tag.tagId != tagParents.value.peek().tagId) { tagViewModel.goUp() } would
-        // be more scalable but too many bugs. This solution works for 3 level hierarchy like
-        // we have but need to be adapted if we add more levels.
-        if (tag.tagId == tagViewModel.rootTag.tagId) {
-            tagViewModel.reset()
-            searchEntryCallback("")
-        } else {
+        while (tag.tagId != tagParents.value.peek().tagId) {
             tagViewModel.goUp()
-            searchEntryCallback(tagParents.value.peek().name)
         }
+        val tagParentsName =
+            if (tag.tagId == tagViewModel.rootTag.tagId) {
+                ""
+            } else {
+                tagParents.value.peek().name
+            }
+        searchEntryCallback(tagParentsName)
         // Deselect the selected tag
         selectedTag = ""
     }
@@ -67,7 +69,7 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
     // discover mode
     fun onTagClicked(tag: Tag) {
         // Check that the tag has subtags to display
-        if (hasSubTags) {
+        if (!subTagsMap.value[tag].isNullOrEmpty()) {
             tagViewModel.goDown(tag)
             searchEntryCallback(tagParents.value.peek().name)
             selectedTag = ""
@@ -77,70 +79,20 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
             selectedTag = tag.name
         }
     }
-    /*
-        // Doesn't work for now
-        @Composable
-        fun getSubTags(tag: Tag): List<Tag> {
-            var subTags by remember { mutableStateOf(listOf<Tag>()) }
-            LaunchedEffect(tag) { subTags = tagViewModel.getSubTags(tag) }
-            return subTags
-        }
-    */
+
     // Main component of the discover mode
     Column(modifier = Modifier.fillMaxWidth().padding(5.dp).testTag("discover_main_component")) {
         // Display the parents of the current tag in order to go back in the hierarchy
         // when they are clicked
-        Row(
-            modifier = Modifier.fillMaxWidth().height(25.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // if else here to not display the root name if we are at the root, but select category
-            if (currentDepth.value == 0) {
-                Text(
-                    stringResource(R.string.discover_select_a_category),
-                    modifier = Modifier.testTag("discover_select_category")
-                )
-            } else {
-                // Format the display of the parents of the current tag. The last tag is not
-                // clickable because it is the current tag, that's why we take ...size - 1
-                tagParents.value.subList(0, tagParents.value.size - 1).forEachIndexed { id, tag ->
-                    Text(
-                        text =
-                            if (id == 0) {
-                                ""
-                            } else {
-                                " > "
-                            }
-                    )
-                    Text(
-                        // if else here to display "All" instead of the root tag name
-                        text =
-                            if (id == 0) {
-                                stringResource(R.string.discover_all)
-                            } else {
-                                tag.name
-                            },
-                        modifier =
-                            Modifier.clickable(onClick = { onParentClicked(tag) })
-                                .testTag("discover_parent_${tag.name}"),
-                        color = ButtonDefaults.buttonColors().containerColor
-                    )
-                }
-                // Display the current tag
-                Text(
-                    " > ${tagParents.value.peek().name}",
-                    modifier =
-                        Modifier.clickable(
-                                // Reset the selected tag when the current tag is clicked
-                                onClick = {
-                                    searchEntryCallback(tagParents.value.peek().name)
-                                    selectedTag = ""
-                                }
-                            )
-                            .testTag("discover_parent_${tagParents.value.peek().name}")
-                )
+        TagHierarchyNavigableBar(
+            tagParents.value,
+            currentDepth.value,
+            { tag -> onParentClicked(tag) },
+            {
+                searchEntryCallback(tagParents.value.peek().name)
+                selectedTag = ""
             }
-        }
+        )
         Spacer(modifier = Modifier.height(5.dp))
         // Display the tags
         LazyVerticalGrid(
@@ -149,7 +101,13 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
             modifier = Modifier.testTag("discover_lazy_grid")
         ) {
             items(tags.value) { tag ->
-                SearchMenuDiscoverItem(tag, { onTagClicked(tag) }, selectedTag)
+                SearchMenuDiscoverItem(
+                    tag,
+                    { onTagClicked(tag) },
+                    selectedTag,
+                    subTagsMap.value[tag]?.map { t -> t.name }.orEmpty(),
+                    randomSeed
+                )
             }
         }
     }
@@ -157,16 +115,17 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
 
 // Component that displays a tag in the discover mode
 @Composable
-fun SearchMenuDiscoverItem(tag: Tag, onTagClicked: (Tag) -> Unit, selectedTag: String) {
-    /*
-    val sizeSubTags = subTags.size
-    val randomSubTags = subTags.shuffled()
-    val subListSubTags = randomSubTags.subList(0, min(sizeSubTags, 5))
-     */
+fun SearchMenuDiscoverItem(
+    tag: Tag,
+    onTagClicked: (Tag) -> Unit,
+    selectedTag: String,
+    subTags: List<String>,
+    randomSeed: Int
+) {
     Box(
         modifier =
             Modifier.fillMaxWidth()
-                .height(60.dp)
+                .height(90.dp)
                 .padding(3.dp)
                 .clip(RoundedCornerShape(8.dp))
                 // Change the background color of the tag if it is selected
@@ -185,17 +144,17 @@ fun SearchMenuDiscoverItem(tag: Tag, onTagClicked: (Tag) -> Unit, selectedTag: S
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = tag.name)
-            /*
-            if (sizeSubTags > 0) {
-                val tripleDot = if (sizeSubTags > 5) "..." else ""
+            if (subTags.isNotEmpty()) {
                 Text(
-                    text = subListSubTags.joinToString { it.name } + tripleDot,
+                    modifier = Modifier.padding(5.dp),
+                    text = subTags.shuffled(Random(randomSeed)).joinToString(),
                     color = LocalContentColor.current.copy(alpha = 0.5f),
                     textAlign = TextAlign.Center,
-                    fontSize = 10.sp
+                    fontSize = 10.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
             }
-             */
         }
     }
 }

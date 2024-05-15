@@ -3,6 +3,7 @@ package com.github.swent.echo.compose.components
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuDiscover
 import com.github.swent.echo.data.model.Tag
@@ -35,7 +36,7 @@ class SearchMenuDiscoverTest {
         coEvery { mockedRepository.getSubTags(rootTagId) } returns topTag
         coEvery { mockedRepository.getSubTags("tag1") } returns subTag1
         coEvery { mockedRepository.getSubTags("tag3") } returns subTag3
-        tagViewModel = TagViewModel(mockedRepository)
+        tagViewModel = TagViewModel(mockedRepository, SavedStateHandle())
         scheduler.runCurrent()
         composeTestRule.setContent {
             SearchMenuDiscover(searchEntryCallback = { str = it }, tagViewModel = tagViewModel)
