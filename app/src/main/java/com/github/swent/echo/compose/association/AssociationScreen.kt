@@ -7,15 +7,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.SearchButton
 import com.github.swent.echo.compose.event.EventTitleAndBackButton
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
-import com.github.swent.echo.viewmodels.Overlay
 import com.github.swent.echo.viewmodels.association.AssociationOverlay
 import com.github.swent.echo.viewmodels.association.AssociationPage
 import com.github.swent.echo.viewmodels.association.AssociationViewModel
@@ -57,7 +56,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                 }
             )
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().testTag("association_screen")
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             when (actualAssociationPage) {
