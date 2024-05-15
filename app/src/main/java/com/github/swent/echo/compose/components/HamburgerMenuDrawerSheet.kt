@@ -107,6 +107,11 @@ fun HamburgerMenuDrawerSheet(
                 navOnClick = { navActions.navigateTo(Routes.ASSOCIATION_MEMBERSHIPS) }
             ),
             NavigationItem(
+                title = stringResource(R.string.hamburger_associations),
+                selectedIcon = Icons.Filled.Star,
+                navOnClick = { navActions.navigateTo(Routes.ASSOCIATIONS) }
+            ),
+            NavigationItem(
                 title = stringResource(id = R.string.hamburger_log_out),
                 selectedIcon = Icons.Filled.Close,
                 navOnClick = { onSignOutPressed() }

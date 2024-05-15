@@ -22,6 +22,7 @@
     <!--<string name="hamburger_friends">Friends</string>
     <string name="hamburger_settings">Settings</string>-->
     <string name="hamburger_create_event">Create Event</string>
+    <string name="hamburger_associations">Associations</string>
     <!--<string name="hamburger_add_friends">Add Friends</string>
     <string name="hamburger_help">Help</string>-->
     <string name="hamburger_log_out">Log Out</string>
