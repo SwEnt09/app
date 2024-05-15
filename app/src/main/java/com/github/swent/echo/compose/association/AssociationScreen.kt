@@ -1,0 +1,94 @@
+package com.github.swent.echo.compose.association
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.github.swent.echo.R
+import com.github.swent.echo.compose.components.SearchButton
+import com.github.swent.echo.compose.event.EventTitleAndBackButton
+import com.github.swent.echo.ui.navigation.NavigationActions
+import com.github.swent.echo.ui.navigation.Routes
+import com.github.swent.echo.viewmodels.Overlay
+
+@Composable
+fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: NavigationActions) {
+    val followedAssociations by associationViewModel.followedAssociations.collectAsState()
+    val committeeAssociations by associationViewModel.committeeAssociations.collectAsState()
+
+    val filteredEvents by associationViewModel.filteredEvents.collectAsState()
+    val eventsFilter by associationViewModel.eventsFilter.collectAsState()
+
+    val actualAssociationPage by associationViewModel.actualAssociationPage.collectAsState()
+
+    val overlay by associationViewModel.overlay.collectAsState()
+    val searched by associationViewModel.searched.collectAsState()
+
+    fun goBack() {
+        if (actualAssociationPage == AssociationPage.MAINSCREEN) {
+            navActions.navigateTo(Routes.MAP)
+        } else {
+            associationViewModel.goBack()
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            EventTitleAndBackButton(stringResource(R.string.hamburger_associations)) { goBack() }
+        },
+        floatingActionButton = {
+            SearchButton(
+                onClick = {
+                    if (actualAssociationPage != AssociationPage.SEARCH) {
+                        associationViewModel.goTo(AssociationPage.SEARCH)
+                    }
+                    associationViewModel.setOverlay(Overlay.SEARCH_SHEET)
+                }
+            )
+        },
+        modifier = Modifier.fillMaxSize()
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            when (actualAssociationPage) {
+                AssociationPage.MAINSCREEN -> {
+                    AssociationMainScreen(
+                        filteredEvents,
+                        { associationViewModel.goTo(it) },
+                        { associationViewModel.addAssociationToFilter(it) },
+                        followedAssociations,
+                        committeeAssociations,
+                        eventsFilter
+                    )
+                }
+                AssociationPage.DETAILS -> {
+                    AssociationDetails(
+                        { associationViewModel.followAssociation(it) },
+                        actualAssociationPage.association,
+                        followedAssociations.contains(actualAssociationPage.association),
+                        associationViewModel.associationEvents(actualAssociationPage.association)
+                    )
+                }
+                AssociationPage.SEARCH -> {
+                    AssociationSearch(
+                        { associationViewModel.goTo(it) },
+                        associationViewModel.filterAssociations()
+                    )
+                    if (overlay == Overlay.SEARCH_SHEET) {
+                        AssociationSearchBottomSheet(
+                            {},
+                            { associationViewModel.setOverlay(Overlay.NONE) },
+                            { associationViewModel.setSearched(it) },
+                            searched
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
