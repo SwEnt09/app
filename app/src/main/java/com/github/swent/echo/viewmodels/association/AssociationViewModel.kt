@@ -44,8 +44,8 @@ constructor(
     private val _eventsFilter = MutableStateFlow<List<Association>>(listOf())
     val eventsFilter = _eventsFilter.asStateFlow()
     private val _lastAssociationPage = MutableStateFlow(AssociationPage.MAINSCREEN)
-    private val _actualAssociationPage = MutableStateFlow(AssociationPage.MAINSCREEN)
-    val actualAssociationPage = _actualAssociationPage.asStateFlow()
+    private val _currentAssociationPage = MutableStateFlow(AssociationPage.MAINSCREEN)
+    val currentAssociationPage = _currentAssociationPage.asStateFlow()
     private val _overlay = MutableStateFlow(AssociationOverlay.NONE)
     val overlay = _overlay.asStateFlow()
     private val _searched = MutableStateFlow("")
@@ -83,18 +83,18 @@ constructor(
 
     fun goBack() {
         if (
-            (_actualAssociationPage.value == AssociationPage.DETAILS) &&
+            (_currentAssociationPage.value == AssociationPage.DETAILS) &&
                 (_lastAssociationPage.value == AssociationPage.SEARCH)
         ) {
-            _actualAssociationPage.value = AssociationPage.SEARCH
+            _currentAssociationPage.value = AssociationPage.SEARCH
         } else {
-            _actualAssociationPage.value = AssociationPage.MAINSCREEN
+            _currentAssociationPage.value = AssociationPage.MAINSCREEN
         }
     }
 
     fun goTo(page: AssociationPage) {
-        _lastAssociationPage.value = _actualAssociationPage.value
-        _actualAssociationPage.value = page
+        _lastAssociationPage.value = _currentAssociationPage.value
+        _currentAssociationPage.value = page
     }
 
     fun setOverlay(overlay: AssociationOverlay) {

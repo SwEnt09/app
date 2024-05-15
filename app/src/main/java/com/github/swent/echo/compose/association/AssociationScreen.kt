@@ -27,7 +27,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
     val filteredEvents by associationViewModel.filteredEvents.collectAsState()
     val eventsFilter by associationViewModel.eventsFilter.collectAsState()
 
-    val actualAssociationPage by associationViewModel.actualAssociationPage.collectAsState()
+    val currentAssociationPage by associationViewModel.currentAssociationPage.collectAsState()
 
     val overlay by associationViewModel.overlay.collectAsState()
     val searched by associationViewModel.searched.collectAsState()
@@ -35,7 +35,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
     val isOnline by associationViewModel.isOnline.collectAsState()
 
     fun goBack() {
-        if (actualAssociationPage == AssociationPage.MAINSCREEN) {
+        if (currentAssociationPage == AssociationPage.MAINSCREEN) {
             navActions.navigateTo(Routes.MAP)
         } else {
             associationViewModel.goBack()
@@ -49,7 +49,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
         floatingActionButton = {
             SearchButton(
                 onClick = {
-                    if (actualAssociationPage != AssociationPage.SEARCH) {
+                    if (currentAssociationPage != AssociationPage.SEARCH) {
                         associationViewModel.goTo(AssociationPage.SEARCH)
                     }
                     associationViewModel.setOverlay(AssociationOverlay.SEARCH)
@@ -59,7 +59,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
         modifier = Modifier.fillMaxSize().testTag("association_screen")
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            when (actualAssociationPage) {
+            when (currentAssociationPage) {
                 AssociationPage.MAINSCREEN -> {
                     AssociationMainScreen(
                         filteredEvents,
@@ -73,9 +73,9 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                 AssociationPage.DETAILS -> {
                     AssociationDetails(
                         { associationViewModel.onFollowAssociationChanged(it) },
-                        actualAssociationPage.association,
-                        followedAssociations.contains(actualAssociationPage.association),
-                        associationViewModel.associationEvents(actualAssociationPage.association),
+                        currentAssociationPage.association,
+                        followedAssociations.contains(currentAssociationPage.association),
+                        associationViewModel.associationEvents(currentAssociationPage.association),
                     )
                 }
                 AssociationPage.SEARCH -> {
