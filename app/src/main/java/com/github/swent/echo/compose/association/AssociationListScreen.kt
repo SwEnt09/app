@@ -3,9 +3,7 @@ package com.github.swent.echo.compose.association
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -50,9 +48,8 @@ fun AssociationListElement(
     onAssociationClicked: (Association) -> Unit,
     eventsFilter: List<Association>
 ) {
-    val boxCornerRadius = 25.dp
-    val boxHeight = 25.dp
-    val boxWidth = 25.dp
+    val boxCornerRadius = 5.dp
+    val boxInsidePadding = 5.dp
     val tonalElevation = 5.dp
     val paddingSelectedIcon = 5.dp
     ListItem(
@@ -65,15 +62,13 @@ fun AssociationListElement(
             Box(
                 modifier =
                     Modifier.clip(RoundedCornerShape(boxCornerRadius))
-                        .height(boxHeight)
-                        .width(boxWidth)
                         .clickable(onClick = { onAssociationClicked(association) })
                         .testTag("association_name_button_${association.name}")
             ) {
                 Text(
                     text = association.name,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center).padding(boxInsidePadding)
                 )
             }
         },
