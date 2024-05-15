@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.data.model.Association
@@ -29,7 +30,7 @@ fun AssociationListScreen(
     onAssociationClicked: (Association) -> Unit = {},
     eventsFilter: List<Association>
 ) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.testTag("association_list_screen")) {
         items(associationList.size) { index ->
             AssociationListElement(
                 association = associationList[index],
@@ -55,7 +56,9 @@ fun AssociationListElement(
     val tonalElevation = 5.dp
     val paddingSelectedIcon = 5.dp
     ListItem(
-        modifier = Modifier.clickable { onRowClicked(association) },
+        modifier =
+            Modifier.clickable { onRowClicked(association) }
+                .testTag("association_list_${association.name}"),
         overlineContent = { Spacer(modifier = Modifier) }, // used to align the icon and the button
         headlineContent = {},
         leadingContent = {
@@ -65,6 +68,7 @@ fun AssociationListElement(
                         .height(boxHeight)
                         .width(boxWidth)
                         .clickable(onClick = { onAssociationClicked(association) })
+                        .testTag("association_name_button_${association.name}")
             ) {
                 Text(
                     text = association.name,
@@ -75,7 +79,12 @@ fun AssociationListElement(
         },
         trailingContent = {
             if (eventsFilter.contains(association)) {
-                Icon(Icons.Filled.Done, "Selected", Modifier.padding(paddingSelectedIcon))
+                Icon(
+                    Icons.Filled.Done,
+                    "Selected",
+                    Modifier.padding(paddingSelectedIcon)
+                        .testTag("selected_icon_${association.name}")
+                )
             }
         },
         tonalElevation = tonalElevation,
