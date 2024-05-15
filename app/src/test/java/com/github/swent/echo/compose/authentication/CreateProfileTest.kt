@@ -22,12 +22,22 @@ class CreateProfileTest {
         // Verify that the Profile Creation screen loads successfully
         composeTestRule.setContent {
             ProfileCreationUI(
-                listOf(SectionEPFL.AR, SectionEPFL.IN, SectionEPFL.SC, SectionEPFL.GM),
-                listOf(SemesterEPFL.BA1, SemesterEPFL.BA2),
-                setOf(Tag("1", "Sports"), Tag("2", "Music")),
-                {},
-                {},
+                sectionList =
+                    listOf(SectionEPFL.AR, SectionEPFL.IN, SectionEPFL.SC, SectionEPFL.GM),
+                semList = listOf(SemesterEPFL.BA1, SemesterEPFL.BA2),
+                tagList = setOf(Tag("1", "Sports"), Tag("2", "Music")),
+                onSave = { _, _ -> },
+                onAdd = {},
+                tagDelete = {},
                 navAction = mockk(relaxed = true),
+                firstName = "",
+                lastName = "",
+                selectedSec = null,
+                selectedSem = null,
+                onFirstNameChange = {},
+                onLastNameChange = {},
+                onSecChange = {},
+                onSemChange = {},
             )
         }
         // Assert that certain elements are present on the screen
