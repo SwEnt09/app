@@ -68,6 +68,7 @@ import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.CreateProfileViewModel
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun ProfileCreationScreen(
     modifier: Modifier = Modifier,
@@ -76,6 +77,11 @@ fun ProfileCreationScreen(
     tagviewModel: TagViewModel
 ) {
     var dialogVisible by remember { mutableStateOf(false) }
+    val firstName by viewModel.firstName.collectAsState()
+    val lastName by viewModel.lastName.collectAsState()
+    val semesterSelected by viewModel.selectedSemester.collectAsState()
+    val sectionSelected by viewModel.selectedSection.collectAsState()
+
     ProfileCreationUI(
         modifier = modifier,
         sectionList = SectionEPFL.entries,
@@ -84,7 +90,21 @@ fun ProfileCreationScreen(
         onSave = viewModel::profileSave,
         onAdd = { dialogVisible = true },
         tagDelete = viewModel::removeTag,
-        navAction = navAction
+        navAction = navAction,
+        firstName = firstName,
+        lastName = lastName,
+        selectedSec = sectionSelected?.name,
+        onSecChange = { secName ->
+            val section = SectionEPFL.entries.firstOrNull { it.name == secName }
+            viewModel.setSelectedSection(section)
+        },
+        selectedSem = semesterSelected?.name,
+        onSemChange = { semName ->
+            val semester = SemesterEPFL.entries.firstOrNull { it.name == semName }
+            viewModel.setSelectedSemester(semester)
+        },
+        onFirstNameChange = viewModel::setFirstName,
+        onLastNameChange = viewModel::setLastName
     )
 
     if (dialogVisible) {
@@ -117,6 +137,14 @@ fun ProfileCreationUI(
     onAdd: () -> Unit,
     tagDelete: (Tag) -> Unit,
     navAction: NavigationActions,
+    firstName: String,
+    lastName: String,
+    selectedSec: String?,
+    onSecChange: (String) -> Unit,
+    selectedSem: String?,
+    onSemChange: (String) -> Unit,
+    onFirstNameChange: (String) -> Unit,
+    onLastNameChange: (String) -> Unit,
 ) {
     Box(
         modifier = modifier.fillMaxSize().padding(16.dp).testTag("profile-creation"),
@@ -125,10 +153,6 @@ fun ProfileCreationUI(
         Column(
             modifier = modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
         ) {
-            var firstName by remember { mutableStateOf("") }
-            var lastName by remember { mutableStateOf("") }
-         //   var selectedSemester by remember { mutableStateOf<String?>(null) }
-          //  var selectedSection by remember { mutableStateOf<String?>(null) }
             var showError by remember { mutableStateOf(false) }
             var showErrorMessage by remember { mutableStateOf(0) }
 
@@ -144,7 +168,7 @@ fun ProfileCreationUI(
             // First name and last name fields
             OutlinedTextField(
                 value = firstName,
-                onValueChange =  { firstName = it } ,
+                onValueChange = { onFirstNameChange(it) },
                 modifier = modifier.testTag("FirstName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) },
                 singleLine = true,
@@ -155,7 +179,7 @@ fun ProfileCreationUI(
 
             OutlinedTextField(
                 value = lastName,
-                onValueChange = { lastName = it },
+                onValueChange = { onLastNameChange(it) },
                 modifier = modifier.testTag("LastName"),
                 label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) },
                 singleLine = true,
@@ -165,9 +189,19 @@ fun ProfileCreationUI(
             Spacer(modifier = modifier.height(5.dp))
 
             // Section and semester dropdown menus
-            DropDownListFunctionWrapper(sectionList, R.string.profile_creation_section)
+            DropDownListFunctionWrapper(
+                sectionList,
+                R.string.profile_creation_section,
+                selectedSec ?: "",
+                onSecChange
+            )
             Spacer(modifier = modifier.height(5.dp))
-            DropDownListFunctionWrapper(semList, R.string.profile_creation_semester)
+            DropDownListFunctionWrapper(
+                semList,
+                R.string.profile_creation_semester,
+                selectedSem ?: "",
+                onSemChange
+            )
 
             Spacer(modifier = modifier.height(10.dp))
 
@@ -202,14 +236,14 @@ fun ProfileCreationUI(
                 onClick = {
                     if (firstName.isBlank() || lastName.isBlank()) {
                         showError = true
-                         showErrorMessage = if (firstName.isBlank()) {
-                            ProfileCreationErrorKind.EMPTY_FIRST_NAME.errorMess
-                        } else {
-                            ProfileCreationErrorKind.EMPTY_LAST_NAME.errorMess
-                        }
+                        showErrorMessage =
+                            if (firstName.isBlank()) {
+                                ProfileCreationErrorKind.EMPTY_FIRST_NAME.errorMess
+                            } else {
+                                ProfileCreationErrorKind.EMPTY_LAST_NAME.errorMess
+                            }
                         return@OutlinedButton
                     } else {
-                       // val selectedSem = SemesterEPFL.entries.firstOrNull { it.name == selectedSemester }
                         onSave(firstName, lastName)
                         navAction.navigateTo(Routes.MAP)
                     }
@@ -235,18 +269,23 @@ fun ProfileCreationUI(
 }
 
 @Composable
-fun DropDownListFunctionWrapper(elementList: List<Any>, label: Int) {
+fun DropDownListFunctionWrapper(
+    elementList: List<Any>,
+    label: Int,
+    selectedField: String,
+    onSelectedFieldChange: (String) -> Unit
+) {
+
     var showDropdown by remember { mutableStateOf(false) }
-    var selectedField by remember { mutableStateOf("") }
     var selectedFieldSize by remember { mutableStateOf(Size.Zero) }
     val icon = if (showDropdown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
     Column {
         Box() {
             OutlinedTextField(
-                value = selectedField,
+                value = selectedField ?: "",
                 onValueChange = {
-                    selectedField = it
-                                },
+                    // selectedField = it
+                },
                 modifier =
                     Modifier.onGloballyPositioned { coordinates ->
                             selectedFieldSize = coordinates.size.toSize()
@@ -273,7 +312,8 @@ fun DropDownListFunctionWrapper(elementList: List<Any>, label: Int) {
                     DropdownMenuItem(
                         text = { Text(elem.toString()) },
                         onClick = {
-                            selectedField = elem.toString()
+                            // selectedField = elem.toString()
+                            onSelectedFieldChange(elem.toString())
                             showDropdown = false
                         },
                         modifier = Modifier.testTag(elem.toString())
