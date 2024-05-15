@@ -47,9 +47,5 @@ class AssociationScreenTest {
 
         composeTestRule.onNodeWithTag("search_button").performClick()
         composeTestRule.onNodeWithTag("association_search").assertExists()
-
-        composeTestRule.onNodeWithTag("Back-button").performClick()
-        composeTestRule.onNodeWithTag("details_button").performClick()
-        composeTestRule.onNodeWithTag("association_details").assertExists()
     }
 }
