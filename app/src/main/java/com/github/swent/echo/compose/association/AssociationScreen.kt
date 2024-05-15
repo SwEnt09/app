@@ -16,6 +16,9 @@ import com.github.swent.echo.compose.event.EventTitleAndBackButton
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.Overlay
+import com.github.swent.echo.viewmodels.association.AssociationOverlay
+import com.github.swent.echo.viewmodels.association.AssociationPage
+import com.github.swent.echo.viewmodels.association.AssociationViewModel
 
 @Composable
 fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: NavigationActions) {
@@ -29,6 +32,8 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
 
     val overlay by associationViewModel.overlay.collectAsState()
     val searched by associationViewModel.searched.collectAsState()
+
+    val isOnline by associationViewModel.isOnline.collectAsState()
 
     fun goBack() {
         if (actualAssociationPage == AssociationPage.MAINSCREEN) {
@@ -48,7 +53,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                     if (actualAssociationPage != AssociationPage.SEARCH) {
                         associationViewModel.goTo(AssociationPage.SEARCH)
                     }
-                    associationViewModel.setOverlay(Overlay.SEARCH_SHEET)
+                    associationViewModel.setOverlay(AssociationOverlay.SEARCH)
                 }
             )
         },
@@ -60,7 +65,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                     AssociationMainScreen(
                         filteredEvents,
                         { associationViewModel.goTo(it) },
-                        { associationViewModel.addAssociationToFilter(it) },
+                        { associationViewModel.onAssociationToFilterChanged(it) },
                         followedAssociations,
                         committeeAssociations,
                         eventsFilter
@@ -68,10 +73,10 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                 }
                 AssociationPage.DETAILS -> {
                     AssociationDetails(
-                        { associationViewModel.followAssociation(it) },
+                        { associationViewModel.onFollowAssociationChanged(it) },
                         actualAssociationPage.association,
                         followedAssociations.contains(actualAssociationPage.association),
-                        associationViewModel.associationEvents(actualAssociationPage.association)
+                        associationViewModel.associationEvents(actualAssociationPage.association),
                     )
                 }
                 AssociationPage.SEARCH -> {
@@ -79,10 +84,10 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                         { associationViewModel.goTo(it) },
                         associationViewModel.filterAssociations()
                     )
-                    if (overlay == Overlay.SEARCH_SHEET) {
+                    if (overlay == AssociationOverlay.SEARCH) {
                         AssociationSearchBottomSheet(
                             {},
-                            { associationViewModel.setOverlay(Overlay.NONE) },
+                            { associationViewModel.setOverlay(AssociationOverlay.NONE) },
                             { associationViewModel.setSearched(it) },
                             searched
                         )

@@ -3,6 +3,7 @@ package com.github.swent.echo.compose.association
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.viewmodels.association.AssociationPage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
