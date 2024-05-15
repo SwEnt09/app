@@ -1,13 +1,12 @@
 package com.github.swent.echo.compose.association
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.model.Association
 import junit.framework.TestCase.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,80 +16,71 @@ class AssociationListScreenTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
-    val testAssociation = Association("testid", "test name", "test description")
+    private val testAssociations =
+        listOf(
+            Association("id 1", "name 1", "description 1"),
+            Association("id 2", "name 2", "description 2"),
+            Association("id 3", "name 3", "description 3")
+        )
+    private var onRowClicked = 0
+    private var onAssociationClicked = 0
 
-    @Test
-    fun associationScreenDisplayCorrectStrings() {
+    @Before
+    fun setUp() {
+        onRowClicked = 0
+        onAssociationClicked = 0
         composeTestRule.setContent {
             AssociationListScreen(
-                title = "test",
-                {},
-                associationList = listOf(testAssociation),
-                hasActionButton = true,
-                actionButtonName = "test action",
-                onActionButtonClicked = {}
+                associationList = testAssociations,
+                { onRowClicked++ },
+                { onAssociationClicked++ },
+                listOf(testAssociations[0])
             )
         }
-        composeTestRule
-            .onNodeWithTag("${testAssociation.associationId}-name", true)
-            .assertTextContains(testAssociation.name)
-        composeTestRule
-            .onNodeWithTag("${testAssociation.associationId}-action-button-text", true)
-            .assertTextContains("test action")
     }
 
     @Test
-    fun associationScreenActionAndBackButtonsTriggerCallback() {
-        var backClicked = false
-        var actionClicked = false
-        composeTestRule.setContent {
-            AssociationListScreen(
-                title = "test",
-                { backClicked = true },
-                associationList = listOf(testAssociation),
-                hasActionButton = true,
-                actionButtonName = "test-action",
-                onActionButtonClicked = { actionClicked = true }
-            )
-        }
-        composeTestRule
-            .onNodeWithTag("${testAssociation.associationId}-action-button", true)
-            .performClick()
-        assertTrue(actionClicked)
-        composeTestRule.onNodeWithTag("Back-button").performClick()
-        assertTrue(backClicked)
+    fun associationListScreenExists() {
+        composeTestRule.onNodeWithTag("association_list_screen").assertExists()
     }
 
     @Test
-    fun associationScreenWithoutActionButton() {
-        composeTestRule.setContent {
-            AssociationListScreen(title = "test", {}, associationList = listOf(testAssociation))
+    fun allAssociationsDisplayed() {
+        testAssociations.forEach {
+            composeTestRule.onNodeWithTag("association_list_${it.name}").assertExists()
         }
-        composeTestRule
-            .onNodeWithTag("${testAssociation.associationId}-action-button", true)
-            .assertDoesNotExist()
-        composeTestRule
-            .onNodeWithTag("${testAssociation.associationId}-name", true)
-            .assertIsDisplayed()
     }
 
     @Test
-    fun associationSnackbarIsDisplayedWhenUnfollowClicked() {
-        var undoClicked = false
-        composeTestRule.setContent {
-            AssociationListScreen(
-                title = "test",
-                {},
-                associationList = listOf(testAssociation),
-                hasActionButton = true,
-                actionButtonName = "test-action",
-                onActionButtonClicked = {},
-                onUndoActionButtonClicked = { undoClicked = true }
-            )
+    fun clickOnAssociationRowTrigger() {
+        testAssociations.forEach {
+            composeTestRule.onNodeWithTag("association_list_${it.name}").performClick()
+            assertTrue(onRowClicked == 1)
+            onRowClicked = 0
         }
-        composeTestRule
-            .onNodeWithTag("${testAssociation.associationId}-action-button", true)
-            .performClick()
-        composeTestRule.onNodeWithTag("snackbar").assertIsDisplayed()
+    }
+
+    @Test
+    fun clickOnAssociationNameTrigger() {
+        testAssociations.forEach {
+            composeTestRule.onNodeWithTag("association_name_button_${it.name}").performClick()
+            assertTrue(onAssociationClicked == 1)
+            onAssociationClicked = 0
+        }
+    }
+
+    @Test
+    fun iconDisplayedForSelectedAssociations() {
+        testAssociations.forEach {
+            if (it == testAssociations[0]) {
+                composeTestRule
+                    .onNodeWithTag("selected_icon_${it.name}", useUnmergedTree = true)
+                    .assertExists()
+            } else {
+                composeTestRule
+                    .onNodeWithTag("selected_icon_${it.name}", useUnmergedTree = true)
+                    .assertDoesNotExist()
+            }
+        }
     }
 }
