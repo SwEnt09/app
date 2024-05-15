@@ -85,11 +85,6 @@ constructor(
         }
     }
 
-    // TO ASK: how does it work for the associations and committee members? Of course they cannot be
-    // set by the user, but how do they get set?
-    // TO ASK: how to display the associations a user is subscribe to?
-
-    // TODO: Save profile button => go to the home screen after saving the profile.
     fun profileSave(firstNameArg: String, lastNameArg: String) {
 
         val userId = authenticationService.getCurrentUserID()
