@@ -140,29 +140,29 @@ class AssociationViewModelTest {
     @Test
     fun navigationBetweenPagesShouldWork() {
         AssociationViewModel.goTo(AssociationPage.DETAILS)
-        assert(AssociationViewModel.actualAssociationPage.value == AssociationPage.DETAILS)
+        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.DETAILS)
         AssociationViewModel.goTo(AssociationPage.SEARCH)
-        assert(AssociationViewModel.actualAssociationPage.value == AssociationPage.SEARCH)
+        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.SEARCH)
         AssociationViewModel.goTo(AssociationPage.MAINSCREEN)
-        assert(AssociationViewModel.actualAssociationPage.value == AssociationPage.MAINSCREEN)
+        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
     }
 
     @Test
     fun backButtonShouldWork() {
         AssociationViewModel.goTo(AssociationPage.SEARCH)
         AssociationViewModel.goBack()
-        assert(AssociationViewModel.actualAssociationPage.value == AssociationPage.MAINSCREEN)
+        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
 
         AssociationViewModel.goTo(AssociationPage.DETAILS)
         AssociationViewModel.goBack()
-        assert(AssociationViewModel.actualAssociationPage.value == AssociationPage.MAINSCREEN)
+        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
 
         AssociationViewModel.goTo(AssociationPage.SEARCH)
         AssociationViewModel.goTo(AssociationPage.DETAILS)
         AssociationViewModel.goBack()
-        assert(AssociationViewModel.actualAssociationPage.value == AssociationPage.SEARCH)
+        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.SEARCH)
         AssociationViewModel.goBack()
-        assert(AssociationViewModel.actualAssociationPage.value == AssociationPage.MAINSCREEN)
+        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
     }
 
     @Test
