@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -40,6 +39,8 @@ fun TagSelectionDialog(
 ) {
     val tags = tagViewModel.tags.collectAsState()
     val subTagsMap = tagViewModel.subTagsMap.collectAsState()
+    val tagParents by tagViewModel.tagParents.collectAsState()
+    val currentDepth by tagViewModel.currentDepth.collectAsState()
     Dialog(onDismissRequest = onDismissRequest, properties = dialogProperties) {
         Card(
             modifier =
@@ -50,18 +51,18 @@ fun TagSelectionDialog(
         ) {
             LazyColumn {
                 stickyHeader {
-                    Card {
-                        Row {
-                            IconButton(
-                                onClick = tagViewModel::goUp,
-                                modifier = Modifier.testTag("tag-back-button")
-                            ) {
-                                val icon = Icons.Filled.KeyboardArrowLeft
-                                Icon(imageVector = icon, contentDescription = icon.name)
-                            }
-                        }
+                    Card(modifier = Modifier.padding(10.dp)) {
+                        TagHierarchyNavigableBar(
+                            tagParents = tagParents,
+                            currentDepth = currentDepth,
+                            onParentTagClicked = { tag ->
+                                while (tag.tagId != tagParents.peek().tagId) {
+                                    tagViewModel.goUp()
+                                }
+                            },
+                            onCurrentTagClicked = {}
+                        )
                     }
-                    // Spacer(Modifier.padding(5.dp))
                 }
                 items(tags.value) { tag ->
                     TagSelectionDialogEntry(
