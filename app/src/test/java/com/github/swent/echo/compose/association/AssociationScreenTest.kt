@@ -46,6 +46,12 @@ class AssociationScreenTest {
         composeTestRule.onNodeWithTag("association_main_screen").assertExists()
 
         composeTestRule.onNodeWithTag("search_button").performClick()
-        composeTestRule.onNodeWithTag("association_search").assertExists()
+        composeTestRule.onNodeWithTag("association_list_screen").assertExists()
+        composeTestRule.onNodeWithTag("search_menu_sheet").assertExists()
+        composeTestRule.onNodeWithTag("search_menu_search_bar_tags").assertExists()
+        composeTestRule.onNodeWithTag("discover_main_component").assertExists()
+
+        composeTestRule.onNodeWithTag("Back-button").performClick()
+        composeTestRule.onNodeWithTag("association_main_screen").assertExists()
     }
 }
