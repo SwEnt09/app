@@ -97,16 +97,6 @@ fun HamburgerMenuDrawerSheet(
 
              */
             NavigationItem(
-                title = stringResource(R.string.hamburger_association_subscriptions),
-                selectedIcon = Icons.Filled.Favorite,
-                navOnClick = { navActions.navigateTo(Routes.ASSOCIATION_SUBSCRIPTIONS) }
-            ),
-            NavigationItem(
-                title = stringResource(R.string.hamburger_association_memberships),
-                selectedIcon = Icons.Filled.Star,
-                navOnClick = { navActions.navigateTo(Routes.ASSOCIATION_MEMBERSHIPS) }
-            ),
-            NavigationItem(
                 title = stringResource(R.string.hamburger_associations),
                 selectedIcon = Icons.Filled.Star,
                 navOnClick = { navActions.navigateTo(Routes.ASSOCIATIONS) }

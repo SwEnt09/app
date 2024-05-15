@@ -106,20 +106,6 @@ fun AppNavigationHost(
             EditEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
         }
 
-        composable(Routes.ASSOCIATION_SUBSCRIPTIONS.name) {
-            AssociationSubscriptionsScreen(
-                userProfileViewModel = hiltViewModel(),
-                navigationActions = navActions
-            )
-        }
-
-        composable(Routes.ASSOCIATION_MEMBERSHIPS.name) {
-            AssociationCommitteeMemberScreen(
-                userProfileViewModel = hiltViewModel(),
-                navigationActions = navActions
-            )
-        }
-
         composable(Routes.MY_EVENTS.name) { MyEventsScreen(navActions = navActions) }
 
         composable(Routes.ASSOCIATIONS.name) {
