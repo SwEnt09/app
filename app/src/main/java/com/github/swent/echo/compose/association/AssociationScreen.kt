@@ -67,7 +67,8 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                         { associationViewModel.onAssociationToFilterChanged(it) },
                         followedAssociations,
                         committeeAssociations,
-                        eventsFilter
+                        eventsFilter,
+                        isOnline
                     )
                 }
                 AssociationPage.DETAILS -> {
