@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
@@ -24,6 +25,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.time.ZonedDateTime
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,6 +41,7 @@ class CreateEventScreenTest {
     private val mockedAuthenticationService = mockk<AuthenticationService>(relaxed = true)
     private lateinit var eventViewModel: EventViewModel
     private val savedEventId = SavedStateHandle(mapOf())
+    private val mockedNetworkService = mockk<NetworkService>(relaxed = true)
     private val TEST_EVENT =
         Event(
             eventId = "testid",
@@ -57,10 +60,17 @@ class CreateEventScreenTest {
 
     @Before
     fun init() {
+        every { mockedNetworkService.isOnline } returns MutableStateFlow(true)
         every { mockedAuthenticationService.getCurrentUserID() } returns TEST_EVENT.eventId
         coEvery { mockedRepository.getEvent(TEST_EVENT.eventId) } returns TEST_EVENT
         hiltRule.inject()
-        eventViewModel = EventViewModel(mockedRepository, mockedAuthenticationService, savedEventId)
+        eventViewModel =
+            EventViewModel(
+                mockedRepository,
+                mockedAuthenticationService,
+                savedEventId,
+                mockedNetworkService
+            )
     }
 
     @Test

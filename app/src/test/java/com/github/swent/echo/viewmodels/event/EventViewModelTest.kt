@@ -3,6 +3,7 @@ package com.github.swent.echo.viewmodels.event
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
@@ -23,6 +24,7 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -70,14 +72,21 @@ class EventViewModelTest {
     private lateinit var eventViewModel: EventViewModel
     private val scheduler = TestCoroutineScheduler()
     private val savedEventId = SavedStateHandle(mapOf())
+    private val mockedNetworkService = mockk<NetworkService>()
 
     @Before
     fun init() {
+        every { mockedNetworkService.isOnline } returns MutableStateFlow(true)
         fakeAuthenticationService.userID = "u0"
         Dispatchers.setMain(StandardTestDispatcher(scheduler))
         runBlocking {
             eventViewModel =
-                EventViewModel(mockedRepository, fakeAuthenticationService, savedEventId)
+                EventViewModel(
+                    mockedRepository,
+                    fakeAuthenticationService,
+                    savedEventId,
+                    mockedNetworkService
+                )
         }
         scheduler.runCurrent()
     }
@@ -139,7 +148,13 @@ class EventViewModelTest {
         val mockedAuthService = mockk<AuthenticationService>()
         every { mockedAuthService.getCurrentUserID() } returns null
         runBlocking {
-            eventViewModel = EventViewModel(mockedRepository, mockedAuthService, savedEventId)
+            eventViewModel =
+                EventViewModel(
+                    mockedRepository,
+                    mockedAuthService,
+                    savedEventId,
+                    mockedNetworkService
+                )
         }
         scheduler.runCurrent()
         assertTrue(eventViewModel.status.value is EventStatus.Error)
@@ -165,7 +180,12 @@ class EventViewModelTest {
         coEvery { mockedRepository.getUserProfile(any()) } returns testUserProfile
         runBlocking {
             eventViewModel =
-                EventViewModel(mockedRepository, fakeAuthenticationService, savedEventId)
+                EventViewModel(
+                    mockedRepository,
+                    fakeAuthenticationService,
+                    savedEventId,
+                    mockedNetworkService
+                )
         }
         scheduler.runCurrent()
         val organizerList = eventViewModel.organizerList
@@ -227,7 +247,12 @@ class EventViewModelTest {
         coEvery { mockedRepository.getEvent(any()) } returns existingEvent
         runBlocking {
             eventViewModel =
-                EventViewModel(mockedRepository, fakeAuthenticationService, testEventId)
+                EventViewModel(
+                    mockedRepository,
+                    fakeAuthenticationService,
+                    testEventId,
+                    mockedNetworkService
+                )
         }
         scheduler.runCurrent()
         assertEquals(EventStatus.Saved, eventViewModel.status.value)
@@ -257,7 +282,10 @@ class EventViewModelTest {
         mockLog()
         val mockedAuth = mockk<AuthenticationService>()
         every { mockedAuth.getCurrentUserID() } returns null
-        runBlocking { eventViewModel = EventViewModel(mockedRepository, mockedAuth, savedEventId) }
+        runBlocking {
+            eventViewModel =
+                EventViewModel(mockedRepository, mockedAuth, savedEventId, mockedNetworkService)
+        }
         scheduler.runCurrent()
         verify { Log.e(any(), any() as String) }
     }
