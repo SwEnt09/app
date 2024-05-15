@@ -1,5 +1,6 @@
 package com.github.swent.echo.viewmodels.tag
 
+import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import io.mockk.coEvery
@@ -18,36 +19,18 @@ class TagViewModelTest {
 
     private val mockedRepository = mockk<Repository>(relaxed = true)
     private lateinit var tagViewModel: TagViewModel
-    val allTagList = listOf(Tag("a", "a"), Tag("b", "b"))
     val topTagsList = listOf(Tag("w", "w"), Tag("e", "e"))
     val subTagsList = listOf(Tag("x", "x"), Tag("y", "y"))
     val tagExample = Tag("z", "z")
     val rootTagId = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
     private val scheduler = TestCoroutineScheduler()
+    private val rootTagHandle = SavedStateHandle(mapOf())
 
     @Before
     fun init() {
         Dispatchers.setMain(StandardTestDispatcher(scheduler))
-        runBlocking { tagViewModel = TagViewModel(mockedRepository) }
+        runBlocking { tagViewModel = TagViewModel(mockedRepository, rootTagHandle) }
         scheduler.runCurrent()
-    }
-
-    @Test
-    fun allTagsShouldReturnAllTheTags() {
-        coEvery { mockedRepository.getAllTags() } returns allTagList
-        runBlocking { tagViewModel = TagViewModel(mockedRepository) }
-        scheduler.runCurrent()
-        coVerify { mockedRepository.getAllTags() }
-        assertEquals(tagViewModel.allTags.value, allTagList)
-    }
-
-    @Test
-    fun getSubTagsShouldReturnTheSubTags() {
-        coEvery { mockedRepository.getSubTags(tagExample.tagId) } returns subTagsList
-        val subTags = tagViewModel.getSubTags(tagExample)
-        scheduler.runCurrent()
-        coVerify { mockedRepository.getSubTags(tagExample.tagId) }
-        assertEquals(subTags.value, subTagsList)
     }
 
     @Test
@@ -61,8 +44,10 @@ class TagViewModelTest {
 
     @Test
     fun goDownThenUpShouldNotMoveTheCurrentLevel() {
+        coEvery { mockedRepository.getSubTags(tagExample.tagId) } returns subTagsList
         val depth = tagViewModel.currentDepth.value
         tagViewModel.goDown(tagExample)
+        scheduler.runCurrent()
         assertEquals(depth + 1, tagViewModel.currentDepth.value)
         tagViewModel.goUp()
         scheduler.runCurrent()
