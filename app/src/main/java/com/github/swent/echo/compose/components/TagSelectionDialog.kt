@@ -39,8 +39,7 @@ fun TagSelectionDialog(
     onTagSelected: (Tag) -> Unit
 ) {
     val tags = tagViewModel.tags.collectAsState()
-    val currentDepth = tagViewModel.currentDepth.collectAsState()
-    val hasSubTags = currentDepth.value < tagViewModel.maxDepth
+    val subTagsMap = tagViewModel.subTagsMap.collectAsState()
     Dialog(onDismissRequest = onDismissRequest, properties = dialogProperties) {
         Card(
             modifier =
@@ -72,7 +71,7 @@ fun TagSelectionDialog(
                             onDismissRequest()
                         },
                         onTagArrowClicked = tagViewModel::goDown,
-                        hasSubTags = hasSubTags
+                        hasSubTags = subTagsMap.value[tag]?.isNotEmpty() ?: false
                     )
                 }
             }
