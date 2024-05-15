@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.compose.components.ListDrawer
 import com.github.swent.echo.data.model.Association
@@ -39,7 +40,7 @@ fun AssociationMainScreen(
     eventsFilter: List<Association>,
     isOnline: Boolean
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().testTag("association_main_screen")) {
         AssociationExpandableList(
             "Followed Associations",
             goTo,
@@ -78,10 +79,14 @@ fun AssociationExpandableList(
                 .clip(RoundedCornerShape(cornerRadius))
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer)
+                .testTag("association_expandable_list_${title}")
     ) {
         Box(
             modifier =
-                Modifier.height(topBoxHeight).fillMaxWidth().clickable { expanded = !expanded }
+                Modifier.height(topBoxHeight)
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded }
+                    .testTag("association_expandable_list_${title}_box")
         ) {
             Text(
                 title,
