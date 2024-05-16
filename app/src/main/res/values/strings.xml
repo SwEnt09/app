@@ -99,5 +99,7 @@
     <string name="association_committee_member_screen_title">Your association memberships</string>
     <string name="my_events_joined_events">Joined Events</string>
     <string name="my_events_created_events">Created Events</string>
+    <string name="list_drawer_leave_event">Leave Event</string>
+    <string name="event_successfully_left">Event successfully left!</string>
 </resources>
 
