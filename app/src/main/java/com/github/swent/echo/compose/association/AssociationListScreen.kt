@@ -46,7 +46,6 @@ fun AssociationListElement(
     onAssociationClicked: (Association) -> Unit,
     eventsFilter: List<Association>
 ) {
-    val boxCornerRadius = 5.dp
     val boxInsidePadding = 5.dp
     val tonalElevation = 5.dp
     val paddingSelectedIcon = 5.dp
