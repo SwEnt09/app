@@ -58,13 +58,11 @@ fun HamburgerMenuDrawerSheet(
      */
     val items =
         listOf(
-
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_my_profile),
                 selectedIcon = Icons.Filled.Person,
                 navOnClick = { navActions.navigateTo(Routes.PROFILE_CREATION) }
             ),
-
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_my_events),
                 selectedIcon = Icons.Filled.DateRange,
