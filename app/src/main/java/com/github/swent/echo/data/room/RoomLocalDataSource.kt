@@ -50,12 +50,16 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         return associationDao.getAll(after).map { it.toAssociation() }
     }
 
-    override suspend fun getAllAssociationsSyncedBefore(secondsAgo: Long): List<String> {
-        return associationDao.getAllBefore(computeTimestamp(secondsAgo))
+    override suspend fun getAllAssociationIds(secondsAgo: Long): List<String> {
+        return associationDao.getAllIds(computeTimestamp(secondsAgo))
     }
 
     override suspend fun setAssociations(associations: List<Association>) {
         associationDao.insertAll(associations.map { AssociationRoom(it) })
+    }
+
+    override suspend fun deleteAssociationsNotIn(associationIds: List<String>) {
+        associationDao.deleteNotIn(associationIds)
     }
 
     override suspend fun getEvent(eventId: String, syncedSecondsAgo: Long): Event? {
@@ -77,8 +81,8 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         return eventDao.getAll(after).map { it.toEvent() }
     }
 
-    override suspend fun getAllEventsSyncedBefore(secondsAgo: Long): List<String> {
-        return eventDao.getAllBefore(computeTimestamp(secondsAgo))
+    override suspend fun getAllEventIds(secondsAgo: Long): List<String> {
+        return eventDao.getAllIds(computeTimestamp(secondsAgo))
     }
 
     override suspend fun setEvents(events: List<Event>) {
@@ -91,6 +95,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         tagDao.insertAll(tags.toTagRoomList())
         eventDao.insertAll(events.map { EventRoom(it) })
         eventDao.insertEventTagCrossRegs(crossRefs)
+    }
+
+    override suspend fun deleteEventsNotIn(eventIds: List<String>) {
+        return eventDao.deleteNotIn(eventIds)
     }
 
     override suspend fun getTag(tagId: String, syncedSecondsAgo: Long): Tag? {
@@ -107,13 +115,21 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         return tagDao.getSubTags(tagId, after).toTagList()
     }
 
+    override suspend fun deleteSubTagsNotIn(tagId: String, childTagIds: List<String>) {
+        tagDao.deleteSubTagsNotIn(tagId, childTagIds)
+    }
+
     override suspend fun getAllTags(syncedSecondsAgo: Long): List<Tag> {
         val after = computeTimestamp(syncedSecondsAgo)
         return tagDao.getAll(after).map { it.toTag() }
     }
 
-    override suspend fun getAllTagsSyncedBefore(secondsAgo: Long): List<String> {
-        return tagDao.getAllBefore(computeTimestamp(secondsAgo))
+    override suspend fun getAllTagIds(secondsAgo: Long): List<String> {
+        return tagDao.getAllIds(computeTimestamp(secondsAgo))
+    }
+
+    override suspend fun deleteAllTagsNotIn(tagIds: List<String>) {
+        tagDao.deleteNotIn(tagIds)
     }
 
     override suspend fun setTags(tags: List<Tag>) {
@@ -153,10 +169,6 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         )
     }
 
-    override suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String> {
-        return userProfileDao.getAllBefore(computeTimestamp(secondsAgo))
-    }
-
     override suspend fun joinEvent(
         userId: String,
         eventId: String,
@@ -167,6 +179,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
                 eventId,
             ),
         )
+    }
+
+    override suspend fun joinEvents(userId: String, eventIds: List<String>) {
+        eventDao.insertJoinedEvents(eventIds.map { JoinedEventRoom(userId, it) })
     }
 
     override suspend fun leaveEvent(
@@ -181,10 +197,12 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         )
     }
 
-    override suspend fun getJoinedEvents(
-        userId: String,
-    ): List<Event> {
-        val eventIds = eventDao.getJoinedEvents(userId)
+    override suspend fun leaveEventsNotIn(userId: String, eventIds: List<String>) {
+        eventDao.deleteJoinedEventsNotIn(userId, eventIds)
+    }
+
+    override suspend fun getJoinedEvents(userId: String, syncedSecondsAgo: Long): List<Event> {
+        val eventIds = eventDao.getJoinedEvents(userId, syncedSecondsAgo)
         return eventDao.getEventsByIds(eventIds).map { it.toEvent() }
     }
 

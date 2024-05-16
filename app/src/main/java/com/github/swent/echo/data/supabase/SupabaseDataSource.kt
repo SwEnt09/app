@@ -18,8 +18,31 @@ import io.github.jan.supabase.exceptions.BadRequestRestException
 import io.github.jan.supabase.exceptions.UnknownRestException
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
+import kotlin.text.StringBuilder
 
 class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSource {
+
+    /**
+     * Transforms a list from usual toString format into the format required by Supabase /
+     * PostgREST, namely surrounded by normal parentheses rather than brackets.
+     *
+     * @param listOfIds: a list of strings / ids which will be filtered
+     * @return String of comma separated values surrounded by parentheses
+     */
+    private fun toFilterList(listOfIds: List<String>): String {
+        val output: StringBuilder = StringBuilder()
+        output.append("(")
+        for (elemId in listOfIds) {
+            output.append(elemId)
+            output.append(",")
+        }
+        if (output.length > 1) {
+            output.deleteAt(output.length - 1)
+        }
+        output.append(")")
+        return output.toString()
+    }
 
     override suspend fun getAssociation(associationId: String): Association? {
         return try {
@@ -36,6 +59,17 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         return supabase
             .from("associations")
             .select { filter { isIn("association_id", associations) } }
+            .decodeList()
+    }
+
+    override suspend fun getAssociationsNotIn(associationIds: List<String>): List<Association> {
+        return supabase
+            .from("associations")
+            .select {
+                filter {
+                    filterNot("association_id", FilterOperator.IN, toFilterList(associationIds))
+                }
+            }
             .decodeList()
     }
 
@@ -84,6 +118,17 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         supabase.from("event_tags").upsert(eventTags, onConflict = "tag_id,event_id")
     }
 
+    override suspend fun getEventsNotIn(eventIds: List<String>): List<Event> {
+        val events =
+            supabase
+                .from("events")
+                .select(Columns.raw(QUERY_EVENT)) {
+                    filter { filterNot("event_id", FilterOperator.IN, toFilterList(eventIds)) }
+                }
+                .decodeList<EventSupabase>()
+        return events.map { event -> event.toEvent() }
+    }
+
     override suspend fun getAllEvents(): List<Event> {
         val events =
             supabase.from("events").select(Columns.raw(QUERY_EVENT)).decodeList<EventSupabase>()
@@ -116,7 +161,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
     }
 
     override suspend fun getJoinedEvents(userId: String): List<Event> {
-        var events =
+        val events =
             supabase
                 .from("events")
                 .select(
@@ -131,9 +176,25 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         return events.map { event -> event.toEvent() }
     }
 
+    override suspend fun getJoinedEventsNotIn(userId: String, eventIds: List<String>): List<Event> {
+        val events =
+            supabase
+                .from("joined_event_view")
+                .select(Columns.raw(QUERY_EVENT + ", join_user_id")) {
+                    filter {
+                        and {
+                            eq("join_user_id", userId)
+                            filterNot("event_id", FilterOperator.IN, toFilterList(eventIds))
+                        }
+                    }
+                }
+                .decodeList<EventSupabase>()
+        return events.map { event -> event.toEvent() }
+    }
+
     override suspend fun getTag(tagId: String): Tag? {
         return try {
-            supabase.from("tags").select() { filter { eq("tag_id", tagId) } }.decodeSingle()
+            return supabase.from("tags").select() { filter { eq("tag_id", tagId) } }.decodeSingle()
         } catch (e: NoSuchElementException) {
             null
         }
@@ -143,8 +204,29 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         return supabase.from("tags").select() { filter { eq("parent_id", tagId) } }.decodeList()
     }
 
+    override suspend fun getSubTagsNotIn(tagId: String, childTagIds: List<String>): List<Tag> {
+        return supabase
+            .from("tags")
+            .select {
+                filter {
+                    and {
+                        eq("parent_id", tagId)
+                        filterNot("tag_id", FilterOperator.IN, toFilterList(childTagIds))
+                    }
+                }
+            }
+            .decodeList()
+    }
+
     override suspend fun getAllTags(): List<Tag> {
         return supabase.from("tags").select().decodeList<Tag>()
+    }
+
+    override suspend fun getAllTagsNotIn(tagIds: List<String>): List<Tag> {
+        return supabase
+            .from("tags")
+            .select { filter { filterNot("tag_id", FilterOperator.IN, toFilterList(tagIds)) } }
+            .decodeList()
     }
 
     override suspend fun getUserProfile(userId: String): UserProfile? {

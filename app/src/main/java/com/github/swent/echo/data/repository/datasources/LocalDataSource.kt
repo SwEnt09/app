@@ -24,9 +24,11 @@ interface LocalDataSource {
 
     suspend fun getAllAssociations(syncedSecondsAgo: Long): List<Association>
 
-    suspend fun getAllAssociationsSyncedBefore(secondsAgo: Long): List<String>
+    suspend fun getAllAssociationIds(secondsAgo: Long): List<String>
 
     suspend fun setAssociations(associations: List<Association>)
+
+    suspend fun deleteAssociationsNotIn(associationIds: List<String>)
 
     suspend fun getEvent(eventId: String, syncedSecondsAgo: Long): Event?
 
@@ -34,9 +36,11 @@ interface LocalDataSource {
 
     suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event>
 
-    suspend fun getAllEventsSyncedBefore(secondsAgo: Long): List<String>
+    suspend fun getAllEventIds(secondsAgo: Long): List<String>
 
     suspend fun setEvents(events: List<Event>)
+
+    suspend fun deleteEventsNotIn(eventIds: List<String>)
 
     suspend fun getTag(tagId: String, syncedSecondsAgo: Long): Tag?
 
@@ -50,9 +54,13 @@ interface LocalDataSource {
      */
     suspend fun getSubTags(tagId: String, syncedSecondsAgo: Long): List<Tag>
 
+    suspend fun deleteSubTagsNotIn(tagId: String, childTagIds: List<String>)
+
     suspend fun getAllTags(syncedSecondsAgo: Long): List<Tag>
 
-    suspend fun getAllTagsSyncedBefore(secondsAgo: Long): List<String>
+    suspend fun getAllTagIds(secondsAgo: Long): List<String>
+
+    suspend fun deleteAllTagsNotIn(tagIds: List<String>)
 
     suspend fun setTags(tags: List<Tag>)
 
@@ -63,13 +71,15 @@ interface LocalDataSource {
 
     suspend fun setUserProfile(userProfile: UserProfile)
 
-    suspend fun getAllUserProfilesSyncedBefore(secondsAgo: Long): List<String>
-
     suspend fun joinEvent(userId: String, eventId: String)
+
+    suspend fun joinEvents(userId: String, eventIds: List<String>)
 
     suspend fun leaveEvent(userId: String, eventId: String)
 
-    suspend fun getJoinedEvents(userId: String): List<Event>
+    suspend fun leaveEventsNotIn(userId: String, eventIds: List<String>)
+
+    suspend fun getJoinedEvents(userId: String, syncedSecondsAgo: Long): List<Event>
 
     suspend fun joinAssociation(userId: String, associationId: String)
 

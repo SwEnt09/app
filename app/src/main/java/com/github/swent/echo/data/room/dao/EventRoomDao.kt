@@ -26,15 +26,25 @@ interface EventRoomDao {
     @Query("SELECT * FROM EventRoom WHERE timestamp >= :after")
     suspend fun getAll(after: Long): List<EventWithOrganizerAndTags>
 
-    @Query("SELECT eventId FROM EventRoom WHERE timestamp <= :before")
-    suspend fun getAllBefore(before: Long): List<String>
+    @Query("SELECT eventId FROM EventRoom WHERE timestamp >= :after")
+    suspend fun getAllIds(after: Long): List<String>
+
+    @Query("DELETE FROM EventRoom WHERE eventId NOT IN (:ids)")
+    suspend fun deleteNotIn(ids: List<String>)
 
     @Upsert suspend fun insertJoinedEvent(joinedEvent: JoinedEventRoom)
 
+    @Upsert suspend fun insertJoinedEvents(joinedEvents: List<JoinedEventRoom>)
+
     @Delete suspend fun deleteJoinedEvent(joinedEvent: JoinedEventRoom)
 
-    @Query("SELECT eventId FROM JoinedEventRoom WHERE userId = :userId")
-    suspend fun getJoinedEvents(userId: String): List<String>
+    @Delete suspend fun deleteJoinedEvents(joinedEvents: List<JoinedEventRoom>)
+
+    @Query("SELECT eventId FROM JoinedEventRoom WHERE userId = :userId AND timestamp >= :after")
+    suspend fun getJoinedEvents(userId: String, after: Long): List<String>
+
+    @Query("DELETE FROM JoinedEventRoom WHERE userId = :userId AND eventId NOT IN (:eventIds)")
+    suspend fun deleteJoinedEventsNotIn(userId: String, eventIds: List<String>)
 
     @Transaction
     @Query("SELECT * FROM EventRoom WHERE eventId IN (:eventIds)")

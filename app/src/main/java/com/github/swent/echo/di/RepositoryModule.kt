@@ -2,6 +2,7 @@ package com.github.swent.echo.di
 
 import android.app.Application
 import androidx.room.Room
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.data.repository.RepositoryImpl
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
@@ -22,7 +23,11 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideRepository(supabaseClient: SupabaseClient, application: Application): Repository {
+    fun provideRepository(
+        supabaseClient: SupabaseClient,
+        application: Application,
+        networkService: NetworkService
+    ): Repository {
         val remoteDataSource: RemoteDataSource = SupabaseDataSource(supabaseClient)
         val localDataSource: LocalDataSource =
             RoomLocalDataSource(
@@ -34,11 +39,7 @@ object RepositoryModule {
                     .build()
             )
 
-        return RepositoryImpl(
-            remoteDataSource,
-            localDataSource,
-            { true }
-        ) // TODO: use a real source for online state
+        return RepositoryImpl(remoteDataSource, localDataSource, networkService)
     }
 
     /*
