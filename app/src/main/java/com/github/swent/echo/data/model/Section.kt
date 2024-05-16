@@ -5,7 +5,6 @@ interface Section {
 }
 
 enum class SectionEPFL : Section {
-    UNKNOWN,
     // School of Basic Sciences
     MA,
     CGC,
