@@ -54,7 +54,6 @@ constructor(
                 _organizerList.value =
                     userProfile.committeeMember.map { association -> association.name } + username
                 if (savedEventId.contains("eventId")) {
-                    _isEventNew.value = false
                     val repositoryEvent = repository.getEvent(savedEventId.get<String>("eventId")!!)
                     if (repositoryEvent == null) {
                         _event.value =
@@ -64,6 +63,7 @@ constructor(
                             )
                         _status.value = EventStatus.Modified
                     } else {
+                        _isEventNew.value = false
                         _event.value = repositoryEvent
                         _status.value = EventStatus.Saved
                     }
