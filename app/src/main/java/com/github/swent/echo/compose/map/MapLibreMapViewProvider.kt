@@ -2,7 +2,6 @@ package com.github.swent.echo.compose.map
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
 import com.mapbox.mapboxsdk.Mapbox
@@ -24,7 +23,11 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
     private var locationComponent: LocationComponent? = null
     private var firstRecenter = true
 
-    private fun redrawMarkers(map: MapboxMap, events: List<Event>, callback: (Event) -> Unit) {
+    private fun redrawMarkers(
+        map: MapboxMap,
+        events: List<Event>,
+        callback: (Event) -> Unit,
+    ) {
         map.markers.forEach { map.removeMarker(it) }
         events.forEach {
             val markerBuilder = MarkerOptions().setPosition(it.location.toLatLng()).title(it.title)
@@ -99,7 +102,6 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                             .build()
                 }
                 map.addOnMapLongClickListener {
-                    Log.i("LONG_PRESS", "map long pressed")
                     onLongPress(it)
                     true
                 }
