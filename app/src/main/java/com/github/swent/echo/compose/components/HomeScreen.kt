@@ -132,7 +132,6 @@ private fun Content(
         if (overlay == Overlay.EVENT_INFO_SHEET && displayEventInfo != null) {
             EventInfoSheet(
                 event = displayEventInfo!!,
-                onJoinButtonPressed = {},
                 onDismiss = homeScreenViewModel::clearOverlay,
                 onFullyExtended = {},
                 canModifyEvent = canUserModifyEvent,
