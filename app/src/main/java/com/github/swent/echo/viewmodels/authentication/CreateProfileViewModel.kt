@@ -25,6 +25,9 @@ constructor(
     private val repository: Repository,
 ) : ViewModel() {
 
+    private val _isEditing = MutableStateFlow(false)
+    val isEditing = _isEditing.asStateFlow()
+
     private val _firstName = MutableStateFlow("")
     val firstName = _firstName.asStateFlow()
 
@@ -73,6 +76,7 @@ constructor(
             if (userId != null) {
                 val userProfile = repository.getUserProfile(userId)
                 if (userProfile != null) {
+                    _isEditing.value = true
                     _firstName.value = userProfile.name.split(" ")[0]
                     _lastName.value = userProfile.name.split(" ")[1]
                     _selectedSemester.value = userProfile.semester
@@ -80,6 +84,8 @@ constructor(
                     _tagList.value = userProfile.tags
                     _committeeMember.value = userProfile.committeeMember
                     _associationSubscriptions.value = userProfile.associationsSubscriptions
+                } else {
+                    _isEditing.value = false
                 }
             }
         }
