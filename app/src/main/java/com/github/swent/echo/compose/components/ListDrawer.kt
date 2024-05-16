@@ -1,6 +1,5 @@
 package com.github.swent.echo.compose.components
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,7 +29,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,14 +46,7 @@ fun ListDrawer(eventsList: List<Event>, section: String, semester: String, isOnl
     LazyColumn(modifier = Modifier.fillMaxSize().padding(5.dp).testTag("list_drawer")) {
         // Iterate over the list of events and display them
         items(eventsList) { event ->
-            EventListItem(
-                event = event,
-                selectedEvent = selectedEvent,
-                onJoinButtonPressed = {},
-                section,
-                semester,
-                isOnline
-            )
+            EventListItem(event = event, selectedEvent = selectedEvent, section, semester, isOnline)
             Spacer(modifier = Modifier.height(5.dp))
         }
     }
@@ -66,7 +56,6 @@ fun ListDrawer(eventsList: List<Event>, section: String, semester: String, isOnl
 fun EventListItem(
     event: Event,
     selectedEvent: MutableState<String>,
-    onJoinButtonPressed: () -> Unit,
     section: String,
     semester: String,
     isOnline: Boolean,
@@ -260,8 +249,6 @@ fun EventListItem(
                 Spacer(modifier = Modifier.width(40.dp))
                 Column {
                     val buttonWidth = 130.dp
-                    // get the context
-                    val context = LocalContext.current
                     // To add when the button will be implemented the next Milestone
                     /*
                     Button(
@@ -271,22 +258,7 @@ fun EventListItem(
                         Text(stringResource(id = R.string.list_drawer_view_on_map))
                     }*/
                     // Join event button
-                    Button(
-                        enabled = isOnline,
-                        onClick = {
-                            onJoinButtonPressed()
-                            Toast.makeText(
-                                    context,
-                                    context.getString(R.string.event_successfully_joined),
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show()
-                        },
-                        modifier =
-                            Modifier.width(buttonWidth).testTag("list_join_event_${event.eventId}")
-                    ) {
-                        Text(stringResource(id = R.string.list_drawer_join_event))
-                    }
+                    JoinEventButton(event, isOnline, buttonWidth)
                 }
             }
         }

@@ -1,6 +1,5 @@
 package com.github.swent.echo.compose.components
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +23,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,7 +35,6 @@ import java.time.format.DateTimeFormatter
  * Bottom sheet that shows the details of an event.
  *
  * @param event the event to show
- * @param onJoinButtonPressed callback to join the event
  * @param onDismiss callback to dismiss the sheet
  * @param onFullyExtended callback when the sheet is fully extended
  */
@@ -45,7 +42,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun EventInfoSheet(
     event: Event,
-    onJoinButtonPressed: () -> Unit,
     onDismiss: () -> Unit,
     onFullyExtended: () -> Unit,
     canModifyEvent: Boolean,
@@ -63,9 +59,6 @@ fun EventInfoSheet(
     // handle the display of the date and time
     val formatter = DateTimeFormatter.ofPattern("dd/MM\nHH:mm")
     val displayDate = formatter.format(event.startDate)
-
-    // get the context
-    val context = LocalContext.current
 
     ModalBottomSheet(
         modifier = Modifier.fillMaxSize().testTag("event_info_sheet"),
@@ -148,24 +141,7 @@ fun EventInfoSheet(
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp),
             ) {
                 // button to join the event
-                Button(
-                    enabled = isOnline,
-                    onClick = {
-                        onJoinButtonPressed()
-                        Toast.makeText(
-                                context,
-                                context.getString(R.string.event_successfully_joined),
-                                Toast.LENGTH_SHORT
-                            )
-                            .show()
-                    },
-                    modifier = Modifier.testTag("join_button_event_info_sheet"),
-                ) {
-                    Text(
-                        text = stringResource(R.string.event_info_sheet_join_event_button_text),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
+                JoinEventButton(event, isOnline, 100.dp)
 
                 // button to modify the event
                 if (canModifyEvent) {
