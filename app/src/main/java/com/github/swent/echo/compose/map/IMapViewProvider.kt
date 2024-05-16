@@ -3,6 +3,7 @@ package com.github.swent.echo.compose.map
 import android.content.Context
 import android.view.View
 import com.github.swent.echo.data.model.Event
+import com.mapbox.mapboxsdk.geometry.LatLng
 
 /**
  * A MapView provider is meant to be used by an
@@ -13,7 +14,12 @@ import com.github.swent.echo.data.model.Event
  * @author alejandrocalles
  */
 interface IMapViewProvider<T : View> {
-    fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): T
+    fun factory(
+        context: Context,
+        withLocation: Boolean,
+        onCreate: () -> Unit,
+        onLongPress: (LatLng) -> Unit
+    ): T
 
     fun update(view: T, events: List<Event>, callback: (Event) -> Unit, withLocation: Boolean)
 }
