@@ -1,14 +1,18 @@
 package com.github.swent.echo.compose.components
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.activity.compose.setContent
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.MainActivity
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import org.hamcrest.CoreMatchers.equalTo
@@ -17,10 +21,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class EventInfoSheetTest {
+    @get:Rule(order = 0) val hiltRule = HiltAndroidRule(this)
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule(order = 1) val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private var joinClicked = 0
     private var dismissed = 0
@@ -28,7 +34,7 @@ class EventInfoSheetTest {
     private var modified = 0
 
     private fun setUp(peopleMax: Int = 0, canModifyEvent: Boolean = false) {
-        composeTestRule.setContent {
+        composeTestRule.activity.setContent {
             joinClicked = 0
             dismissed = 0
 
@@ -50,7 +56,6 @@ class EventInfoSheetTest {
 
             EventInfoSheet(
                 event = event,
-                onJoinButtonPressed = { joinClicked++ },
                 onDismiss = { dismissed++ },
                 onFullyExtended = { extended++ },
                 canModifyEvent = canModifyEvent,
@@ -94,13 +99,6 @@ class EventInfoSheetTest {
     fun shouldShowPeopleButton() {
         setUp()
         composeTestRule.onNodeWithText("0").assertExists()
-    }
-
-    @Test
-    fun shouldCallJoinButtonPressedWhenJoinButtonClicked() {
-        setUp()
-        composeTestRule.onNodeWithTag("join_button_event_info_sheet").performClick()
-        assertThat(joinClicked, equalTo(1))
     }
 
     @Test
