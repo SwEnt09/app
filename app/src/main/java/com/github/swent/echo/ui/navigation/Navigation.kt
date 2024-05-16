@@ -11,7 +11,7 @@ data class Routes(val name: String) {
         val LOGIN = Routes("login")
         val REGISTER = Routes("register")
         val MAP = Routes("map")
-        val CREATE_EVENT = Routes("create_event")
+        val CREATE_EVENT = RoutesBuilder("create_event", "location")
         val EDIT_EVENT = RoutesBuilder("edit_event", "eventId")
         val PROFILE_CREATION = Routes("profile_creation")
         val MY_EVENTS = Routes("my_events")

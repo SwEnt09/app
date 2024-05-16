@@ -33,10 +33,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
+import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun HamburgerMenuDrawerSheet(
@@ -82,7 +85,10 @@ fun HamburgerMenuDrawerSheet(
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_create_event),
                 selectedIcon = Icons.Filled.AddCircle,
-                navOnClick = { navActions.navigateTo(Routes.CREATE_EVENT) }
+                navOnClick = {
+                    val encodedMapCenter = Json.encodeToString(MAP_CENTER)
+                    navActions.navigateTo(Routes.CREATE_EVENT.build(encodedMapCenter))
+                }
             ),
             /*
             NavigationItem(

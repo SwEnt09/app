@@ -17,11 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.compose.map.MapDrawer
+import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.HomeScreenViewModel
 import com.github.swent.echo.viewmodels.MapOrListMode
 import com.github.swent.echo.viewmodels.Overlay
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * The scaffold for the home screen. contains the top bar, the bottom sheet if an event is selected,
@@ -118,6 +121,10 @@ private fun Content(
             MapDrawer(
                 events = displayEventList,
                 callback = homeScreenViewModel::onEventSelected,
+                launchEventCreation = {
+                    val encodedLocation = Json.encodeToString(Location("", it))
+                    navActions.navigateTo(Routes.CREATE_EVENT.build(encodedLocation))
+                }
             )
             if (!searchMode) {
                 TagUI(
