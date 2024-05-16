@@ -1,6 +1,7 @@
 package com.github.swent.echo.data.supabase.serializer
 
 import com.github.swent.echo.data.model.SectionEPFL
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -40,6 +41,7 @@ class SectionSerializerTest {
 
     @Test
     fun testDeserialize() {
+        every { decoder.decodeString() } returns SectionEPFL.IN.name
         semesterSerializer.deserialize(decoder)
         verify { decoder.decodeString() }
     }
