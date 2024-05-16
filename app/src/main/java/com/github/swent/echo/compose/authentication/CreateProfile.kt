@@ -254,7 +254,7 @@ fun ProfileCreationUI(
             }
             if (showError) {
                 Snackbar(
-                    modifier = modifier.padding(16.dp),
+                    modifier = modifier.padding(16.dp).testTag("ErrorMessage"),
                     action = {
                         Button(onClick = { showError = false }) {
                             Text(stringResource(id = R.string.profile_creation_dismiss))

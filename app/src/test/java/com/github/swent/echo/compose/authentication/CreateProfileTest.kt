@@ -63,5 +63,8 @@ class CreateProfileTest {
         composeTestRule.onAllNodesWithContentDescription("list dropdown")[1].performClick()
         composeTestRule.onNodeWithTag("BA1").assertExists()
         composeTestRule.onNodeWithTag("BA2").assertExists()
+
+        composeTestRule.onNodeWithTag("Save").performClick()
+        composeTestRule.onNodeWithTag("ErrorMessage").assertExists()
     }
 }
