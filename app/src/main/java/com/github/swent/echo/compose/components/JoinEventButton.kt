@@ -28,7 +28,7 @@ fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, joinedEven
         androidx.compose.ui.Modifier.width(buttonWidth).testTag("list_join_event_${event.eventId}")
     ) {
         Text(
-            if(joinedEvents.contains(event))
+            if(joinedEvents.map{it.eventId}.contains(event.eventId))
                 stringResource(id = R.string.list_drawer_leave_event)
             else
                 stringResource(id = R.string.list_drawer_join_event)

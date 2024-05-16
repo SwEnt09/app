@@ -383,7 +383,7 @@ constructor(
 
     fun joinOrLeaveEvent(event: Event){
         viewModelScope.launch{
-            if(_joinedEvents.value.contains(event)){
+            if(_joinedEvents.value.map{it.eventId}.contains(event.eventId)){
                 repository.leaveEvent(userId, event)
             } else {
                 repository.joinEvent(userId, event)
