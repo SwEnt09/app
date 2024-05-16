@@ -1,20 +1,18 @@
 package com.github.swent.echo.compose.association
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -59,16 +57,14 @@ fun AssociationListElement(
         overlineContent = { Spacer(modifier = Modifier) }, // used to align the icon and the button
         headlineContent = {},
         leadingContent = {
-            Box(
-                modifier =
-                    Modifier.clip(RoundedCornerShape(boxCornerRadius))
-                        .clickable(onClick = { onAssociationClicked(association) })
-                        .testTag("association_name_button_${association.name}")
+            TextButton(
+                onClick = { onAssociationClicked(association) },
+                modifier = Modifier.testTag("association_name_button_${association.name}")
             ) {
                 Text(
                     text = association.name,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.Center).padding(boxInsidePadding)
+                    modifier = Modifier.align(Alignment.CenterVertically).padding(boxInsidePadding)
                 )
             }
         },
