@@ -25,7 +25,7 @@ class NavigationActionsTest {
                 Routes.LOGIN,
                 Routes.REGISTER,
                 Routes.MAP,
-                Routes.CREATE_EVENT,
+                Routes.CREATE_EVENT.build("location"),
                 Routes.EDIT_EVENT.build("1234")
             )
         for (route in routes) {
