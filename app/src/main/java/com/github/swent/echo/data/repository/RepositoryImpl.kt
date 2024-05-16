@@ -27,7 +27,8 @@ class RepositoryImpl(
         const val EVENT_CACHE_TTL: Long = 60 * 5
         const val TAG_CACHE_TTL: Long = 60 * 60 * 24
         const val USERPROFILE_CACHE_TTL: Long = 60 * 15
-        const val FETCH_ALL = Long.MAX_VALUE
+        const val FETCH_ALL: Long =
+            1715885732 // Epoch seconds of ~16.05.2024 so we fetch everything up to ~50 years ago
 
         var associations_last_cached_all: Long = 0
         var events_last_cached_all: Long = 0
