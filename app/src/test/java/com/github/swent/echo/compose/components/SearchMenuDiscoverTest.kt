@@ -62,6 +62,7 @@ class SearchMenuDiscoverTest {
         composeTestRule.onNodeWithTag("discover_parent_${subTag1[0].name}").assertExists()
         // Test if on parent tag click, it goes back to this parent
         composeTestRule.onNodeWithTag("discover_parent_${tagViewModel.rootTag.name}").performClick()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("discover_select_category").assertExists()
     }
 
