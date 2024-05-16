@@ -42,10 +42,11 @@ class SupabaseDataSourceTest {
             "DO NOT DELETE/MODIFY: tests in repository.datasources.SupabaseTest will fail"
         )
     private val tag = Tag("daba142a-a276-4b7e-824d-43ca088633ff", "Dummy Tag")
+    private val rootTagId = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
     private val event =
         Event(
             "3bcf6f25-81d4-4a14-9caa-c05feb593da0",
-            EventCreator("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759", "Dummy User"),
+            EventCreator("4792cb7e-894e-4dad-bf7c-7f0660d0b648", "SubapaseDataSourceTest User"),
             association,
             "Dummy Event",
             "blabla description",
@@ -59,8 +60,8 @@ class SupabaseDataSourceTest {
         )
     private val userProfile =
         UserProfile(
-            "39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759",
-            "Dummy User",
+            "4792cb7e-894e-4dad-bf7c-7f0660d0b648",
+            "SubapaseDataSourceTest User",
             null,
             null,
             setOf(tag),
@@ -75,7 +76,7 @@ class SupabaseDataSourceTest {
         authenticationService =
             AuthenticationServiceImpl(supabaseClient.auth, supabaseClient.composeAuth)
 
-        runBlocking { authenticationService.signIn("test@example.com", "123456") }
+        runBlocking { authenticationService.signIn("test@testing.com", "123456") }
 
         source = SupabaseDataSource(supabaseClient)
     }
@@ -86,6 +87,14 @@ class SupabaseDataSourceTest {
             source.getAssociation("b0122e3e-82ed-4409-83f9-dbfb9761db20")
         }
         assertEquals(association, associationFetched)
+    }
+
+    @Test
+    fun getAssociationsNotInTest() {
+        val associationsFetched = runBlocking {
+            source.getAssociationsNotIn(listOf(association.associationId))
+        }
+        assertNotNull(associationsFetched)
     }
 
     @Test
@@ -103,11 +112,18 @@ class SupabaseDataSourceTest {
     @Test
     fun createEventTest() {
         val eventFetched = runBlocking { source.createEvent(event.copy(title = "Autre")) }
+        assertNotNull(eventFetched)
     }
 
     @Test
     fun setEventTest() {
         runBlocking { source.setEvent(event) }
+    }
+
+    @Test
+    fun getEventsNotInTest() {
+        val result = runBlocking { source.getEventsNotIn(listOf(event.eventId)) }
+        assertNotNull(result)
     }
 
     @Test
@@ -135,22 +151,54 @@ class SupabaseDataSourceTest {
     }
 
     @Test
+    fun getJoinedEventsNotInTest() {
+        val joinedEvents = runBlocking {
+            source.getJoinedEventsNotIn(userProfile.userId, listOf(event.eventId))
+        }
+        assertNotNull(joinedEvents)
+    }
+
+    @Test
     fun getTagTest() {
         val tagFetched = runBlocking { source.getTag("daba142a-a276-4b7e-824d-43ca088633ff") }
         assertEquals(tag, tagFetched)
     }
 
     @Test
+    fun getSubTagsTest() {
+        val tagsFetched = runBlocking { source.getSubTags(rootTagId) }
+        assertNotNull(tagsFetched)
+    }
+
+    @Test
+    fun getSubTagsNotIn() {
+        val tagsFetched = runBlocking {
+            source.getSubTagsNotIn(
+                rootTagId,
+                listOf(
+                    "d84bb3e8-3c07-49a2-8281-f149c4922870",
+                    "dd25a9e5-e3bc-48ee-a931-332d38336253"
+                )
+            )
+        }
+        assertEquals(3, tagsFetched.size)
+    }
+
+    @Test
     fun getAllTagsTest() {
-        val associations = runBlocking { source.getAllTags() }
-        assertNotNull(associations)
+        val tagsFetched = runBlocking { source.getAllTags() }
+        assertNotNull(tagsFetched)
+    }
+
+    @Test
+    fun getAllTagsNotIn() {
+        val tagsFetched = runBlocking { source.getAllTagsNotIn(listOf(rootTagId)) }
+        assertNotNull(tagsFetched)
     }
 
     @Test
     fun getUserProfileTest() {
-        val userProfileFetched = runBlocking {
-            source.getUserProfile("39ed9088-73b9-4ad1-ad0f-bbc1f8dbe759")
-        }
+        val userProfileFetched = runBlocking { source.getUserProfile(userProfile.userId) }
         assertEquals(userProfile, userProfileFetched)
     }
 

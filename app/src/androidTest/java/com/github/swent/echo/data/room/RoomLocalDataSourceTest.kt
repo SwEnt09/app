@@ -5,6 +5,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.SAMPLE_EVENTS
+import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
@@ -98,18 +100,39 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
-    fun testGetAllAssociationsSyncedBefore() = runBlocking {
+    fun testGetAllAssociationIds() = runBlocking {
         assertTrue(associations.isNotEmpty())
 
         every { ZonedDateTime.now() } returns time
         localDataSource.setAssociations(associations)
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
-        val actual = localDataSource.getAllAssociationsSyncedBefore(syncedSecondsAgo)
-        assertEquals(associations.map { it.associationId }.toSet(), actual.toSet())
+        assertTrue(localDataSource.getAllAssociationIds(syncedSecondsAgo).isEmpty())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
-        assertTrue(localDataSource.getAllAssociationsSyncedBefore(syncedSecondsAgo).isEmpty())
+        val actual = localDataSource.getAllAssociationIds(syncedSecondsAgo)
+        assertEquals(associations.map { it.associationId }.toSet(), actual.toSet())
+    }
+
+    @Test
+    fun testDeleteAssociationsNotIn() = runBlocking {
+        assertTrue(associations.isNotEmpty())
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setAssociations(associations)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        localDataSource.deleteAssociationsNotIn(associations.map { it.associationId })
+        val actualNothingDeleted = localDataSource.getAllAssociations(syncedSecondsAgo)
+        assertEquals(associations, actualNothingDeleted)
+
+        localDataSource.deleteAssociationsNotIn(associations.map { it.associationId }.drop(1))
+        val actualDroppedFirst = localDataSource.getAllAssociations(syncedSecondsAgo)
+        assertEquals(associations.drop(1), actualDroppedFirst)
+
+        localDataSource.deleteAssociationsNotIn(listOf())
+        val actual = localDataSource.getAllAssociations(syncedSecondsAgo)
+        assertEquals(listOf<Association>(), actual)
     }
 
     @Test
@@ -144,18 +167,39 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
-    fun testGetAllEventsSyncedBefore() = runBlocking {
+    fun testGetAllEventIds() = runBlocking {
         assertTrue(events.isNotEmpty())
 
         every { ZonedDateTime.now() } returns time
         localDataSource.setEvents(events)
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
-        val actual = localDataSource.getAllEventsSyncedBefore(syncedSecondsAgo)
-        assertEquals(events.map { it.eventId }.toSet(), actual.toSet())
+        assertTrue(localDataSource.getAllEventIds(syncedSecondsAgo).isEmpty())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
-        assertTrue(localDataSource.getAllEventsSyncedBefore(syncedSecondsAgo).isEmpty())
+        val actual = localDataSource.getAllEventIds(syncedSecondsAgo)
+        assertEquals(events.map { it.eventId }.toSet(), actual.toSet())
+    }
+
+    @Test
+    fun testDeleteEventsNotIn() = runBlocking {
+        assertTrue(events.isNotEmpty())
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setEvents(events)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        localDataSource.deleteEventsNotIn(events.map { it.eventId })
+        val actualNothingDeleted = localDataSource.getAllEvents(syncedSecondsAgo)
+        assertEquals(events, actualNothingDeleted)
+
+        localDataSource.deleteEventsNotIn(events.map { it.eventId }.drop(1))
+        val actualDroppedFirst = localDataSource.getAllEvents(syncedSecondsAgo)
+        assertEquals(events.drop(1), actualDroppedFirst)
+
+        localDataSource.deleteEventsNotIn(listOf())
+        val actual = localDataSource.getAllEvents(syncedSecondsAgo)
+        assertEquals(listOf<Event>(), actual)
     }
 
     @Test
@@ -189,20 +233,41 @@ class RoomLocalDataSourceTest {
         assertTrue(localDataSource.getAllTags(syncedSecondsAgo).isEmpty())
     }
 
-    @Ignore("This test if sometimes failing in our CI pipeline")
+    @Ignore("This test is sometimes failing in our CI pipeline")
     @Test
-    fun testGetAllTagsSyncedBefore() = runBlocking {
+    fun testGetAllTagIds() = runBlocking {
         assertTrue(tags.isNotEmpty())
 
         every { ZonedDateTime.now() } returns time
         localDataSource.setTags(tags)
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
-        val actual = localDataSource.getAllTagsSyncedBefore(syncedSecondsAgo)
-        assertEquals(tags.map { it.tagId }.toSet(), actual.toSet())
+        assertTrue(localDataSource.getAllTagIds(syncedSecondsAgo).isEmpty())
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
-        assertTrue(localDataSource.getAllTagsSyncedBefore(syncedSecondsAgo).isEmpty())
+        val actual = localDataSource.getAllTagIds(syncedSecondsAgo)
+        assertEquals(tags.map { it.tagId }.toSet(), actual.toSet())
+    }
+
+    @Test
+    fun testDeleteAllTagsNotIn() = runBlocking {
+        assertTrue(events.size >= 2)
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setTags(tags)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        localDataSource.deleteAllTagsNotIn(tags.map { it.tagId })
+        val actualNothingDeleted = localDataSource.getAllTags(syncedSecondsAgo)
+        assertEquals(tags, actualNothingDeleted)
+
+        localDataSource.deleteAllTagsNotIn(tags.map { it.tagId }.drop(1))
+        val actualDroppedFirst = localDataSource.getAllTags(syncedSecondsAgo)
+        assertEquals(tags.drop(1), actualDroppedFirst)
+
+        localDataSource.deleteAllTagsNotIn(listOf())
+        val actual = localDataSource.getAllTags(syncedSecondsAgo)
+        assertEquals(listOf<Tag>(), actual)
     }
 
     @Test
@@ -231,6 +296,35 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
+    fun testDeleteSubTagsNotIn() = runBlocking {
+        val tags =
+            listOf(
+                Tag("0", "ROOT", null),
+                Tag("1", "SUB1", "0"),
+                Tag("2", "SUB2", "0"),
+            )
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setTags(tags)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        localDataSource.deleteSubTagsNotIn(tags[0].tagId, tags.drop(1).map { it.tagId })
+        val actualNothingDeleted = localDataSource.getSubTags(tags[0].tagId, syncedSecondsAgo)
+        assertEquals(tags.drop(1), actualNothingDeleted)
+
+        localDataSource.deleteSubTagsNotIn(tags[0].tagId, tags.map { it.tagId }.drop(2))
+        val actualDroppedFirst = localDataSource.getSubTags(tags[0].tagId, syncedSecondsAgo)
+        assertEquals(tags.drop(2), actualDroppedFirst)
+
+        localDataSource.deleteSubTagsNotIn(tags[0].tagId, listOf())
+        val actualAllDeleted = localDataSource.getSubTags(tags[0].tagId, syncedSecondsAgo)
+        assertEquals(listOf<Tag>(), actualAllDeleted)
+
+        val actualRemainingParent = localDataSource.getAllTags(syncedSecondsAgo)
+        assertEquals(listOf(tags[0]), actualRemainingParent)
+    }
+
+    @Test
     fun testGetAndSetUserProfile() = runBlocking {
         assertTrue(tags.isNotEmpty())
         assertTrue(associations.isNotEmpty())
@@ -246,25 +340,6 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertNull(localDataSource.getUserProfile(expected.userId, syncedSecondsAgo))
-    }
-
-    @Test
-    fun testGetAllUserProfilesSyncedBefore() = runBlocking {
-        assertTrue(tags.isNotEmpty())
-        assertTrue(associations.isNotEmpty())
-
-        val expected = userProfile
-
-        every { ZonedDateTime.now() } returns time
-        localDataSource.setUserProfile(expected)
-        localDataSource.setUserProfile(expected.copy(userId = "1"))
-
-        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
-        val actual = localDataSource.getAllUserProfilesSyncedBefore(syncedSecondsAgo)
-        assertEquals(listOf("0", "1").toSet(), actual.toSet())
-
-        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
-        assertTrue(localDataSource.getAllUserProfilesSyncedBefore(syncedSecondsAgo).isEmpty())
     }
 
     @Test
@@ -284,13 +359,39 @@ class RoomLocalDataSourceTest {
             localDataSource.joinEvent(userId, event2.eventId)
         }
 
-        val joinedEvents = runBlocking { localDataSource.getJoinedEvents(userId) }
+        val joinedEvents = runBlocking { localDataSource.getJoinedEvents(userId, 0) }
         assertEquals(2, joinedEvents.size)
         assertEquals(setOf(event1, event2), joinedEvents.toSet())
 
         runBlocking { localDataSource.leaveEvent(userId, event1.eventId) }
 
-        val joinedEventsAfterLeaving = runBlocking { localDataSource.getJoinedEvents(userId) }
+        val joinedEventsAfterLeaving = runBlocking { localDataSource.getJoinedEvents(userId, 0) }
+        assertEquals(1, joinedEventsAfterLeaving.size)
+        assertTrue(joinedEventsAfterLeaving.contains(event2))
+    }
+
+    @Test
+    fun testJoinEventsAndLeaveEventsNotIn() {
+        assertTrue(events.size >= 2)
+        val event1 = events[0]
+        val event2 = events[1]
+        assertTrue(event1.eventId != event2.eventId)
+
+        val userId = userProfile.userId
+
+        runBlocking {
+            localDataSource.setUserProfile(userProfile)
+            localDataSource.setEvents(listOf(event1, event2))
+            localDataSource.joinEvents(userId, listOf(event1.eventId, event2.eventId))
+        }
+
+        val joinedEvents = runBlocking { localDataSource.getJoinedEvents(userId, 0) }
+        assertEquals(2, joinedEvents.size)
+        assertEquals(setOf(event1, event2), joinedEvents.toSet())
+
+        runBlocking { localDataSource.leaveEventsNotIn(userId, listOf(event2.eventId)) }
+
+        val joinedEventsAfterLeaving = runBlocking { localDataSource.getJoinedEvents(userId, 0) }
         assertEquals(1, joinedEventsAfterLeaving.size)
         assertTrue(joinedEventsAfterLeaving.contains(event2))
     }
