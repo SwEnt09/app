@@ -5,6 +5,7 @@ interface Semester {
 }
 
 enum class SemesterEPFL : Semester {
+    UNKNOWN,
     BA1,
     MAN,
     BA2,
