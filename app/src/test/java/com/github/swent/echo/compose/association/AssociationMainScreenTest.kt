@@ -6,10 +6,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.data.model.EventCreator
-import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.association.AssociationPage
-import java.time.ZonedDateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -33,47 +30,20 @@ class AssociationMainScreenTest {
         )
     private val testEvents =
         listOf(
-            Event(
-                "event 1",
-                EventCreator.EMPTY,
-                testAssociations[0],
-                "title 1",
-                "",
-                Location.EMPTY,
-                ZonedDateTime.now(),
-                ZonedDateTime.now(),
-                emptySet(),
-                0,
-                0,
-                0
+            Event.EMPTY.copy(
+                eventId = "event 1",
+                organizer = testAssociations[0],
+                title = "title 1"
             ),
-            Event(
-                "event 2",
-                EventCreator.EMPTY,
-                testAssociations[1],
-                "title 2",
-                "",
-                Location.EMPTY,
-                ZonedDateTime.now(),
-                ZonedDateTime.now(),
-                emptySet(),
-                0,
-                0,
-                0
+            Event.EMPTY.copy(
+                eventId = "event 2",
+                organizer = testAssociations[1],
+                title = "title 2"
             ),
-            Event(
-                "event 3",
-                EventCreator.EMPTY,
-                testAssociations[2],
-                "title 3",
-                "",
-                Location.EMPTY,
-                ZonedDateTime.now(),
-                ZonedDateTime.now(),
-                emptySet(),
-                0,
-                0,
-                0
+            Event.EMPTY.copy(
+                eventId = "event 3",
+                organizer = testAssociations[2],
+                title = "title 3"
             )
         )
     private var nextPage = AssociationPage.MAINSCREEN
