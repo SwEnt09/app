@@ -162,7 +162,7 @@ class MainActivityTest {
             .assert(hasText(event.title, substring = true))
 
         // Join the event
-        composeTestRule.onNodeWithTag("join_button_event_info_sheet").performClick()
+        composeTestRule.onNodeWithTag("list_join_event_${event.eventId}").performClick()
     }
 
     @Test
