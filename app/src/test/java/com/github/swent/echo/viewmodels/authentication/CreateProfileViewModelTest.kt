@@ -1,5 +1,6 @@
 package com.github.swent.echo.viewmodels.authentication
 
+import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
@@ -13,6 +14,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
@@ -41,6 +43,35 @@ class CreateProfileViewModelTest {
            assert(viewModel.errorMessage.value == "Profile creation error: Not logged in")
        }
     */
+    @Test
+    fun initTest() {
+        val userId = "test_user_id"
+        val userProfile =
+            UserProfile(
+                userId,
+                "John Doe",
+                SemesterEPFL.BA1,
+                SectionEPFL.IN,
+                setOf(Tag("1", "Music")),
+                emptySet(),
+                emptySet()
+            )
+
+        coEvery { authenticationService.getCurrentUserID() } returns userId
+        coEvery { (repository.getUserProfile(userId)) } returns (userProfile)
+
+        val viewModel = CreateProfileViewModel(authenticationService, repository)
+
+        // Force coroutine execution to test initial values
+        runBlocking { viewModel.viewModelScope.launch {}.join() }
+
+        // Assert that user profile data is set in the ViewModel
+        assert(viewModel.firstName.value == "John")
+        assert(viewModel.lastName.value == "Doe")
+        assert(viewModel.selectedSemester.value == SemesterEPFL.BA1)
+        assert(viewModel.selectedSection.value == SectionEPFL.IN)
+        assert(viewModel.tagList.value.contains(Tag("1", "Music")))
+    }
 
     @Test
     fun loggedInUser() = runBlocking {
