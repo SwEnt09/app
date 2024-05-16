@@ -11,6 +11,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.SAMPLE_EVENTS
+import com.mapbox.mapboxsdk.geometry.LatLng
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,14 +21,17 @@ class MapViewAndroidTest {
 
     companion object {
         @Composable
-        private fun <T : View> DummyMapDrawer(p: IMapViewProvider<T>) {
+        private fun <T : View> DummyMapDrawer(
+            p: IMapViewProvider<T>,
+            launchEventCreation: (LatLng) -> Unit = {}
+        ) {
             val e by remember { mutableStateOf(SAMPLE_EVENTS) }
             EchoAndroidView(
                 factory = p::factory,
                 update = p::update,
                 events = e,
                 withLocation = true,
-                launchEventCreation = {}
+                launchEventCreation = launchEventCreation
             )
         }
     }
