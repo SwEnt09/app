@@ -3,6 +3,7 @@ package com.github.swent.echo.data.room.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import java.time.ZonedDateTime
 
 @Entity(
     primaryKeys = ["userId", "eventId"],
@@ -26,4 +27,6 @@ import androidx.room.Index
 data class JoinedEventRoom(
     val userId: String,
     val eventId: String,
+    /** The time of the last update in seconds */
+    val timestamp: Long = ZonedDateTime.now().toEpochSecond(),
 )

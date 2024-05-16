@@ -10,6 +10,8 @@ interface RemoteDataSource {
 
     suspend fun getAssociations(associations: List<String>): List<Association>
 
+    suspend fun getAssociationsNotIn(associationIds: List<String>): List<Association>
+
     suspend fun getAllAssociations(): List<Association>
 
     suspend fun getEvent(eventId: String): Event?
@@ -17,6 +19,8 @@ interface RemoteDataSource {
     suspend fun createEvent(event: Event): String
 
     suspend fun setEvent(event: Event)
+
+    suspend fun getEventsNotIn(eventIds: List<String>): List<Event>
 
     suspend fun getAllEvents(): List<Event>
 
@@ -26,11 +30,17 @@ interface RemoteDataSource {
 
     suspend fun getJoinedEvents(userId: String): List<Event>
 
+    suspend fun getJoinedEventsNotIn(userId: String, eventIds: List<String>): List<Event>
+
     suspend fun getTag(tagId: String): Tag?
 
     suspend fun getSubTags(tagId: String): List<Tag>
 
+    suspend fun getSubTagsNotIn(tagId: String, childTagIds: List<String>): List<Tag>
+
     suspend fun getAllTags(): List<Tag>
+
+    suspend fun getAllTagsNotIn(tagIds: List<String>): List<Tag>
 
     suspend fun getUserProfile(userId: String): UserProfile?
 
