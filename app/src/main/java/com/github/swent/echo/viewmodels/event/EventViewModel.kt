@@ -8,6 +8,7 @@ import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
+import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 /** represents an event, used in the event screens */
 @HiltViewModel
@@ -23,7 +25,7 @@ class EventViewModel
 constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
-    private val savedEventId: SavedStateHandle
+    private val savedState: SavedStateHandle
 ) : ViewModel() {
 
     private val _event = MutableStateFlow<Event>(Event.EMPTY)
@@ -53,8 +55,8 @@ constructor(
                 val username = userProfile.name
                 _organizerList.value =
                     userProfile.committeeMember.map { association -> association.name } + username
-                if (savedEventId.contains("eventId")) {
-                    val repositoryEvent = repository.getEvent(savedEventId.get<String>("eventId")!!)
+                if (savedState.contains("eventId")) {
+                    val repositoryEvent = repository.getEvent(savedState.get<String>("eventId")!!)
                     if (repositoryEvent == null) {
                         _event.value =
                             _event.value.copy(
@@ -70,6 +72,11 @@ constructor(
                 } else {
                     _event.value =
                         _event.value.copy(creator = userProfile.toEventCreator(), organizer = null)
+                    if (savedState.contains("location")) {
+                        val savedLocation =
+                            Json.decodeFromString<Location>(savedState.get<String>("location")!!)
+                        _event.value = _event.value.copy(location = savedLocation)
+                    }
                     _status.value = EventStatus.Modified
                 }
             }
