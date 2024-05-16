@@ -159,7 +159,7 @@ fun EventPropertiesFields(eventViewModel: EventViewModel, isOnline: Boolean) {
         ) {
             eventViewModel.setOrganizer(it)
         }
-        EventLocationEntry(location = event.location) {
+        EventLocationEntry(location = event.location, enabled = isOnline) {
             eventViewModel.setEvent(event.copy(location = it))
         }
         EventDateEntry(

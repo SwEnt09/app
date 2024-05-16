@@ -31,7 +31,8 @@ import com.github.swent.echo.data.model.Location
 @Composable
 fun EventLocationEntry(
     location: Location,
-    onLocationChanged: (Location) -> Unit,
+    enabled: Boolean,
+    onLocationChanged: (Location) -> Unit
 ) {
     var editLocation by remember { mutableStateOf(false) }
     if (editLocation) {
@@ -55,6 +56,7 @@ fun EventLocationEntry(
                 modifier =
                     Modifier.matchParentSize()
                         .clickable(
+                            enabled = enabled,
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = { editLocation = true }
