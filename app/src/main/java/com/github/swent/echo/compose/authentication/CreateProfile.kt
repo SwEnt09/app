@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,14 +33,18 @@ import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,8 +70,16 @@ import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.CreateProfileViewModel
 import com.github.swent.echo.viewmodels.tag.TagViewModel
+import kotlinx.coroutines.launch
 
-@SuppressLint("SuspiciousIndentation")
+/**
+ * A composable function that displays the screen for creating a user profile.
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param viewModel The view model for creating a user profile.
+ * @param navAction The navigation actions to be performed.
+ * @param tagviewModel The view model for tags.
+ */
 @Composable
 fun ProfileCreationScreen(
     modifier: Modifier = Modifier,
@@ -125,11 +136,11 @@ fun ProfileCreationScreen(
  * @param semList The list of semesters to be displayed in the dropdown menu.
  * @param tagList The list of tags to be displayed as chips.
  */
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("RestrictedApi")
 @Composable
 fun ProfileCreationUI(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.fillMaxWidth(),
     sectionList: List<Section>,
     semList: List<Semester>,
     tagList: Set<Tag>,
@@ -146,122 +157,133 @@ fun ProfileCreationUI(
     onFirstNameChange: (String) -> Unit,
     onLastNameChange: (String) -> Unit,
 ) {
-    Box(
-        modifier = modifier.fillMaxSize().padding(16.dp).testTag("profile-creation"),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
-        ) {
-            var showError by remember { mutableStateOf(false) }
-            var showErrorMessage by remember { mutableStateOf(0) }
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-            // Back button
-            IconButton(onClick = { navAction.goBack() }, modifier = modifier.testTag("Back")) {
-                Icon(
-                    Icons.Default.ArrowBack,
-                    contentDescription = "go back",
-                    modifier = Modifier.size(35.dp)
-                )
-            }
-
-            // First name and last name fields
-            OutlinedTextField(
-                value = firstName,
-                onValueChange = { onFirstNameChange(it) },
-                modifier = modifier.testTag("FirstName"),
-                label = { Text(text = stringResource(id = R.string.profile_creation_first_name)) },
-                singleLine = true,
-                isError = firstName.isBlank()
-            )
-
-            Spacer(modifier = modifier.height(5.dp))
-
-            OutlinedTextField(
-                value = lastName,
-                onValueChange = { onLastNameChange(it) },
-                modifier = modifier.testTag("LastName"),
-                label = { Text(text = stringResource(id = R.string.profile_creation_last_name)) },
-                singleLine = true,
-                isError = lastName.isBlank()
-            )
-
-            Spacer(modifier = modifier.height(5.dp))
-
-            // Section and semester dropdown menus
-            DropDownListFunctionWrapper(
-                sectionList,
-                R.string.profile_creation_section,
-                selectedSec ?: "",
-                onSecChange
-            )
-            Spacer(modifier = modifier.height(5.dp))
-            DropDownListFunctionWrapper(
-                semList,
-                R.string.profile_creation_semester,
-                selectedSem ?: "",
-                onSemChange
-            )
-
-            Spacer(modifier = modifier.height(10.dp))
-
-            // Tags
-            Text(
-                stringResource(id = R.string.profile_creation_tags),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = modifier.height(10.dp))
-
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                for (tag in tagList) {
-                    InputChipFun(tag.name) { tagDelete(tag) }
-                }
-
-                // Add tag button
-                SmallFloatingActionButton(
-                    onClick = { onAdd() },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.secondary,
-                    modifier = modifier.testTag("AddTag")
-                ) {
-                    Icon(Icons.Default.Add, "Add tags")
-                }
-            }
-            Spacer(modifier = modifier.weight(1f))
-
-            // Save button
-            OutlinedButton(
-                onClick = {
-                    if (firstName.isBlank() || lastName.isBlank()) {
-                        showError = true
-                        showErrorMessage =
-                            if (firstName.isBlank()) {
-                                ProfileCreationErrorKind.EMPTY_FIRST_NAME.errorMess
-                            } else {
-                                ProfileCreationErrorKind.EMPTY_LAST_NAME.errorMess
-                            }
-                        return@OutlinedButton
-                    } else {
-                        onSave(firstName, lastName)
-                        navAction.navigateTo(Routes.MAP)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = { navAction.goBack() }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "go back button",
+                            modifier = Modifier.testTag("Back")
+                        )
                     }
                 },
-                modifier = modifier.fillMaxWidth().testTag("Save")
+                title = { Text(text = "Create Profile") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
+        Box(
+            modifier = modifier.fillMaxSize().padding(innerPadding).testTag("profile-creation"),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier =
+                    modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
             ) {
-                Text(text = stringResource(id = R.string.profile_creation_save_button))
-            }
-            if (showError) {
-                Snackbar(
-                    modifier = modifier.padding(16.dp).testTag("ErrorMessage"),
-                    action = {
-                        Button(onClick = { showError = false }) {
-                            Text(stringResource(id = R.string.profile_creation_dismiss))
-                        }
+                // First name and last name fields
+                OutlinedTextField(
+                    value = firstName,
+                    onValueChange = { onFirstNameChange(it) },
+                    modifier = modifier.fillMaxWidth().testTag("FirstName"),
+                    label = {
+                        Text(text = stringResource(id = R.string.profile_creation_first_name))
+                    },
+                    singleLine = true,
+                    isError = firstName.isBlank()
+                )
+
+                Spacer(modifier = modifier.height(5.dp))
+
+                OutlinedTextField(
+                    value = lastName,
+                    onValueChange = { onLastNameChange(it) },
+                    modifier = modifier.fillMaxWidth().testTag("LastName"),
+                    label = {
+                        Text(text = stringResource(id = R.string.profile_creation_last_name))
+                    },
+                    singleLine = true,
+                    isError = lastName.isBlank()
+                )
+
+                Spacer(modifier = modifier.height(5.dp))
+
+                // Section and semester dropdown menus
+                DropDownListFunctionWrapper(
+                    sectionList,
+                    R.string.profile_creation_section,
+                    selectedSec ?: "",
+                    onSecChange
+                )
+                Spacer(modifier = modifier.height(5.dp))
+                DropDownListFunctionWrapper(
+                    semList,
+                    R.string.profile_creation_semester,
+                    selectedSem ?: "",
+                    onSemChange
+                )
+
+                Spacer(modifier = modifier.height(10.dp))
+
+                // Tags
+                Text(
+                    stringResource(id = R.string.profile_creation_tags),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = modifier.height(10.dp))
+
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                    for (tag in tagList) {
+                        InputChipFun(tag.name) { tagDelete(tag) }
                     }
+
+                    // Add tag button
+                    SmallFloatingActionButton(
+                        onClick = { onAdd() },
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.secondary,
+                        modifier = modifier.testTag("AddTag")
+                    ) {
+                        Icon(Icons.Default.Add, "Add tags")
+                    }
+                }
+                Spacer(modifier = modifier.weight(1f))
+                val errorLN = stringResource(R.string.profile_creation_empty_LN)
+                val errorFN = stringResource(R.string.profile_creation_empty_FN)
+
+                // Save button
+                OutlinedButton(
+                    onClick = {
+                        if (firstName.isBlank() || lastName.isBlank()) {
+                            scope.launch {
+                                if (firstName.isBlank()) {
+                                    snackbarHostState.showSnackbar(
+                                        errorFN,
+                                        withDismissAction = true
+                                    )
+                                } else {
+                                    snackbarHostState.showSnackbar(
+                                        errorLN,
+                                        withDismissAction = true
+                                    )
+                                }
+                            }
+                            //  return@OutlinedButton
+                        } else {
+                            onSave(firstName, lastName)
+                            navAction.navigateTo(Routes.MAP)
+                        }
+                    },
+                    modifier = modifier.fillMaxWidth().testTag("Save")
                 ) {
-                    Text(stringResource(id = showErrorMessage))
+                    Text(text = stringResource(id = R.string.profile_creation_save_button))
                 }
             }
         }
@@ -282,15 +304,14 @@ fun DropDownListFunctionWrapper(
     Column {
         Box() {
             OutlinedTextField(
-                value = selectedField ?: "",
-                onValueChange = {
-                    // selectedField = it
-                },
+                value = selectedField,
+                onValueChange = {},
                 modifier =
                     Modifier.onGloballyPositioned { coordinates ->
                             selectedFieldSize = coordinates.size.toSize()
                         }
                         .clickable { showDropdown = !showDropdown }
+                        .fillMaxWidth()
                         .testTag(stringResource(id = label)),
                 readOnly = true,
                 label = { Text(stringResource(id = label)) },
@@ -350,9 +371,4 @@ fun InputChipFun(
             )
         }
     )
-}
-
-enum class ProfileCreationErrorKind(val errorMess: Int) {
-    EMPTY_FIRST_NAME(R.string.profile_creation_empty_FN),
-    EMPTY_LAST_NAME(R.string.profile_creation_empty_LN)
 }
