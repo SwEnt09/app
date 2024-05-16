@@ -21,7 +21,7 @@ class LocationSelectorTest {
 
     @Test
     fun shouldDisplayLocationDisplayer() {
-        composeTestRule.setContent { LocationDisplayer() }
+        composeTestRule.setContent { LocationDisplayer(position = MAP_CENTER.toLatLng()) }
         composeTestRule.onNodeWithTag("location-displayer-map-libre").assertIsDisplayed()
     }
 }

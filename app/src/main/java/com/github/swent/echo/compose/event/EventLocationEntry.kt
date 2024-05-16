@@ -29,15 +29,16 @@ import com.github.swent.echo.data.model.Location
 
 /** this composable contains the Location title, text field and button */
 @Composable
-fun EventLocationEntry(location: Location, onLocationChanged: (Location) -> Unit) {
+fun EventLocationEntry(
+    location: Location,
+    onLocationChanged: (Location) -> Unit,
+) {
     var editLocation by remember { mutableStateOf(false) }
-    var displayedLocation by remember { mutableStateOf(location) }
     if (editLocation) {
         SelectLocationDialog(
             currentLocation = location,
             onDismissRequest = { editLocation = false }
         ) {
-            displayedLocation = it
             onLocationChanged(it)
         }
     }
@@ -49,7 +50,7 @@ fun EventLocationEntry(location: Location, onLocationChanged: (Location) -> Unit
             onLocationChanged(location.copy(name = it))
         }
         Box(modifier = Modifier.aspectRatio(1.5F).padding(EVENT_PADDING_BETWEEN_INPUTS)) {
-            LocationDisplayer(position = displayedLocation.toLatLng())
+            LocationDisplayer(position = location.toLatLng())
             Box(
                 modifier =
                     Modifier.matchParentSize()
@@ -77,7 +78,7 @@ fun SelectLocationDialog(
     Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties()) {
         Card(modifier = Modifier.fillMaxWidth().testTag("Location-dialog")) {
             Column(modifier = Modifier.padding(5.dp)) {
-                Box(modifier = Modifier.aspectRatio(1F)) {
+                Box(modifier = Modifier.aspectRatio(1.5F)) {
                     LocationSelector(initialLocation = currentLocation.toLatLng()) { point = it }
                 }
                 Row {

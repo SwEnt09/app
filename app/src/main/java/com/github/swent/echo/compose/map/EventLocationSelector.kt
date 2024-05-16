@@ -53,7 +53,10 @@ fun LocationSelector(
 }
 
 @Composable
-fun LocationDisplayer(modifier: Modifier = Modifier, position: LatLng = MAP_CENTER.toLatLng()) {
+fun LocationDisplayer(
+    modifier: Modifier = Modifier,
+    position: LatLng,
+) {
     val context = LocalContext.current
     val styleUrl =
         context.getString(R.string.maptiler_base_style_url) +
