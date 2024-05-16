@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import com.github.swent.echo.compose.map.IMapViewProvider
 import com.github.swent.echo.data.model.Event
+import com.mapbox.mapboxsdk.geometry.LatLng
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
@@ -23,8 +24,9 @@ class MapDrawerViewModelTest {
     fun `factory should call provider factory`() {
         val context = mockk<Context>()
         val onCreate = {}
-        viewModel.factory(context, false, onCreate)
-        verify { provider.factory(context, false, onCreate) }
+        val onLongPress: (LatLng) -> Unit = {}
+        viewModel.factory(context, false, onCreate, onLongPress)
+        verify { provider.factory(context, false, onCreate, onLongPress) }
     }
 
     @Test
