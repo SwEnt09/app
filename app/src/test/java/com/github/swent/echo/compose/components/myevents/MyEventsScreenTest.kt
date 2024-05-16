@@ -1,30 +1,37 @@
 package com.github.swent.echo.compose.components.myevents
 
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.activity.compose.setContent
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.MainActivity
 import com.github.swent.echo.compose.myevents.MyEventsScreen
 import com.github.swent.echo.ui.navigation.NavigationActions
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class MyEventsScreenTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule(order = 0) val hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1) val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var navActions: NavigationActions
 
     @Before
     fun setUp() {
-        composeTestRule.setContent {
-            navActions = mockk(relaxed = true)
-            MyEventsScreen(navActions)
-        }
+        hiltRule.inject()
+
+        navActions = mockk(relaxed = true)
+        composeTestRule.activity.setContent { MyEventsScreen(hiltViewModel(), navActions) }
     }
 
     @Test
