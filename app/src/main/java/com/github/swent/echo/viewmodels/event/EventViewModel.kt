@@ -55,8 +55,18 @@ constructor(
                     userProfile.committeeMember.map { association -> association.name } + username
                 if (savedEventId.contains("eventId")) {
                     _isEventNew.value = false
-                    _event.value = repository.getEvent(savedEventId.get<String>("eventId")!!)!!
-                    _status.value = EventStatus.Saved
+                    val repositoryEvent = repository.getEvent(savedEventId.get<String>("eventId")!!)
+                    if (repositoryEvent == null) {
+                        _event.value =
+                            _event.value.copy(
+                                creator = userProfile.toEventCreator(),
+                                organizer = null
+                            )
+                        _status.value = EventStatus.Modified
+                    } else {
+                        _event.value = repositoryEvent
+                        _status.value = EventStatus.Saved
+                    }
                 } else {
                     _event.value =
                         _event.value.copy(creator = userProfile.toEventCreator(), organizer = null)
