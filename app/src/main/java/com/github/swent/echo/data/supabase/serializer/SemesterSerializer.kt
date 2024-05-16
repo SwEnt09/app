@@ -1,6 +1,7 @@
 package com.github.swent.echo.data.supabase.serializer
 
 import com.github.swent.echo.data.model.Semester
+import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.toSemesterEPFL
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -15,7 +16,7 @@ object SemesterSerializer : KSerializer<Semester> {
 
     override fun deserialize(decoder: Decoder): Semester {
         val string = decoder.decodeString()
-        return string.toSemesterEPFL()!!
+        return string.toSemesterEPFL() ?: SemesterEPFL.UNKNOWN
     }
 
     override fun serialize(encoder: Encoder, value: Semester) {
