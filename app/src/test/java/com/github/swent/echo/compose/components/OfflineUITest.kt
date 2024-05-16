@@ -14,10 +14,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.swent.echo.connectivity.NetworkService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -31,14 +28,7 @@ class OfflineUITest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun connectivityStatus_initialRendering_connectedState() {
-        val mockNetworkService =
-            object : NetworkService {
-                override val isOnline: StateFlow<Boolean> =
-                    MutableStateFlow(true) // Simulating connected state
-
-                override fun isOnlineNow(): Boolean = isOnline.value
-            }
-        composeTestRule.setContent { ConnectivityStatus(connection = mockNetworkService) }
+        composeTestRule.setContent { ConnectivityStatus(true) }
         composeTestRule.onNodeWithTag("ConnectivityStatusBox").assertDoesNotExist()
     }
 
