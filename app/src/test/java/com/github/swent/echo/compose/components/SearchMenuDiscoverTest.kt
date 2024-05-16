@@ -23,6 +23,7 @@ class SearchMenuDiscoverTest {
     private val topTag = listOf(Tag("tag1", "tag1"))
     private val subTag1 = listOf(Tag("tag2", "tag2"), Tag("tag3", "tag3"))
     private val subTag3 = listOf(Tag("tag4", "tag4"))
+    private val subTag2 = listOf(Tag("tag5", "tag5"))
     private var str = ""
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -36,6 +37,7 @@ class SearchMenuDiscoverTest {
         coEvery { mockedRepository.getSubTags(rootTagId) } returns topTag
         coEvery { mockedRepository.getSubTags("tag1") } returns subTag1
         coEvery { mockedRepository.getSubTags("tag3") } returns subTag3
+        coEvery { mockedRepository.getSubTags("tag2") } returns subTag2
         tagViewModel = TagViewModel(mockedRepository, SavedStateHandle())
         scheduler.runCurrent()
         composeTestRule.setContent {
