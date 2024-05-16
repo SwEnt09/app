@@ -23,15 +23,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.swent.echo.R
-import com.github.swent.echo.connectivity.NetworkService
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 
-@ExperimentalCoroutinesApi
 @Composable
-fun ConnectivityStatus(connection: NetworkService) {
-    // This will cause re-composition on every network state change
-    val isConnected = connection.isOnlineNow()
+fun ConnectivityStatus(isConnected: Boolean) {
     var visibility by remember { mutableStateOf(false) }
 
     AnimatedVisibility(
@@ -57,7 +52,7 @@ fun ConnectivityStatus(connection: NetworkService) {
 
 @Composable
 fun ConnectivityStatusBox(isConnected: Boolean, modifier: Modifier = Modifier) {
-    val backgroundColor by animateColorAsState(if (!isConnected) Color.LightGray else Color.Green)
+    val backgroundColor by animateColorAsState(if (!isConnected) Color.DarkGray else Color.Green)
     val message = if (isConnected) R.string.Online_mode else R.string.Offline_mode
     SmallTopAppBarFunc(text = stringResource(id = message), color = backgroundColor)
 }
@@ -65,9 +60,9 @@ fun ConnectivityStatusBox(isConnected: Boolean, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallTopAppBarFunc(text: String, color: Color) {
-    Box(modifier = Modifier.height(20.dp)) {
+    Box {
         CenterAlignedTopAppBar(
-            modifier = Modifier.fillMaxWidth().height(20.dp),
+            modifier = Modifier.fillMaxWidth().height(24.dp),
             colors = TopAppBarDefaults.topAppBarColors(containerColor = color),
             title = { Text(text, fontSize = 15.sp) }
         )
