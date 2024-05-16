@@ -141,7 +141,7 @@ fun EventInfoSheet(
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp),
             ) {
                 // button to join the event
-                JoinEventButton(event, isOnline, 100.dp)
+                JoinEventButton(event, isOnline, 130.dp)
 
                 // button to modify the event
                 if (canModifyEvent) {
