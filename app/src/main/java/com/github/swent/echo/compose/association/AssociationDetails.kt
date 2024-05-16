@@ -57,7 +57,9 @@ fun AssociationDetails(
     val weightItems = 1f
     val underlineShape = Modifier.height(1.dp).width(200.dp)
     val underlinePadding = 10.dp
-    Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(paddingValues).testTag("association_details")
+    ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
                 association.name,
@@ -68,7 +70,10 @@ fun AssociationDetails(
                 enabled = isOnline,
                 onClick = { follow(association) },
                 modifier =
-                    Modifier.align(Alignment.CenterEnd).width(followWidth).height(followHeight)
+                    Modifier.align(Alignment.CenterEnd)
+                        .width(followWidth)
+                        .height(followHeight)
+                        .testTag("association_details_follow_button")
             ) {
                 Icon(
                     if (isFollowed) Icons.Filled.Clear else Icons.Filled.Add,
@@ -77,7 +82,8 @@ fun AssociationDetails(
                 Spacer(modifier = Modifier.padding(followSpaceInside))
                 Text(
                     if (isFollowed) stringResource(R.string.association_details_unfollow)
-                    else stringResource(R.string.association_details_follow)
+                    else stringResource(R.string.association_details_follow),
+                    modifier = Modifier.testTag("association_details_follow_button_text")
                 )
             }
         }
@@ -85,9 +91,11 @@ fun AssociationDetails(
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier =
-                    Modifier.weight(weightItems).padding(paddingItems).height(tabHeight).clickable {
-                        associationDetailsTab = AssociationDetailsTab.DESCRIPTION
-                    }
+                    Modifier.weight(weightItems)
+                        .padding(paddingItems)
+                        .height(tabHeight)
+                        .clickable { associationDetailsTab = AssociationDetailsTab.DESCRIPTION }
+                        .testTag("association_details_description_tab")
             ) {
                 Text(
                     stringResource(R.string.association_details_description),
@@ -97,9 +105,11 @@ fun AssociationDetails(
             }
             Box(
                 modifier =
-                    Modifier.weight(weightItems).padding(paddingItems).height(tabHeight).clickable {
-                        associationDetailsTab = AssociationDetailsTab.EVENTS
-                    }
+                    Modifier.weight(weightItems)
+                        .padding(paddingItems)
+                        .height(tabHeight)
+                        .clickable { associationDetailsTab = AssociationDetailsTab.EVENTS }
+                        .testTag("association_details_events_tab")
             ) {
                 Text(
                     stringResource(R.string.association_details_events),
@@ -117,7 +127,7 @@ fun AssociationDetails(
                                 .align(Alignment.CenterStart)
                                 .padding(start = underlinePadding)
                                 .background(MaterialTheme.colorScheme.primary)
-                                .testTag("my_events_underline_joined_events")
+                                .testTag("association_details_underline_description")
                     )
                 }
                 AssociationDetailsTab.EVENTS -> {
@@ -127,7 +137,7 @@ fun AssociationDetails(
                                 .align(Alignment.CenterEnd)
                                 .padding(end = underlinePadding)
                                 .background(MaterialTheme.colorScheme.primary)
-                                .testTag("my_events_underline_created_events")
+                                .testTag("association_details_underline_events")
                     )
                 }
             }
@@ -136,7 +146,10 @@ fun AssociationDetails(
             AssociationDetailsTab.DESCRIPTION -> {
                 Spacer(modifier = Modifier.height(verticalSpace))
                 // Text(association.largeDescription)
-                Text(association.description)
+                Text(
+                    association.description,
+                    modifier = Modifier.testTag("association_details_description_text")
+                )
                 /*
                 Spacer(modifier = Modifier.height(verticalSpace))
                 Text(
