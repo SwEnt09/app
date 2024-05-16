@@ -101,6 +101,8 @@ private fun Content(
 
     val isOnline by homeScreenViewModel.isOnline.collectAsState()
 
+    val joinedEvents by homeScreenViewModel.joinedEvents.collectAsState()
+
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
             Column {
@@ -112,7 +114,9 @@ private fun Content(
                         onTagClick = homeScreenViewModel::onFollowedTagClicked
                     )
                 }
-                ListDrawer(displayEventList, section, semester, isOnline)
+                ListDrawer(displayEventList, section, semester, isOnline, joinedEvents) {
+                    homeScreenViewModel.joinOrLeaveEvent(it)
+                }
             }
         } else {
             MapDrawer(
@@ -132,14 +136,15 @@ private fun Content(
         if (overlay == Overlay.EVENT_INFO_SHEET && displayEventInfo != null) {
             EventInfoSheet(
                 event = displayEventInfo!!,
-                onJoinButtonPressed = {},
                 onDismiss = homeScreenViewModel::clearOverlay,
                 onFullyExtended = {},
                 canModifyEvent = canUserModifyEvent,
                 onModifyEvent = {
                     navActions.navigateTo(Routes.EDIT_EVENT.build(displayEventInfo!!.eventId))
                 },
-                isOnline = isOnline
+                isOnline = isOnline,
+                joinedEvents = joinedEvents,
+                joinOrLeaveEvent = homeScreenViewModel::joinOrLeaveEvent
             )
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info

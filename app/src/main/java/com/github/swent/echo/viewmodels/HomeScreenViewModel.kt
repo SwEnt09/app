@@ -38,6 +38,7 @@ constructor(
     private val authenticationService: AuthenticationService,
     private val networkService: NetworkService
 ) : ViewModel() {
+    private lateinit var userId: String
     private val _overlay = MutableStateFlow(Overlay.NONE)
     val overlay = _overlay.asStateFlow()
     private val _mode = MutableStateFlow(MapOrListMode.MAP)
@@ -100,10 +101,12 @@ constructor(
     private var _searchMode = MutableStateFlow(false)
     val searchMode = _searchMode.asStateFlow()
     val isOnline = networkService.isOnline
+    private val _joinedEvents = MutableStateFlow<List<Event>>(listOf())
+    val joinedEvents = _joinedEvents.asStateFlow()
 
     init {
         viewModelScope.launch {
-            val userId = authenticationService.getCurrentUserID() ?: ""
+            userId = authenticationService.getCurrentUserID() ?: ""
             allEventsList = repository.getAllEvents()
             allTagSet = repository.getAllTags().toSet()
             _semester.value = repository.getUserProfile(userId)?.semester?.name ?: ""
@@ -117,6 +120,7 @@ constructor(
                 repository.getUserProfile(userId)?.tags?.toList() ?: allTagSet.toList()
             sectionTags = repository.getSubTags(sectionTagId)
             semesterTags = repository.getSubTags(semesterTagId)
+            _joinedEvents.value = repository.getJoinedEvents(userId)
             refreshFiltersContainer()
         }
     }
@@ -375,5 +379,17 @@ constructor(
             result = result && event.startDate.isBefore(floatToDate(_filtersContainer.value.to))
         }
         return result
+    }
+
+    fun joinOrLeaveEvent(event: Event){
+        viewModelScope.launch{
+            if(_joinedEvents.value.contains(event)){
+                repository.leaveEvent(userId, event)
+            } else {
+                repository.joinEvent(userId, event)
+            }
+            _joinedEvents.value = repository.getJoinedEvents(userId)
+            refreshFiltersContainer()
+        }
     }
 }

@@ -45,12 +45,13 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun EventInfoSheet(
     event: Event,
-    onJoinButtonPressed: () -> Unit,
     onDismiss: () -> Unit,
     onFullyExtended: () -> Unit,
     canModifyEvent: Boolean,
     onModifyEvent: () -> Unit,
     isOnline: Boolean,
+    joinedEvents: List<Event>,
+    joinOrLeaveEvent: (Event) -> Unit
 ) {
     val sheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = false) { value ->
@@ -148,24 +149,7 @@ fun EventInfoSheet(
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp),
             ) {
                 // button to join the event
-                Button(
-                    enabled = isOnline,
-                    onClick = {
-                        onJoinButtonPressed()
-                        Toast.makeText(
-                                context,
-                                context.getString(R.string.event_successfully_joined),
-                                Toast.LENGTH_SHORT
-                            )
-                            .show()
-                    },
-                    modifier = Modifier.testTag("join_button_event_info_sheet"),
-                ) {
-                    Text(
-                        text = stringResource(R.string.event_info_sheet_join_event_button_text),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
+                JoinEventButton(event, isOnline, 130.dp, joinedEvents) { joinOrLeaveEvent(it) }
 
                 // button to modify the event
                 if (canModifyEvent) {

@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import com.github.swent.echo.compose.event.EventTitleAndBackButton
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
+import com.github.swent.echo.viewmodels.myevents.MyEventsViewModel
 
 enum class MyEventsTab {
     JOINED_EVENTS,
@@ -37,18 +39,20 @@ enum class MyEventsTab {
 }
 
 @Composable
-fun MyEventsScreen(navActions: NavigationActions) {
+fun MyEventsScreen(myEventsViewModel: MyEventsViewModel, navActions: NavigationActions) {
     Scaffold(
         topBar = {
             EventTitleAndBackButton(stringResource(R.string.hamburger_my_events)) {
                 navActions.navigateTo(Routes.MAP)
             }
         },
-        modifier = Modifier.fillMaxSize().testTag("my_events_screen")
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("my_events_screen")
     ) {
         // Will be adapted with the future viewModel
-        val joinedEventsList by remember { mutableStateOf(SAMPLE_EVENTS) }
-        val createdEventsList by remember { mutableStateOf(SAMPLE_EVENTS) }
+        val joinedEventsList by myEventsViewModel.joinedEvents.collectAsState()
+        val createdEventsList by myEventsViewModel.createdEvents.collectAsState()
         var myEventsTab by remember { mutableStateOf(MyEventsTab.JOINED_EVENTS) }
 
         Column(modifier = Modifier.padding(it)) {
@@ -56,11 +60,12 @@ fun MyEventsScreen(navActions: NavigationActions) {
                 val paddingItems = 2.dp
                 Box(
                     modifier =
-                        Modifier.weight(1f)
-                            .padding(paddingItems)
-                            .height(50.dp)
-                            .clickable { myEventsTab = MyEventsTab.JOINED_EVENTS }
-                            .testTag("my_events_joined_events_tab")
+                    Modifier
+                        .weight(1f)
+                        .padding(paddingItems)
+                        .height(50.dp)
+                        .clickable { myEventsTab = MyEventsTab.JOINED_EVENTS }
+                        .testTag("my_events_joined_events_tab")
                 ) {
                     Text(
                         stringResource(R.string.my_events_joined_events),
@@ -70,11 +75,12 @@ fun MyEventsScreen(navActions: NavigationActions) {
                 }
                 Box(
                     modifier =
-                        Modifier.weight(1f)
-                            .padding(paddingItems)
-                            .height(50.dp)
-                            .clickable { myEventsTab = MyEventsTab.CREATED_EVENTS }
-                            .testTag("my_events_created_events_tab")
+                    Modifier
+                        .weight(1f)
+                        .padding(paddingItems)
+                        .height(50.dp)
+                        .clickable { myEventsTab = MyEventsTab.CREATED_EVENTS }
+                        .testTag("my_events_created_events_tab")
                 ) {
                     Text(
                         stringResource(R.string.my_events_created_events),
@@ -85,26 +91,28 @@ fun MyEventsScreen(navActions: NavigationActions) {
                 }
             }
             Box(modifier = Modifier.fillMaxWidth()) {
-                val underline = Modifier.height(1.dp).width(200.dp)
+                val underline = Modifier
+                    .height(1.dp)
+                    .width(200.dp)
                 when (myEventsTab) {
                     MyEventsTab.JOINED_EVENTS -> {
                         Box(
                             modifier =
-                                underline
-                                    .align(Alignment.CenterStart)
-                                    .padding(start = 10.dp)
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .testTag("my_events_underline_joined_events")
+                            underline
+                                .align(Alignment.CenterStart)
+                                .padding(start = 10.dp)
+                                .background(MaterialTheme.colorScheme.primary)
+                                .testTag("my_events_underline_joined_events")
                         )
                     }
                     MyEventsTab.CREATED_EVENTS -> {
                         Box(
                             modifier =
-                                underline
-                                    .align(Alignment.CenterEnd)
-                                    .padding(end = 10.dp)
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .testTag("my_events_underline_created_events")
+                            underline
+                                .align(Alignment.CenterEnd)
+                                .padding(end = 10.dp)
+                                .background(MaterialTheme.colorScheme.primary)
+                                .testTag("my_events_underline_created_events")
                         )
                     }
                 }
@@ -115,8 +123,9 @@ fun MyEventsScreen(navActions: NavigationActions) {
                 else createdEventsList,
                 "",
                 "",
-                true
-            )
+                true,
+                joinedEventsList
+            ) { myEventsViewModel.joinOrLeaveEvent(it) }
         }
     }
 }
