@@ -92,6 +92,7 @@ fun ProfileCreationScreen(
     val lastName by viewModel.lastName.collectAsState()
     val semesterSelected by viewModel.selectedSemester.collectAsState()
     val sectionSelected by viewModel.selectedSection.collectAsState()
+    val isEditing by viewModel.isEditing.collectAsState()
 
     ProfileCreationUI(
         modifier = modifier,
@@ -115,7 +116,8 @@ fun ProfileCreationScreen(
             viewModel.setSelectedSemester(semester)
         },
         onFirstNameChange = viewModel::setFirstName,
-        onLastNameChange = viewModel::setLastName
+        onLastNameChange = viewModel::setLastName,
+        isEditing = isEditing
     )
 
     if (dialogVisible) {
@@ -156,6 +158,7 @@ fun ProfileCreationUI(
     onSemChange: (String) -> Unit,
     onFirstNameChange: (String) -> Unit,
     onLastNameChange: (String) -> Unit,
+    isEditing: Boolean
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -164,12 +167,14 @@ fun ProfileCreationUI(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { navAction.goBack() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "go back button",
-                            modifier = Modifier.testTag("Back")
-                        )
+                    if (isEditing) {
+                        IconButton(onClick = { navAction.goBack() }) {
+                            Icon(
+                                Icons.Default.ArrowBack,
+                                contentDescription = "go back button",
+                                modifier = Modifier.testTag("Back")
+                            )
+                        }
                     }
                 },
                 title = { Text(text = "Create Profile") },
