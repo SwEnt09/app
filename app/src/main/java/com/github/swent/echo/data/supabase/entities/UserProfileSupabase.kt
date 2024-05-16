@@ -3,6 +3,8 @@ package com.github.swent.echo.data.supabase.entities
 import com.github.swent.echo.data.model.Section
 import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.supabase.serializer.SectionSerializer
+import com.github.swent.echo.data.supabase.serializer.SemesterSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,8 +12,8 @@ import kotlinx.serialization.Serializable
 data class UserProfileSupabase(
     @SerialName("user_id") val userId: String,
     val name: String,
-    val semester: Semester?,
-    val section: Section?,
+    @Serializable(with = SemesterSerializer::class) val semester: Semester?,
+    @Serializable(with = SectionSerializer::class) val section: Section?,
     @SerialName("user_tags") val tags: List<TagHelper>,
     @SerialName("committee_members") val committeeMembers: List<AssociationHelper>,
     @SerialName("association_subscriptions") val associationSubscriptions: List<AssociationHelper>,
