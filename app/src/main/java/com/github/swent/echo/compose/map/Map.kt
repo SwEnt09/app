@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.runBlocking
 
 val MAP_CENTER = Location("EPFL", 46.5191, 6.5668)
@@ -29,16 +30,17 @@ const val DEFAULT_ZOOM = 13.0
 @Composable
 fun <T : View> EchoAndroidView(
     modifier: Modifier = Modifier,
-    factory: (Context, Boolean, (() -> Unit)) -> T,
+    factory: (Context, Boolean, (() -> Unit), (LatLng) -> Unit) -> T,
     update: (T, List<Event>, (Event) -> Unit, Boolean) -> Unit,
     events: List<Event>,
     callback: (Event) -> Unit = {},
-    withLocation: Boolean
+    withLocation: Boolean,
+    launchEventCreation: (LatLng) -> Unit
 ) {
     var trigger by remember { mutableStateOf(false) }
     AndroidView(
         modifier = modifier.testTag("mapAndroidView"),
-        factory = { factory(it, withLocation) { trigger = true } },
+        factory = { factory(it, withLocation, { trigger = true }) { launchEventCreation(it) } },
         update = { update(it, events, callback, trigger && withLocation) }
     )
 }
@@ -65,6 +67,7 @@ fun MapDrawer(
     modifier: Modifier = Modifier,
     events: List<Event>,
     callback: (Event) -> Unit = {},
+    launchEventCreation: (LatLng) -> Unit = {},
     mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
 ) {
     var displayLocation by remember { mutableStateOf(false) }
@@ -94,6 +97,7 @@ fun MapDrawer(
         update = mapDrawerViewModel::update,
         events = events,
         callback = callback,
-        withLocation = displayLocation
+        withLocation = displayLocation,
+        launchEventCreation = launchEventCreation,
     )
 }

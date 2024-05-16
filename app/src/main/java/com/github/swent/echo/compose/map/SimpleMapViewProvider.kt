@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.testTag
 import com.github.swent.echo.data.model.Event
+import com.mapbox.mapboxsdk.geometry.LatLng
 
 /**
  * A simple map view provider that uses a [ComposeView] to display a list of events. No map is shown
@@ -16,7 +17,8 @@ class SimpleMapViewProvider : IMapViewProvider<ComposeView> {
     override fun factory(
         context: android.content.Context,
         withLocation: Boolean,
-        onCreate: () -> Unit
+        onCreate: () -> Unit,
+        onLongPress: (LatLng) -> Unit,
     ): ComposeView {
         val view = ComposeView(context)
         onCreate()

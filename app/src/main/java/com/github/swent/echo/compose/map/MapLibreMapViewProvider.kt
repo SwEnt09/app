@@ -65,7 +65,12 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
         }
     }
 
-    override fun factory(context: Context, withLocation: Boolean, onCreate: () -> Unit): MapView {
+    override fun factory(
+        context: Context,
+        withLocation: Boolean,
+        onCreate: () -> Unit,
+        onLongPress: (LatLng) -> Unit
+    ): MapView {
         Mapbox.getInstance(context)
         val styleUrl =
             context.getString(R.string.maptiler_base_style_url) +
@@ -91,6 +96,10 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                             .zoom(DEFAULT_ZOOM)
                             .bearing(0.0)
                             .build()
+                }
+                map.addOnMapLongClickListener {
+                    onLongPress(it)
+                    true
                 }
                 onCreate()
             }

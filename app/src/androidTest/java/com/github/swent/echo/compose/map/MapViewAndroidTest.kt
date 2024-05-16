@@ -26,7 +26,8 @@ class MapViewAndroidTest {
                 factory = p::factory,
                 update = p::update,
                 events = e,
-                withLocation = true
+                withLocation = true,
+                launchEventCreation = {}
             )
         }
     }
