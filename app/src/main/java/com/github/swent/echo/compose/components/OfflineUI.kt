@@ -4,14 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -61,35 +58,18 @@ fun ConnectivityStatus(connection: NetworkService) {
 @Composable
 fun ConnectivityStatusBox(isConnected: Boolean, modifier: Modifier = Modifier) {
     val backgroundColor by animateColorAsState(if (!isConnected) Color.LightGray else Color.Green)
-
     val message = if (isConnected) R.string.Online_mode else R.string.Offline_mode
-    SmallTopAppBarExample(text = stringResource(id = message), color = backgroundColor)
+    SmallTopAppBarFunc(text = stringResource(id = message), color = backgroundColor)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SmallTopAppBarExample(text: String, color: Color) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                modifier = Modifier.height(20.dp),
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = color,
-                    ),
-                title = { Text(text, fontSize = 15.sp) }
-            )
-        }
-    ) { innerPadding ->
-        ScrollContent(innerPadding)
+fun SmallTopAppBarFunc(text: String, color: Color) {
+    Box(modifier = Modifier.height(20.dp)) {
+        CenterAlignedTopAppBar(
+            modifier = Modifier.fillMaxWidth().height(20.dp),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = color),
+            title = { Text(text, fontSize = 15.sp) }
+        )
     }
-}
-
-@Composable
-fun ScrollContent(innerPadding: PaddingValues) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {}
 }
