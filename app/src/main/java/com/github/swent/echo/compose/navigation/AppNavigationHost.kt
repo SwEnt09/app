@@ -104,7 +104,9 @@ fun AppNavigationHost(
             EditEventScreen(eventViewModel = hiltViewModel(), navigationActions = navActions)
         }
 
-        composable(Routes.MY_EVENTS.name) { MyEventsScreen(navActions = navActions) }
+        composable(Routes.MY_EVENTS.name) {
+            MyEventsScreen(myEventsViewModel = hiltViewModel(), navActions = navActions)
+        }
 
         composable(Routes.ASSOCIATIONS.name) {
             AssociationScreen(hiltViewModel(), navActions = navActions)
