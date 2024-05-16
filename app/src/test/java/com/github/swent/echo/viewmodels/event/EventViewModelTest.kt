@@ -261,4 +261,23 @@ class EventViewModelTest {
         scheduler.runCurrent()
         verify { Log.e(any(), any() as String) }
     }
+
+    @Test
+    fun eventViewModelWithNullEventIdCreateANewOne() {
+        val mockedEventId = mockk<SavedStateHandle>(relaxed = true)
+        every { mockedEventId.contains(any()) } returns true
+        every { mockedEventId.get<String>(any()) } returns ""
+        every { mockedEventId[any()] = "" }
+        coEvery { mockedRepository.getUserProfile(any()) } returns UserProfile.EMPTY
+        coEvery { mockedRepository.getEvent(any()) } returns null
+        var creator = EventCreator.EMPTY
+        runBlocking {
+            creator = mockedRepository.getUserProfile("")!!.toEventCreator()
+            eventViewModel =
+                EventViewModel(mockedRepository, fakeAuthenticationService, mockedEventId)
+        }
+        scheduler.runCurrent()
+        assertEquals(Event.EMPTY.copy(creator = creator), eventViewModel.event.value)
+        assertTrue(eventViewModel.isEventNew.value)
+    }
 }
