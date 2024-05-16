@@ -40,7 +40,7 @@ class EventViewModelTest {
             organizer = Association("testid", "testname", "testdesc"),
             title = "test title",
             description = "test description",
-            location = Location("test location", 100.0, 100.0),
+            location = Location("test location", 10.0, 10.0),
             startDate = ZonedDateTime.now(),
             endDate = ZonedDateTime.now(),
             tags = setOf(Tag("1", "tag1")),
