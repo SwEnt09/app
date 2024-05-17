@@ -1,0 +1,122 @@
+Title	URL	Assignees	Status	Priority	Estimate	Size	Sprint	Actual time
+improve visuals of the homescreen and composables in the homescreen		Greenade	Product backlog	High			Sprint 9	
+use the GPS location of the user to display the distance to events in the list, and to sort by distance events		Greenade	Product backlog	High			Sprint 9	
+use the GPS position to get the distance to events and display it (and sort the lists by it)			Product backlog	High				
+As an event organizer, I want to be able to create and broadcast an event so that students who may be interested are notified.			Product backlog	High				
+Show saving animation while the user profile is saved before navigating to the home screen		srsingh04	Sprint Backlog	High			Sprint 9	
+Block the save user profile button in offline mode		srsingh04	Sprint Backlog	High	2		Sprint 9	
+Move the `SAMPLE_EVENTS` to test directories.	https://github.com/echo-swent/echo/issues/100	alejandrocalles	Sprint Backlog	High	2	S	Sprint 9	
+Add fields to select section & semester in the event creation page		unglazedstamp	Sprint Backlog	High	6	M	Sprint 9	
+Confusing message when registering with existing account	https://github.com/echo-swent/echo/issues/303		Product backlog	High		L	Sprint 9	
+Delete cache (room db) on logout			Product backlog	Medium				
+Delete account button			Product backlog	Medium				
+Implement the default/light/dark mode	https://github.com/echo-swent/echo/issues/64		Product backlog	Medium	0			
+As a user I want to be able to see how many participants are participating in a certain event in order to know if there is still place for me and my friends to register.			Product backlog	Medium				
+Improve readability of the offline composable for light and dark theme			Product backlog	Medium				
+Image for events	https://github.com/echo-swent/echo/issues/165	octogradiste, violoncelloCH	Product backlog	Medium		XL		
+As an event organizer, I want people to be able to join my events, so that I have an idea of how many attendees to expect			Product backlog	Medium				
+As a user, I want to have an event feed, so that I can see what events are currently going on			Product backlog	Medium				
+As a student that has specific interests, I want to be able to follow associations so that their events show up in my feed first.			Product backlog	Medium				
+As a user I want to be able to pull-to-refresh on the event detail screen, so that I have the latest data.	https://github.com/echo-swent/echo/issues/166		Product backlog	Medium				
+the map's view (position/scale) should be preserved when switching to other screen (e.g. list screen) and back			Product backlog	Medium				
+As a student whose best friend is a UNIL student, I would like to be able to share my live location so that she can find the event easily on the campus and we can find each other amongst the crowd in big events scattered over multiple locations on campus			Product backlog	Low				
+As curious potential user I want to start using the app without having to create an account: just discover events based on what I like. Then later on when I want to perform an action requiring sign-up I can create an account keeping all the data			Product backlog	Low				
+As an association we want to be certified, so that we have more visibility and can be trusted by the users			Product backlog	Low				
+As a user I want to be able to add friends, so I can see what my friends are doing			Product backlog	Low				
+SCRUM master		violoncelloCH	Done in sprint 7	High			Sprint 7	
+Mockup "joined events" screen	https://github.com/echo-swent/echo/issues/216	Greenade	Done in sprint 7	High	4		Sprint 7	
+make SupabaseDataSource return null if object not found	https://github.com/echo-swent/echo/issues/217	violoncelloCH	Done in sprint 7	High	2	S	Sprint 7	4
+Create the logic for the associations in the app	https://github.com/echo-swent/echo/issues/248	ntissieres	Done in sprint 7	High	4		Sprint 7	
+Event Creation Map	https://github.com/echo-swent/echo/pull/240	alejandrocalles	Done in sprint 7	High	10	M	Sprint 7	14
+Make the location selection composable for event creation	https://github.com/echo-swent/echo/issues/221	alejandrocalles	Done in sprint 7	High	10	M	Sprint 7	14
+link the TagUI to the homescreen and the viewmodel, handle filtering accordingly	https://github.com/echo-swent/echo/issues/252	Greenade	Done in sprint 7	High	8		Sprint 7	
+Implement a screen to show the associations I've joined and one for the association in which I'm a committee member.	https://github.com/echo-swent/echo/issues/238	unglazedstamp	Done in sprint 7	High	8	M	Sprint 7	8.5
+Connect the screens to show the associations I've joined and the association in which I'm a committee member to the app	https://github.com/echo-swent/echo/issues/242	unglazedstamp	Done in sprint 7	High	3	S	Sprint 7	2.5
+Fix bugs in create / edit event screen	https://github.com/echo-swent/echo/issues/220	unglazedstamp	Done in sprint 7	High	1		Sprint 7	1
+Feature/search menu discover v1	https://github.com/echo-swent/echo/pull/244	ntissieres	Done in sprint 7					
+Mockup "my events" screen	https://github.com/echo-swent/echo/issues/215	Greenade	Done in sprint 7	High	4		Sprint 7	
+Discuss in the team the repository interface	https://github.com/echo-swent/echo/issues/234	octogradiste, unglazedstamp, violoncelloCH	Done in sprint 7	High	4	S	Sprint 7	
+allow to subscribe/join to Events	https://github.com/echo-swent/echo/issues/192	violoncelloCH	Done in sprint 7	High	6	M	Sprint 7	
+Fix/adaptative display scope event	https://github.com/echo-swent/echo/pull/245	ntissieres	Done in sprint 7					
+Extend the local data source to support better syncing strategies	https://github.com/echo-swent/echo/pull/167	octogradiste	Done in sprint 7	High	1	XS	Sprint 7	1
+Discuss how to use the local data source not only for the offline mode, but also for caching.	https://github.com/echo-swent/echo/issues/235	octogradiste, unglazedstamp, violoncelloCH	Done in sprint 7	Medium	3	S	Sprint 7	
+Remove `Osmdroid`.	https://github.com/echo-swent/echo/pull/211	alejandrocalles	Done in sprint 7	High	3	S	Sprint 7	3
+List Mode adaptative display for the scope of the events	https://github.com/echo-swent/echo/issues/223	ntissieres	Done in sprint 7	High	1	XS	Sprint 7	
+Update the local data source to support better syncing	https://github.com/echo-swent/echo/issues/239	octogradiste	Done in sprint 7	High	6	M	Sprint 7	
+Implementation Discover mode	https://github.com/echo-swent/echo/issues/213	ntissieres	Done in sprint 7	High	12	L	Sprint 7	
+Discuss the filters and improve the UX	https://github.com/echo-swent/echo/issues/315	Greenade, ntissieres	Done in sprint 7	High	12	M	Sprint 7	
+Simplify the `MapViewProvider` hierarchy	https://github.com/echo-swent/echo/issues/133	alejandrocalles	Product backlog	Medium	6			
+Add end to end test for offline mode			Product backlog	Medium	4			
+Connect the list view to the bottom sheet on the map		alejandrocalles	Sprint Backlog	High	8	M	Sprint 9	
+overhaul of the associations events		ntissieres	Sprint Backlog	High	10		Sprint 9	
+change the logo		Greenade	Sprint Backlog	High	4		Sprint 9	
+change the color scheme to fit the new logo		octogradiste	Sprint Backlog	High	1	XS	Sprint 9	
+Implement a GPS service to get the user position	https://github.com/echo-swent/echo/issues/318	alejandrocalles	Sprint Backlog	High	10	L	Sprint 9	
+Change the filter feature so that it takes children into account	https://github.com/echo-swent/echo/issues/312	Greenade	Sprint Backlog	High	8		Sprint 9	
+As a user, I want to be able to modify my personal profile, so I can update my preferences			Done in sprint 8	Medium				
+Callback to retrigger the layout after joining/leaving an event	https://github.com/echo-swent/echo/issues/314	ntissieres	Done in sprint 8	High	4		Sprint 8	
+support deleting events (and other objects as well as relational attributes) from the backend	https://github.com/echo-swent/echo/issues/219	violoncelloCH	Done in sprint 8	High	8	M	Sprint 8	
+🐛 HIGH VALUE BUGFIX AFTER 3 HOURS OF DEBUGGING: properly refetch events *after* joining/leaving event 	https://github.com/echo-swent/echo/pull/317	violoncelloCH	Done in sprint 8	High			Sprint 8	3
+SCRUM MASTER		srsingh04	Done in sprint 8	High			Sprint 8	
+Block save/delete event in offline mode	https://github.com/echo-swent/echo/issues/275	unglazedstamp	Done in sprint 8	High	2		Sprint 8	2
+Change the name of the `Location.name` field in the UI.	https://github.com/echo-swent/echo/issues/273	unglazedstamp	Done in sprint 8	High		S	Sprint 8	
+remove unnecessary logs in the create/edit event screen	https://github.com/echo-swent/echo/issues/276	unglazedstamp	Done in sprint 8	High	0.5		Sprint 8	0.5
+modify the tag viewmodel and the tag hierarchy	https://github.com/echo-swent/echo/issues/278	unglazedstamp	Done in sprint 8	High	10		Sprint 8	10
+As a curious user, I want to discover new activities around a specific category.			Done in sprint 8	High				
+As a user, I want to be able to navigate through the app efficiently.			Done in sprint 8	High				
+create the my event screen composable			Done in sprint 8	High				
+create the my event screen viewmodel			Done in sprint 8	High				
+As a user who has limited internet connection, I want to be able to use the app offline.			Done in sprint 8	High				
+Implementation AssociationDetails	https://github.com/echo-swent/echo/issues/268	ntissieres	Done in sprint 8	High	4		Sprint 8	
+Implementation AssociationSearch	https://github.com/echo-swent/echo/issues/267	ntissieres	Done in sprint 8	High	4		Sprint 8	
+As a user I want to be able to filter and search events, so I can find them efficiently			Done in sprint 8	High				
+As a user interested in an event, I want to be able to join it.			Done in sprint 8	High				
+Feature/my events page	https://github.com/echo-swent/echo/pull/287	ntissieres	Done in sprint 8					
+Composable when internet is disconnected/connected	https://github.com/echo-swent/echo/issues/233	srsingh04	Done in sprint 8	High	2	S	Sprint 7	2
+CreateProfile: have error types in enum	https://github.com/echo-swent/echo/issues/207	srsingh04	Done in sprint 8	Medium	1	XS	Sprint 8	
+Internet connection detection in the app	https://github.com/echo-swent/echo/issues/232	srsingh04	Done in sprint 8	High	8	M	Sprint 7	
+Feature/association search	https://github.com/echo-swent/echo/pull/295	ntissieres	Done in sprint 8			M	Sprint 8	
+Create the logic for the associations in the app	https://github.com/echo-swent/echo/pull/251	ntissieres	Done in sprint 8					
+Feature/association details	https://github.com/echo-swent/echo/pull/297	ntissieres	Done in sprint 8			M	Sprint 8	
+Feature/association main screen	https://github.com/echo-swent/echo/pull/294	ntissieres	Done in sprint 8					
+Feature/my events viewmodel	https://github.com/echo-swent/echo/pull/304	ntissieres	Done in sprint 8					
+ProfileCreationScreen and ProfileCreationUI: have `Modifier` as first parameter so that any parent can pass down style	https://github.com/echo-swent/echo/issues/206	srsingh04	Done in sprint 8	Medium	2	S		
+Feature/association screen	https://github.com/echo-swent/echo/pull/292	ntissieres	Done in sprint 8					
+Feature/association viewmodel	https://github.com/echo-swent/echo/pull/291	ntissieres	Done in sprint 8					
+Start Event Creation from long press on the map	https://github.com/echo-swent/echo/issues/307	alejandrocalles	Done in sprint 8	High	4	S	Sprint 8	
+Prevent the Map from requesting location more than once.	https://github.com/echo-swent/echo/pull/309	alejandrocalles	Done in sprint 8	High	6	M	Sprint 8	6
+Location permissions should only be requested once per session.	https://github.com/echo-swent/echo/issues/316	alejandrocalles	Done in sprint 8	High	6	M	Sprint 8	6
+Long press on the map to create an event at that location	https://github.com/echo-swent/echo/pull/306	alejandrocalles	Done in sprint 8	High	4	S	Sprint 8	
+CreateProfile: rename enabled1 to selected	https://github.com/echo-swent/echo/issues/209	srsingh04	Done in sprint 8	Low	0.5	XS	Sprint 8	
+CreateProfile: remove unneeded onDismiss argument	https://github.com/echo-swent/echo/issues/208	srsingh04	Done in sprint 8	Low	0.5	XS	Sprint 8	
+Implementation Association viewModel	https://github.com/echo-swent/echo/issues/265	ntissieres	Done in sprint 8	High	8		Sprint 8	
+Edit the user profile		srsingh04	Done in sprint 8	High	8	M	Sprint 8	
+Integrate connectivity status	https://github.com/echo-swent/echo/pull/308	octogradiste	Done in sprint 8	High	0.5	XS	Sprint 8	0.5
+Implementation AssociationMainScreen	https://github.com/echo-swent/echo/issues/293	ntissieres	Done in sprint 8	High	4		Sprint 8	
+Synchronisation mechanism in Repository between Supabase and Room	https://github.com/echo-swent/echo/issues/103	violoncelloCH	Done in sprint 8	High	12	XL	Sprint 8	40
+Add and use custom serializer	https://github.com/echo-swent/echo/pull/302	octogradiste	Done in sprint 8	High	2	S	Sprint 8	2
+create the joined event viewmodel	https://github.com/echo-swent/echo/issues/305	ntissieres	Done in sprint 8	High	6		Sprint 8	
+App crashes when clicking on the compass icon at the top right of the map screen	https://github.com/echo-swent/echo/issues/163	alejandrocalles	Done in sprint 8	High	6		Sprint 8	1
+Graphic update bottom info sheet: add tags	https://github.com/echo-swent/echo/issues/254	Greenade	Done in sprint 8	High	6		Sprint 8	
+Implementation AssociationsScreen	https://github.com/echo-swent/echo/issues/266	ntissieres	Done in sprint 8	High	4		Sprint 8	
+Mockup Association	https://github.com/echo-swent/echo/issues/247	ntissieres	Done in sprint 8	High	8		Sprint 8	
+create the my events screen	https://github.com/echo-swent/echo/issues/288	ntissieres	Done in sprint 8	High	6		Sprint 8	
+Block join/modify button in offline mode	https://github.com/echo-swent/echo/issues/261	Greenade	Done in sprint 8	High	2		Sprint 8	
+Redirect to the user profile creation page at application start when the user has not profile yet	https://github.com/echo-swent/echo/issues/258	octogradiste	Done in sprint 8	High	2	S	Sprint 8	4
+Block login and register button when offline	https://github.com/echo-swent/echo/issues/285	octogradiste	Done in sprint 8	High	2	S	Sprint 8	
+change the search handling of the two modes	https://github.com/echo-swent/echo/issues/260	Greenade	Done in sprint 8	High	4		Sprint 8	
+App crashes when registering with an existing account	https://github.com/echo-swent/echo/issues/286	octogradiste	Done in sprint 8	High	1	S	Sprint 8	1
+Investigate how to make the CI faster (move every thinig to robolectirc)	https://github.com/echo-swent/echo/issues/259	octogradiste	Done in sprint 8	High	6	L	Sprint 8	4
+Implement NetworkService	https://github.com/echo-swent/echo/issues/270	octogradiste	Done in sprint 8	High	6	L	Sprint 8	5
+state object which holds the current network state, for composables and repository	https://github.com/echo-swent/echo/issues/190	octogradiste	Done in sprint 8	High		M	Sprint 8	
+Overwrite hardware back button in situations which do not make sense	https://github.com/echo-swent/echo/issues/280	octogradiste	Done in sprint 8	High	2	S	Sprint 8	2
+Create a loading screen to initialize the `AuthenticationService`	https://github.com/echo-swent/echo/issues/105	octogradiste	Done in sprint 8	Medium		M		
+Help page explaining all features		octogradiste	Sprint Backlog	High	6	M	Sprint 9	
+Differentiate or merge the login and register screens.	https://github.com/echo-swent/echo/issues/101	octogradiste	Sprint Backlog	High		S	Sprint 9	
+Adapt the dataclass Association	https://github.com/echo-swent/echo/issues/264	violoncelloCH	Sprint Backlog	High		M	Sprint 9	
+Make the repository more robust		violoncelloCH	Sprint Backlog	High	8	M	Sprint 9	
+Backend clean up		violoncelloCH	Sprint Backlog	High	5	M	Sprint 9	
+Improve two pages selection composable for MyEvents screen and AssociationDetails screen	https://github.com/echo-swent/echo/issues/311	ntissieres	Sprint Backlog	High	4	M	Sprint 9	
+Profile creation click inside the dropdown should open it (not only on the small arrow)		srsingh04	Sprint Backlog	High	4	S	Sprint 9	
+Add image to user profile		unglazedstamp	Sprint Backlog	High	16		Sprint 9	
+SCRUM Master		Greenade	Ready					
