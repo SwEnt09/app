@@ -342,7 +342,6 @@ fun DropDownListFunctionWrapper(
                     DropdownMenuItem(
                         text = { Text(elem.toString()) },
                         onClick = {
-                            // selectedField = elem.toString()
                             onSelectedFieldChange(elem.toString())
                             showDropdown = false
                         },
