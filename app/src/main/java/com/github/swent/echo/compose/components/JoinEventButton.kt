@@ -20,10 +20,7 @@ fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEve
     val joinedEvents by myEventsViewModel.joinedEvents.collectAsState()
     Button(
         enabled = isOnline && (event.participantCount < event.maxParticipants),
-        onClick = {
-            myEventsViewModel.joinOrLeaveEvent(event)
-            refreshEvents()
-        },
+        onClick = { myEventsViewModel.joinOrLeaveEvent(event, refreshEvents) },
         modifier =
             androidx.compose.ui.Modifier.width(buttonWidth)
                 .testTag("list_join_event_${event.eventId}")
