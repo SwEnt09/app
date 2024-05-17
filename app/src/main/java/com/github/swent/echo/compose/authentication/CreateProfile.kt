@@ -363,9 +363,7 @@ fun InputChipFun(
 
     InputChip(
         selected = selected,
-        onClick = {
-            onDismiss()
-        },
+        onClick = { onDismiss() },
         label = { Text(text) },
         modifier = Modifier.testTag(text),
         enabled = true,
