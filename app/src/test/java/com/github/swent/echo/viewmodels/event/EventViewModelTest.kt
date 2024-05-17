@@ -302,7 +302,12 @@ class EventViewModelTest {
         runBlocking {
             creator = mockedRepository.getUserProfile("")!!.toEventCreator()
             eventViewModel =
-                EventViewModel(mockedRepository, fakeAuthenticationService, mockedEventId)
+                EventViewModel(
+                    mockedRepository,
+                    fakeAuthenticationService,
+                    mockedEventId,
+                    mockedNetworkService
+                )
         }
         scheduler.runCurrent()
         assertEquals(Event.EMPTY.copy(creator = creator), eventViewModel.event.value)
