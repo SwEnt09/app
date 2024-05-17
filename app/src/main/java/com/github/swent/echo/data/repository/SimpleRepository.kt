@@ -97,6 +97,10 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
         events.add(event)
     }
 
+    override suspend fun deleteEvent(event: Event) {
+        events.removeIf { it.eventId == event.eventId }
+    }
+
     override suspend fun getAllEvents(): List<Event> {
         return events
     }
@@ -140,5 +144,9 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
     override suspend fun setUserProfile(userProfile: UserProfile) {
         userProfiles.removeIf { it.userId == userProfile.userId }
         userProfiles.add(userProfile)
+    }
+
+    override suspend fun deleteUserProfile(userProfile: UserProfile) {
+        userProfiles.removeIf { it.userId == userProfile.userId }
     }
 }

@@ -110,12 +110,21 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
     override suspend fun setEvent(event: Event) {
         val eventSupabase = EventSupabaseSetter(event)
         supabase.from("events").upsert(eventSupabase, onConflict = "event_id")
+        deleteAllEventTagRelationsForEvent(event.eventId)
         setEventTagRelations(event.eventId, event.tags)
     }
 
     private suspend fun setEventTagRelations(eventId: String, tags: Set<Tag>) {
         val eventTags = tags.map { tag -> EventTagSupabase(tag.tagId, eventId) }
         supabase.from("event_tags").upsert(eventTags, onConflict = "tag_id,event_id")
+    }
+
+    private suspend fun deleteAllEventTagRelationsForEvent(eventId: String) {
+        supabase.from("event_tags").delete { filter { eq("event_id", eventId) } }
+    }
+
+    override suspend fun deleteEvent(event: Event) {
+        supabase.from("events").delete { filter { eq("event_id", event.eventId) } }
     }
 
     override suspend fun getEventsNotIn(eventIds: List<String>): List<Event> {
@@ -252,14 +261,22 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         val userProfileSupabaseSetter = UserProfileSupabaseSetter(userProfile)
         supabase.from("user_profiles").upsert(userProfileSupabaseSetter, onConflict = "user_id")
 
+        supabase.from("user_tags").delete { filter { eq("user_id", userProfile.userId) } }
         val userTagsSupabase =
             userProfile.tags.map { tag -> UserTagSupabase(userProfile.userId, tag.tagId) }
         supabase.from("user_tags").upsert(userTagsSupabase)
 
+        supabase.from("association_subscriptions").delete {
+            filter { eq("user_id", userProfile.userId) }
+        }
         val associationSubscriptionSupabase =
             userProfile.associationsSubscriptions.map { association ->
                 AssociationSubscriptionSupabase(userProfile.userId, association.associationId)
             }
         supabase.from("association_subscriptions").upsert(associationSubscriptionSupabase)
+    }
+
+    override suspend fun deleteUserProfile(userProfile: UserProfile) {
+        supabase.from("user_profiles").delete { filter { eq("user_id", userProfile.userId) } }
     }
 }

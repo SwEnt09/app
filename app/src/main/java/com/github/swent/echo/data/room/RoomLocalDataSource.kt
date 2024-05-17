@@ -71,9 +71,14 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         val crossRefs = event.tags.map { EventTagCrossRef(event.eventId, it.tagId) }
 
         event.organizer?.let { associationDao.insert(AssociationRoom(it)) }
+        eventDao.deleteAllEventTagCrossRefsForEvent(event.eventId)
         tagDao.insertAll(event.tags.toTagRoomList())
         eventDao.insert(EventRoom(event))
-        eventDao.insertEventTagCrossRegs(crossRefs)
+        eventDao.insertEventTagCrossRefs(crossRefs)
+    }
+
+    override suspend fun deleteEvent(eventId: String) {
+        eventDao.delete(eventId)
     }
 
     override suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event> {
@@ -91,10 +96,11 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         val crossRefs =
             events.flatMap { event -> event.tags.map { EventTagCrossRef(event.eventId, it.tagId) } }
 
+        eventDao.deleteAllEventTagCrossRefsForEvents(events.map { it.eventId })
         associationDao.insertAll(associations.map { AssociationRoom(it) })
         tagDao.insertAll(tags.toTagRoomList())
         eventDao.insertAll(events.map { EventRoom(it) })
-        eventDao.insertEventTagCrossRegs(crossRefs)
+        eventDao.insertEventTagCrossRefs(crossRefs)
     }
 
     override suspend fun deleteEventsNotIn(eventIds: List<String>) {
@@ -157,6 +163,11 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
                 UserProfileAssociationSubscriptionCrossRef(userProfile.userId, it.associationId)
             }
 
+        userProfileDao.deleteAllUserProfileTagCrossRefsForUser(userProfile.userId)
+        userProfileDao.deleteAllUserProfileCommitteeMemberCrossRefsForUser(userProfile.userId)
+        userProfileDao.deleteAllUserProfileAssociationSubscriptionCrossRefsForUser(
+            userProfile.userId
+        )
         tagDao.insertAll(tags)
         associationDao.insertAll(committeeMemberAssociations)
         associationDao.insertAll(associationSubscriptions)
@@ -167,6 +178,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         userProfileDao.insertUserProfileAssociationSubscriptionCrossRefs(
             associationSubscriptionCrossRefs
         )
+    }
+
+    override suspend fun deleteUserProfile(userId: String) {
+        userProfileDao.delete(userId)
     }
 
     override suspend fun joinEvent(

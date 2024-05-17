@@ -34,6 +34,8 @@ interface LocalDataSource {
 
     suspend fun setEvent(event: Event)
 
+    suspend fun deleteEvent(eventId: String)
+
     suspend fun getAllEvents(syncedSecondsAgo: Long): List<Event>
 
     suspend fun getAllEventIds(secondsAgo: Long): List<String>
@@ -70,6 +72,8 @@ interface LocalDataSource {
     ): UserProfile?
 
     suspend fun setUserProfile(userProfile: UserProfile)
+
+    suspend fun deleteUserProfile(userId: String)
 
     suspend fun joinEvent(userId: String, eventId: String)
 
