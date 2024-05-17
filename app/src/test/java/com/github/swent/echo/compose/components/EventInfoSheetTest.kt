@@ -60,7 +60,8 @@ class EventInfoSheetTest {
                 onFullyExtended = { extended++ },
                 canModifyEvent = canModifyEvent,
                 onModifyEvent = { modified++ },
-                isOnline = true
+                isOnline = true,
+                refreshEvents = {}
             )
         }
     }

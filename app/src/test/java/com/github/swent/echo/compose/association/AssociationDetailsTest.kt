@@ -47,7 +47,8 @@ class AssociationDetailsTest {
                 testAssociation,
                 isFollowed.value,
                 listOf(testEvent),
-                true
+                true,
+                {}
             )
         }
     }
