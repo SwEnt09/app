@@ -12,6 +12,7 @@ import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.fakes.FakeAuthenticationService
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import java.time.ZonedDateTime
@@ -23,6 +24,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -202,5 +204,38 @@ class HomeScreenViewModelTest {
         val v9 = SortBy.DATE_ASC
         homeScreenViewModel.onSortByChanged(v9)
         assertEquals(homeScreenViewModel.filtersContainer.value.sortBy, v9)
+    }
+
+    @Test
+    fun refreshEventsTest() = runBlocking {
+        // Arrange
+        val oldEvents = homeScreenViewModel.displayEventList.value
+        val newEvents =
+            listOf(
+                Event(
+                    eventId = "newEvent",
+                    creator = EventCreator("a", ""),
+                    organizer = Association("a", "a", ""),
+                    title = "New Event",
+                    description = "",
+                    location = Location("Location 2", MAP_CENTER.toLatLng()),
+                    startDate = ZonedDateTime.now(),
+                    endDate = ZonedDateTime.now(),
+                    tags = setOf(Tag("1", "new")),
+                    participantCount = 5,
+                    maxParticipants = 8,
+                    imageId = 0
+                )
+            )
+        coEvery { mockedRepository.getAllEvents() } returns newEvents
+
+        // Act
+        homeScreenViewModel.refreshEvents()
+        scheduler.runCurrent() // To ensure all launched coroutines have completed
+
+        // Assert
+        coVerify { mockedRepository.getAllEvents() }
+        assertNotEquals(oldEvents, homeScreenViewModel.displayEventList.value)
+        assertEquals(newEvents, homeScreenViewModel.displayEventList.value)
     }
 }

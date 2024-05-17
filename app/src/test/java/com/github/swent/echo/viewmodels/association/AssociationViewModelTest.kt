@@ -11,6 +11,7 @@ import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.fakes.FakeAuthenticationService
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import java.time.ZonedDateTime
@@ -21,13 +22,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.setMain
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
 class AssociationViewModelTest {
     private val fakeAuthenticationService = FakeAuthenticationService()
     private val mockedRepository = mockk<Repository>(relaxed = true)
-    private lateinit var AssociationViewModel: AssociationViewModel
+    private lateinit var associationViewModel: AssociationViewModel
     private val scheduler = TestCoroutineScheduler()
     private val associationList =
         listOf(
@@ -119,7 +121,7 @@ class AssociationViewModelTest {
         coEvery { mockedRepository.getUserProfile("u0")?.committeeMember } returns
             userProfile.committeeMember
         runBlocking {
-            AssociationViewModel =
+            associationViewModel =
                 AssociationViewModel(
                     mockedRepository,
                     fakeAuthenticationService,
@@ -131,75 +133,108 @@ class AssociationViewModelTest {
 
     @Test
     fun onFollowAssociationChangedShouldWork() {
-        AssociationViewModel.onFollowAssociationChanged(associationList[2])
-        assert(AssociationViewModel.followedAssociations.value.contains(associationList[2]))
-        AssociationViewModel.onFollowAssociationChanged(associationList[2])
-        assert(!AssociationViewModel.followedAssociations.value.contains(associationList[2]))
+        associationViewModel.onFollowAssociationChanged(associationList[2])
+        assert(associationViewModel.followedAssociations.value.contains(associationList[2]))
+        associationViewModel.onFollowAssociationChanged(associationList[2])
+        assert(!associationViewModel.followedAssociations.value.contains(associationList[2]))
     }
 
     @Test
     fun navigationBetweenPagesShouldWork() {
-        AssociationViewModel.goTo(AssociationPage.DETAILS)
-        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.DETAILS)
-        AssociationViewModel.goTo(AssociationPage.SEARCH)
-        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.SEARCH)
-        AssociationViewModel.goTo(AssociationPage.MAINSCREEN)
-        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
+        associationViewModel.goTo(AssociationPage.DETAILS)
+        assert(associationViewModel.currentAssociationPage.value == AssociationPage.DETAILS)
+        associationViewModel.goTo(AssociationPage.SEARCH)
+        assert(associationViewModel.currentAssociationPage.value == AssociationPage.SEARCH)
+        associationViewModel.goTo(AssociationPage.MAINSCREEN)
+        assert(associationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
     }
 
     @Test
     fun backButtonShouldWork() {
-        AssociationViewModel.goTo(AssociationPage.SEARCH)
-        AssociationViewModel.goBack()
-        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
+        associationViewModel.goTo(AssociationPage.SEARCH)
+        associationViewModel.goBack()
+        assert(associationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
 
-        AssociationViewModel.goTo(AssociationPage.DETAILS)
-        AssociationViewModel.goBack()
-        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
+        associationViewModel.goTo(AssociationPage.DETAILS)
+        associationViewModel.goBack()
+        assert(associationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
 
-        AssociationViewModel.goTo(AssociationPage.SEARCH)
-        AssociationViewModel.goTo(AssociationPage.DETAILS)
-        AssociationViewModel.goBack()
-        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.SEARCH)
-        AssociationViewModel.goBack()
-        assert(AssociationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
+        associationViewModel.goTo(AssociationPage.SEARCH)
+        associationViewModel.goTo(AssociationPage.DETAILS)
+        associationViewModel.goBack()
+        assert(associationViewModel.currentAssociationPage.value == AssociationPage.SEARCH)
+        associationViewModel.goBack()
+        assert(associationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
     }
 
     @Test
     fun setOverlayShouldWork() {
-        AssociationViewModel.setOverlay(AssociationOverlay.NONE)
-        assert(AssociationViewModel.overlay.value == AssociationOverlay.NONE)
-        AssociationViewModel.setOverlay(AssociationOverlay.SEARCH)
-        assert(AssociationViewModel.overlay.value == AssociationOverlay.SEARCH)
+        associationViewModel.setOverlay(AssociationOverlay.NONE)
+        assert(associationViewModel.overlay.value == AssociationOverlay.NONE)
+        associationViewModel.setOverlay(AssociationOverlay.SEARCH)
+        assert(associationViewModel.overlay.value == AssociationOverlay.SEARCH)
     }
 
     @Test
     fun setSearchedShouldWork() {
-        AssociationViewModel.setSearched("Association A")
-        assert(AssociationViewModel.searched.value == "Association A")
+        associationViewModel.setSearched("Association A")
+        assert(associationViewModel.searched.value == "Association A")
     }
 
     @Test
     fun associationEventsShouldReturnCorrectEvents() {
         val association = associationList[0]
-        val events = AssociationViewModel.associationEvents(association)
+        val events = associationViewModel.associationEvents(association)
         assert(events.size == 1)
         assert(events[0].organizer == association)
     }
 
     @Test
     fun filterAssociationsShouldReturnCorrectAssociations() {
-        AssociationViewModel.setSearched("Association A")
-        val associations = AssociationViewModel.filterAssociations()
+        associationViewModel.setSearched("Association A")
+        val associations = associationViewModel.filterAssociations()
         assert(associations.size == 1)
         assert(associations[0].name == "Association A")
     }
 
     @Test
     fun onAssociationToFilterChangedShouldWork() {
-        AssociationViewModel.onAssociationToFilterChanged(associationList[0])
-        assert(AssociationViewModel.eventsFilter.value.contains(associationList[0]))
-        AssociationViewModel.onAssociationToFilterChanged(associationList[0])
-        assert(!AssociationViewModel.eventsFilter.value.contains(associationList[0]))
+        associationViewModel.onAssociationToFilterChanged(associationList[0])
+        assert(associationViewModel.eventsFilter.value.contains(associationList[0]))
+        associationViewModel.onAssociationToFilterChanged(associationList[0])
+        assert(!associationViewModel.eventsFilter.value.contains(associationList[0]))
+    }
+
+    @Test
+    fun refreshEventsTest() = runBlocking {
+        // Arrange
+        val oldEvents = associationViewModel.filteredEvents.value
+        val newEvents =
+            listOf(
+                Event(
+                    eventId = "newEvent",
+                    creator = EventCreator("a", ""),
+                    organizer = associationList[0],
+                    title = "New Event",
+                    description = "",
+                    location = Location("Location 2", MAP_CENTER.toLatLng()),
+                    startDate = ZonedDateTime.now(),
+                    endDate = ZonedDateTime.now(),
+                    tags = setOf(Tag("1", "new")),
+                    participantCount = 5,
+                    maxParticipants = 8,
+                    imageId = 0
+                )
+            )
+        coEvery { mockedRepository.getAllEvents() } returns newEvents
+
+        // Act
+        associationViewModel.refreshEvents()
+        scheduler.runCurrent() // To ensure all launched coroutines have completed
+
+        // Assert
+        coVerify { mockedRepository.getAllEvents() }
+        Assert.assertNotEquals(oldEvents, associationViewModel.filteredEvents.value)
+        Assert.assertEquals(newEvents, associationViewModel.filteredEvents.value)
     }
 }
