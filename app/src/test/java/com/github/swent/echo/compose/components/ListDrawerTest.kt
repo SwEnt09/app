@@ -26,7 +26,7 @@ class ListDrawerTest {
 
     @Before
     fun setUp() {
-        composeTestRule.activity.setContent { ListDrawer(SAMPLE_EVENTS, "", "", true) }
+        composeTestRule.activity.setContent { ListDrawer(SAMPLE_EVENTS, "", "", true, {}) }
     }
 
     @Test

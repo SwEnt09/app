@@ -6,7 +6,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -17,7 +16,6 @@ import com.github.swent.echo.viewmodels.myevents.MyEventsViewModel
 
 @Composable
 fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEvents: () -> Unit) {
-    val context = LocalContext.current
     val myEventsViewModel: MyEventsViewModel = hiltViewModel()
     val joinedEvents by myEventsViewModel.joinedEvents.collectAsState()
     Button(

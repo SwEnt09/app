@@ -62,7 +62,8 @@ class AssociationMainScreenTest {
                 followedAssociations = testAssociations,
                 committeeAssociations = listOf(testAssociations[0]),
                 eventsFilter = associationToFilter,
-                isOnline = true
+                isOnline = true,
+                refreshEvents = {}
             )
         }
     }
