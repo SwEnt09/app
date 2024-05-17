@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.SearchButton
 import com.github.swent.echo.compose.event.EventTitleAndBackButton
+import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.association.AssociationOverlay
@@ -42,6 +43,12 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
         }
     }
 
+    fun onAssociationClicked(association: Association) {
+        val nextPage = AssociationPage.DETAILS
+        nextPage.association = association
+        associationViewModel.goTo(nextPage)
+    }
+
     Scaffold(
         topBar = {
             EventTitleAndBackButton(stringResource(R.string.hamburger_associations)) { goBack() }
@@ -63,7 +70,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                 AssociationPage.MAINSCREEN -> {
                     AssociationMainScreen(
                         filteredEvents,
-                        { associationViewModel.goTo(it) },
+                        { onAssociationClicked(it) },
                         { associationViewModel.onAssociationToFilterChanged(it) },
                         followedAssociations,
                         committeeAssociations,
@@ -81,7 +88,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                 }
                 AssociationPage.SEARCH -> {
                     AssociationSearch(
-                        { associationViewModel.goTo(it) },
+                        { onAssociationClicked(it) },
                         associationViewModel.filterAssociations()
                     )
                     if (overlay == AssociationOverlay.SEARCH) {
