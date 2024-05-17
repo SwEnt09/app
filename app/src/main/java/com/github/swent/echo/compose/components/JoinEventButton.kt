@@ -16,13 +16,16 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.viewmodels.myevents.MyEventsViewModel
 
 @Composable
-fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp) {
+fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEvents: () -> Unit) {
     val context = LocalContext.current
     val myEventsViewModel: MyEventsViewModel = hiltViewModel()
     val joinedEvents by myEventsViewModel.joinedEvents.collectAsState()
     Button(
         enabled = isOnline,
-        onClick = { myEventsViewModel.joinOrLeaveEvent(event) },
+        onClick = {
+            myEventsViewModel.joinOrLeaveEvent(event)
+            refreshEvents()
+        },
         modifier =
             androidx.compose.ui.Modifier.width(buttonWidth)
                 .testTag("list_join_event_${event.eventId}")

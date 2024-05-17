@@ -139,4 +139,11 @@ constructor(
             allEvents.filter { _eventsFilter.value.contains(it.organizer) }
         }
     }
+
+    fun refreshEvents() {
+        viewModelScope.launch {
+            allEvents = repository.getAllEvents()
+            _filteredEvents.value = computeFilteredEvents()
+        }
+    }
 }

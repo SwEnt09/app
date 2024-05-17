@@ -376,4 +376,11 @@ constructor(
         }
         return result
     }
+
+    fun refreshEvents() {
+        viewModelScope.launch {
+            allEventsList = repository.getAllEvents()
+            filterEvents()
+        }
+    }
 }

@@ -116,7 +116,8 @@ fun MyEventsScreen(myEventsViewModel: MyEventsViewModel, navActions: NavigationA
                 else createdEventsList,
                 "",
                 "",
-                true
+                true,
+                myEventsViewModel::refreshEvents
             )
         }
     }

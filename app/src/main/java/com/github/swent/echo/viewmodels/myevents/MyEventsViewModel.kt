@@ -42,4 +42,11 @@ constructor(
             _joinedEvents.value = repository.getJoinedEvents(user)
         }
     }
+
+    fun refreshEvents() {
+        viewModelScope.launch {
+            _joinedEvents.value = repository.getJoinedEvents(user)
+            _createdEvents.value = repository.getAllEvents().filter { it.creator.userId == user }
+        }
+    }
 }

@@ -75,7 +75,8 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                         followedAssociations,
                         committeeAssociations,
                         eventsFilter,
-                        isOnline
+                        isOnline,
+                        associationViewModel::refreshEvents
                     )
                 }
                 AssociationPage.DETAILS -> {
@@ -84,7 +85,8 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                         currentAssociationPage.association,
                         followedAssociations.contains(currentAssociationPage.association),
                         associationViewModel.associationEvents(currentAssociationPage.association),
-                        isOnline
+                        isOnline,
+                        associationViewModel::refreshEvents
                     )
                 }
                 AssociationPage.SEARCH -> {
