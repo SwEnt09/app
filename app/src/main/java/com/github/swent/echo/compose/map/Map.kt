@@ -11,6 +11,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -71,22 +72,21 @@ fun MapDrawer(
     mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
 ) {
     var displayLocation by remember { mutableStateOf(false) }
-    var permissionWasDenied = false
+    var alreadyDeniedPermissions by rememberSaveable { mutableStateOf(false) }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p
             ->
-            permissionWasDenied = !p.values.any { it }
-            displayLocation = displayLocation || !permissionWasDenied
+            alreadyDeniedPermissions = !p.values.any { it }
         }
     val c = LocalContext.current
     /*
     This has to be blocking as we don't want the `EchoAndroidView` to be
     created before launching the permission request.
     */
-    if (!permissionWasDenied && runBlocking { permissionsDenied(c) }) {
+    if (!alreadyDeniedPermissions && runBlocking { permissionsDenied(c) }) {
         SideEffect { launcher.launch(PERMISSIONS) }
     } else {
-        SideEffect { displayLocation = true }
+        SideEffect { displayLocation = !alreadyDeniedPermissions }
     }
     EchoAndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
