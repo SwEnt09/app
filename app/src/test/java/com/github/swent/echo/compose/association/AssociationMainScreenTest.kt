@@ -54,7 +54,10 @@ class AssociationMainScreenTest {
         composeTestRule.setContent {
             AssociationMainScreen(
                 events = testEvents,
-                goTo = { nextPage = it },
+                onAssociationClicked = {
+                    nextPage = AssociationPage.DETAILS
+                    nextPage.association = it
+                },
                 addAssociationToFilter = { associationToFilter += it },
                 followedAssociations = testAssociations,
                 committeeAssociations = listOf(testAssociations[0]),
