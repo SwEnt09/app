@@ -115,7 +115,13 @@ private fun Content(
                         onTagClick = homeScreenViewModel::onFollowedTagClicked
                     )
                 }
-                ListDrawer(displayEventList, section, semester, isOnline)
+                ListDrawer(
+                    displayEventList,
+                    section,
+                    semester,
+                    isOnline,
+                    homeScreenViewModel::refreshEvents
+                )
             }
         } else {
             MapDrawer(
@@ -145,7 +151,8 @@ private fun Content(
                 onModifyEvent = {
                     navActions.navigateTo(Routes.EDIT_EVENT.build(displayEventInfo!!.eventId))
                 },
-                isOnline = isOnline
+                isOnline = isOnline,
+                refreshEvents = homeScreenViewModel::refreshEvents
             )
             // {navActions.navigateTo(Routes.EventInfoScreen)}) <- when we make a whole screen for
             // the event info

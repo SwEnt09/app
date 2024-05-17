@@ -40,13 +40,26 @@ import com.github.swent.echo.viewmodels.STATUS_THRESHOLD
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ListDrawer(eventsList: List<Event>, section: String, semester: String, isOnline: Boolean) {
+fun ListDrawer(
+    eventsList: List<Event>,
+    section: String,
+    semester: String,
+    isOnline: Boolean,
+    refreshEvents: () -> Unit
+) {
     val selectedEvent = remember { mutableStateOf("") }
     // Main column where every items will be displayed, scrollable
     LazyColumn(modifier = Modifier.fillMaxSize().padding(5.dp).testTag("list_drawer")) {
         // Iterate over the list of events and display them
         items(eventsList) { event ->
-            EventListItem(event = event, selectedEvent = selectedEvent, section, semester, isOnline)
+            EventListItem(
+                event = event,
+                selectedEvent = selectedEvent,
+                section,
+                semester,
+                isOnline,
+                refreshEvents
+            )
             Spacer(modifier = Modifier.height(5.dp))
         }
     }
@@ -59,6 +72,7 @@ fun EventListItem(
     section: String,
     semester: String,
     isOnline: Boolean,
+    refreshEvents: () -> Unit
 ) {
     // Colors for the background of the list item
     val darkFractionMiddleCircle = 0.8f
@@ -258,7 +272,7 @@ fun EventListItem(
                         Text(stringResource(id = R.string.list_drawer_view_on_map))
                     }*/
                     // Join event button
-                    JoinEventButton(event, isOnline, buttonWidth)
+                    JoinEventButton(event, isOnline, buttonWidth, refreshEvents)
                 }
             }
         }

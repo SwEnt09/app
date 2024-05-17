@@ -47,6 +47,7 @@ fun EventInfoSheet(
     canModifyEvent: Boolean,
     onModifyEvent: () -> Unit,
     isOnline: Boolean,
+    refreshEvents: () -> Unit,
 ) {
     val sheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = false) { value ->
@@ -141,7 +142,7 @@ fun EventInfoSheet(
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp),
             ) {
                 // button to join the event
-                JoinEventButton(event, isOnline, 130.dp)
+                JoinEventButton(event, isOnline, 130.dp, refreshEvents)
 
                 // button to modify the event
                 if (canModifyEvent) {

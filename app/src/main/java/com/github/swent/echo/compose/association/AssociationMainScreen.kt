@@ -37,7 +37,8 @@ fun AssociationMainScreen(
     followedAssociations: List<Association>,
     committeeAssociations: List<Association>,
     eventsFilter: List<Association>,
-    isOnline: Boolean
+    isOnline: Boolean,
+    refreshEvents: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize().testTag("association_main_screen")) {
         AssociationExpandableList(
@@ -54,7 +55,7 @@ fun AssociationMainScreen(
             committeeAssociations,
             eventsFilter
         )
-        ListDrawer(events, "", "", isOnline)
+        ListDrawer(events, "", "", isOnline, refreshEvents)
     }
 }
 

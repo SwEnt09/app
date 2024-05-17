@@ -44,7 +44,8 @@ fun AssociationDetails(
     association: Association,
     isFollowed: Boolean,
     events: List<Event>,
-    isOnline: Boolean
+    isOnline: Boolean,
+    refreshEvents: () -> Unit
 ) {
     var associationDetailsTab by remember { mutableStateOf(AssociationDetailsTab.DESCRIPTION) }
     val paddingValues = 5.dp
@@ -162,7 +163,7 @@ fun AssociationDetails(
             }
             AssociationDetailsTab.EVENTS -> {
                 Spacer(modifier = Modifier.height(verticalSpace))
-                ListDrawer(events, "", "", isOnline)
+                ListDrawer(events, "", "", isOnline, refreshEvents)
             }
         }
     }
