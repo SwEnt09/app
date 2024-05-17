@@ -28,12 +28,11 @@ import androidx.compose.ui.unit.dp
 import com.github.swent.echo.compose.components.ListDrawer
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
-import com.github.swent.echo.viewmodels.association.AssociationPage
 
 @Composable
 fun AssociationMainScreen(
     events: List<Event>,
-    goTo: (AssociationPage) -> Unit,
+    onAssociationClicked: (Association) -> Unit,
     addAssociationToFilter: (Association) -> Unit,
     followedAssociations: List<Association>,
     committeeAssociations: List<Association>,
@@ -43,14 +42,14 @@ fun AssociationMainScreen(
     Column(modifier = Modifier.fillMaxSize().testTag("association_main_screen")) {
         AssociationExpandableList(
             "Followed Associations",
-            goTo,
+            onAssociationClicked,
             addAssociationToFilter,
             followedAssociations,
             eventsFilter
         )
         AssociationExpandableList(
             "My Associations",
-            goTo,
+            onAssociationClicked,
             addAssociationToFilter,
             committeeAssociations,
             eventsFilter
@@ -62,7 +61,7 @@ fun AssociationMainScreen(
 @Composable
 fun AssociationExpandableList(
     title: String,
-    goTo: (AssociationPage) -> Unit,
+    onAssociationClicked: (Association) -> Unit,
     addAssociationToFilter: (Association) -> Unit,
     associationList: List<Association>,
     eventsFilter: List<Association>
@@ -102,11 +101,7 @@ fun AssociationExpandableList(
             AssociationListScreen(
                 associationList,
                 { addAssociationToFilter(it) },
-                {
-                    val nextPage = AssociationPage.DETAILS
-                    nextPage.association = it
-                    goTo(nextPage)
-                },
+                onAssociationClicked,
                 eventsFilter
             )
         }
