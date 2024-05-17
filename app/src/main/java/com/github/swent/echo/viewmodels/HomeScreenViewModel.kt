@@ -380,6 +380,8 @@ constructor(
     fun refreshEvents() {
         viewModelScope.launch {
             allEventsList = repository.getAllEvents()
+            _displayEventInfo.value =
+                allEventsList.find { it.eventId == displayEventInfo.value?.eventId }
             filterEvents()
         }
     }
