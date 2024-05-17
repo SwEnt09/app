@@ -21,7 +21,7 @@ fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEve
     val myEventsViewModel: MyEventsViewModel = hiltViewModel()
     val joinedEvents by myEventsViewModel.joinedEvents.collectAsState()
     Button(
-        enabled = isOnline,
+        enabled = isOnline && (event.participantCount < event.maxParticipants),
         onClick = {
             myEventsViewModel.joinOrLeaveEvent(event)
             refreshEvents()
