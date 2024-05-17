@@ -83,17 +83,17 @@ Feature/my events viewmodel	https://github.com/echo-swent/echo/pull/304	ntissier
 ProfileCreationScreen and ProfileCreationUI: have `Modifier` as first parameter so that any parent can pass down style	https://github.com/echo-swent/echo/issues/206	srsingh04	Done in sprint 8	Medium	2	S		
 Feature/association screen	https://github.com/echo-swent/echo/pull/292	ntissieres	Done in sprint 8					
 Feature/association viewmodel	https://github.com/echo-swent/echo/pull/291	ntissieres	Done in sprint 8					
-Start Event Creation from long press on the map	https://github.com/echo-swent/echo/issues/307	alejandrocalles	Done in sprint 8	High	4	S	Sprint 8	
+Start Event Creation from long press on the map	https://github.com/echo-swent/echo/issues/307	alejandrocalles	Done in sprint 8	High	4	S	Sprint 8	5
 Prevent the Map from requesting location more than once.	https://github.com/echo-swent/echo/pull/309	alejandrocalles	Done in sprint 8	High	6	M	Sprint 8	6
 Location permissions should only be requested once per session.	https://github.com/echo-swent/echo/issues/316	alejandrocalles	Done in sprint 8	High	6	M	Sprint 8	6
-Long press on the map to create an event at that location	https://github.com/echo-swent/echo/pull/306	alejandrocalles	Done in sprint 8	High	4	S	Sprint 8	
+Long press on the map to create an event at that location	https://github.com/echo-swent/echo/pull/306	alejandrocalles	Done in sprint 8	High	4	S	Sprint 8	5
 CreateProfile: rename enabled1 to selected	https://github.com/echo-swent/echo/issues/209	srsingh04	Done in sprint 8	Low	0.5	XS	Sprint 8	
 CreateProfile: remove unneeded onDismiss argument	https://github.com/echo-swent/echo/issues/208	srsingh04	Done in sprint 8	Low	0.5	XS	Sprint 8	
 Implementation Association viewModel	https://github.com/echo-swent/echo/issues/265	ntissieres	Done in sprint 8	High	8		Sprint 8	
 Edit the user profile		srsingh04	Done in sprint 8	High	8	M	Sprint 8	
 Integrate connectivity status	https://github.com/echo-swent/echo/pull/308	octogradiste	Done in sprint 8	High	0.5	XS	Sprint 8	0.5
 Implementation AssociationMainScreen	https://github.com/echo-swent/echo/issues/293	ntissieres	Done in sprint 8	High	4		Sprint 8	
-Synchronisation mechanism in Repository between Supabase and Room	https://github.com/echo-swent/echo/issues/103	violoncelloCH	Done in sprint 8	High	12	XL	Sprint 8	40
+Synchronisation and Caching mechanism in Repository between Supabase and Room	https://github.com/echo-swent/echo/issues/103	violoncelloCH	Done in sprint 8	High	12	XL	Sprint 8	40
 Add and use custom serializer	https://github.com/echo-swent/echo/pull/302	octogradiste	Done in sprint 8	High	2	S	Sprint 8	2
 create the joined event viewmodel	https://github.com/echo-swent/echo/issues/305	ntissieres	Done in sprint 8	High	6		Sprint 8	
 App crashes when clicking on the compass icon at the top right of the map screen	https://github.com/echo-swent/echo/issues/163	alejandrocalles	Done in sprint 8	High	6		Sprint 8	1
@@ -119,4 +119,8 @@ Backend clean up		violoncelloCH	Sprint Backlog	High	5	M	Sprint 9
 Improve two pages selection composable for MyEvents screen and AssociationDetails screen	https://github.com/echo-swent/echo/issues/311	ntissieres	Sprint Backlog	High	4	M	Sprint 9	
 Profile creation click inside the dropdown should open it (not only on the small arrow)		srsingh04	Sprint Backlog	High	4	S	Sprint 9	
 Add image to user profile		unglazedstamp	Sprint Backlog	High	16		Sprint 9	
+As a user I want the app to feel natural and intuitive, so that I enjoy the app experience			Sprint Backlog	High				
+As a user with limited time or transportation means, I want to know which events are closest to me, so that I can quickly go and find them			Sprint Backlog	High				
+As a new user I want to add an image to my profile, so that others can recognize me more easily			Sprint Backlog	High				
+As a new user I want to have some help on how to use the app, so that I can quickly start using the app effectively			Sprint Backlog	High				
 SCRUM Master		Greenade	Ready					
