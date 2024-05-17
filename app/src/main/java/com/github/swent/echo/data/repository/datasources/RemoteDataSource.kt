@@ -20,6 +20,8 @@ interface RemoteDataSource {
 
     suspend fun setEvent(event: Event)
 
+    suspend fun deleteEvent(event: Event)
+
     suspend fun getEventsNotIn(eventIds: List<String>): List<Event>
 
     suspend fun getAllEvents(): List<Event>
@@ -45,4 +47,6 @@ interface RemoteDataSource {
     suspend fun getUserProfile(userId: String): UserProfile?
 
     suspend fun setUserProfile(userProfile: UserProfile)
+
+    suspend fun deleteUserProfile(userProfile: UserProfile)
 }

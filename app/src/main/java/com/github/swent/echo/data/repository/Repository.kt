@@ -40,6 +40,8 @@ interface Repository {
 
     suspend fun setEvent(event: Event)
 
+    suspend fun deleteEvent(event: Event)
+
     suspend fun getAllEvents(): List<Event>
 
     suspend fun joinEvent(userId: String, event: Event): Boolean
@@ -75,4 +77,6 @@ interface Repository {
     suspend fun getUserProfile(userId: String): UserProfile?
 
     suspend fun setUserProfile(userProfile: UserProfile)
+
+    suspend fun deleteUserProfile(userProfile: UserProfile)
 }

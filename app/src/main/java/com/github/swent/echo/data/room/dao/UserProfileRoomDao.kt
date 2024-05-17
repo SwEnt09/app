@@ -15,18 +15,29 @@ import com.github.swent.echo.data.room.entity.UserProfileWithTagsCommitteeMember
 interface UserProfileRoomDao {
     @Upsert suspend fun insert(userProfile: UserProfileRoom)
 
+    @Query("DELETE FROM UserProfileRoom WHERE userId= :userId") suspend fun delete(userId: String)
+
     @Upsert
     suspend fun insertUserProfileTagCrossRefs(userProfileTagCrossRef: List<UserProfileTagCrossRef>)
+
+    @Query("DELETE FROM UserProfileTagCrossRef WHERE userId = :userId")
+    suspend fun deleteAllUserProfileTagCrossRefsForUser(userId: String)
 
     @Upsert
     suspend fun insertUserProfileCommitteeMemberCrossRefs(
         userProfileCommitteeMemberCrossRef: List<UserProfileCommitteeMemberCrossRef>
     )
 
+    @Query("DELETE FROM UserProfileCommitteeMemberCrossRef WHERE userId = :userId")
+    suspend fun deleteAllUserProfileCommitteeMemberCrossRefsForUser(userId: String)
+
     @Upsert
     suspend fun insertUserProfileAssociationSubscriptionCrossRefs(
         userProfileAssociationSubscriptionCrossRef: List<UserProfileAssociationSubscriptionCrossRef>
     )
+
+    @Query("DELETE FROM UserProfileAssociationSubscriptionCrossRef WHERE userId = :userId")
+    suspend fun deleteAllUserProfileAssociationSubscriptionCrossRefsForUser(userId: String)
 
     @Upsert
     suspend fun joinAssociation(

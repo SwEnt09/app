@@ -70,7 +70,11 @@ class RepositoryImpl(
         val localResult = localDataSource.getEvent(eventId, EVENT_CACHE_TTL)
         if (localResult == null) {
             val remoteResult = remoteDataSource.getEvent(eventId)
-            if (remoteResult != null) localDataSource.setEvent(remoteResult)
+            if (remoteResult == null) {
+                localDataSource.deleteEvent(eventId)
+                return null
+            }
+            localDataSource.setEvent(remoteResult)
             return remoteResult
         }
         return localResult
@@ -93,6 +97,14 @@ class RepositoryImpl(
         localDataSource.setEvent(event)
     }
 
+    override suspend fun deleteEvent(event: Event) {
+        if (isOffline()) {
+            throw RepositoryStoreWhileNoInternetException("Event")
+        }
+        remoteDataSource.deleteEvent(event)
+        localDataSource.deleteEvent(event.eventId)
+    }
+
     override suspend fun getAllEvents(): List<Event> {
         if (isOffline() || notExpired(events_last_cached_all, EVENT_CACHE_TTL)) {
             return localDataSource.getAllEvents(FETCH_ALL)
@@ -112,6 +124,7 @@ class RepositoryImpl(
         }
         val remoteResult = remoteDataSource.joinEvent(userId, event.eventId)
         localDataSource.joinEvent(userId, event.eventId)
+        forceRefetchEvent(event.eventId)
         return remoteResult
     }
 
@@ -121,7 +134,15 @@ class RepositoryImpl(
         }
         val remoteResult = remoteDataSource.leaveEvent(userId, event.eventId)
         localDataSource.leaveEvent(userId, event.eventId)
+        forceRefetchEvent(event.eventId)
         return remoteResult
+    }
+
+    private suspend fun forceRefetchEvent(eventId: String) {
+        val eventUpdate = remoteDataSource.getEvent(eventId)
+        if (eventUpdate != null) {
+            localDataSource.setEvent(eventUpdate)
+        }
     }
 
     override suspend fun getJoinedEvents(userId: String): List<Event> {
@@ -190,7 +211,11 @@ class RepositoryImpl(
         val localResult = localDataSource.getUserProfile(userId, USERPROFILE_CACHE_TTL)
         if (localResult == null) {
             val remoteResult = remoteDataSource.getUserProfile(userId)
-            if (remoteResult != null) localDataSource.setUserProfile(remoteResult)
+            if (remoteResult == null) {
+                localDataSource.deleteUserProfile(userId)
+                return null
+            }
+            localDataSource.setUserProfile(remoteResult)
             return remoteResult
         }
         return localResult
@@ -203,7 +228,17 @@ class RepositoryImpl(
         remoteDataSource.setUserProfile(userProfile)
         localDataSource.setUserProfile(userProfile)
     }
+
+    override suspend fun deleteUserProfile(userProfile: UserProfile) {
+        if (isOffline()) {
+            throw RepositoryStoreWhileNoInternetException("UserProfile")
+        }
+        remoteDataSource.deleteUserProfile(userProfile)
+        localDataSource.deleteUserProfile(userProfile.userId)
+    }
 }
 
 class RepositoryStoreWhileNoInternetException(objectTryingToStore: String) :
-    Exception("Storing a " + objectTryingToStore + " while the App is offline is not supported")
+    Exception(
+        "Storing/Deleting a " + objectTryingToStore + " while the App is offline is not supported"
+    )

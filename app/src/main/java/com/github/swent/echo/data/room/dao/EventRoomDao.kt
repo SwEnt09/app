@@ -14,13 +14,21 @@ import com.github.swent.echo.data.room.entity.JoinedEventRoom
 interface EventRoomDao {
     @Upsert suspend fun insert(event: EventRoom)
 
-    @Upsert suspend fun insertEventTagCrossRegs(eventTagCrossRef: List<EventTagCrossRef>)
+    @Upsert suspend fun insertEventTagCrossRefs(eventTagCrossRef: List<EventTagCrossRef>)
+
+    @Query("DELETE FROM EventTagCrossRef WHERE eventId = :eventId")
+    suspend fun deleteAllEventTagCrossRefsForEvent(eventId: String)
+
+    @Query("DELETE FROM EventTagCrossRef WHERE eventId IN (:eventIds)")
+    suspend fun deleteAllEventTagCrossRefsForEvents(eventIds: List<String>)
 
     @Upsert suspend fun insertAll(events: List<EventRoom>)
 
     @Transaction
     @Query("SELECT * FROM EventRoom WHERE eventId = :eventId AND timestamp >= :after")
     suspend fun get(eventId: String, after: Long): EventWithOrganizerAndTags?
+
+    @Query("DELETE FROM EventRoom WHERE eventId = :eventId") suspend fun delete(eventId: String)
 
     @Transaction
     @Query("SELECT * FROM EventRoom WHERE timestamp >= :after")
