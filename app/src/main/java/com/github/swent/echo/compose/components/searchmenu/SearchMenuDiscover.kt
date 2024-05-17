@@ -39,10 +39,10 @@ import kotlin.random.Random
 @Composable
 fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagViewModel) {
     // Collecting the necessary data from the viewModel
-    val tags = tagViewModel.tags.collectAsState()
-    val currentDepth = tagViewModel.currentDepth.collectAsState()
-    val tagParents = tagViewModel.tagParents.collectAsState()
-    val subTagsMap = tagViewModel.subTagsMap.collectAsState()
+    val tags by tagViewModel.tags.collectAsState()
+    val currentDepth by tagViewModel.currentDepth.collectAsState()
+    val tagParents by tagViewModel.tagParents.collectAsState()
+    val subTagsMap by tagViewModel.subTagsMap.collectAsState()
     // The selected tag
     var selectedTag by remember { mutableStateOf("") }
     // a random seed for consistent random subtag list
@@ -51,14 +51,14 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
     // Function that is used when the user clicks on a parent tag
     // at the top of the discover mode
     fun onParentClicked(tag: Tag) {
-        while (tag.tagId != tagParents.value.peek().tagId) {
+        while (tag.tagId != tagParents.peek().tagId) {
             tagViewModel.goUp()
         }
         val tagParentsName =
             if (tag.tagId == tagViewModel.rootTag.tagId) {
                 ""
             } else {
-                tagParents.value.peek().name
+                tagParents.peek().name
             }
         searchEntryCallback(tagParentsName)
         // Deselect the selected tag
@@ -69,9 +69,9 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
     // discover mode
     fun onTagClicked(tag: Tag) {
         // Check that the tag has subtags to display
-        if (!subTagsMap.value[tag].isNullOrEmpty()) {
+        if (!subTagsMap[tag].isNullOrEmpty()) {
             tagViewModel.goDown(tag)
-            searchEntryCallback(tagParents.value.peek().name)
+            searchEntryCallback(tagParents.peek().name)
             selectedTag = ""
             // If not, select the tag
         } else {
@@ -85,11 +85,11 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
         // Display the parents of the current tag in order to go back in the hierarchy
         // when they are clicked
         TagHierarchyNavigableBar(
-            tagParents.value,
-            currentDepth.value,
+            tagParents,
+            currentDepth,
             { tag -> onParentClicked(tag) },
             {
-                searchEntryCallback(tagParents.value.peek().name)
+                searchEntryCallback(tagParents.peek().name)
                 selectedTag = ""
             }
         )
@@ -100,12 +100,12 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
             contentPadding = PaddingValues(16.dp),
             modifier = Modifier.testTag("discover_lazy_grid")
         ) {
-            items(tags.value) { tag ->
+            items(tags) { tag ->
                 SearchMenuDiscoverItem(
                     tag,
                     { onTagClicked(tag) },
                     selectedTag,
-                    subTagsMap.value[tag]?.map { t -> t.name }.orEmpty(),
+                    subTagsMap[tag]?.map { t -> t.name }.orEmpty(),
                     randomSeed
                 )
             }
