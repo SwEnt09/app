@@ -1,29 +1,20 @@
 package com.github.swent.echo.compose.map
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.view.View
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
 import com.mapbox.mapboxsdk.geometry.LatLng
-import kotlinx.coroutines.runBlocking
 
 val MAP_CENTER = Location("EPFL", 46.5191, 6.5668)
 const val DEFAULT_ZOOM = 13.0
@@ -46,14 +37,6 @@ fun <T : View> EchoAndroidView(
     )
 }
 
-val PERMISSIONS =
-    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-
-fun permissionsDenied(context: Context) =
-    PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED
-    }
-
 /**
  * This composable will draw a map that displays events.
  *
@@ -70,24 +53,8 @@ fun MapDrawer(
     callback: (Event) -> Unit = {},
     launchEventCreation: (LatLng) -> Unit = {},
     mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
+    displayLocation: Boolean = false
 ) {
-    var displayLocation by remember { mutableStateOf(false) }
-    var alreadyDeniedPermissions by rememberSaveable { mutableStateOf(false) }
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p
-            ->
-            alreadyDeniedPermissions = !p.values.any { it }
-        }
-    val c = LocalContext.current
-    /*
-    This has to be blocking as we don't want the `EchoAndroidView` to be
-    created before launching the permission request.
-    */
-    if (!alreadyDeniedPermissions && runBlocking { permissionsDenied(c) }) {
-        SideEffect { launcher.launch(PERMISSIONS) }
-    } else {
-        SideEffect { displayLocation = !alreadyDeniedPermissions }
-    }
     EchoAndroidView(
         modifier = modifier.testTag("mapViewWrapper"),
         factory = mapDrawerViewModel::factory,

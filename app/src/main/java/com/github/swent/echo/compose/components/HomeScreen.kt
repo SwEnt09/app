@@ -32,7 +32,11 @@ import kotlinx.serialization.json.Json
  * view, and the map.
  */
 @Composable
-fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenViewModel) {
+fun HomeScreen(
+    navActions: NavigationActions,
+    homeScreenViewModel: HomeScreenViewModel,
+    hasLocationPermissions: Boolean = false
+) {
 
     // Drawer state to open and close the hamburger menu
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -73,7 +77,7 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
                 SearchButton(onClick = { homeScreenViewModel.setOverlay(Overlay.SEARCH_SHEET) })
             }
         ) { paddingValues ->
-            Content(paddingValues, navActions, homeScreenViewModel)
+            Content(paddingValues, navActions, homeScreenViewModel, hasLocationPermissions)
         }
     }
 }
@@ -82,7 +86,8 @@ fun HomeScreen(navActions: NavigationActions, homeScreenViewModel: HomeScreenVie
 private fun Content(
     paddingValues: PaddingValues,
     navActions: NavigationActions,
-    homeScreenViewModel: HomeScreenViewModel
+    homeScreenViewModel: HomeScreenViewModel,
+    hasLocationPermissions: Boolean = false
 ) {
 
     val mode by homeScreenViewModel.mode.collectAsState()
@@ -130,7 +135,8 @@ private fun Content(
                 launchEventCreation = {
                     val encodedLocation = Json.encodeToString(Location("", it))
                     navActions.navigateTo(Routes.CREATE_EVENT.build(encodedLocation))
-                }
+                },
+                displayLocation = hasLocationPermissions
             )
             if (!searchMode) {
                 TagUI(
