@@ -283,7 +283,6 @@ fun ProfileCreationUI(
                                     )
                                 }
                             }
-                            //  return@OutlinedButton
                         } else {
                             onSave(firstName, lastName)
                             navAction.navigateTo(Routes.MAP)
@@ -365,8 +364,7 @@ fun InputChipFun(
     InputChip(
         selected = selected,
         onClick = {
-           // onDismiss()
-            selected = !selected
+            onDismiss()
         },
         label = { Text(text) },
         modifier = Modifier.testTag(text),
