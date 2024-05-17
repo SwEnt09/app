@@ -127,6 +127,11 @@ class SupabaseDataSourceTest {
     }
 
     @Test
+    fun deleteEventTest() {
+        runBlocking { source.deleteEvent(event) }
+    }
+
+    @Test
     fun getAllEventsTest() {
         val associations = runBlocking { source.getAllEvents() }
         assertNotNull(associations)
@@ -205,5 +210,10 @@ class SupabaseDataSourceTest {
     @Test
     fun setUserProfileTest() {
         runBlocking { source.setUserProfile(userProfile) }
+    }
+
+    @Test
+    fun deleteUserProfileTest() {
+        runBlocking { source.deleteUserProfile(userProfile) }
     }
 }

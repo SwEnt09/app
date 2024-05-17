@@ -136,8 +136,9 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
-    fun testGetAndSetEvent() = runBlocking {
+    fun testGetAndSetAndDeleteEvent() = runBlocking {
         assertTrue(events.isNotEmpty())
+        assertTrue(events[1].tags.isNotEmpty())
 
         every { ZonedDateTime.now() } returns time
         val expected = events.first()
@@ -149,11 +150,25 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertNull(localDataSource.getEvent(expected.eventId, syncedSecondsAgo))
+
+        every { ZonedDateTime.now() } returns time
+        val expectedWithoutTags = expected.copy(tags = setOf())
+        localDataSource.setEvent(expectedWithoutTags)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        assertEquals(
+            expectedWithoutTags,
+            localDataSource.getEvent(expectedWithoutTags.eventId, syncedSecondsAgo)
+        )
+
+        localDataSource.deleteEvent(expected.eventId)
+        val shouldBeDeleted = localDataSource.getEvent(expected.eventId, syncedSecondsAgo)
+        assertNull(shouldBeDeleted)
     }
 
     @Test
     fun testGetAndSetEvents() = runBlocking {
         assertTrue(events.isNotEmpty())
+        assertTrue(events[1].tags.isNotEmpty())
 
         every { ZonedDateTime.now() } returns time
         localDataSource.setEvents(events)
@@ -164,6 +179,13 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertTrue(localDataSource.getAllEvents(syncedSecondsAgo).isEmpty())
+
+        every { ZonedDateTime.now() } returns time
+        val eventsWithoutTags = events.map { it.copy(tags = setOf()) }
+        localDataSource.setEvents(eventsWithoutTags)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        assertEquals(eventsWithoutTags, localDataSource.getAllEvents(syncedSecondsAgo))
     }
 
     @Test
@@ -325,9 +347,12 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
-    fun testGetAndSetUserProfile() = runBlocking {
+    fun testGetAndSetAndDeleteUserProfile() = runBlocking {
         assertTrue(tags.isNotEmpty())
         assertTrue(associations.isNotEmpty())
+        assertTrue(userProfile.tags.isNotEmpty())
+        assertTrue(userProfile.committeeMember.isNotEmpty())
+        assertTrue(userProfile.associationsSubscriptions.isNotEmpty())
 
         val expected = userProfile
 
@@ -340,6 +365,20 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertNull(localDataSource.getUserProfile(expected.userId, syncedSecondsAgo))
+
+        every { ZonedDateTime.now() } returns time
+        val userProfileDeletedRelationalAttributes =
+            userProfile.copy(
+                tags = setOf(),
+                committeeMember = setOf(),
+                associationsSubscriptions = setOf()
+            )
+        localDataSource.setUserProfile(userProfileDeletedRelationalAttributes)
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        assertEquals(
+            userProfileDeletedRelationalAttributes,
+            localDataSource.getUserProfile(userProfile.userId, syncedSecondsAgo)
+        )
     }
 
     @Test
