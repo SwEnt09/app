@@ -72,9 +72,9 @@ class RepositoryImpl(
             val remoteResult = remoteDataSource.getEvent(eventId)
             if (remoteResult == null) {
                 localDataSource.deleteEvent(eventId)
-                return null
+            } else {
+                localDataSource.setEvent(remoteResult)
             }
-            localDataSource.setEvent(remoteResult)
             return remoteResult
         }
         return localResult
@@ -213,9 +213,9 @@ class RepositoryImpl(
             val remoteResult = remoteDataSource.getUserProfile(userId)
             if (remoteResult == null) {
                 localDataSource.deleteUserProfile(userId)
-                return null
+            } else {
+                localDataSource.setUserProfile(remoteResult)
             }
-            localDataSource.setUserProfile(remoteResult)
             return remoteResult
         }
         return localResult
