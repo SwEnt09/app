@@ -67,6 +67,15 @@ class SimpleRepositoryTest {
     }
 
     @Test
+    fun `deleteEvent should delete event in the repository`() = runBlocking {
+        val events = simpleRepository.getAllEvents()
+        val eventToDelete = events.first()
+        val updatedEvents = events.drop(1)
+        simpleRepository.deleteEvent(eventToDelete)
+        assertEquals(updatedEvents, simpleRepository.getAllEvents())
+    }
+
+    @Test
     fun `joinEvent and leaveEvent should add and remove Event to list returned by getJoinedEvents`() =
         runBlocking {
             val events = simpleRepository.getAllEvents()
@@ -114,6 +123,13 @@ class SimpleRepositoryTest {
         val updatedUserProfile = userProfile.copy(name = "Updated Name")
         simpleRepository.setUserProfile(updatedUserProfile)
         assertEquals(updatedUserProfile, simpleRepository.getUserProfile(USER_ID))
+    }
+
+    @Test
+    fun `deleteUserProfile should delete user profile in the repository`() = runBlocking {
+        val userProfile = simpleRepository.getUserProfile(USER_ID)!!
+        simpleRepository.deleteUserProfile(userProfile)
+        assertNull(simpleRepository.getUserProfile(USER_ID))
     }
 
     @Test

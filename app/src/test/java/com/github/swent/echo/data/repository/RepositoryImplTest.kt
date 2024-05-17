@@ -161,12 +161,18 @@ class RepositoryImplTest {
             mockedLocalDataSource.getEvent("testEvent2", RepositoryImpl.EVENT_CACHE_TTL)
         } returns null
         coEvery { mockedRemoteDataSource.getEvent("testEvent2") } returns event2
+        coEvery { mockedLocalDataSource.getEvent("deletedEvent", any()) } returns null
+        coEvery { mockedRemoteDataSource.getEvent("deletedEvent") } returns null
 
         val eventResultOnline = runBlocking { repositoryImpl.getEvent("testEvent2") }
         assertEquals(event2, eventResultOnline)
 
         val eventResultOnlineFromCache = runBlocking { repositoryImpl.getEvent("testEvent") }
         assertEquals(event, eventResultOnlineFromCache)
+
+        val eventResultOnlineDeleted = runBlocking { repositoryImpl.getEvent("deletedEvent") }
+        coVerify { mockedLocalDataSource.deleteEvent("deletedEvent") }
+        assertNull(eventResultOnlineDeleted)
     }
 
     @Test
@@ -195,6 +201,22 @@ class RepositoryImplTest {
         coVerify {
             mockedRemoteDataSource.setEvent(event)
             mockedLocalDataSource.setEvent(event)
+        }
+    }
+
+    @Test
+    fun deleteEventTest() {
+        every { mockedNetworkService.isOnlineNow() } returns false
+        assertThrows(
+            RepositoryStoreWhileNoInternetException::class.java,
+            ThrowingRunnable { runBlocking { repositoryImpl.deleteEvent(event) } }
+        )
+
+        every { mockedNetworkService.isOnlineNow() } returns true
+        runBlocking { repositoryImpl.deleteEvent(event) }
+        coVerify {
+            mockedRemoteDataSource.deleteEvent(event)
+            mockedLocalDataSource.deleteEvent(event.eventId)
         }
     }
 
@@ -234,11 +256,14 @@ class RepositoryImplTest {
 
         every { mockedNetworkService.isOnlineNow() } returns true
         coEvery { mockedRemoteDataSource.joinEvent(userProfile.userId, event.eventId) } returns true
+        coEvery { mockedRemoteDataSource.getEvent(event.eventId) } returns event
         val result = runBlocking { repositoryImpl.joinEvent(userProfile.userId, event) }
         assertTrue(result)
         coVerify {
             mockedRemoteDataSource.joinEvent(userProfile.userId, event.eventId)
             mockedLocalDataSource.joinEvent(userProfile.userId, event.eventId)
+            mockedRemoteDataSource.getEvent(event.eventId)
+            mockedLocalDataSource.setEvent(event)
         }
     }
 
@@ -255,11 +280,13 @@ class RepositoryImplTest {
         every { mockedNetworkService.isOnlineNow() } returns true
         coEvery { mockedRemoteDataSource.leaveEvent(userProfile.userId, event.eventId) } returns
             true
+        coEvery { mockedRemoteDataSource.getEvent(event.eventId) } returns null
         val result = runBlocking { repositoryImpl.leaveEvent(userProfile.userId, event) }
         assertTrue(result)
         coVerify {
             mockedRemoteDataSource.leaveEvent(userProfile.userId, event.eventId)
             mockedLocalDataSource.leaveEvent(userProfile.userId, event.eventId)
+            mockedRemoteDataSource.getEvent(event.eventId)
         }
     }
 
@@ -389,6 +416,8 @@ class RepositoryImplTest {
             mockedLocalDataSource.getUserProfile("testUser2", RepositoryImpl.USERPROFILE_CACHE_TTL)
         } returns null
         coEvery { mockedRemoteDataSource.getUserProfile("testUser2") } returns userProfile2
+        coEvery { mockedLocalDataSource.getUserProfile("deletedUserProfile", any()) } returns null
+        coEvery { mockedRemoteDataSource.getUserProfile("deletedUserProfile") } returns null
 
         val userProfileResultOnline = runBlocking { repositoryImpl.getUserProfile("testUser2") }
         assertEquals(userProfile2, userProfileResultOnline)
@@ -397,6 +426,12 @@ class RepositoryImplTest {
             repositoryImpl.getUserProfile("testUser")
         }
         assertEquals(userProfile, userProfileResultOnlineFromCache)
+
+        val userProfileResultOnlineDeleted = runBlocking {
+            repositoryImpl.getUserProfile("deletedUserProfile")
+        }
+        coVerify { mockedLocalDataSource.deleteUserProfile("deletedUserProfile") }
+        assertNull(userProfileResultOnlineDeleted)
     }
 
     @Test
@@ -412,6 +447,22 @@ class RepositoryImplTest {
         coVerify {
             mockedRemoteDataSource.setUserProfile(userProfile)
             mockedLocalDataSource.setUserProfile(userProfile)
+        }
+    }
+
+    @Test
+    fun deleteUserProfileTest() {
+        every { mockedNetworkService.isOnlineNow() } returns false
+        assertThrows(
+            RepositoryStoreWhileNoInternetException::class.java,
+            ThrowingRunnable { runBlocking { repositoryImpl.deleteUserProfile(userProfile) } }
+        )
+
+        every { mockedNetworkService.isOnlineNow() } returns true
+        runBlocking { repositoryImpl.deleteUserProfile(userProfile) }
+        coVerify {
+            mockedRemoteDataSource.deleteUserProfile(userProfile)
+            mockedLocalDataSource.deleteUserProfile(userProfile.userId)
         }
     }
 }
