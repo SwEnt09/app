@@ -366,7 +366,7 @@ fun InputChipFun(
     InputChip(
         selected = selected,
         onClick = {
-            onDismiss()
+           // onDismiss()
             selected = !selected
         },
         label = { Text(text) },
