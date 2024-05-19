@@ -272,15 +272,15 @@ constructor(
                         .filter { event -> // filter by time to avoid displaying past events
                             dateFilterConditions(event)
                         }
-                }/* else {
-                    allEventsList
-                        .filter { event ->
-                            event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
-                        }
-                        .filter { event -> // filter by time to avoid displaying past events
-                            dateFilterConditions(event)
-                        }
-                }*/
+                } /* else {
+                      allEventsList
+                          .filter { event ->
+                              event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
+                          }
+                          .filter { event -> // filter by time to avoid displaying past events
+                              dateFilterConditions(event)
+                          }
+                  }*/
         } else {
             _displayEventList.value =
                 allEventsList
