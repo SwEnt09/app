@@ -1,6 +1,8 @@
 package com.github.swent.echo.data.repository
 
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.compose.event.SECTION_ROOT_TAG_ID
+import com.github.swent.echo.compose.event.SEMESTER_ROOT_TAG_ID
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
@@ -33,6 +35,9 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
             Tag("4", "Football", "1"),
             Tag("5", "Basketball", "1"),
             Tag("6", "Theatre", "2"),
+            Tag(Repository.ROOT_TAG_ID, "ROOT TAG: DO NOT DELETE"),
+            Tag(SECTION_ROOT_TAG_ID, "Section"),
+            Tag(SEMESTER_ROOT_TAG_ID, "Semester")
         )
     private val userProfiles = mutableSetOf<UserProfile>()
 
@@ -125,8 +130,8 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
         return eventJoins.get(userId).orEmpty()
     }
 
-    override suspend fun getTag(tagId: String): Tag {
-        return tags.find { it.tagId == tagId }!!
+    override suspend fun getTag(tagId: String): Tag? {
+        return tags.find { it.tagId == tagId }
     }
 
     override suspend fun getAllTags(): List<Tag> {
