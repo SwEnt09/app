@@ -206,6 +206,8 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
             return supabase.from("tags").select() { filter { eq("tag_id", tagId) } }.decodeSingle()
         } catch (e: NoSuchElementException) {
             null
+        } catch (e: BadRequestRestException) { // in case tagId is an empty string
+            null
         }
     }
 

@@ -38,6 +38,7 @@ import com.github.swent.echo.compose.myevents.MyEventsScreen
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
+import com.github.swent.echo.viewmodels.tag.TagViewModel
 import kotlinx.coroutines.runBlocking
 
 val LOCATION_PERMISSIONS =
@@ -139,7 +140,10 @@ fun AppNavigationHost(
             ProfileCreationScreen(
                 viewModel = hiltViewModel(),
                 navAction = navActions,
-                tagviewModel = hiltViewModel()
+                tagviewModel =
+                    hiltViewModel<TagViewModel, TagViewModel.TagViewModelFactory>() { factory ->
+                        factory.create()
+                    }
             )
         }
 

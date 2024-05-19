@@ -3,7 +3,6 @@ package com.github.swent.echo.compose.components
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuDiscover
 import com.github.swent.echo.data.model.Tag
@@ -34,11 +33,12 @@ class SearchMenuDiscoverTest {
 
     @Before
     fun init() {
+        coEvery { mockedRepository.getTag(rootTagId) } returns Tag(rootTagId, "test root tag")
         coEvery { mockedRepository.getSubTags(rootTagId) } returns topTag
         coEvery { mockedRepository.getSubTags("tag1") } returns subTag1
         coEvery { mockedRepository.getSubTags("tag3") } returns subTag3
         coEvery { mockedRepository.getSubTags("tag2") } returns subTag2
-        tagViewModel = TagViewModel(mockedRepository, SavedStateHandle())
+        tagViewModel = TagViewModel(mockedRepository, rootTagId)
         scheduler.runCurrent()
         composeTestRule.setContent {
             SearchMenuDiscover(searchEntryCallback = { str = it }, tagViewModel = tagViewModel)
@@ -64,7 +64,9 @@ class SearchMenuDiscoverTest {
         composeTestRule.onNodeWithTag("discover_parent_${topTag[0].name}").assertExists()
         composeTestRule.onNodeWithTag("discover_parent_${subTag1[0].name}").assertExists()
         // Test if on parent tag click, it goes back to this parent
-        composeTestRule.onNodeWithTag("discover_parent_${tagViewModel.rootTag.name}").performClick()
+        composeTestRule
+            .onNodeWithTag("discover_parent_${tagViewModel.rootTag.value.name}")
+            .performClick()
         composeTestRule.onNodeWithTag("discover_select_category").assertExists()
     }
 

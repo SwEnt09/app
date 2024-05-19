@@ -4,7 +4,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
@@ -35,10 +34,11 @@ class TagSelectionDialogTest {
 
     @Before
     fun init() {
+        coEvery { mockedRepository.getTag(rootTagId) } returns Tag(rootTagId, rootTagName)
         coEvery { mockedRepository.getSubTags(rootTagId) } returns topTag
         coEvery { mockedRepository.getSubTags("tag1") } returns subTag1
         coEvery { mockedRepository.getSubTags("tag3") } returns subTag3
-        tagViewModel = TagViewModel(mockedRepository, SavedStateHandle())
+        tagViewModel = TagViewModel(mockedRepository, rootTagId)
         scheduler.runCurrent()
         composeTestRule.setContent {
             TagSelectionDialog(

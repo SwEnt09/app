@@ -1,13 +1,14 @@
 package com.github.swent.echo.viewmodels.tag
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Stack
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,22 +18,23 @@ import kotlinx.coroutines.launch
  * Represent the tags tree. This viewModel allows the composables get the tags from the repository
  * easily.
  */
-@HiltViewModel
+@HiltViewModel(assistedFactory = TagViewModel.TagViewModelFactory::class)
 class TagViewModel
-@Inject
-constructor(private val repository: Repository, private val rootTagHandle: SavedStateHandle) :
+@AssistedInject
+constructor(private val repository: Repository, @Assisted private val rootTagId: String) :
     ViewModel() {
-    // the root tag is hardcoded here as in the database
-    val rootTag =
-        rootTagHandle["rootTag"]
-            ?: Tag("1d253a7e-eb8c-4546-bc98-1d3adadcffe8", "ROOT TAG: DO NOT DELETE")
+    private val _rootTag =
+        MutableStateFlow<Tag>(
+            Tag("1d253a7e-eb8c-4546-bc98-1d3adadcffe8", "ROOT TAG: DO NOT DELETE")
+        )
+    val rootTag = _rootTag.asStateFlow()
     private val _tags = MutableStateFlow<List<Tag>>(listOf())
     val tags = _tags.asStateFlow()
     private var _currentDepth = MutableStateFlow(0)
     val currentDepth = _currentDepth.asStateFlow()
     private var _tagParents = MutableStateFlow(Stack<Tag>())
     val tagParents = _tagParents.asStateFlow()
-    private val _subTagsMap = MutableStateFlow(mapOf(Pair(rootTag, setOf<Tag>())))
+    private val _subTagsMap = MutableStateFlow(mapOf(Pair(rootTag.value, setOf<Tag>())))
     val subTagsMap = _subTagsMap.asStateFlow()
 
     init {
@@ -42,9 +44,10 @@ constructor(private val repository: Repository, private val rootTagHandle: Saved
     // initialize the variables exposed by the viewmodel
     private fun initialize() {
         viewModelScope.launch {
-            _tags.value = repository.getSubTags(rootTag.tagId)
-            _subTagsMap.value += Pair(rootTag, tags.value.toSet())
-            _tagParents.value.push(rootTag)
+            _rootTag.value = repository.getTag(rootTagId) ?: _rootTag.value
+            _tags.value = repository.getSubTags(rootTag.value.tagId)
+            _subTagsMap.value += Pair(rootTag.value, tags.value.toSet())
+            _tagParents.value.push(rootTag.value)
             prefetchTags(tags.value)
         }
     }
@@ -105,5 +108,10 @@ constructor(private val repository: Repository, private val rootTagHandle: Saved
         _currentDepth.value = 0
         _tagParents.value.clear()
         initialize()
+    }
+
+    @AssistedFactory
+    interface TagViewModelFactory {
+        fun create(rootTagId: String = ""): TagViewModel
     }
 }
