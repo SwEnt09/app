@@ -22,7 +22,8 @@ fun TagHierarchyNavigableBar(
     tagParents: Stack<Tag>,
     currentDepth: Int,
     onParentTagClicked: (tag: Tag) -> Unit,
-    onCurrentTagClicked: () -> Unit
+    onCurrentTagClicked: () -> Unit,
+    rootName: String = stringResource(R.string.discover_select_a_category)
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().height(25.dp),
@@ -30,10 +31,7 @@ fun TagHierarchyNavigableBar(
     ) {
         // if else here to not display the root name if we are at the root, but select category
         if (currentDepth == 0) {
-            Text(
-                stringResource(R.string.discover_select_a_category),
-                modifier = Modifier.testTag("discover_select_category")
-            )
+            Text(rootName, modifier = Modifier.testTag("discover_select_category"))
         } else {
             // Format the display of the parents of the current tag. The last tag is not
             // clickable because it is the current tag, that's why we take ...size - 1

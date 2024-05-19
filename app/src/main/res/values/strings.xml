@@ -93,6 +93,7 @@
     <string name="edit_event_screen_select_section">Section</string>
     <string name="edit_event_screen_select_semester">Semester</string>
     <string name="edit_event_screen_select_category">Category</string>
+    <string name="tag_navigation_bar_before_type">Select a&#160;</string>
     <string name="discover_select_a_category">Select a Category :</string>
     <string name="discover_all">All</string>
     <string name="Offline_mode">Offline Mode</string>
