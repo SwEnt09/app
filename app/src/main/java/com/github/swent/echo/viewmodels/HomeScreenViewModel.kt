@@ -97,6 +97,7 @@ constructor(
     val followedTags = _followedTags.asStateFlow()
     private val _selectedTagId = MutableStateFlow<String?>(null)
     val selectedTagId = _selectedTagId.asStateFlow()
+    private var followedTagFilter = listOf<Tag>()
     private var _searchMode = MutableStateFlow(false)
     val searchMode = _searchMode.asStateFlow()
     val isOnline = networkService.isOnline
@@ -115,6 +116,7 @@ constructor(
             _profileName.value = repository.getUserProfile(userId)?.name ?: ""
             _followedTags.value =
                 repository.getUserProfile(userId)?.tags?.toList() ?: allTagSet.toList()
+            followedTagFilter = getTagsAndSubTags(_followedTags.value).toList()
             sectionTags = repository.getSubTags(sectionTagId)
             semesterTags = repository.getSubTags(semesterTagId)
             refreshFiltersContainer()
@@ -125,9 +127,10 @@ constructor(
         if (_followedTags.value.contains(tag)) {
             if (_selectedTagId.value == tag.tagId) {
                 _selectedTagId.value = null
-                println("tagId: ${_selectedTagId.value}\n")
+                followedTagFilter = getTagsAndSubTags(_followedTags.value).toList()
             } else {
                 _selectedTagId.value = tag.tagId
+                followedTagFilter = getTagsAndSubTags(listOf(tag)).toList()
             }
         }
         filterEvents()
@@ -203,9 +206,28 @@ constructor(
 
     private fun refreshFiltersContainer() {
         filterWordList = _filtersContainer.value.searchEntry.lowercase().split(" ")
-        filterTagSet = allTagSet.filter { tag -> areWordsInTag(tag, filterWordList) }.toSet()
+        val temp = allTagSet.filter { tag -> areWordsInTag(tag, filterWordList) }
+        filterTagSet = getTagsAndSubTags(temp)
+
         updateSearchMode()
         filterEvents()
+    }
+
+    private fun getTagsAndSubTags(initialTagList: List<Tag>): Set<Tag> {
+        if (initialTagList.isEmpty()) return setOf()
+
+        var ret = initialTagList.toSet()
+        val subTags = mutableListOf<Tag>()
+        for (tag in initialTagList) {
+            subTags += getSubTagsLocal(tag.tagId)
+        }
+        ret = ret.plus(getTagsAndSubTags(subTags))
+
+        return ret
+    }
+
+    private fun getSubTagsLocal(tagId: String): List<Tag> {
+        return allTagSet.filter { tag -> tag.parentId == tagId }
     }
 
     private fun updateSearchMode() {
@@ -240,17 +262,17 @@ constructor(
                         -> // filter by time to avoid displaying past events
                         dateFilterConditions(event)
                     }
-                } else if (selectedTagId.value == null) {
+                } else /*if (selectedTagId.value == null)*/ {
                     allEventsList
                         .filter { event ->
                             event.tags.any { tag ->
-                                _followedTags.value.any { tag2 -> tag.tagId == tag2.tagId }
+                                followedTagFilter.any { tag2 -> tag.tagId == tag2.tagId }
                             }
                         }
                         .filter { event -> // filter by time to avoid displaying past events
                             dateFilterConditions(event)
                         }
-                } else {
+                }/* else {
                     allEventsList
                         .filter { event ->
                             event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
@@ -258,7 +280,7 @@ constructor(
                         .filter { event -> // filter by time to avoid displaying past events
                             dateFilterConditions(event)
                         }
-                }
+                }*/
         } else {
             _displayEventList.value =
                 allEventsList
