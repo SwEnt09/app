@@ -1,6 +1,5 @@
 package com.github.swent.echo.viewmodels.tag
 
-import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import io.mockk.coEvery
@@ -24,12 +23,11 @@ class TagViewModelTest {
     val tagExample = Tag("z", "z")
     val rootTagId = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
     private val scheduler = TestCoroutineScheduler()
-    private val rootTagHandle = SavedStateHandle(mapOf())
 
     @Before
     fun init() {
         Dispatchers.setMain(StandardTestDispatcher(scheduler))
-        runBlocking { tagViewModel = TagViewModel(mockedRepository, rootTagHandle) }
+        runBlocking { tagViewModel = TagViewModel(mockedRepository, rootTagId) }
         scheduler.runCurrent()
     }
 
@@ -56,12 +54,39 @@ class TagViewModelTest {
 
     @Test
     fun goUpShouldQueryTopTags() {
+        coEvery { mockedRepository.getTag(rootTagId) } returns Tag(rootTagId, "test root")
         coEvery { mockedRepository.getSubTags(rootTagId) } returns topTagsList
         coEvery { mockedRepository.getSubTags(topTagsList.first().tagId) } returns subTagsList
+        runBlocking { tagViewModel = TagViewModel(mockedRepository, rootTagId) }
         tagViewModel.goDown(topTagsList.first())
         tagViewModel.goUp()
         scheduler.runCurrent()
         coVerify { mockedRepository.getSubTags(rootTagId) }
         assertEquals(topTagsList, tagViewModel.tags.value)
+    }
+
+    @Test
+    fun incorrectTagIdUseDefaultRoot() {
+        val defaultRoot = Tag(rootTagId, "ROOT TAG: DO NOT DELETE")
+        coEvery { mockedRepository.getTag(any()) } returns null
+        coEvery { mockedRepository.getTag(defaultRoot.tagId) } returns defaultRoot
+        val incorrectTagId = "aaaaaaaaaaaa"
+        runBlocking { tagViewModel = TagViewModel(mockedRepository, incorrectTagId) }
+        scheduler.runCurrent()
+        coVerify { mockedRepository.getTag(defaultRoot.tagId) }
+        coVerify { mockedRepository.getTag(incorrectTagId) }
+        assertEquals(defaultRoot, tagViewModel.rootTag.value)
+    }
+
+    @Test
+    fun correctRootTagUseIt() {
+        val otherRootTag = Tag("bbbbbbbbbb", "valid root tag")
+        coEvery { mockedRepository.getTag(any()) } returns null
+        coEvery { mockedRepository.getTag(otherRootTag.tagId) } returns otherRootTag
+        coEvery { mockedRepository.getTag(rootTagId) } returns Tag(rootTagId, "root tag")
+        runBlocking { tagViewModel = TagViewModel(mockedRepository, otherRootTag.tagId) }
+        scheduler.runCurrent()
+        coVerify { mockedRepository.getTag(otherRootTag.tagId) }
+        assertEquals(otherRootTag, tagViewModel.rootTag.value)
     }
 }

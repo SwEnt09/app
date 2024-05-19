@@ -54,7 +54,7 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
             tagViewModel.goUp()
         }
         val tagParentsName =
-            if (tag.tagId == tagViewModel.rootTag.tagId) {
+            if (tag.tagId == tagViewModel.rootTag.value.tagId) {
                 ""
             } else {
                 tagParents.peek().name

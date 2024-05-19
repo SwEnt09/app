@@ -59,7 +59,10 @@ fun SearchMenuSheet(
     // Search mode
     val searchMode = remember { mutableStateOf(SearchMode.FILTERS) }
     // TagViewModel
-    val tagViewModel: TagViewModel = hiltViewModel()
+    val tagViewModel: TagViewModel =
+        hiltViewModel<TagViewModel, TagViewModel.TagViewModelFactory>() { factory ->
+            factory.create()
+        }
 
     val sheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = false) { value ->
