@@ -116,6 +116,7 @@ fun AddTagButton(
         TagSelectionDialog(
             onDismissRequest = { dialogVisible = false },
             tagViewModel = tagViewModel,
+            tagType = stringResource(R.string.tag_navigation_bar_before_type) + type + " : ",
             onTagSelected = {
                 onTagSelected(it)
                 dialogVisible = false

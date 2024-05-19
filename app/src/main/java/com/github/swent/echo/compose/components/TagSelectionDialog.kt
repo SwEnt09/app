@@ -22,9 +22,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
@@ -35,6 +37,7 @@ fun TagSelectionDialog(
     onDismissRequest: () -> Unit,
     dialogProperties: DialogProperties = DialogProperties(),
     tagViewModel: TagViewModel,
+    tagType: String = stringResource(R.string.edit_event_screen_select_category),
     onTagSelected: (Tag) -> Unit
 ) {
     val tags by tagViewModel.tags.collectAsState()
@@ -60,7 +63,8 @@ fun TagSelectionDialog(
                                     tagViewModel.goUp()
                                 }
                             },
-                            onCurrentTagClicked = {}
+                            onCurrentTagClicked = {},
+                            rootName = tagType
                         )
                     }
                 }
