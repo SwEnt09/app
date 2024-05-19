@@ -42,7 +42,7 @@
     <string name="edit_event_screen_start_date">Start date</string>
     <string name="edit_event_screen_end_date">End date</string>
     <string name="edit_event_screen_delete_tag_button">Delete tag </string>
-    <string name="edit_event_screen_add_tag_button">Add tag </string>
+    <string name="edit_event_screen_add_tag_button">Add&#8230;</string>
     <string name="edit_event_screen_select_location_button">Select location</string>
     <string name="edit_event_screen_max_participants">Max number of participants</string>
     <string name="event_creation_error_not_logged_in">You are not logged in</string>
@@ -89,6 +89,10 @@
     <string name="list_drawer_event_status">Event Status</string>
     <string name="edit_event_screen_alert_deletion_message">You will delete permanently this event !</string>
     <string name="edit_event_screen_delete_button">Delete</string>
+    <string name="edit_event_screen_tag_not_selected">All</string>
+    <string name="edit_event_screen_select_section">Section</string>
+    <string name="edit_event_screen_select_semester">Semester</string>
+    <string name="edit_event_screen_select_category">Category</string>
     <string name="discover_select_a_category">Select a Category :</string>
     <string name="discover_all">All</string>
     <string name="Offline_mode">Offline Mode</string>

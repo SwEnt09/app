@@ -2,6 +2,7 @@ package com.github.swent.echo.compose.event
 
 import androidx.activity.compose.setContent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -23,6 +24,7 @@ import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
+import com.github.swent.echo.data.repository.SimpleRepository
 import com.github.swent.echo.viewmodels.event.EventViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -32,6 +34,7 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
@@ -55,6 +58,7 @@ class EventScreenTest {
     private val savedEventId = SavedStateHandle(mapOf())
     private val mockedNetworkService = mockk<NetworkService>(relaxed = true)
     private val isOnline = MutableStateFlow(true)
+    private val categoryName = "Category"
 
     @Before
     fun init() {
@@ -170,8 +174,17 @@ class EventScreenTest {
 
     @Test
     fun selectTagAddItToTagList() {
+        runBlocking {
+            eventViewModel =
+                EventViewModel(
+                    SimpleRepository(mockedAuthenticationService),
+                    mockedAuthenticationService,
+                    savedEventId,
+                    mockedNetworkService
+                )
+        }
         setCompose(eventViewModel)
-        val addTagButton = composeTestRule.onNodeWithTag("add-tag-button")
+        val addTagButton = composeTestRule.onNodeWithTag("add-tag-button-$categoryName")
         val tag1 = Tag("1", "Sport", Repository.ROOT_TAG_ID) // first tag of simple repository
         val firstTag = composeTestRule.onNodeWithTag("${tag1.name}-select-button")
         addTagButton.performClick()
@@ -237,7 +250,7 @@ class EventScreenTest {
         setCompose(eventViewModel, true)
         composeTestRule.onNodeWithTag("Save-button").assertIsEnabled()
         composeTestRule.onNodeWithTag("delete-button").assertIsEnabled()
-        composeTestRule.onNodeWithTag("add-tag-button").assertIsEnabled()
+        composeTestRule.onNodeWithTag("add-tag-button-$categoryName").assertIsEnabled()
     }
 
     @Test
@@ -246,6 +259,13 @@ class EventScreenTest {
         setCompose(eventViewModel, true)
         composeTestRule.onNodeWithTag("Save-button").assertIsNotEnabled()
         composeTestRule.onNodeWithTag("delete-button").assertIsNotEnabled()
-        composeTestRule.onNodeWithTag("add-tag-button").assertIsNotEnabled()
+        composeTestRule.onNodeWithTag("add-tag-button-$categoryName").assertIsNotEnabled()
+    }
+
+    @Test
+    fun tagSectionAndSemesterButtonExist() {
+        setCompose(eventViewModel)
+        composeTestRule.onNodeWithTag("add-tag-button-Section").assertHasClickAction()
+        composeTestRule.onNodeWithTag("add-tag-button-Semester").assertHasClickAction()
     }
 }
