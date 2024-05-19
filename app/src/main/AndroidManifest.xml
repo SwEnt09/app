@@ -14,10 +14,10 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/echo"
-        android:logo="@drawable/echo"
+        android:icon="@drawable/echologo"
+        android:logo="@drawable/echologo"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/echo_round"
+        android:roundIcon="@drawable/echologoround"
         android:supportsRtl="true"
         android:theme="@style/Theme.Echo"
         tools:targetApi="31">
