@@ -47,6 +47,7 @@ fun AuthenticationForm(
             label = { Text(stringResource(R.string.authentication_form_email_label)) },
             value = email,
             onValueChange = { email = it },
+            singleLine = true
         )
         Spacer(modifier = Modifier.padding(16.dp))
         OutlinedTextField(
@@ -59,6 +60,7 @@ fun AuthenticationForm(
                 KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                 ),
+            singleLine = true
         )
         Spacer(modifier = Modifier.padding(16.dp))
         ElevatedButton(
