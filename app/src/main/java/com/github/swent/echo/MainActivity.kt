@@ -11,7 +11,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.lifecycle.ViewModelProvider
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.ConnectivityStatus
@@ -20,7 +19,6 @@ import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.theme.EchoTheme
 import com.github.swent.echo.viewmodels.AppTheme
-import com.github.swent.echo.viewmodels.HomeScreenViewModel
 import com.github.swent.echo.viewmodels.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

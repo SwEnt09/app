@@ -9,9 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -29,12 +27,9 @@ class ThemeViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        themePreferenceManager = mockk(relaxed = true) {
-            coEvery { theme } returns themeFlow
-        }
+        themePreferenceManager = mockk(relaxed = true) { coEvery { theme } returns themeFlow }
         viewModel = ThemeViewModel(themePreferenceManager)
     }
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @After
@@ -43,20 +38,22 @@ class ThemeViewModelTest {
     }
 
     @Test
-    fun initialstateIsDark() = runTest(testDispatcher) {
-        viewModel.themeUserSetting.test {
-            assert(awaitItem() == AppTheme.MODE_NIGHT)
+    fun initialstateIsDark() =
+        runTest(testDispatcher) {
+            viewModel.themeUserSetting.test { assert(awaitItem() == AppTheme.MODE_NIGHT) }
         }
-    }
 
     @Test
-    fun switchesTheme() = runTest(testDispatcher) {
-        viewModel.toggleTheme()
-        testDispatcher.scheduler.advanceUntilIdle()
-        coVerify { themePreferenceManager.setTheme(AppTheme.MODE_DAY) }
-        themeFlow.value = AppTheme.MODE_DAY
-        viewModel.toggleTheme()
-        testDispatcher.scheduler.advanceUntilIdle()     //ensures that the coroutine inside toggleTheme() is executed fully before proceeding: crucial for the test to pass
-        coVerify { themePreferenceManager.setTheme(AppTheme.MODE_NIGHT) }
-    }
+    fun switchesTheme() =
+        runTest(testDispatcher) {
+            viewModel.toggleTheme()
+            testDispatcher.scheduler.advanceUntilIdle()
+            coVerify { themePreferenceManager.setTheme(AppTheme.MODE_DAY) }
+            themeFlow.value = AppTheme.MODE_DAY
+            viewModel.toggleTheme()
+            testDispatcher.scheduler
+                .advanceUntilIdle() // ensures that the coroutine inside toggleTheme() is executed
+                                    // fully before proceeding: crucial for the test to pass
+            coVerify { themePreferenceManager.setTheme(AppTheme.MODE_NIGHT) }
+        }
 }
