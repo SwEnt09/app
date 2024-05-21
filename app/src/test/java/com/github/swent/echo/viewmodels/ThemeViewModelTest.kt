@@ -53,7 +53,7 @@ class ThemeViewModelTest {
             viewModel.toggleTheme()
             testDispatcher.scheduler
                 .advanceUntilIdle() // ensures that the coroutine inside toggleTheme() is executed
-                                    // fully before proceeding: crucial for the test to pass
+            // fully before proceeding: crucial for the test to pass
             coVerify { themePreferenceManager.setTheme(AppTheme.MODE_NIGHT) }
         }
 }
