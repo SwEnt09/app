@@ -7,6 +7,7 @@ import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.Routes
+import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -14,8 +15,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -42,6 +45,13 @@ class LoginViewModelTest {
         repository = mockk()
         networkService = mockk { every { isOnline } returns MutableStateFlow(true) }
         viewModel = LoginViewModel(authenticationService, repository, networkService)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain() // Reset the main dispatcher to the original Main dispatcher
+        clearAllMocks() // Clear MockK mocks to avoid side effects between tests
+        // Additional cleanup if required
     }
 
     @Test
