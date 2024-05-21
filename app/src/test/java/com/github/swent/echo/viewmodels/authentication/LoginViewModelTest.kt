@@ -7,7 +7,6 @@ import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.Routes
-import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -15,10 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -29,6 +26,8 @@ class LoginViewModelTest {
     private lateinit var repository: Repository
     private lateinit var networkService: NetworkService
     private lateinit var viewModel: LoginViewModel
+
+    // @get:Rule val throwRule = RethrowingExceptionHandler()
 
     companion object {
         private const val EMAIL = "test@email.com"
@@ -45,13 +44,6 @@ class LoginViewModelTest {
         repository = mockk()
         networkService = mockk { every { isOnline } returns MutableStateFlow(true) }
         viewModel = LoginViewModel(authenticationService, repository, networkService)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain() // Reset the main dispatcher to the original Main dispatcher
-        clearAllMocks() // Clear MockK mocks to avoid side effects between tests
-        // Additional cleanup if required
     }
 
     @Test
@@ -98,18 +90,24 @@ class LoginViewModelTest {
         }
 
     @Test
-    fun `login should return error when failed`() = runTest {
-        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
-        Dispatchers.setMain(testDispatcher)
+    fun `login should return error when failed`() =
+        try {
+            runTest {
+                val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+                Dispatchers.setMain(testDispatcher)
 
-        coEvery { authenticationService.signIn(EMAIL, PASSWORD) } returns
-            AuthenticationResult.Error(ERROR_MESSAGE)
+                coEvery { authenticationService.signIn(EMAIL, PASSWORD) } returns
+                    AuthenticationResult.Error(ERROR_MESSAGE)
 
-        viewModel.state.test {
-            assertEquals(AuthenticationState.SignedOut, awaitItem())
-            viewModel.login(EMAIL, PASSWORD)
-            assertEquals(AuthenticationState.SigningIn, awaitItem())
-            assertEquals(AuthenticationState.Error(ERROR_MESSAGE), awaitItem())
+                viewModel.state.test {
+                    assertEquals(AuthenticationState.SignedOut, awaitItem())
+                    viewModel.login(EMAIL, PASSWORD)
+                    assertEquals(AuthenticationState.SigningIn, awaitItem())
+                    assertEquals(AuthenticationState.Error(ERROR_MESSAGE), awaitItem())
+                }
+            }
+        } catch (e: Throwable) {
+            println("Exception caught during test execution: ${e.message}")
+            throw e
         }
-    }
 }
