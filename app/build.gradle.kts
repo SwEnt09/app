@@ -84,7 +84,7 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -114,6 +114,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
+    //implementation(libs.compose.preview.renderer)
     kapt(libs.hilt.android.compiler)
 
     //navigation

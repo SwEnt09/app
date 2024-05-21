@@ -23,6 +23,7 @@ import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.HomeScreenViewModel
 import com.github.swent.echo.viewmodels.MapOrListMode
 import com.github.swent.echo.viewmodels.Overlay
+import com.github.swent.echo.viewmodels.ThemeViewModel
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -35,7 +36,8 @@ import kotlinx.serialization.json.Json
 fun HomeScreen(
     navActions: NavigationActions,
     homeScreenViewModel: HomeScreenViewModel,
-    hasLocationPermissions: Boolean = false
+    hasLocationPermissions: Boolean = false,
+    themeViewModel: ThemeViewModel
 ) {
 
     // Drawer state to open and close the hamburger menu
@@ -54,10 +56,18 @@ fun HomeScreen(
     ModalNavigationDrawer(
         // Content of the hamburger menu
         drawerContent = {
-            HamburgerMenuDrawerSheet(navActions, drawerState, scope, profileName, profileClass) {
-                homeScreenViewModel.signOut()
-                navActions.navigateTo(Routes.LOGIN)
-            }
+            HamburgerMenuDrawerSheet(
+                navActions,
+                drawerState,
+                scope,
+                profileName,
+                profileClass,
+                {
+                    homeScreenViewModel.signOut()
+                    navActions.navigateTo(Routes.LOGIN)
+                },
+                themeViewModel::toggleTheme
+            )
         },
         drawerState = drawerState,
         modifier = Modifier.testTag("hamburger_menu"),
