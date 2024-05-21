@@ -79,11 +79,17 @@ fun AppNavigationHost(
         // to the map screen.
         if (userId == null) {
             navActions.navigateTo(Routes.REGISTER)
-        } else if (repository.getUserProfile(userId) == null) {
+        } else {
+            navActions.navigateTo(Routes.PROFILE_CREATION)
+        }
+        /*
+        else if (repository.getUserProfile(userId) == null) {
             navActions.navigateTo(Routes.PROFILE_CREATION)
         } else {
             navActions.navigateTo(Routes.MAP)
         }
+
+         */
     }
     // Handle Permissions
     var hasLocationPermissions by remember { mutableStateOf(false) }
@@ -98,7 +104,8 @@ fun AppNavigationHost(
 
     NavHost(
         navController = navController,
-        startDestination = Routes.LOADING.name,
+        // startDestination = Routes.LOADING.name,
+        startDestination = Routes.PROFILE_CREATION.name,
     ) {
         composable(Routes.LOADING.name) {
             QuitAppOnHardwareBackButtonPressPress()
@@ -127,7 +134,8 @@ fun AppNavigationHost(
             HomeScreen(
                 homeScreenViewModel = hiltViewModel(),
                 navActions = navActions,
-                hasLocationPermissions = hasLocationPermissions
+                hasLocationPermissions = hasLocationPermissions,
+                themeViewModel = hiltViewModel()
             )
         }
 

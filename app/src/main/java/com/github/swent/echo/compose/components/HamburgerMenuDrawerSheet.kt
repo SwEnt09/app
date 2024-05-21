@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
@@ -48,7 +50,8 @@ fun HamburgerMenuDrawerSheet(
     scope: CoroutineScope,
     profileName: String,
     profileClass: String,
-    onSignOutPressed: () -> Unit
+    onSignOutPressed: () -> Unit,
+    onToggle: () -> Unit
 ) {
     /**
      * List of navigation items to display in the hamburger menu
@@ -158,6 +161,7 @@ fun HamburgerMenuDrawerSheet(
                     contentDescription = "Close button hamburger menu"
                 )
             }
+            ThemeToggleButton(onToggle = onToggle)
         }
         // Display the navigation items
         items.forEachIndexed { index, item ->
@@ -189,3 +193,13 @@ data class NavigationItem(
     val selectedIcon: ImageVector,
     val navOnClick: (() -> Unit)? = {}
 )
+
+@Composable
+fun ThemeToggleButton(onToggle: () -> Unit) {
+    IconButton(onClick = onToggle, modifier = Modifier.testTag("theme_toggle_button")) {
+        Icon(
+            painter = painterResource(id = R.drawable.light_bulb_foreground),
+            contentDescription = "Toggle theme"
+        )
+    }
+}
