@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.ThemePreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 enum class AppTheme {
     MODE_DAY,
@@ -18,7 +18,7 @@ enum class AppTheme {
 @HiltViewModel
 class ThemeViewModel
 @Inject
-constructor(private val themePreferenceManager: ThemePreferenceManager): ViewModel(){
+constructor(private val themePreferenceManager: ThemePreferenceManager) : ViewModel() {
     private val _themeUserSetting = MutableStateFlow(AppTheme.MODE_NIGHT)
     val themeUserSetting: StateFlow<AppTheme> = _themeUserSetting.asStateFlow()
 
@@ -27,6 +27,7 @@ constructor(private val themePreferenceManager: ThemePreferenceManager): ViewMod
             themePreferenceManager.theme.collect { theme -> _themeUserSetting.value = theme }
         }
     }
+
     fun toggleTheme() {
         viewModelScope.launch {
             val newTheme =
