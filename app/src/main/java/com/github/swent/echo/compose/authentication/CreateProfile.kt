@@ -253,7 +253,7 @@ fun ProfileCreationUI(
                     SmallFloatingActionButton(
                         onClick = { onAdd() },
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                         modifier = modifier.testTag("AddTag")
                     ) {
                         Icon(Icons.Default.Add, "Add tags")

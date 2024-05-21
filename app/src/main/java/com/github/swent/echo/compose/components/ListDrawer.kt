@@ -90,6 +90,7 @@ fun EventListItem(
             green = colorBorderCircles.green * darkFraction2ndFloor,
             blue = colorBorderCircles.blue * darkFraction2ndFloor
         )
+    val textColor = MaterialTheme.colorScheme.onSecondaryContainer
     // Main container for the list item, two floor : the first is the general information of the
     // event and
     // the second is the detailed information of the event which appears only on clicked
@@ -151,7 +152,8 @@ fun EventListItem(
                     Modifier.padding(horizontal = paddingItems)
                         .weight(1f)
                         .testTag("list_event_title_${event.eventId}"),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = textColor,
             )
             // Display event date
             Text(
@@ -160,7 +162,8 @@ fun EventListItem(
                     Modifier.padding(horizontal = paddingItems)
                         .weight(1f)
                         .testTag("list_event_date_${event.eventId}"),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = textColor,
             )
             /*
             // Display event distance from user
@@ -196,12 +199,14 @@ fun EventListItem(
                                 else R.drawable.confirmed
                             ),
                         contentDescription = stringResource(id = R.string.list_drawer_event_status),
+                        tint = textColor,
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = "${event.participantCount}/${event.maxParticipants}",
                         modifier = Modifier.testTag("list_event_participants_${event.eventId}"),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = textColor,
                     )
                 }
                 Spacer(modifier = Modifier.height(5.dp))
@@ -243,7 +248,8 @@ fun EventListItem(
                             semester
                         else "other",
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
+                        color = textColor,
                     )
                 }
             }
@@ -258,7 +264,8 @@ fun EventListItem(
                     modifier =
                         Modifier.width(200.dp)
                             .padding(5.dp)
-                            .testTag("list_event_description_${event.eventId}")
+                            .testTag("list_event_description_${event.eventId}"),
+                    color = textColor,
                 )
                 Spacer(modifier = Modifier.width(40.dp))
                 Column {
