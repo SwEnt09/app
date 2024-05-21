@@ -128,7 +128,7 @@ fun HelpCard(helpItem: HelpItem) {
             Text(
                 helpItem.title,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.testTag("title"),
+                modifier = Modifier.testTag("title").clickable { expanded = !expanded },
             )
             IconButton(
                 onClick = { expanded = !expanded },
