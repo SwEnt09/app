@@ -2,18 +2,21 @@ package com.github.swent.echo.viewmodels.authentication
 
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.SimpleRepository
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -27,24 +30,18 @@ class CreateProfileViewModelTest {
     private val authenticationService: AuthenticationService = mockk()
     private val repository: SimpleRepository = mockk()
     private lateinit var viewModel: CreateProfileViewModel
+    private val mockedNetworkService = mockk<NetworkService>()
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = CreateProfileViewModel(authenticationService, repository)
+        every { mockedNetworkService.isOnline } returns MutableStateFlow(true)
+        viewModel = CreateProfileViewModel(authenticationService, repository, mockedNetworkService)
     }
-    /*
-       @Test
-       fun loggedinErrorMessage() = runTest {
-           coEvery { authenticationService.getCurrentUserID() } returns null
 
-           viewModel.profileSave("John", "Doe")
-
-           assert(viewModel.errorMessage.value == "Profile creation error: Not logged in")
-       }
-    */
     @Test
     fun initTest() {
+
         val userId = "test_user_id"
         val userProfile =
             UserProfile(
@@ -56,11 +53,11 @@ class CreateProfileViewModelTest {
                 emptySet(),
                 emptySet()
             )
-
         coEvery { authenticationService.getCurrentUserID() } returns userId
         coEvery { (repository.getUserProfile(userId)) } returns (userProfile)
 
-        val viewModel = CreateProfileViewModel(authenticationService, repository)
+        val viewModel =
+            CreateProfileViewModel(authenticationService, repository, mockedNetworkService)
 
         // Force coroutine execution to test initial values
         runBlocking { viewModel.viewModelScope.launch {}.join() }
@@ -76,7 +73,6 @@ class CreateProfileViewModelTest {
     @Test
     fun loggedInUser() = runBlocking {
         val userId = "userId"
-        // whenever(authenticationService.getCurrentUserID()).thenReturn(userId)
         coEvery { authenticationService.getCurrentUserID() } returns userId
 
         viewModel.setFirstName("John")
@@ -112,8 +108,6 @@ class CreateProfileViewModelTest {
         assertEquals(userProfile.tags, actualUserProfile?.tags)
 
         assertEquals(actualUserProfile, userProfile)
-        // println("Expected UserProfile: $userProfile")
-
     }
 
     @Test

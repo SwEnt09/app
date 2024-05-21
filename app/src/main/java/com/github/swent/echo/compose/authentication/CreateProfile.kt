@@ -93,6 +93,7 @@ fun ProfileCreationScreen(
     val semesterSelected by viewModel.selectedSemester.collectAsState()
     val sectionSelected by viewModel.selectedSection.collectAsState()
     val isEditing by viewModel.isEditing.collectAsState()
+    val isOnline by viewModel.isOnline.collectAsState()
 
     ProfileCreationUI(
         modifier = modifier,
@@ -117,7 +118,8 @@ fun ProfileCreationScreen(
         },
         onFirstNameChange = viewModel::setFirstName,
         onLastNameChange = viewModel::setLastName,
-        isEditing = isEditing
+        isEditing = isEditing,
+        isOnline = isOnline
     )
 
     if (dialogVisible) {
@@ -158,7 +160,8 @@ fun ProfileCreationUI(
     onSemChange: (String) -> Unit,
     onFirstNameChange: (String) -> Unit,
     onLastNameChange: (String) -> Unit,
-    isEditing: Boolean
+    isEditing: Boolean,
+    isOnline: Boolean
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -286,7 +289,8 @@ fun ProfileCreationUI(
                             navAction.navigateTo(Routes.MAP)
                         }
                     },
-                    modifier = modifier.fillMaxWidth().testTag("Save")
+                    modifier = modifier.fillMaxWidth().testTag("Save"),
+                    enabled = isOnline
                 ) {
                     Text(text = stringResource(id = R.string.profile_creation_save_button))
                 }
