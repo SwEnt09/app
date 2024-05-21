@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
@@ -95,16 +96,16 @@ fun HamburgerMenuDrawerSheet(
                 title = stringResource(id = R.string.hamburger_add_friends),
                 selectedIcon = Icons.Filled.Add,
             ),
-            NavigationItem(
-                title = stringResource(id = R.string.hamburger_help),
-                selectedIcon = Icons.Filled.Build,
-            )
-
              */
             NavigationItem(
                 title = stringResource(R.string.hamburger_associations),
                 selectedIcon = Icons.Filled.Star,
                 navOnClick = { navActions.navigateTo(Routes.ASSOCIATIONS) }
+            ),
+            NavigationItem(
+                title = stringResource(id = R.string.hamburger_help),
+                selectedIcon = Icons.Filled.Build,
+                navOnClick = { navActions.navigateTo(Routes.HELP) }
             ),
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_log_out),

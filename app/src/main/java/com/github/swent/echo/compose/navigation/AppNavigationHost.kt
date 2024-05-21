@@ -30,6 +30,7 @@ import com.github.swent.echo.compose.authentication.LoadingScreen
 import com.github.swent.echo.compose.authentication.LoginScreen
 import com.github.swent.echo.compose.authentication.ProfileCreationScreen
 import com.github.swent.echo.compose.authentication.RegisterScreen
+import com.github.swent.echo.compose.components.HelpScreen
 import com.github.swent.echo.compose.components.HomeScreen
 import com.github.swent.echo.compose.event.CreateEventScreen
 import com.github.swent.echo.compose.event.EditEventScreen
@@ -153,6 +154,8 @@ fun AppNavigationHost(
         composable(Routes.ASSOCIATIONS.name) {
             AssociationScreen(hiltViewModel(), navActions = navActions)
         }
+
+        composable(Routes.HELP.name) { HelpScreen(navActions) }
     }
 }
 
