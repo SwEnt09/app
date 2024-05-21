@@ -79,17 +79,11 @@ fun AppNavigationHost(
         // to the map screen.
         if (userId == null) {
             navActions.navigateTo(Routes.REGISTER)
-        } else {
-            navActions.navigateTo(Routes.PROFILE_CREATION)
-        }
-        /*
-        else if (repository.getUserProfile(userId) == null) {
+        } else if (repository.getUserProfile(userId) == null) {
             navActions.navigateTo(Routes.PROFILE_CREATION)
         } else {
             navActions.navigateTo(Routes.MAP)
         }
-
-         */
     }
     // Handle Permissions
     var hasLocationPermissions by remember { mutableStateOf(false) }
