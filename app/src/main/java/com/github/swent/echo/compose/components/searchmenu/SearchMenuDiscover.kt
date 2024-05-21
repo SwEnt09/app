@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -143,12 +142,18 @@ fun SearchMenuDiscoverItem(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = tag.name)
+            val textColor =
+                if (selectedTag == tag.name) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSecondaryContainer
+                }
+            Text(text = tag.name, color = textColor)
             if (subTags.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(5.dp),
                     text = subTags.shuffled(Random(randomSeed)).joinToString(),
-                    color = LocalContentColor.current.copy(alpha = 0.5f),
+                    color = textColor.copy(alpha = 0.5f),
                     textAlign = TextAlign.Center,
                     fontSize = 10.sp,
                     overflow = TextOverflow.Ellipsis,

@@ -73,6 +73,8 @@ fun AssociationExpandableList(
     val topBoxHeight = 80.dp
     val paddingTextStart = 10.dp
     val paddingIconEnd = 10.dp
+    val textColor = MaterialTheme.colorScheme.onPrimaryContainer
+
     Column(
         modifier =
             Modifier.padding(paddingValues)
@@ -90,12 +92,14 @@ fun AssociationExpandableList(
         ) {
             Text(
                 title,
-                modifier = Modifier.align(Alignment.CenterStart).padding(start = paddingTextStart)
+                modifier = Modifier.align(Alignment.CenterStart).padding(start = paddingTextStart),
+                color = textColor,
             )
             Icon(
                 if (!expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
                 contentDescription = "Expand",
-                modifier = Modifier.align(Alignment.CenterEnd).padding(end = paddingIconEnd)
+                modifier = Modifier.align(Alignment.CenterEnd).padding(end = paddingIconEnd),
+                tint = textColor,
             )
         }
         if (expanded) {
