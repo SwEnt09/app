@@ -108,15 +108,17 @@
     <string name="help_screen_how_can_i_find_events">How can I find events?</string>
     <string name="help_screen_how_can_i_find_events_description">Good question! By default you see all events that match your interests. You can filter by only one of your interests by tapping on the chips on the top of the map.\n\nTap on the search icon in the bottom left part of the screen to open the search options. This mode will consider all events, not only your interests. Perfect for discovering new events on the campus! In the top right corner you have an icon button to cancel the search.</string>
     <string name="help_screen_create_event">I want to create an event</string>
-    <string name="help_screen_create_event_description">Great! You have to options: either you open the hamburger menu and tap on \'Create Event\' or you simply long press on the map. Then fill in the details and save it! It\'s this simple.</string>
+    <string name="help_screen_create_event_description">Great! You have two options: either you open the hamburger menu and tap on \'Create Event\' or you simply long press on the map. Then fill in the details and save it! It\'s that simple.</string>
     <string name="help_screen_following_associations">Following associations</string>
     <string name="help_screen_following_associations_description">Follow association to see what events they are hosting! To see all associations you are following open the hamburger menu and tap on \'Association\'.</string>
-    <string name="help_screen_my_interest_changed">My interest changed</string>
+    <string name="help_screen_my_interest_changed">My interests changed</string>
     <string name="help_screen_my_interest_changed_description">No problem, you can modify your profile at any time! Open the hamburger menu and tap on \'Edit Profile\'. You’re free to remove and add new tags!</string>
     <string name="help_screen_title">Welcome to Echo</string>
     <string name="help_screen_subtitle">This page is here to help you get started with the Echo app. Use the list below to discover all the amazing features!</string>
     <string name="help_screen_navigate_back">Navigate back</string>
     <string name="help_screen_top_appbar_title">Get Help</string>
     <string name="help_screen_toggle_description">Toggle description</string>
+    <string name="help_screen_list_mode">It\'s hard to see the events on the map</string>
+    <string name="help_screen_list_mode_description">No worries! You can change the display of events to a list by clicking the button in the upper right of the screen. You can even sort it by date or distance!</string>
 </resources>
 

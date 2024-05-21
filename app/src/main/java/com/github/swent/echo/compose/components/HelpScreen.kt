@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +59,10 @@ fun HelpScreen(navActions: NavigationActions) {
                 title = stringResource(R.string.help_screen_following_associations),
                 description =
                     stringResource(R.string.help_screen_following_associations_description),
+            ),
+            HelpItem(
+                title = stringResource(R.string.help_screen_list_mode),
+                description = stringResource(R.string.help_screen_list_mode_description),
             ),
             HelpItem(
                 title = stringResource(R.string.help_screen_my_interest_changed),

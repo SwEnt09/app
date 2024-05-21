@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
@@ -32,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.map.MAP_CENTER
@@ -104,7 +104,7 @@ fun HamburgerMenuDrawerSheet(
             ),
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_help),
-                selectedIcon = Icons.Filled.Build,
+                selectedIcon = ImageVector.vectorResource(id = R.drawable.help),
                 navOnClick = { navActions.navigateTo(Routes.HELP) }
             ),
             NavigationItem(
