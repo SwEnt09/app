@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Section
 import com.github.swent.echo.data.model.Semester
@@ -23,7 +24,10 @@ class CreateProfileViewModel
 constructor(
     private val authenticationService: AuthenticationService,
     private val repository: Repository,
+    private val network: NetworkService
 ) : ViewModel() {
+
+    val isOnline = network.isOnline
 
     private val _isEditing = MutableStateFlow(false)
     val isEditing = _isEditing.asStateFlow()

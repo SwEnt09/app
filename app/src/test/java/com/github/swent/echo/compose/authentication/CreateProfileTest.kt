@@ -38,12 +38,12 @@ class CreateProfileTest {
                 onLastNameChange = {},
                 onSecChange = {},
                 onSemChange = {},
-                isEditing = true
+                isEditing = true,
+                isOnline = true
             )
         }
         // Assert that certain elements are present on the screen
         composeTestRule.onNodeWithTag("Save").assertExists()
-        //  composeTestRule.onNodeWithTag("Back").assertExists()
         composeTestRule.onNodeWithTag("AddTag").assertExists()
         composeTestRule.onNodeWithTag("FirstName").assertExists()
         composeTestRule.onNodeWithTag("LastName").assertExists()
