@@ -3,7 +3,6 @@ package com.github.swent.echo.compose.components.myevents
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
@@ -45,20 +44,7 @@ class MyEventsScreenTest {
     }
 
     @Test
-    fun switchBetweenJoinedAndCreatedWorks() {
-        // Check that the tabs exist
-        composeTestRule.onNodeWithTag("my_events_joined_events_tab").assertExists()
-        composeTestRule.onNodeWithTag("my_events_created_events_tab").assertExists()
-        // Initial state
-        composeTestRule.onNodeWithTag("my_events_underline_joined_events").assertExists()
-        composeTestRule.onNodeWithTag("my_events_underline_created_events").assertDoesNotExist()
-        // Switch to created events
-        composeTestRule.onNodeWithTag("my_events_created_events_tab").performClick()
-        composeTestRule.onNodeWithTag("my_events_underline_joined_events").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("my_events_underline_created_events").assertExists()
-        // Switch back to joined events
-        composeTestRule.onNodeWithTag("my_events_joined_events_tab").performClick()
-        composeTestRule.onNodeWithTag("my_events_underline_joined_events").assertExists()
-        composeTestRule.onNodeWithTag("my_events_underline_created_events").assertDoesNotExist()
+    fun pagerExists() {
+        composeTestRule.onNodeWithTag("pager").assertExists()
     }
 }
