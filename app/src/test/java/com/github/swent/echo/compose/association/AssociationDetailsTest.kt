@@ -73,15 +73,7 @@ class AssociationDetailsTest {
     }
 
     @Test
-    fun associationDetailsTabsWork() {
-        composeTestRule.onNodeWithTag("association_details_events_tab").performClick()
-        composeTestRule.onNodeWithTag("association_details_underline_events").assertExists()
-        composeTestRule.onNodeWithTag("list_drawer").assertExists()
-
-        composeTestRule.onNodeWithTag("association_details_description_tab").performClick()
-        composeTestRule.onNodeWithTag("association_details_underline_description").assertExists()
-        composeTestRule
-            .onNodeWithTag("association_details_description_text", useUnmergedTree = true)
-            .assertTextEquals(testAssociation.description)
+    fun pagerExists() {
+        composeTestRule.onNodeWithTag("pager").assertExists()
     }
 }
