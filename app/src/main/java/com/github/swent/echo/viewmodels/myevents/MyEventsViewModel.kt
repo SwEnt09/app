@@ -3,6 +3,7 @@ package com.github.swent.echo.viewmodels.myevents
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,12 +18,14 @@ class MyEventsViewModel
 constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
+    private val networkService: NetworkService
 ) : ViewModel() {
     private lateinit var user: String
     private val _joinedEvents = MutableStateFlow<List<Event>>(listOf())
     val joinedEvents = _joinedEvents.asStateFlow()
     private val _createdEvents = MutableStateFlow<List<Event>>(listOf())
     val createdEvents = _createdEvents.asStateFlow()
+    val isOnline = networkService.isOnline
 
     init {
         viewModelScope.launch {
