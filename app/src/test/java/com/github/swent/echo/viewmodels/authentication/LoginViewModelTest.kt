@@ -27,8 +27,6 @@ class LoginViewModelTest {
     private lateinit var networkService: NetworkService
     private lateinit var viewModel: LoginViewModel
 
-    // @get:Rule val throwRule = RethrowingExceptionHandler()
-
     companion object {
         private const val EMAIL = "test@email.com"
         private const val PASSWORD = "password"
@@ -90,24 +88,18 @@ class LoginViewModelTest {
         }
 
     @Test
-    fun `login should return error when failed`() =
-        try {
-            runTest {
-                val testDispatcher = UnconfinedTestDispatcher(testScheduler)
-                Dispatchers.setMain(testDispatcher)
+    fun `login should return error when failed`() = runTest {
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        Dispatchers.setMain(testDispatcher)
 
-                coEvery { authenticationService.signIn(EMAIL, PASSWORD) } returns
-                    AuthenticationResult.Error(ERROR_MESSAGE)
+        coEvery { authenticationService.signIn(EMAIL, PASSWORD) } returns
+            AuthenticationResult.Error(ERROR_MESSAGE)
 
-                viewModel.state.test {
-                    assertEquals(AuthenticationState.SignedOut, awaitItem())
-                    viewModel.login(EMAIL, PASSWORD)
-                    assertEquals(AuthenticationState.SigningIn, awaitItem())
-                    assertEquals(AuthenticationState.Error(ERROR_MESSAGE), awaitItem())
-                }
-            }
-        } catch (e: Throwable) {
-            println("Exception caught during test execution: ${e.message}")
-            // throw e
+        viewModel.state.test {
+            assertEquals(AuthenticationState.SignedOut, awaitItem())
+            viewModel.login(EMAIL, PASSWORD)
+            assertEquals(AuthenticationState.SigningIn, awaitItem())
+            assertEquals(AuthenticationState.Error(ERROR_MESSAGE), awaitItem())
         }
+    }
 }

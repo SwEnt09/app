@@ -81,8 +81,16 @@ constructor(
                 val userProfile = repository.getUserProfile(userId)
                 if (userProfile != null) {
                     _isEditing.value = true
-                    _firstName.value = userProfile.name.split(" ")[0]
-                    _lastName.value = userProfile.name.split(" ")[1]
+                    val nameParts = userProfile.name.split(" ")
+                    if (nameParts.size > 1) {
+                        _firstName.value = nameParts[0]
+                        _lastName.value = nameParts[1]
+                    } else {
+                        _firstName.value = nameParts[0]
+                        _lastName.value = ""
+                    }
+                    // _firstName.value = userProfile.name.split(" ")[0]
+                    // _lastName.value = userProfile.name.split(" ")[1]
                     _selectedSemester.value = userProfile.semester
                     _selectedSection.value = userProfile.section
                     _tagList.value = userProfile.tags
