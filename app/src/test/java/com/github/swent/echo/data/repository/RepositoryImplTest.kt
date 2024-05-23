@@ -16,6 +16,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import java.io.File
 import java.time.ZonedDateTime
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -88,6 +89,8 @@ class RepositoryImplTest {
     private val time = ZonedDateTime.parse("2024-01-01T00:00:00Z")
 
     private var isOnline: () -> Boolean = { true }
+
+    private val userProfilePicture = File(userProfile.userId)
 
     @Before
     fun setUp() {
@@ -529,5 +532,50 @@ class RepositoryImplTest {
             mockedRemoteDataSource.deleteUserProfile(userProfile)
             mockedLocalDataSource.deleteUserProfile(userProfile.userId)
         }
+    }
+
+    @Test
+    fun getUserProfilePictureTest() {
+        every { mockedNetworkService.isOnlineNow() } returns true
+        coEvery { mockedRemoteDataSource.getUserProfilePicture(userProfile.userId) } returns
+            userProfilePicture
+        var res: File? = null
+        runBlocking { res = repositoryImpl.getUserProfilePicture(userProfile.userId) }
+        assertEquals(userProfilePicture, res)
+        every { mockedNetworkService.isOnlineNow() } returns false
+        runBlocking { res = repositoryImpl.getUserProfilePicture(userProfile.userId) }
+        assertNull(res)
+    }
+
+    @Test
+    fun setUserProfilePictureTest() {
+        every { mockedNetworkService.isOnlineNow() } returns true
+        runBlocking { repositoryImpl.setUserProfilePicture(userProfile.userId, userProfilePicture) }
+        coVerify {
+            mockedRemoteDataSource.setUserProfilePicture(userProfile.userId, userProfilePicture)
+        }
+        every { mockedNetworkService.isOnlineNow() } returns false
+        assertThrows(
+            RepositoryStoreWhileNoInternetException::class.java,
+            ThrowingRunnable {
+                runBlocking {
+                    repositoryImpl.setUserProfilePicture(userProfile.userId, userProfilePicture)
+                }
+            }
+        )
+    }
+
+    @Test
+    fun deleteUserProfilePictureTest() {
+        every { mockedNetworkService.isOnlineNow() } returns true
+        runBlocking { repositoryImpl.deleteUserProfilePicture(userProfile.userId) }
+        coVerify { mockedRemoteDataSource.deleteUserProfilePicture(userProfile.userId) }
+        every { mockedNetworkService.isOnlineNow() } returns false
+        assertThrows(
+            RepositoryStoreWhileNoInternetException::class.java,
+            ThrowingRunnable {
+                runBlocking { repositoryImpl.deleteUserProfilePicture(userProfile.userId) }
+            }
+        )
     }
 }

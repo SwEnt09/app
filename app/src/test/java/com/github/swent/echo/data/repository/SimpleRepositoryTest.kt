@@ -8,6 +8,7 @@ import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.UserProfile
 import io.mockk.every
 import io.mockk.mockk
+import java.io.File
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
@@ -153,5 +154,18 @@ class SimpleRepositoryTest {
     fun `getSubTags should return top level tags when called with ROOT_TAG_ID`() = runBlocking {
         val subTags = simpleRepository.getSubTags(Repository.ROOT_TAG_ID)
         assertEquals(SimpleRepository.NUM_OF_TOP_LEVEL_TAGS, subTags.size)
+    }
+
+    @Test
+    fun setGetAndDeleteUserProfileTest() {
+        val picture = File.createTempFile(USER_ID, ".png", null)
+        runBlocking {
+            simpleRepository.setUserProfilePicture(USER_ID, picture)
+            val res = simpleRepository.getUserProfilePicture(USER_ID)
+            assertEquals(picture, res)
+            simpleRepository.deleteUserProfilePicture(USER_ID)
+            val nullRes = simpleRepository.getUserProfilePicture(USER_ID)
+            assertEquals(null, nullRes)
+        }
     }
 }
