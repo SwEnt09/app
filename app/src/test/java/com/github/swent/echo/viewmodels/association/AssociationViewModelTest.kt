@@ -140,42 +140,6 @@ class AssociationViewModelTest {
     }
 
     @Test
-    fun navigationBetweenPagesShouldWork() {
-        associationViewModel.goTo(AssociationPage.DETAILS)
-        assert(associationViewModel.currentAssociationPage.value == AssociationPage.DETAILS)
-        associationViewModel.goTo(AssociationPage.SEARCH)
-        assert(associationViewModel.currentAssociationPage.value == AssociationPage.SEARCH)
-        associationViewModel.goTo(AssociationPage.MAINSCREEN)
-        assert(associationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
-    }
-
-    @Test
-    fun backButtonShouldWork() {
-        associationViewModel.goTo(AssociationPage.SEARCH)
-        associationViewModel.goBack()
-        assert(associationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
-
-        associationViewModel.goTo(AssociationPage.DETAILS)
-        associationViewModel.goBack()
-        assert(associationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
-
-        associationViewModel.goTo(AssociationPage.SEARCH)
-        associationViewModel.goTo(AssociationPage.DETAILS)
-        associationViewModel.goBack()
-        assert(associationViewModel.currentAssociationPage.value == AssociationPage.SEARCH)
-        associationViewModel.goBack()
-        assert(associationViewModel.currentAssociationPage.value == AssociationPage.MAINSCREEN)
-    }
-
-    @Test
-    fun setOverlayShouldWork() {
-        associationViewModel.setOverlay(AssociationOverlay.NONE)
-        assert(associationViewModel.overlay.value == AssociationOverlay.NONE)
-        associationViewModel.setOverlay(AssociationOverlay.SEARCH)
-        assert(associationViewModel.overlay.value == AssociationOverlay.SEARCH)
-    }
-
-    @Test
     fun setSearchedShouldWork() {
         associationViewModel.setSearched("Association A")
         assert(associationViewModel.searched.value == "Association A")
@@ -192,23 +156,16 @@ class AssociationViewModelTest {
     @Test
     fun filterAssociationsShouldReturnCorrectAssociations() {
         associationViewModel.setSearched("Association A")
-        val associations = associationViewModel.filterAssociations()
+        val associations =
+            associationViewModel.filterAssociations(associationViewModel.showAllAssociations.value)
         assert(associations.size == 1)
         assert(associations[0].name == "Association A")
     }
 
     @Test
-    fun onAssociationToFilterChangedShouldWork() {
-        associationViewModel.onAssociationToFilterChanged(associationList[0])
-        assert(associationViewModel.eventsFilter.value.contains(associationList[0]))
-        associationViewModel.onAssociationToFilterChanged(associationList[0])
-        assert(!associationViewModel.eventsFilter.value.contains(associationList[0]))
-    }
-
-    @Test
     fun refreshEventsTest() = runBlocking {
         // Arrange
-        val oldEvents = associationViewModel.filteredEvents.value
+        val oldEvents = associationViewModel.associationEvents(associationList[0])
         val newEvents =
             listOf(
                 Event(
@@ -234,7 +191,10 @@ class AssociationViewModelTest {
 
         // Assert
         coVerify { mockedRepository.getAllEvents() }
-        Assert.assertNotEquals(oldEvents, associationViewModel.filteredEvents.value)
-        Assert.assertEquals(newEvents, associationViewModel.filteredEvents.value)
+        Assert.assertNotEquals(
+            oldEvents,
+            associationViewModel.associationEvents(associationList[0])
+        )
+        Assert.assertEquals(newEvents, associationViewModel.associationEvents(associationList[0]))
     }
 }

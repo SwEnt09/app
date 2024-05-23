@@ -43,9 +43,9 @@ class AssociationDetailsTest {
     fun setUp() {
         composeTestRule.setContent {
             AssociationDetails(
-                { isFollowed.value = !isFollowed.value },
                 testAssociation,
                 isFollowed.value,
+                { isFollowed.value = !isFollowed.value },
                 listOf(testEvent),
                 true,
                 {}

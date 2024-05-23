@@ -32,10 +32,9 @@ class AssociationListScreenTest {
         composeTestRule.setContent {
             AssociationListScreen(
                 associationList = testAssociations,
-                { onRowClicked++ },
-                { onAssociationClicked++ },
-                listOf(testAssociations[0])
-            )
+            ) {
+                onRowClicked++
+            }
         }
     }
 
@@ -57,30 +56,6 @@ class AssociationListScreenTest {
             composeTestRule.onNodeWithTag("association_list_${it.name}").performClick()
             assertTrue(onRowClicked == 1)
             onRowClicked = 0
-        }
-    }
-
-    @Test
-    fun clickOnAssociationNameTrigger() {
-        testAssociations.forEach {
-            composeTestRule.onNodeWithTag("association_name_button_${it.name}").performClick()
-            assertTrue(onAssociationClicked == 1)
-            onAssociationClicked = 0
-        }
-    }
-
-    @Test
-    fun iconDisplayedForSelectedAssociations() {
-        testAssociations.forEach {
-            if (it == testAssociations[0]) {
-                composeTestRule
-                    .onNodeWithTag("selected_icon_${it.name}", useUnmergedTree = true)
-                    .assertExists()
-            } else {
-                composeTestRule
-                    .onNodeWithTag("selected_icon_${it.name}", useUnmergedTree = true)
-                    .assertDoesNotExist()
-            }
         }
     }
 }

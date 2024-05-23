@@ -7,7 +7,9 @@ import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
+import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.ui.navigation.NavigationActions
+import com.github.swent.echo.viewmodels.association.AssociationViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.mockk
@@ -25,6 +27,8 @@ class AssociationScreenTest {
     @get:Rule(order = 1) val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var navActions: NavigationActions
+    private lateinit var associationViewModel: AssociationViewModel
+    private val testAssociation = Association("id 1", "name 1", "description 1")
 
     @Before
     fun setUp() {
@@ -32,7 +36,8 @@ class AssociationScreenTest {
 
         navActions = mockk(relaxed = true)
         composeTestRule.activity.setContent {
-            AssociationScreen(associationViewModel = hiltViewModel(), navActions = navActions)
+            associationViewModel = hiltViewModel()
+            AssociationScreen(associationViewModel = associationViewModel, navActions = navActions)
         }
     }
 
@@ -43,15 +48,17 @@ class AssociationScreenTest {
 
     @Test
     fun navigationWorks() {
-        composeTestRule.onNodeWithTag("association_main_screen").assertExists()
+        // Initial state
+        composeTestRule.onNodeWithTag("search_bar_Associations/Categories").assertExists()
+        composeTestRule.onNodeWithTag("pager").assertExists()
 
-        composeTestRule.onNodeWithTag("search_button").performClick()
-        composeTestRule.onNodeWithTag("association_list_screen").assertExists()
-        composeTestRule.onNodeWithTag("search_menu_sheet").assertExists()
-        composeTestRule.onNodeWithTag("search_menu_search_bar_tags").assertExists()
-        composeTestRule.onNodeWithTag("discover_main_component").assertExists()
+        // Navigate to an association details
+        associationViewModel.setCurrentAssociationPage(testAssociation)
+        composeTestRule.onNodeWithTag("association_details").assertExists()
 
+        // Navigate back
         composeTestRule.onNodeWithTag("Back-button").performClick()
-        composeTestRule.onNodeWithTag("association_main_screen").assertExists()
+        composeTestRule.onNodeWithTag("search_bar_Associations/Categories").assertExists()
+        composeTestRule.onNodeWithTag("pager").assertExists()
     }
 }
