@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.supabase.gotrue)
     implementation(libs.ktor.client.android)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.supabase.storage)
 
     // Google Authentication
     implementation(libs.androidx.credentials)
