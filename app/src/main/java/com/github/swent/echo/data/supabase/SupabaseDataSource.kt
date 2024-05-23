@@ -21,7 +21,11 @@ import io.github.jan.supabase.exceptions.UnknownRestException
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
-import kotlin.text.StringBuilder
+import io.github.jan.supabase.storage.downloadAuthenticatedTo
+import io.github.jan.supabase.storage.storage
+import java.io.File
+
+val EMPTY_FILE_SIZE = 69
 
 class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSource {
 
@@ -294,5 +298,28 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
 
     override suspend fun deleteUserProfile(userProfile: UserProfile) {
         supabase.from("user_profiles").delete { filter { eq("user_id", userProfile.userId) } }
+    }
+
+    override suspend fun getUserProfilePicture(userId: String): File? {
+        val outputFile =
+            File.createTempFile(userId, ".png", null) // the cache directory is used by default
+        supabase.storage
+            .from("user-profile-picture")
+            .downloadAuthenticatedTo("$userId.png", outputFile)
+        if (outputFile.length() > EMPTY_FILE_SIZE) {
+            return outputFile
+        } else {
+            return null
+        }
+    }
+
+    override suspend fun setUserProfilePicture(userId: String, picture: File) {
+        supabase.storage
+            .from("user-profile-picture")
+            .upload("$userId.png", picture.readBytes(), upsert = true)
+    }
+
+    override suspend fun deleteUserProfilePicture(userId: String) {
+        supabase.storage.from("user-profile-picture").delete("$userId.png")
     }
 }
