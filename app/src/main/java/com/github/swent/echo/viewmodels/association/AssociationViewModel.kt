@@ -13,17 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-enum class AssociationPage(var association: Association) {
-    MAINSCREEN(Association.EMPTY),
-    DETAILS(Association.EMPTY),
-    SEARCH(Association.EMPTY)
-}
-
-enum class AssociationOverlay {
-    NONE,
-    SEARCH
-}
-
 // represent associations
 @HiltViewModel
 class AssociationViewModel
@@ -39,15 +28,8 @@ constructor(
     val followedAssociations = _followedAssociations.asStateFlow()
     private val _committeeAssociations = MutableStateFlow<List<Association>>(listOf())
     val committeeAssociations = _committeeAssociations.asStateFlow()
-    private val _filteredEvents = MutableStateFlow<List<Event>>(listOf())
-    val filteredEvents = _filteredEvents.asStateFlow()
-    private val _eventsFilter = MutableStateFlow<List<Association>>(listOf())
-    val eventsFilter = _eventsFilter.asStateFlow()
-    private val _lastAssociationPage = MutableStateFlow(AssociationPage.MAINSCREEN)
-    private val _currentAssociationPage = MutableStateFlow(AssociationPage.MAINSCREEN)
-    val currentAssociationPage = _currentAssociationPage.asStateFlow()
-    private val _overlay = MutableStateFlow(AssociationOverlay.NONE)
-    val overlay = _overlay.asStateFlow()
+    private val _showAllAssociations = MutableStateFlow<List<Association>>(listOf())
+    val showAllAssociations = _showAllAssociations.asStateFlow()
     private val _searched = MutableStateFlow("")
     val searched = _searched.asStateFlow()
     val isOnline = networkService.isOnline
@@ -61,14 +43,13 @@ constructor(
                 repository.getUserProfile(user)?.associationsSubscriptions?.toList() ?: listOf()
             _committeeAssociations.value =
                 repository.getUserProfile(user)?.committeeMember?.toList() ?: listOf()
-            _filteredEvents.value = computeFilteredEvents()
+            _showAllAssociations.value = allAssociations
         }
     }
 
     fun onFollowAssociationChanged(association: Association) {
         if (_followedAssociations.value.contains(association)) {
             _followedAssociations.value -= association
-            _eventsFilter.value -= association
         } else {
             _followedAssociations.value += association
         }
@@ -78,27 +59,6 @@ constructor(
                 userProfile?.copy(associationsSubscriptions = _followedAssociations.value.toSet())
             repository.setUserProfile(updatedProfile!!)
         }
-        _filteredEvents.value = computeFilteredEvents()
-    }
-
-    fun goBack() {
-        if (
-            (_currentAssociationPage.value == AssociationPage.DETAILS) &&
-                (_lastAssociationPage.value == AssociationPage.SEARCH)
-        ) {
-            _currentAssociationPage.value = AssociationPage.SEARCH
-        } else {
-            _currentAssociationPage.value = AssociationPage.MAINSCREEN
-        }
-    }
-
-    fun goTo(page: AssociationPage) {
-        _lastAssociationPage.value = _currentAssociationPage.value
-        _currentAssociationPage.value = page
-    }
-
-    fun setOverlay(overlay: AssociationOverlay) {
-        _overlay.value = overlay
     }
 
     fun setSearched(searched: String) {
@@ -109,41 +69,20 @@ constructor(
         return allEvents.filter { it.organizer == association }
     }
 
-    fun filterAssociations(): List<Association> {
+    fun filterAssociations(associations: List<Association>): List<Association> {
         return if (_searched.value.isEmpty()) {
-            allAssociations
+            associations
         } else {
-            allAssociations.filter {
+            associations.filter {
                 it.name.lowercase().contains(_searched.value.lowercase())
                 // || it.tags.lowercase().contains(_searched.value.lowercase())
             }
         }
     }
 
-    fun onAssociationToFilterChanged(association: Association) {
-        if (_eventsFilter.value.contains(association)) {
-            _eventsFilter.value -= association
-        } else {
-            _eventsFilter.value += association
-        }
-        _filteredEvents.value = computeFilteredEvents()
-    }
-
-    private fun computeFilteredEvents(): List<Event> {
-        return if (_eventsFilter.value.isEmpty()) {
-            allEvents.filter {
-                _followedAssociations.value.contains(it.organizer) ||
-                    _committeeAssociations.value.contains(it.organizer)
-            }
-        } else {
-            allEvents.filter { _eventsFilter.value.contains(it.organizer) }
-        }
-    }
-
     fun refreshEvents() {
         viewModelScope.launch {
             allEvents = repository.getAllEvents()
-            _filteredEvents.value = computeFilteredEvents()
         }
     }
 }
