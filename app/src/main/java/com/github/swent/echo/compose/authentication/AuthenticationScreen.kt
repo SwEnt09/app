@@ -43,7 +43,9 @@ fun AuthenticationScreen(
     state: AuthenticationState,
     isOnline: Boolean,
     onAuthenticate: (email: String, password: String) -> Unit,
-    onStartGoogleSignIn: () -> Unit
+    onStartGoogleSignIn: () -> Unit,
+    confirmPassword: Boolean = false,
+    validate: Boolean = false,
 ) {
     Box(modifier = Modifier.padding(24.dp)) {
         when (state) {
@@ -56,6 +58,8 @@ fun AuthenticationScreen(
                         action = action,
                         isOnline = isOnline,
                         onAuthenticate = onAuthenticate,
+                        confirmPassword = confirmPassword,
+                        validate = validate,
                     )
                     AuthenticationMethodSeparator()
                     GoogleSignInButton(isOnline, onStartGoogleSignIn)

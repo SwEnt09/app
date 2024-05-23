@@ -5,7 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,8 +51,10 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
         }
     }
 
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier.testTag("register-screen"),
+        modifier = Modifier.testTag("register-screen").fillMaxHeight().verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -61,6 +66,8 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
         AuthenticationScreen(
             action = stringResource(R.string.register_screen_action_button),
             isOnline = isOnline,
+            confirmPassword = true,
+            validate = true,
             state = state,
             onAuthenticate = registerViewModel::register,
             onStartGoogleSignIn = {
