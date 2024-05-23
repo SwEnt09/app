@@ -1,9 +1,12 @@
 package com.github.swent.echo.compose.authentication
 
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.ui.navigation.NavigationActions
@@ -50,6 +53,7 @@ class RegisterScreenTest {
         state.value = AuthenticationState.SignedOut
         composeTestRule.onNodeWithTag("email-field").performTextInput("test@test.test")
         composeTestRule.onNodeWithTag("password-field").performTextInput("password")
+        composeTestRule.onNodeWithTag("confirm-password-field").performTextInput("password")
         composeTestRule.onNodeWithTag("action-button").performClick()
         verify { registerViewModel.register("test@test.test", "password") }
     }
@@ -59,6 +63,7 @@ class RegisterScreenTest {
         state.value = AuthenticationState.Error("Error message")
         composeTestRule.onNodeWithTag("email-field").performTextInput("test@test.test")
         composeTestRule.onNodeWithTag("password-field").performTextInput("password")
+        composeTestRule.onNodeWithTag("confirm-password-field").performTextInput("password")
         composeTestRule.onNodeWithTag("action-button").performClick()
         verify { registerViewModel.register("test@test.test", "password") }
     }
@@ -66,6 +71,7 @@ class RegisterScreenTest {
     @Test
     fun shouldCallNavigateToLoginWhenLoginButtonIsClickedInSignedOutState() {
         state.value = AuthenticationState.SignedOut
+        composeTestRule.onNodeWithTag("login-button").performScrollTo()
         composeTestRule.onNodeWithTag("login-button").performClick()
         verify { navActions.navigateTo(Routes.LOGIN) }
     }
@@ -73,7 +79,37 @@ class RegisterScreenTest {
     @Test
     fun shouldCallNavigateToLoginWhenLoginButtonIsClickedInErrorState() {
         state.value = AuthenticationState.Error("Error message")
+        composeTestRule.onNodeWithTag("login-button").performScrollTo()
         composeTestRule.onNodeWithTag("login-button").performClick()
         verify { navActions.navigateTo(Routes.LOGIN) }
+    }
+
+    @Test
+    fun shouldDisplayErrorMessageWhenPasswordDoNotMatch() {
+        state.value = AuthenticationState.SignedOut
+        composeTestRule.onNodeWithTag("email-field").performTextInput("test@test.test")
+        composeTestRule.onNodeWithTag("password-field").performTextInput("password")
+        composeTestRule.onNodeWithTag("confirm-password-field").performTextInput("pass")
+        composeTestRule.onNodeWithTag("action-button").performClick()
+        composeTestRule.onNodeWithText("Passwords do not match").assertIsDisplayed()
+    }
+
+    @Test
+    fun shouldDisplayErrorMessageWhenPasswordIsTooShort() {
+        state.value = AuthenticationState.SignedOut
+        composeTestRule.onNodeWithTag("email-field").performTextInput("test@test.test")
+        composeTestRule.onNodeWithTag("password-field").performTextInput("pass")
+        composeTestRule.onNodeWithTag("confirm-password-field").performTextInput("pass")
+        composeTestRule.onNodeWithTag("action-button").performClick()
+        composeTestRule.onNodeWithText("Password must be at least 8 characters").assertIsDisplayed()
+    }
+
+    @Test
+    fun shouldDisplayErrorMessageWhenEmailIsEmpty() {
+        state.value = AuthenticationState.SignedOut
+        composeTestRule.onNodeWithTag("password-field").performTextInput("password")
+        composeTestRule.onNodeWithTag("confirm-password-field").performTextInput("password")
+        composeTestRule.onNodeWithTag("action-button").performClick()
+        composeTestRule.onNodeWithText("Email is required").assertIsDisplayed()
     }
 }

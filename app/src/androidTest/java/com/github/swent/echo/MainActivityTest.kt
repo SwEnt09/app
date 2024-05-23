@@ -58,6 +58,7 @@ class MainActivityTest {
     @Test
     fun shouldNavigateToLoginRouteWhenLoginButtonIsClicked() {
         // Navigate to the login screen
+        composeTestRule.onNodeWithTag("login-button").performScrollTo()
         composeTestRule.onNodeWithTag("login-button").performClick()
         composeTestRule.onNodeWithTag("login-screen").assertIsDisplayed()
     }
@@ -65,6 +66,7 @@ class MainActivityTest {
     @Test
     fun shouldNavigateBackToRegisterRouteWhenRegisterButtonIsClicked() {
         // Navigate to the login screen
+        composeTestRule.onNodeWithTag("login-button").performScrollTo()
         composeTestRule.onNodeWithTag("login-button").performClick()
         // Navigate back to the register screen
         composeTestRule.onNodeWithTag("register-button").performClick()
@@ -77,6 +79,7 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
         composeTestRule.onNodeWithTag("email-field").performTextInput(EMAIL)
         composeTestRule.onNodeWithTag("password-field").performTextInput(PASSWORD)
+        composeTestRule.onNodeWithTag("confirm-password-field").performTextInput(PASSWORD)
         composeTestRule.onNodeWithTag("action-button").performClick()
 
         // Login with the registered user
@@ -130,6 +133,7 @@ class MainActivityTest {
         composeTestRule.onNodeWithTag("register-screen").assertIsDisplayed()
 
         // Go to the login screen
+        composeTestRule.onNodeWithTag("login-button").performScrollTo()
         composeTestRule.onNodeWithTag("login-button").performClick()
 
         // Login with email and password
