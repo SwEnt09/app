@@ -1,7 +1,6 @@
 package com.github.swent.echo.compose.association
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ListItem
@@ -23,7 +22,7 @@ fun AssociationListScreen(
         items(associationList.size) { index ->
             AssociationListElement(
                 association = associationList[index],
-                onRowClicked = { onRowClicked(it) }
+                onRowClicked = onRowClicked
             )
         }
     }
@@ -38,12 +37,7 @@ fun AssociationListElement(
     val boxInsidePadding = 5.dp
     val tonalElevation = 5.dp
     ListItem(
-        modifier =
-            Modifier.clickable { onRowClicked(association) }
-                .testTag("association_list_${association.name}"),
-        overlineContent = { Spacer(modifier = Modifier) }, // used to align the icon and the button
-        headlineContent = {},
-        leadingContent = {
+        headlineContent = {
             Text(
                 text = association.name,
                 textAlign = TextAlign.Center,
@@ -52,6 +46,9 @@ fun AssociationListElement(
                         .testTag("association_name_button_${association.name}")
             )
         },
+        modifier =
+            Modifier.clickable { onRowClicked(association) }
+                .testTag("association_list_${association.name}"),
         tonalElevation = tonalElevation,
     )
 }
