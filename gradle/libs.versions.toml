@@ -53,6 +53,7 @@ supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "s
 supabase-compose-auth = { module = "io.github.jan-tennert.supabase:compose-auth" }
 supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 supabase-gotrue = { module = "io.github.jan-tennert.supabase:gotrue-kt"}
+supabase-storage = {module = "io.github.jan-tennert.supabase:storage-kt"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
