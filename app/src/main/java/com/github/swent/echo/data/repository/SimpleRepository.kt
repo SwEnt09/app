@@ -11,6 +11,7 @@ import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import java.io.File
 
 /**
  * A simple implementation of the [Repository] interface that stores all data in memory.
@@ -41,6 +42,7 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
             Tag(SEMESTER_ROOT_TAG_ID, "Semester")
         )
     private val userProfiles = mutableSetOf<UserProfile>()
+    private val userProfilesPicturesMap = mutableMapOf<String, File>()
 
     init {
         // Populate the repository with sample data
@@ -156,5 +158,17 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
 
     override suspend fun deleteUserProfile(userProfile: UserProfile) {
         userProfiles.removeIf { it.userId == userProfile.userId }
+    }
+
+    override suspend fun getUserProfilePicture(userId: String): File? {
+        return userProfilesPicturesMap[userId]
+    }
+
+    override suspend fun setUserProfilePicture(userId: String, picture: File) {
+        userProfilesPicturesMap[userId] = picture
+    }
+
+    override suspend fun deleteUserProfilePicture(userId: String) {
+        userProfilesPicturesMap.remove(userId)
     }
 }

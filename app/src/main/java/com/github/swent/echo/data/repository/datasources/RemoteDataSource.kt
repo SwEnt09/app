@@ -4,6 +4,7 @@ import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import java.io.File
 
 interface RemoteDataSource {
     suspend fun getAssociation(associationId: String): Association?
@@ -49,4 +50,10 @@ interface RemoteDataSource {
     suspend fun setUserProfile(userProfile: UserProfile)
 
     suspend fun deleteUserProfile(userProfile: UserProfile)
+
+    suspend fun getUserProfilePicture(userId: String): File?
+
+    suspend fun setUserProfilePicture(userId: String, picture: File)
+
+    suspend fun deleteUserProfilePicture(userId: String)
 }

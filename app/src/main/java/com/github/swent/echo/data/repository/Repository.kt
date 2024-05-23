@@ -4,6 +4,7 @@ import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import java.io.File
 
 interface Repository {
 
@@ -81,4 +82,16 @@ interface Repository {
     suspend fun setUserProfile(userProfile: UserProfile)
 
     suspend fun deleteUserProfile(userProfile: UserProfile)
+
+    /**
+     * Get the picture of a user's profile, retruns null if none exist.
+     *
+     * @param userId the id of the user
+     * @return a picture as a file.
+     */
+    suspend fun getUserProfilePicture(userId: String): File?
+
+    suspend fun setUserProfilePicture(userId: String, picture: File)
+
+    suspend fun deleteUserProfilePicture(userId: String)
 }
