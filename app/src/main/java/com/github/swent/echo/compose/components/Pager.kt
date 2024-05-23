@@ -21,7 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
@@ -33,8 +35,8 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Pager(content: List<Pair<String, @Composable () -> Unit>>) {
-    val pagerState = rememberPagerState(pageCount = { content.size })
+fun Pager(content: List<Pair<String, @Composable () -> Unit>>, initialPage: Int? = 0) {
+    val pagerState = rememberPagerState(initialPage = initialPage!!, pageCount = { content.size })
     val coroutineScope = rememberCoroutineScope()
     val itemsPadding = 2.dp
     val itemsWeight = 1f
@@ -59,9 +61,10 @@ fun Pager(content: List<Pair<String, @Composable () -> Unit>>) {
                                     pagerState.animateScrollToPage(id)
                                 }
                             },
-                            modifier = Modifier.testTag("page_title_$id")
+                            modifier = Modifier.testTag("page_title_$id"),
+                            shape = RectangleShape
                         ) {
-                            Text(text = item.first, modifier = Modifier.padding(titlePadding))
+                            Text(text = item.first, modifier = Modifier.padding(titlePadding), textAlign = TextAlign.Center)
                         }
                         if (pagerState.currentPage == id) {
                             Box(
