@@ -84,11 +84,8 @@ constructor(
         }
     }
 
-    fun setCurrentAssociationPage(
-        association: Association,
-        initialPage: Int? = _initialPage.value
-    ) {
-        _initialPage.value = initialPage!!
+    fun setCurrentAssociationPage(association: Association, initialPage: Int = _initialPage.value) {
+        _initialPage.value = initialPage
         _currentAssociationPage.value = association
     }
 

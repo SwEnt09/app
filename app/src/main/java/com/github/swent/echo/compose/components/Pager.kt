@@ -35,8 +35,8 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Pager(content: List<Pair<String, @Composable () -> Unit>>, initialPage: Int? = 0) {
-    val pagerState = rememberPagerState(initialPage = initialPage!!, pageCount = { content.size })
+fun Pager(content: List<Pair<String, @Composable () -> Unit>>, initialPage: Int = 0) {
+    val pagerState = rememberPagerState(initialPage = initialPage, pageCount = { content.size })
     val coroutineScope = rememberCoroutineScope()
     val itemsPadding = 2.dp
     val itemsWeight = 1f
