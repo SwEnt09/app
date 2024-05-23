@@ -47,7 +47,9 @@ fun AssociationListElement(
             Text(
                 text = association.name,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(boxInsidePadding).testTag("association_name_button_${association.name}")
+                modifier =
+                    Modifier.padding(boxInsidePadding)
+                        .testTag("association_name_button_${association.name}")
             )
         },
         tonalElevation = tonalElevation,

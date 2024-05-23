@@ -32,11 +32,12 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
     val followedAssociations by associationViewModel.followedAssociations.collectAsState()
     val committeeAssociations by associationViewModel.committeeAssociations.collectAsState()
     val showAllAssociations by associationViewModel.showAllAssociations.collectAsState()
-    val pages = listOf(
-        Pair("Followed Associations", followedAssociations),
-        Pair("Committee Associations", committeeAssociations),
-        Pair("All Associations", showAllAssociations)
-    )
+    val pages =
+        listOf(
+            Pair("Followed Associations", followedAssociations),
+            Pair("Committee Associations", committeeAssociations),
+            Pair("All Associations", showAllAssociations)
+        )
 
     var currentAssociationPage by remember { mutableStateOf(Association.EMPTY) }
     var initialPage by remember { mutableIntStateOf(0) }
@@ -50,25 +51,28 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
     Scaffold(
         topBar = {
             EventTitleAndBackButton(stringResource(R.string.hamburger_associations)) {
-                if(currentAssociationPage == Association.EMPTY) {
+                if (currentAssociationPage == Association.EMPTY) {
                     navActions.navigateTo(Routes.MAP)
                 } else {
                     currentAssociationPage = Association.EMPTY
                 }
             }
         },
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("association_screen")
+        modifier = Modifier.fillMaxSize().testTag("association_screen")
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues), horizontalAlignment = Alignment.CenterHorizontally) {
-            if(currentAssociationPage == Association.EMPTY) {
+        Column(
+            modifier = Modifier.padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (currentAssociationPage == Association.EMPTY) {
                 SearchBar("Associations/Categories", searched, associationViewModel::setSearched)
                 Spacer(modifier = Modifier.height(spaceBetweenSearchAndPages))
                 Pager(
                     pages.mapIndexed { id, page ->
                         Pair(page.first) {
-                            AssociationListScreen(associationViewModel.filterAssociations(page.second)) {
+                            AssociationListScreen(
+                                associationViewModel.filterAssociations(page.second)
+                            ) {
                                 currentAssociationPage = it
                                 initialPage = id
                             }

@@ -64,7 +64,11 @@ fun Pager(content: List<Pair<String, @Composable () -> Unit>>, initialPage: Int?
                             modifier = Modifier.testTag("page_title_$id"),
                             shape = RectangleShape
                         ) {
-                            Text(text = item.first, modifier = Modifier.padding(titlePadding), textAlign = TextAlign.Center)
+                            Text(
+                                text = item.first,
+                                modifier = Modifier.padding(titlePadding),
+                                textAlign = TextAlign.Center
+                            )
                         }
                         if (pagerState.currentPage == id) {
                             Box(

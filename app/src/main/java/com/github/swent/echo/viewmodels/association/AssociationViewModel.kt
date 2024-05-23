@@ -81,8 +81,6 @@ constructor(
     }
 
     fun refreshEvents() {
-        viewModelScope.launch {
-            allEvents = repository.getAllEvents()
-        }
+        viewModelScope.launch { allEvents = repository.getAllEvents() }
     }
 }
