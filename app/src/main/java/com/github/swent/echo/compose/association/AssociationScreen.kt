@@ -9,10 +9,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -39,8 +35,8 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
             Pair("All Associations", showAllAssociations)
         )
 
-    var currentAssociationPage by remember { mutableStateOf(Association.EMPTY) }
-    var initialPage by remember { mutableIntStateOf(0) }
+    val currentAssociationPage by associationViewModel.currentAssociationPage.collectAsState()
+    val initialPage by associationViewModel.initialPage.collectAsState()
 
     val searched by associationViewModel.searched.collectAsState()
 
@@ -54,7 +50,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                 if (currentAssociationPage == Association.EMPTY) {
                     navActions.navigateTo(Routes.MAP)
                 } else {
-                    currentAssociationPage = Association.EMPTY
+                    associationViewModel.setCurrentAssociationPage(Association.EMPTY)
                 }
             }
         },
@@ -65,7 +61,11 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (currentAssociationPage == Association.EMPTY) {
-                SearchBar("Associations/Categories", searched, associationViewModel::setSearched)
+                SearchBar(
+                    stringResource(R.string.associations_categories),
+                    searched,
+                    associationViewModel::setSearched
+                )
                 Spacer(modifier = Modifier.height(spaceBetweenSearchAndPages))
                 Pager(
                     pages.mapIndexed { id, page ->
@@ -73,8 +73,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                             AssociationListScreen(
                                 associationViewModel.filterAssociations(page.second)
                             ) {
-                                currentAssociationPage = it
-                                initialPage = id
+                                associationViewModel.setCurrentAssociationPage(it, id)
                             }
                         }
                     },

@@ -30,6 +30,10 @@ constructor(
     val committeeAssociations = _committeeAssociations.asStateFlow()
     private val _showAllAssociations = MutableStateFlow<List<Association>>(listOf())
     val showAllAssociations = _showAllAssociations.asStateFlow()
+    private val _initialPage = MutableStateFlow(0)
+    val initialPage = _initialPage.asStateFlow()
+    private val _currentAssociationPage = MutableStateFlow(Association.EMPTY)
+    val currentAssociationPage = _currentAssociationPage.asStateFlow()
     private val _searched = MutableStateFlow("")
     val searched = _searched.asStateFlow()
     val isOnline = networkService.isOnline
@@ -78,6 +82,14 @@ constructor(
                 // || it.tags.lowercase().contains(_searched.value.lowercase())
             }
         }
+    }
+
+    fun setCurrentAssociationPage(
+        association: Association,
+        initialPage: Int? = _initialPage.value
+    ) {
+        _initialPage.value = initialPage!!
+        _currentAssociationPage.value = association
     }
 
     fun refreshEvents() {
