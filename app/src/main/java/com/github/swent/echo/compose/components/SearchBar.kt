@@ -12,6 +12,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -32,7 +33,10 @@ fun SearchBar(title: String, searched: String, onSearchChanged: (String) -> Unit
                 )
             }
         },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = paddingHorizontal),
+        modifier =
+            Modifier.fillMaxWidth()
+                .padding(horizontal = paddingHorizontal)
+                .testTag("search_bar_$title"),
         shape = RoundedCornerShape(cornerRadius)
     )
 }
