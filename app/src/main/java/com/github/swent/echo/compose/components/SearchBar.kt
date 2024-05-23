@@ -23,9 +23,9 @@ fun SearchBar(title: String, searched: String, onSearchChanged: (String) -> Unit
         value = searched,
         onValueChange = onSearchChanged,
         trailingIcon = {
-            if(searched.isBlank()){
+            if (searched.isBlank()) {
                 Icon(Icons.Outlined.Search, "search")
-            }else{
+            } else {
                 IconButton(
                     onClick = { onSearchChanged("") },
                     content = { Icon(Icons.Outlined.Close, "close") }
