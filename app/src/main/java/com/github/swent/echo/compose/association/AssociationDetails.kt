@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,14 +31,15 @@ import com.github.swent.echo.data.model.Event
 
 @Composable
 fun AssociationDetails(
-    follow: (Association) -> Unit,
     association: Association,
     isFollowed: Boolean,
+    follow: (Association) -> Unit,
     events: List<Event>,
     isOnline: Boolean,
     refreshEvents: () -> Unit
 ) {
-    val paddingValues = 5.dp
+    val paddingValues = 10.dp
+    val phoneVerticalCenter = (LocalConfiguration.current.screenWidthDp / 2).dp
     val followWidth = 150.dp
     val followHeight = 40.dp
     val followSpaceInside = 5.dp
@@ -47,7 +50,7 @@ fun AssociationDetails(
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
                 association.name,
-                modifier = Modifier.align(Alignment.CenterStart),
+                modifier = Modifier.align(Alignment.CenterStart).widthIn(max = phoneVerticalCenter),
                 style = MaterialTheme.typography.titleLarge
             )
             Button(
