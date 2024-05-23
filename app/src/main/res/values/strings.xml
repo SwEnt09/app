@@ -120,5 +120,6 @@
     <string name="help_screen_toggle_description">Toggle description</string>
     <string name="help_screen_list_mode">It\'s hard to see the events on the map</string>
     <string name="help_screen_list_mode_description">No worries! You can change the display of events to a list by clicking the button in the upper right of the screen. You can even sort it by date or distance!</string>
+    <string name="associations_categories">Associations/Categories</string>
 </resources>
 
