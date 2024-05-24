@@ -42,27 +42,23 @@ fun EventTagEntry(
     onTagSelected: (tag: Tag) -> Unit,
     onTagDeleted: (tag: Tag) -> Unit
 ) {
+    val tagButtonsStrings =
+        listOf(
+            Pair(stringResource(R.string.edit_event_screen_select_category), ""),
+            Pair(stringResource(R.string.edit_event_screen_select_section), SECTION_ROOT_TAG_ID),
+            Pair(stringResource(R.string.edit_event_screen_select_semester), SEMESTER_ROOT_TAG_ID)
+        )
     Column(modifier = Modifier.fillMaxWidth().padding(EVENT_PADDING_BETWEEN_INPUTS)) {
         EventEntryName(stringResource(R.string.edit_event_screen_tags))
         Row {
-            AddTagButton(
-                type = stringResource(R.string.edit_event_screen_select_category),
-                rootTagId = "",
-                enabled = enabled,
-                onTagSelected = onTagSelected
-            )
-            AddTagButton(
-                type = stringResource(R.string.edit_event_screen_select_section),
-                rootTagId = SECTION_ROOT_TAG_ID,
-                enabled = enabled,
-                onTagSelected = onTagSelected
-            )
-            AddTagButton(
-                type = stringResource(R.string.edit_event_screen_select_semester),
-                rootTagId = SEMESTER_ROOT_TAG_ID,
-                enabled = enabled,
-                onTagSelected = onTagSelected
-            )
+            for (buttonString in tagButtonsStrings) {
+                AddTagButton(
+                    type = buttonString.first,
+                    rootTagId = buttonString.second,
+                    enabled = enabled,
+                    onTagSelected = onTagSelected
+                )
+            }
         }
         FlowRow {
             tags.forEach { tag ->
