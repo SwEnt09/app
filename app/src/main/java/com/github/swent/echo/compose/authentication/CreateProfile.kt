@@ -283,7 +283,6 @@ fun ProfileCreationUI(
                                     )
                                 }
                             }
-                            //  return@OutlinedButton
                         } else {
                             onSave(firstName, lastName)
                             navAction.navigateTo(Routes.MAP)
@@ -342,7 +341,6 @@ fun DropDownListFunctionWrapper(
                     DropdownMenuItem(
                         text = { Text(elem.toString()) },
                         onClick = {
-                            // selectedField = elem.toString()
                             onSelectedFieldChange(elem.toString())
                             showDropdown = false
                         },
@@ -365,10 +363,7 @@ fun InputChipFun(
 
     InputChip(
         selected = selected,
-        onClick = {
-            onDismiss()
-            selected = !selected
-        },
+        onClick = { onDismiss() },
         label = { Text(text) },
         modifier = Modifier.testTag(text),
         enabled = true,
