@@ -25,6 +25,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
 
+enum class AuthenticationFormError(val id: Int) {
+    EMPTY_EMAIL(R.string.authentication_error_email_is_required),
+    PASSWORD_TOO_SHORT(R.string.authentication_password_too_short),
+    PASSWORD_DO_NOT_MATCH(R.string.authentication_error_passwords_do_not_match),
+}
+
 /**
  * A form for authenticating a user. It contains fields for the user's email and password.
  *
@@ -53,6 +59,13 @@ fun AuthenticationForm(
     var passwordError by remember { mutableStateOf("") }
     var confirmError by remember { mutableStateOf("") }
 
+    val minPasswordLength = 8
+    val spaceBetweenTextFields = 8.dp
+
+    val emailErrorText = stringResource(AuthenticationFormError.EMPTY_EMAIL.id)
+    val passwordTooShort = stringResource(AuthenticationFormError.PASSWORD_TOO_SHORT.id)
+    val passwordDoNotMatch = stringResource(AuthenticationFormError.PASSWORD_DO_NOT_MATCH.id)
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -67,7 +80,7 @@ fun AuthenticationForm(
             },
             errorText = emailError,
         )
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.padding(spaceBetweenTextFields))
         AuthenticationTextField(
             modifier = Modifier.fillMaxWidth().testTag("password-field"),
             label = stringResource(R.string.authentication_form_password_label),
@@ -80,7 +93,7 @@ fun AuthenticationForm(
             isPasswordField = true,
         )
         if (confirmPassword) {
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(spaceBetweenTextFields))
             AuthenticationTextField(
                 modifier = Modifier.fillMaxWidth().testTag("confirm-password-field"),
                 label = stringResource(R.string.authentication_form_confirm_password_label),
@@ -93,25 +106,30 @@ fun AuthenticationForm(
                 isPasswordField = true,
             )
         }
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.padding(spaceBetweenTextFields))
         ElevatedButton(
             enabled = isOnline,
             modifier = Modifier.fillMaxWidth().testTag("action-button"),
             onClick = {
                 if (validate) {
+                    var hasError = false
+
                     if (email.isEmpty()) {
-                        emailError = "Email is required"
+                        emailError = emailErrorText
+                        hasError = true
                     }
 
-                    if (password.length < 8) {
-                        passwordError = "Password must be at least 8 characters"
+                    if (password.length < minPasswordLength) {
+                        passwordError = passwordTooShort
+                        hasError = true
                     }
 
                     if (confirmPassword && password != confirm && passwordError.isEmpty()) {
-                        confirmError = "Passwords do not match"
+                        confirmError = passwordDoNotMatch
+                        hasError = true
                     }
 
-                    if (emailError.isEmpty() && passwordError.isEmpty() && confirmError.isEmpty()) {
+                    if (!hasError) {
                         onAuthenticate(email, password)
                     }
                 } else {
@@ -133,6 +151,8 @@ fun AuthenticationTextField(
     onValueChange: (String) -> Unit,
     isPasswordField: Boolean = false,
 ) {
+    val spaceBetweenErrorText = 4.dp
+
     Column {
         OutlinedTextField(
             modifier = modifier,
@@ -152,7 +172,7 @@ fun AuthenticationTextField(
             singleLine = true,
         )
         if (errorText.isNotEmpty()) {
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.padding(spaceBetweenErrorText))
             Text(
                 text = errorText,
                 color = MaterialTheme.colorScheme.error,
