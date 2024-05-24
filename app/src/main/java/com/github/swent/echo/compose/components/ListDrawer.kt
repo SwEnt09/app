@@ -221,7 +221,7 @@ fun EventListItem(
                         if (viewOnMap != null) {
                             IconButton(
                                 onClick = { viewOnMap(event) },
-                                modifier = Modifier.testTag("view_on_map"),
+                                modifier = Modifier.testTag("view_on_map_${event.eventId}"),
                                 colors = iconButtonColors,
                             ) {
                                 Icon(
@@ -234,7 +234,7 @@ fun EventListItem(
                         if (canModifyEvent) {
                             IconButton(
                                 onClick = { modify(event) },
-                                modifier = Modifier.testTag("modify_event"),
+                                modifier = Modifier.testTag("modify_event_${event.eventId}"),
                                 colors = iconButtonColors,
                             ) {
                                 Icon(
