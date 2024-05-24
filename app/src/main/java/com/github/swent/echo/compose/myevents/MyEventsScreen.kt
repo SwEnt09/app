@@ -40,6 +40,7 @@ fun MyEventsScreen(myEventsViewModel: MyEventsViewModel, navActions: NavigationA
                             "",
                             "",
                             isOnline,
+                            null,
                             myEventsViewModel::refreshEvents
                         )
                     },
@@ -49,6 +50,7 @@ fun MyEventsScreen(myEventsViewModel: MyEventsViewModel, navActions: NavigationA
                             "",
                             "",
                             isOnline,
+                            null,
                             myEventsViewModel::refreshEvents
                         )
                     }

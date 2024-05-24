@@ -36,7 +36,6 @@ import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuDiscover
 import com.github.swent.echo.compose.components.searchmenu.SearchMenuFilters
-import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +51,6 @@ fun SearchMenuSheet(
     pendingCallback: () -> Unit,
     confirmedCallback: () -> Unit,
     fullCallback: () -> Unit,
-    sortByCallback: (SortBy) -> Unit,
     resetFiltersCallback: () -> Unit,
     timeFilterCallback: (Float, Float) -> Unit
 ) {
@@ -106,7 +104,6 @@ fun SearchMenuSheet(
                         pendingCallback,
                         confirmedCallback,
                         fullCallback,
-                        sortByCallback,
                         timeFilterCallback
                     )
                 } else {

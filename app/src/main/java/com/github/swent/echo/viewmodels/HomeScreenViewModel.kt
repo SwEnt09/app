@@ -1,11 +1,13 @@
 package com.github.swent.echo.viewmodels
 
+import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.components.searchmenu.floatToDate
+import com.github.swent.echo.compose.navigation.OnLocationSuccessListener
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
@@ -36,7 +38,7 @@ class HomeScreenViewModel
 constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
-    private val networkService: NetworkService
+    private val networkService: NetworkService,
 ) : ViewModel() {
     private val _overlay = MutableStateFlow(Overlay.NONE)
     val overlay = _overlay.asStateFlow()
@@ -52,21 +54,6 @@ constructor(
     val displayEventInfo = _displayEventInfo.asStateFlow()
     private val _canUserModifyEvent = MutableStateFlow(false)
     val canUserModifyEvent = _canUserModifyEvent.asStateFlow()
-    private val _filtersContainer =
-        MutableStateFlow(
-            FiltersContainer(
-                searchEntry = "",
-                epflChecked = false,
-                sectionChecked = false,
-                classChecked = false,
-                pendingChecked = false,
-                confirmedChecked = false,
-                fullChecked = false,
-                from = 0f,
-                to = 14f,
-                sortBy = SortBy.NONE
-            )
-        )
     private val defaultFiltersContainer =
         FiltersContainer(
             searchEntry = "",
@@ -78,8 +65,8 @@ constructor(
             fullChecked = false,
             from = 0f,
             to = 14f,
-            sortBy = SortBy.NONE
         )
+    private val _filtersContainer = MutableStateFlow(defaultFiltersContainer)
     val filtersContainer = _filtersContainer.asStateFlow()
     private val _profileName = MutableStateFlow("")
     val profileName = _profileName.asStateFlow()
@@ -101,6 +88,14 @@ constructor(
     private var _searchMode = MutableStateFlow(false)
     val searchMode = _searchMode.asStateFlow()
     val isOnline = networkService.isOnline
+    private var _sortBy = MutableStateFlow(SortBy.NONE)
+    val sortBy = _sortBy.asStateFlow()
+
+    // State to manage location-related features
+    private val _hasLocationPermissions = MutableStateFlow(false)
+    val hasLocationPermissions = _hasLocationPermissions.asStateFlow()
+    private val _userLocation = MutableStateFlow<Location?>(null)
+    val userLocation = _userLocation.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -196,8 +191,7 @@ constructor(
     }
 
     fun onSortByChanged(sortBy: SortBy) {
-        _filtersContainer.value = _filtersContainer.value.copy(sortBy = sortBy)
-        refreshFiltersContainer()
+        _sortBy.value = sortBy
     }
 
     fun signOut() {
@@ -331,21 +325,8 @@ constructor(
                                 tag.name.lowercase() == _semester.value.lowercase()
                             }
                     }
-                    .sortedBy { event ->
-                        event.startDate
-                        // when we can sort by distance, update this
-                        /*when (_filtersContainer.value.sortBy) {
-                            SortBy.DATE_ASC -> event.startDate
-                            SortBy.DATE_DESC ->
-                            else ->
-                        }*/
-                    }
                     .toList()
-
             // reverse the list if the sort by is descending
-            if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) {
-                _displayEventList.value = _displayEventList.value.reversed()
-            }
         }
     }
 
@@ -405,6 +386,16 @@ constructor(
             _displayEventInfo.value =
                 allEventsList.find { it.eventId == displayEventInfo.value?.eventId }
             filterEvents()
+        }
+    }
+
+    fun bindOnLocationSuccessListener(getLastLocation: (OnLocationSuccessListener) -> Unit) {
+        getLastLocation {
+            val old = _userLocation.value
+            // It's not strictly necessary to compare and set with the current data flow, but
+            // using it should improve maintainability, considering this line is executed
+            // asynchronously
+            _userLocation.compareAndSet(old, it)
         }
     }
 }

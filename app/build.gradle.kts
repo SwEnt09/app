@@ -109,6 +109,9 @@ dependencies {
     // Map Libre
     implementation(libs.android.sdk)
     implementation(libs.ramani.maplibre)
+
+    // Location
+    implementation(libs.play.services.location)
     
     // Hilt
     implementation(libs.hilt.android)

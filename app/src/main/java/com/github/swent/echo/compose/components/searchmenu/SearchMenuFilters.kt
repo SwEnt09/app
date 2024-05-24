@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
@@ -34,7 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.colorClass
 import com.github.swent.echo.compose.components.colorEpfl
@@ -54,7 +52,6 @@ fun SearchMenuFilters(
     pendingCallback: () -> Unit,
     confirmedCallback: () -> Unit,
     fullCallback: () -> Unit,
-    sortByCallback: (SortBy) -> Unit,
     timeFilterCallback: (Float, Float) -> Unit
 ) {
     // Content of the Events for filters
@@ -116,16 +113,6 @@ fun SearchMenuFilters(
         )
 
     Box(modifier = Modifier.fillMaxSize().testTag("search_menu_filters_content")) {
-        // Sort by filter
-        Row(
-            modifier =
-                Modifier.align(Alignment.TopStart)
-                    .fillMaxWidth()
-                    .zIndex(1f)
-                    .testTag("sort_by_displayer_container")
-        ) {
-            SortByDisplayer(filters.sortBy, sortByCallback)
-        }
         // Checkbox filters
         Row(
             modifier =

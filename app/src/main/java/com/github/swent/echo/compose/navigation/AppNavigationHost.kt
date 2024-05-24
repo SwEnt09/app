@@ -5,6 +5,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +40,8 @@ import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.tag.TagViewModel
+import com.github.swent.echo.viewmodels.HomeScreenViewModel
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.runBlocking
 
 val LOCATION_PERMISSIONS =
@@ -48,6 +51,8 @@ fun locationPermissionsDenied(context: Context) =
     LOCATION_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED
     }
+
+typealias OnLocationSuccessListener = (Location) -> Unit
 
 /**
  * Navigation composable, it display the relevant screen based on the route and pass an instance of
@@ -90,11 +95,13 @@ fun AppNavigationHost(
     var alreadyDeniedLocationPermissions by rememberSaveable { mutableStateOf(false) }
     val scope = currentRecomposeScope
     val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { p
-            ->
-            alreadyDeniedLocationPermissions = !p.values.any { it }
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            alreadyDeniedLocationPermissions = !it.values.any { granted -> granted }
             scope.invalidate()
         }
+    val localContext = LocalContext.current
+
+    val locationServices = LocationServices.getFusedLocationProviderClient(LocalContext.current)
 
     NavHost(
         navController = navController,
@@ -117,15 +124,32 @@ fun AppNavigationHost(
 
         composable(Routes.MAP.name) {
             QuitAppOnHardwareBackButtonPressPress()
-            // Run this if-else block on every Route that might need location permissions
-            val c = LocalContext.current
-            if (!alreadyDeniedLocationPermissions && runBlocking { locationPermissionsDenied(c) }) {
+            if (
+                !alreadyDeniedLocationPermissions &&
+                    runBlocking { locationPermissionsDenied(localContext) }
+            ) {
                 SideEffect { launcher.launch(LOCATION_PERMISSIONS) }
             } else {
                 SideEffect { hasLocationPermissions = !alreadyDeniedLocationPermissions }
             }
+            val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+            homeScreenViewModel.bindOnLocationSuccessListener { onSuccess ->
+                if (
+                    LOCATION_PERMISSIONS.any {
+                        ContextCompat.checkSelfPermission(localContext, it) ==
+                            PackageManager.PERMISSION_GRANTED
+                    }
+                ) {
+                    locationServices.lastLocation
+                        .addOnSuccessListener { location ->
+                            // TODO if the location is null, try again with scope.invalidate()
+                            location?.let(onSuccess)
+                        }
+                        .addOnFailureListener { scope.invalidate() }
+                }
+            }
             HomeScreen(
-                homeScreenViewModel = hiltViewModel(),
+                homeScreenViewModel = homeScreenViewModel,
                 navActions = navActions,
                 hasLocationPermissions = hasLocationPermissions
             )

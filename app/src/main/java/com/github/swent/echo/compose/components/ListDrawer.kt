@@ -37,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.viewmodels.STATUS_THRESHOLD
+import com.mapbox.mapboxsdk.geometry.LatLng
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ListDrawer(
@@ -45,7 +47,8 @@ fun ListDrawer(
     section: String,
     semester: String,
     isOnline: Boolean,
-    refreshEvents: () -> Unit
+    userPosition: LatLng?,
+    refreshEvents: () -> Unit,
 ) {
     val selectedEvent = remember { mutableStateOf("") }
     // Main column where every items will be displayed, scrollable
@@ -58,7 +61,8 @@ fun ListDrawer(
                 section,
                 semester,
                 isOnline,
-                refreshEvents
+                userPosition,
+                refreshEvents,
             )
             Spacer(modifier = Modifier.height(5.dp))
         }
@@ -72,7 +76,8 @@ fun EventListItem(
     section: String,
     semester: String,
     isOnline: Boolean,
-    refreshEvents: () -> Unit
+    userPosition: LatLng? = null,
+    refreshEvents: () -> Unit,
 ) {
     // Colors for the background of the list item
     val darkFractionMiddleCircle = 0.8f
@@ -165,18 +170,20 @@ fun EventListItem(
                 textAlign = TextAlign.Center,
                 color = textColor,
             )
+            userPosition?.let {
+                val distance = it.distanceTo(event.location.toLatLng())
+                val formattedDistance = String.format(Locale.getDefault(), "%.0f", distance)
+                Text(
+                    text = "${formattedDistance}km",
+                    modifier =
+                        Modifier.padding(horizontal = paddingItems)
+                            .weight(1f)
+                            .testTag("list_event_location_${event.eventId}"),
+                    textAlign = TextAlign.Center
+                )
+            }
             /*
             // Display event distance from user
-            Text(
-                // TODO: Add a way to get the distance from the event (when we'll have the user's
-                // location)
-                text = "5km",
-                modifier =
-                    Modifier.padding(horizontal = paddingItems)
-                        .weight(1f)
-                        .testTag("list_event_location_${event.eventId}"),
-                textAlign = TextAlign.Center
-            )
              */
             // Display event status
             Column(

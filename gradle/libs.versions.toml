@@ -9,6 +9,7 @@ androidSdk = "10.2.0"
 #####################
 kotlinxSerializationJson = "1.6.3"
 ktorClientAndroid = "2.3.9"
+playServicesLocation = "21.2.0"
 ramaniMaplibre = "0.3.0"
 robolectric = "4.12"
 roomRuntime = "2.6.1"
@@ -46,6 +47,7 @@ hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", vers
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 ramani-maplibre = { module = "org.ramani-maps:ramani-maplibre", version.ref = "ramaniMaplibre" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }

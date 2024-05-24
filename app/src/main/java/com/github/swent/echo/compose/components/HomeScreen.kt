@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.github.swent.echo.compose.components.searchmenu.SortByDisplayer
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
@@ -23,6 +24,7 @@ import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.HomeScreenViewModel
 import com.github.swent.echo.viewmodels.MapOrListMode
 import com.github.swent.echo.viewmodels.Overlay
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -77,7 +79,12 @@ fun HomeScreen(
                 SearchButton(onClick = { homeScreenViewModel.setOverlay(Overlay.SEARCH_SHEET) })
             }
         ) { paddingValues ->
-            Content(paddingValues, navActions, homeScreenViewModel, hasLocationPermissions)
+            Content(
+                paddingValues,
+                navActions,
+                homeScreenViewModel,
+                hasLocationPermissions,
+            )
         }
     }
 }
@@ -112,6 +119,12 @@ private fun Content(
     Box(modifier = Modifier.padding(paddingValues)) {
         if (mode == MapOrListMode.LIST) {
             Column {
+                Box {
+                    SortByDisplayer(
+                        sortBy = homeScreenViewModel.sortBy.collectAsState().value,
+                        homeScreenViewModel::onSortByChanged
+                    )
+                }
                 if (tags.isNotEmpty() && !searchMode) {
                     TagUI(
                         tags = tags,
@@ -125,6 +138,9 @@ private fun Content(
                     section,
                     semester,
                     isOnline,
+                    homeScreenViewModel.userLocation.collectAsState().value?.let {
+                        LatLng(it.latitude, it.longitude)
+                    },
                     homeScreenViewModel::refreshEvents
                 )
             }
@@ -176,7 +192,6 @@ private fun Content(
                 pendingCallback = homeScreenViewModel::onPendingCheckedSwitch,
                 confirmedCallback = homeScreenViewModel::onConfirmedCheckedSwitch,
                 fullCallback = homeScreenViewModel::onFullCheckedSwitch,
-                sortByCallback = homeScreenViewModel::onSortByChanged,
                 resetFiltersCallback = homeScreenViewModel::resetFiltersContainer,
                 timeFilterCallback = homeScreenViewModel::onDateFilterChanged
             )

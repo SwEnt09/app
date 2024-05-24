@@ -12,16 +12,15 @@ data class FiltersContainer(
     var fullChecked: Boolean,
     var from: Float,
     var to: Float,
-    var sortBy: SortBy,
 )
 
 // Enum class for the different states of the sort by filter
-enum class SortBy(val stringKey: String) {
-    NONE("filters_container_sort_by_none"),
-    DATE_ASC("filters_container_sort_by_date_asc"),
-    DATE_DESC("filters_container_sort_by_date_desc"),
-    DISTANCE_ASC("filters_container_sort_by_distance_asc"),
-    DISTANCE_DESC("filters_container_sort_by_distance_desc"),
+enum class SortBy(val stringKey: String, val ascending: Boolean) {
+    NONE("filters_container_sort_by_none", false),
+    DATE_ASC("filters_container_sort_by_date_asc", true),
+    DATE_DESC("filters_container_sort_by_date_desc", false),
+    DISTANCE_ASC("filters_container_sort_by_distance_asc", true),
+    DISTANCE_DESC("filters_container_sort_by_distance_desc", false),
 }
 
 // Function to get the string resource for the sort by filter
@@ -36,3 +35,5 @@ fun stringResourceSortBy(key: String): Int {
         else -> throw IllegalArgumentException("Invalid string key")
     }
 }
+
+class EventComparator(val keyType: SortBy) {}
