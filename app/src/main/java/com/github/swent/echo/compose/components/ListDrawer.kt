@@ -43,8 +43,6 @@ import java.time.format.DateTimeFormatter
  * Composable to display a list of events.
  *
  * @param eventsList The list of events to display.
- * @param section The section of the events.
- * @param semester The semester of the events.
  * @param isOnline A boolean indicating whether the user is online.
  * @param refreshEvents The callback to refresh the events.
  * @param viewOnMap The callback to view the event on the map. If null, the view on map button will
@@ -58,8 +56,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ListDrawer(
     eventsList: List<Event>,
-    section: String,
-    semester: String,
     isOnline: Boolean,
     refreshEvents: () -> Unit,
     viewOnMap: ((Event) -> Unit)? = null,

@@ -95,5 +95,5 @@ fun AssociationDescription(association: Association) {
 
 @Composable
 fun AssociationEvents(events: List<Event>, isOnline: Boolean, refreshEvents: () -> Unit) {
-    ListDrawer(events, "", "", isOnline, refreshEvents)
+    ListDrawer(events, isOnline, refreshEvents)
 }

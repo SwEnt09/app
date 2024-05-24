@@ -120,13 +120,7 @@ private fun Content(
                         onTagClick = homeScreenViewModel::onFollowedTagClicked
                     )
                 }
-                ListDrawer(
-                    displayEventList,
-                    section,
-                    semester,
-                    isOnline,
-                    homeScreenViewModel::refreshEvents
-                )
+                ListDrawer(displayEventList, isOnline, homeScreenViewModel::refreshEvents)
             }
         } else {
             MapDrawer(

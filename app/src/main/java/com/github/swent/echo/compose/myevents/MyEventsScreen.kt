@@ -35,22 +35,10 @@ fun MyEventsScreen(myEventsViewModel: MyEventsViewModel, navActions: NavigationA
             Pager(
                 listOf(
                     Pair(stringResource(R.string.my_events_joined_events)) {
-                        ListDrawer(
-                            joinedEventsList,
-                            "",
-                            "",
-                            isOnline,
-                            myEventsViewModel::refreshEvents
-                        )
+                        ListDrawer(joinedEventsList, isOnline, myEventsViewModel::refreshEvents)
                     },
                     Pair(stringResource(R.string.my_events_created_events)) {
-                        ListDrawer(
-                            createdEventsList,
-                            "",
-                            "",
-                            isOnline,
-                            myEventsViewModel::refreshEvents
-                        )
+                        ListDrawer(createdEventsList, isOnline, myEventsViewModel::refreshEvents)
                     }
                 )
             )
