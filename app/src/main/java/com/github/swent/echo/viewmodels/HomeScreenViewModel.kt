@@ -95,8 +95,8 @@ constructor(
     private lateinit var semesterTags: List<Tag>
     private val _followedTags = MutableStateFlow<List<Tag>>(listOf())
     val followedTags = _followedTags.asStateFlow()
-    private val _selectedTagId = MutableStateFlow<String?>(null)
-    val selectedTagId = _selectedTagId.asStateFlow()
+    private val _selectedTagIds = MutableStateFlow<List<String>>(listOf())
+    val selectedTagIds = _selectedTagIds.asStateFlow()
     private var followedTagFilter = listOf<Tag>()
     private var _searchMode = MutableStateFlow(false)
     val searchMode = _searchMode.asStateFlow()
@@ -125,13 +125,19 @@ constructor(
 
     fun onFollowedTagClicked(tag: Tag) {
         if (_followedTags.value.contains(tag)) {
-            if (_selectedTagId.value == tag.tagId) {
-                _selectedTagId.value = null
-                followedTagFilter = getTagsAndSubTags(_followedTags.value).toList()
+            if (_selectedTagIds.value.contains(tag.tagId)) {
+                _selectedTagIds.value = _selectedTagIds.value.minus(tag.tagId)
             } else {
-                _selectedTagId.value = tag.tagId
-                followedTagFilter = getTagsAndSubTags(listOf(tag)).toList()
+                _selectedTagIds.value = _selectedTagIds.value.plus(tag.tagId)
             }
+            val empty = _selectedTagIds.value.isEmpty()
+            followedTagFilter =
+                getTagsAndSubTags(
+                        followedTags.value.filter { ftag ->
+                            empty || _selectedTagIds.value.contains(ftag.tagId)
+                        }
+                    )
+                    .toList()
         }
         filterEvents()
     }

@@ -101,7 +101,7 @@ fun EventInfoSheet(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                TagUI(tags = event.tags.toList(), selectedTagId = null, onTagClick = {})
+                TagUI(tags = event.tags.toList(), selectedTagIds = listOf(), onTagClick = {})
                 Text(
                     text = event.description,
                     style = MaterialTheme.typography.bodyMedium,

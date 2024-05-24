@@ -30,7 +30,7 @@ import com.github.swent.echo.data.model.Tag
 @Composable
 fun TagUI(
     tags: List<Tag>,
-    selectedTagId: String?,
+    selectedTagIds: List<String>,
     leftPadding: Dp = 0.dp,
     onTagClick: (Tag) -> Unit
 ) {
@@ -45,7 +45,7 @@ fun TagUI(
             items(tags) { tag ->
                 TagItem(
                     tag = tag,
-                    isSelected = tag.tagId == selectedTagId,
+                    isSelected = selectedTagIds.contains(tag.tagId),
                     onClick = { onTagClick(tag) }
                 )
             }
@@ -93,5 +93,5 @@ fun PreviewTagUI() {
             Tag("PO", "Politics"),
             Tag("TE", "Tech")
         )
-    MaterialTheme { TagUI(tags = tags, null) {} }
+    MaterialTheme { TagUI(tags = tags, emptyList()) {} }
 }

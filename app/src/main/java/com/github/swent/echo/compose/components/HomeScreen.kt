@@ -100,7 +100,7 @@ private fun Content(
     val canUserModifyEvent by homeScreenViewModel.canUserModifyEvent.collectAsState()
 
     val tags by homeScreenViewModel.followedTags.collectAsState()
-    val selectedTagId by homeScreenViewModel.selectedTagId.collectAsState()
+    val selectedTagIds by homeScreenViewModel.selectedTagIds.collectAsState()
 
     val section by homeScreenViewModel.section.collectAsState()
     val semester by homeScreenViewModel.semester.collectAsState()
@@ -115,7 +115,7 @@ private fun Content(
                 if (tags.isNotEmpty() && !searchMode) {
                     TagUI(
                         tags = tags,
-                        selectedTagId = selectedTagId,
+                        selectedTagIds = selectedTagIds,
                         leftPadding = 8.dp,
                         onTagClick = homeScreenViewModel::onFollowedTagClicked
                     )
@@ -135,7 +135,7 @@ private fun Content(
             if (!searchMode) {
                 TagUI(
                     tags = tags,
-                    selectedTagId = selectedTagId,
+                    selectedTagIds = selectedTagIds,
                     leftPadding = 8.dp,
                     onTagClick = homeScreenViewModel::onFollowedTagClicked
                 )
