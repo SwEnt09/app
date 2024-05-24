@@ -23,7 +23,7 @@ class MainScreenTagsTest {
     @Test
     fun showTagText() {
         val tagList = listOf(Tag("Tag1", "Sports"), Tag("Tag2", "Music"))
-        composeTestRule.setContent { TagUI(tags = tagList, null) {} }
+        composeTestRule.setContent { TagUI(tags = tagList, listOf()) {} }
         composeTestRule.onNodeWithText("Sports").assertExists()
         composeTestRule.onNodeWithText("Music").assertExists()
     }
@@ -31,7 +31,7 @@ class MainScreenTagsTest {
     @Test
     fun clickTag() {
         val tagList = listOf(Tag("Tag1", "Sports"), Tag("Tag2", "Music"))
-        composeTestRule.setContent { TagUI(tags = tagList, null) { tagClicked = it } }
+        composeTestRule.setContent { TagUI(tags = tagList, listOf()) { tagClicked = it } }
         composeTestRule.onNodeWithText("Sports").performClick()
         assert(tagClicked != null && tagClicked!!.name == "Sports")
         composeTestRule.onNodeWithText("Music").performClick()
