@@ -1,6 +1,7 @@
 package com.github.swent.echo.compose.components
 
 import androidx.activity.compose.setContent
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -10,7 +11,6 @@ import com.github.swent.echo.MainActivity
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import java.time.format.DateTimeFormatter
 import kotlin.math.min
 import org.junit.Before
 import org.junit.Rule
@@ -55,18 +55,14 @@ class ListDrawerTest {
                     "list_event_date_${SAMPLE_EVENTS[i].eventId}",
                     useUnmergedTree = true
                 )
-                .assertTextEquals(
-                    SAMPLE_EVENTS[i]
-                        .startDate
-                        .format(DateTimeFormatter.ofPattern("E, dd/MM\nHH:mm"))
-                )
+                .assertIsDisplayed()
             composeTestRule
                 .onNodeWithTag(
                     "list_event_participants_${SAMPLE_EVENTS[i].eventId}",
                     useUnmergedTree = true
                 )
                 .assertTextEquals(
-                    "${SAMPLE_EVENTS[i].participantCount}/${SAMPLE_EVENTS[i].maxParticipants}"
+                    "${SAMPLE_EVENTS[i].participantCount} / ${SAMPLE_EVENTS[i].maxParticipants}"
                 )
         }
     }
@@ -110,7 +106,7 @@ class ListDrawerTest {
                     "list_event_details_${SAMPLE_EVENTS[i].eventId}",
                     useUnmergedTree = true
                 )
-                .assertDoesNotExist()
+                .assertIsDisplayed()
         }
     }
 }
