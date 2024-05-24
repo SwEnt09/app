@@ -127,15 +127,20 @@ class HomeScreenViewModelTest {
         assertEquals(homeScreenViewModel.followedTags.value, tagSet)
         assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
         homeScreenViewModel.onFollowedTagClicked(Tag("1", "wow"))
-        assertEquals(homeScreenViewModel.selectedTagId.value, "1")
+        assertEquals(homeScreenViewModel.selectedTagIds.value[0], "1")
         assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
         homeScreenViewModel.onFollowedTagClicked(Tag("2", "test"))
-        assertEquals(homeScreenViewModel.selectedTagId.value, "2")
+        assertEquals(homeScreenViewModel.selectedTagIds.value[1], "2")
+        assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
+        homeScreenViewModel.onFollowedTagClicked(Tag("1", "wow"))
         assertEquals(homeScreenViewModel.displayEventList.value.size, 0)
+        homeScreenViewModel.onFollowedTagClicked(Tag("2", "test"))
+        assertEquals(homeScreenViewModel.selectedTagIds.value.size, 0)
+        assertEquals(homeScreenViewModel.displayEventList.value.size, 1)
         homeScreenViewModel.onFollowedTagClicked(Tag("3", "nonexistentTag"))
         assertEquals(
-            homeScreenViewModel.selectedTagId.value,
-            "2"
+            homeScreenViewModel.selectedTagIds.value.size,
+            0
         ) // selected tag should not change if the tag is nonexistent
     }
 
