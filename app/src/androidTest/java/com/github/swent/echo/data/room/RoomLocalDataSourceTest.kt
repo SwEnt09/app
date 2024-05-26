@@ -4,13 +4,16 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.data.SAMPLE_ASSOCIATIONS
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.model.toAssociationHeader
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -34,7 +37,7 @@ class RoomLocalDataSourceTest {
 
     private lateinit var localDataSource: RoomLocalDataSource
 
-    private val associations = SAMPLE_EVENTS.mapNotNull { it.organizer }.distinct()
+    private val associations = SAMPLE_ASSOCIATIONS
     private val events =
         SAMPLE_EVENTS.map { event ->
             event.copy(startDate = event.startDate.round(), endDate = event.endDate.round())
@@ -47,8 +50,8 @@ class RoomLocalDataSourceTest {
             SemesterEPFL.BA1,
             SectionEPFL.IN,
             setOf(tags.first()),
-            setOf(associations.first()),
-            setOf(associations.first()),
+            setOf(AssociationHeader.fromAssociation(associations.first())!!),
+            setOf(AssociationHeader.fromAssociation(associations.first())!!),
         )
 
     private val time = ZonedDateTime.parse("2024-01-01T00:00:00Z")
@@ -93,10 +96,39 @@ class RoomLocalDataSourceTest {
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
         val actual = localDataSource.getAllAssociations(syncedSecondsAgo)
+        val actualSelectiv =
+            localDataSource.getAssociations(listOf(associations[0].associationId), syncedSecondsAgo)
         assertEquals(associations.toSet(), actual.toSet())
+        assertEquals(listOf(associations[0]), actualSelectiv)
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
         assertTrue(localDataSource.getAllAssociations(syncedSecondsAgo).isEmpty())
+    }
+
+    @Test
+    fun getAssociationIds() = runBlocking {
+        assertTrue(associations.isNotEmpty())
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setAssociations(associations)
+
+        every { ZonedDateTime.now() } returns time
+        localDataSource.setAssociations(associations)
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertTrue(
+            localDataSource
+                .getAssociationIds(associations.map { it.associationId }, syncedSecondsAgo)
+                .isEmpty()
+        )
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        val actual =
+            localDataSource.getAssociationIds(
+                associations.map { it.associationId },
+                syncedSecondsAgo
+            )
+        assertEquals(associations.map { it.associationId }.toSet(), actual.toSet())
     }
 
     @Test
@@ -357,6 +389,7 @@ class RoomLocalDataSourceTest {
         val expected = userProfile
 
         every { ZonedDateTime.now() } returns time
+        localDataSource.setAssociations(associations)
         localDataSource.setUserProfile(expected)
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
@@ -391,6 +424,7 @@ class RoomLocalDataSourceTest {
         val userId = userProfile.userId
 
         runBlocking {
+            localDataSource.setAssociations(associations)
             localDataSource.setUserProfile(userProfile)
             localDataSource.setEvent(event1)
             localDataSource.setEvent(event2)
@@ -419,6 +453,7 @@ class RoomLocalDataSourceTest {
         val userId = userProfile.userId
 
         runBlocking {
+            localDataSource.setAssociations(associations)
             localDataSource.setUserProfile(userProfile)
             localDataSource.setEvents(listOf(event1, event2))
             localDataSource.joinEvents(userId, listOf(event1.eventId, event2.eventId))
@@ -445,6 +480,7 @@ class RoomLocalDataSourceTest {
         val userId = userProfile.userId
 
         runBlocking {
+            localDataSource.setAssociations(associations)
             localDataSource.setUserProfile(userProfile)
             localDataSource.setAssociation(association1)
             localDataSource.setAssociation(association2)
@@ -458,7 +494,10 @@ class RoomLocalDataSourceTest {
         assertNotNull(newUserProfile)
 
         assertEquals(2, newUserProfile!!.associationsSubscriptions.size)
-        assertEquals(setOf(association1, association2), newUserProfile.associationsSubscriptions)
+        assertEquals(
+            listOf(association1, association2).toAssociationHeader().toSet(),
+            newUserProfile.associationsSubscriptions
+        )
 
         runBlocking { localDataSource.leaveAssociation(userId, association1.associationId) }
 
@@ -468,6 +507,10 @@ class RoomLocalDataSourceTest {
         assertNotNull(newUserProfileAfterLeaving)
 
         assertEquals(1, newUserProfileAfterLeaving!!.associationsSubscriptions.size)
-        assertTrue(newUserProfileAfterLeaving.associationsSubscriptions.contains(association2))
+        assertTrue(
+            newUserProfileAfterLeaving.associationsSubscriptions.contains(
+                AssociationHeader.fromAssociation(association2)
+            )
+        )
     }
 }

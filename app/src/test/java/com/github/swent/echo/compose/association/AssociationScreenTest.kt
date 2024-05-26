@@ -8,6 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.viewmodels.association.AssociationViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -28,7 +29,8 @@ class AssociationScreenTest {
 
     private lateinit var navActions: NavigationActions
     private lateinit var associationViewModel: AssociationViewModel
-    private val testAssociation = Association("id 1", "name 1", "description 1")
+    private val testAssociation =
+        Association("id 1", "name 1", "description 1", "url 1", setOf(Tag.EMPTY))
 
     @Before
     fun setUp() {

@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
-import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -42,7 +42,7 @@ class EventInfoSheetTest {
                 Event(
                     eventId = "1",
                     creator = EventCreator("1", "Event Creator"),
-                    organizer = Association("1", "Event Organization", ""),
+                    organizer = AssociationHeader("1", "Event Organization"),
                     title = "Event Title",
                     description = "Event Description",
                     location = Location("", 0.0, 0.0),

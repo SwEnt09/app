@@ -2,6 +2,7 @@ package com.github.swent.echo.data.repository
 
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -29,15 +30,23 @@ class RepositoryImplTest {
     private lateinit var mockedNetworkService: NetworkService
     private lateinit var repositoryImpl: RepositoryImpl
 
-    private val association = Association("testAssoc", "Dummy Assoc", "blabla description")
-    private val association2 = Association("testAssoc2", "Dummy 2", "asdfg")
+    private val association =
+        Association(
+            "testAssoc",
+            "Dummy Assoc",
+            "blabla description",
+            "url1",
+            setOf(Tag("tag id", "tag description"))
+        )
+    private val association2 =
+        Association("testAssoc2", "Dummy 2", "asdfg", "url2", setOf(Tag.EMPTY))
     private val tag = Tag("testTag", "Dummy Tag", "testTag")
     private val tag2 = Tag("testTag2", "Dummy 2", "testTag")
     private val event =
         Event(
             "testEvent",
             EventCreator("testCreator", ""),
-            association,
+            AssociationHeader.fromAssociation(association),
             "Dummy Event",
             "blabla description",
             Location("testLocation", 0.0, 0.0),
@@ -52,7 +61,7 @@ class RepositoryImplTest {
         Event(
             "testEvent2",
             EventCreator("testCrea", ""),
-            association,
+            AssociationHeader.fromAssociation(association),
             "Dummy ",
             "blabla asdf",
             Location("testLocation", 0.0, 0.0),
@@ -66,7 +75,15 @@ class RepositoryImplTest {
     private val userProfile =
         UserProfile("testUser", "Dummy User", null, null, emptySet(), emptySet(), emptySet())
     private val userProfile2 =
-        UserProfile("testUser2", "Dummy 2", null, null, emptySet(), emptySet(), emptySet())
+        UserProfile(
+            "testUser2",
+            "Dummy 2",
+            null,
+            null,
+            emptySet(),
+            setOf(AssociationHeader("assoc1", "assoc1name")),
+            setOf(AssociationHeader("assoc2", "assoc2name"))
+        )
 
     private val time = ZonedDateTime.parse("2024-01-01T00:00:00Z")
 
@@ -111,6 +128,40 @@ class RepositoryImplTest {
             repositoryImpl.getAssociation("testAssoc")
         }
         assertEquals(association, associationResultOnlineFromCache)
+    }
+
+    @Test
+    fun getAssociantionsTest() {
+        every { ZonedDateTime.now() } returns time
+
+        every { mockedNetworkService.isOnlineNow() } returns false
+        coEvery { mockedLocalDataSource.getAssociations(listOf("testAssoc"), any()) } returns
+            listOf(association)
+
+        val associationResultOffline = runBlocking {
+            repositoryImpl.getAssociations(listOf("testAssoc"))
+        }
+        assertEquals(listOf(association), associationResultOffline)
+
+        every { mockedNetworkService.isOnlineNow() } returns true
+        coEvery {
+            mockedLocalDataSource.getAssociations(
+                listOf("testAssoc2"),
+                RepositoryImpl.ASSOCIATION_CACHE_TTL
+            )
+        } returns emptyList()
+        coEvery { mockedRemoteDataSource.getAssociations(listOf("testAssoc2")) } returns
+            listOf(association2)
+
+        val associationResultOnline = runBlocking {
+            repositoryImpl.getAssociations(listOf("testAssoc2"))
+        }
+        assertEquals(listOf(association2), associationResultOnline)
+
+        val associationResultOnlineFromCache = runBlocking {
+            repositoryImpl.getAssociations(listOf("testAssoc"))
+        }
+        assertEquals(listOf(association), associationResultOnlineFromCache)
     }
 
     @Test
@@ -418,9 +469,23 @@ class RepositoryImplTest {
         coEvery { mockedRemoteDataSource.getUserProfile("testUser2") } returns userProfile2
         coEvery { mockedLocalDataSource.getUserProfile("deletedUserProfile", any()) } returns null
         coEvery { mockedRemoteDataSource.getUserProfile("deletedUserProfile") } returns null
+        coEvery {
+            mockedLocalDataSource.getAssociationIds(
+                (userProfile2.committeeMember + userProfile2.associationsSubscriptions).map {
+                    it.associationId
+                },
+                RepositoryImpl.ASSOCIATION_CACHE_TTL
+            )
+        } returns userProfile2.committeeMember.map { it.associationId }
+        coEvery {
+            mockedRemoteDataSource.getAssociations(
+                userProfile2.associationsSubscriptions.map { it.associationId }
+            )
+        } returns listOf(association2)
 
         val userProfileResultOnline = runBlocking { repositoryImpl.getUserProfile("testUser2") }
         assertEquals(userProfile2, userProfileResultOnline)
+        coVerify { mockedLocalDataSource.setAssociations(listOf(association2)) }
 
         val userProfileResultOnlineFromCache = runBlocking {
             repositoryImpl.getUserProfile("testUser")

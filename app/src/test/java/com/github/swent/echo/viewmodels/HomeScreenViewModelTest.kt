@@ -3,7 +3,7 @@ package com.github.swent.echo.viewmodels
 import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.connectivity.NetworkService
-import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -39,7 +39,7 @@ class HomeScreenViewModelTest {
             Event(
                 eventId = "wow",
                 creator = EventCreator("a", ""),
-                organizer = Association("a", "a", ""),
+                organizer = AssociationHeader("a", "a"),
                 title = "Bowling Event",
                 description = "",
                 location = Location("Location 1", MAP_CENTER.toLatLng()),
@@ -157,7 +157,7 @@ class HomeScreenViewModelTest {
             Event(
                 eventId = "a",
                 creator = EventCreator("a", ""),
-                organizer = Association("a", "a", ""),
+                organizer = AssociationHeader("a", "a"),
                 title = "Bowling Event",
                 description = "",
                 location = Location("Location 1", MAP_CENTER.toLatLng()),
@@ -220,7 +220,7 @@ class HomeScreenViewModelTest {
                 Event(
                     eventId = "newEvent",
                     creator = EventCreator("a", ""),
-                    organizer = Association("a", "a", ""),
+                    organizer = AssociationHeader("a", "a"),
                     title = "New Event",
                     description = "",
                     location = Location("Location 2", MAP_CENTER.toLatLng()),

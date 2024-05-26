@@ -9,7 +9,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.connectivity.NetworkService
-import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -46,7 +46,7 @@ class CreateEventScreenTest {
         Event(
             eventId = "testid",
             creator = EventCreator("testid", "testname"),
-            organizer = Association("testid", "testname", "testdesc"),
+            organizer = AssociationHeader("testid", "testname"),
             title = "test title",
             description = "test description",
             location = Location("test location", 10.0, 10.0),

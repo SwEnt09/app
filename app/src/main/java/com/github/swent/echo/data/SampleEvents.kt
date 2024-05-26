@@ -2,6 +2,7 @@ package com.github.swent.echo.data
 
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -28,7 +29,7 @@ val SAMPLE_EVENTS: List<Event> =
         Event(
             eventId = "a",
             creator = EventCreator("a", ""),
-            organizer = Association("a", "a", ""),
+            organizer = AssociationHeader("a", "a"),
             title = "Bowling Event",
             description = "",
             location = Location("Location 1", MAP_CENTER.toLatLng()),
@@ -42,7 +43,7 @@ val SAMPLE_EVENTS: List<Event> =
         Event(
             eventId = "b",
             creator = EventCreator("a", ""),
-            organizer = Association("a", "a", ""),
+            organizer = AssociationHeader("a", "a"),
             title = "Swimming Event",
             description = "",
             location = Location("Location 2", MAP_CENTER.toLatLng().toDestPt(1000.0, 0.0)),
@@ -56,7 +57,7 @@ val SAMPLE_EVENTS: List<Event> =
         Event(
             eventId = "c",
             creator = EventCreator("b", "Chad"),
-            organizer = Association("B", "EPFL Mewing Group", ""),
+            organizer = AssociationHeader("B", "EPFL Mewing Group"),
             title = "Badminton Tournament",
             description = "Only the greatest humans shall participate. Win... or die.",
             location =
@@ -91,5 +92,17 @@ val SAMPLE_EVENTS: List<Event> =
             participantCount = 3,
             maxParticipants = 5,
             imageId = 0
+        )
+    )
+
+val SAMPLE_ASSOCIATIONS: List<Association> =
+    listOf(
+        Association("a", "a", "", "https://example.org", setOf(Tag("1", "Sport"))),
+        Association(
+            "B",
+            "EPFL Mewing Group",
+            "",
+            "https://example.com",
+            setOf(Tag("62", "Badminton"), Tag("1", "Sport"))
         )
     )

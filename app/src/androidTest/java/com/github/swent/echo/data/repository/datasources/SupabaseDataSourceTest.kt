@@ -3,6 +3,7 @@ package com.github.swent.echo.data.repository.datasources
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.authentication.AuthenticationServiceImpl
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -35,19 +36,21 @@ class SupabaseDataSourceTest {
 
     lateinit var source: SupabaseDataSource
 
+    private val tag = Tag("daba142a-a276-4b7e-824d-43ca088633ff", "Dummy Tag")
     private val association =
         Association(
             "b0122e3e-82ed-4409-83f9-dbfb9761db20",
             "Dummy Assoc",
-            "DO NOT DELETE/MODIFY: tests in repository.datasources.SupabaseTest will fail"
+            "DO NOT DELETE/MODIFY: tests in repository.datasources.SupabaseTest will fail",
+            "https://dummy-url.ch",
+            setOf(tag)
         )
-    private val tag = Tag("daba142a-a276-4b7e-824d-43ca088633ff", "Dummy Tag")
     private val rootTagId = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
     private val event =
         Event(
             "3bcf6f25-81d4-4a14-9caa-c05feb593da0",
             EventCreator("4792cb7e-894e-4dad-bf7c-7f0660d0b648", "SubapaseDataSourceTest User"),
-            association,
+            AssociationHeader.fromAssociation(association),
             "Dummy Event",
             "blabla description",
             Location("testLocation", 0.0, 0.0),
@@ -65,8 +68,8 @@ class SupabaseDataSourceTest {
             null,
             null,
             setOf(tag),
-            setOf(association),
-            setOf(association)
+            setOf(AssociationHeader.fromAssociation(association)!!),
+            setOf(AssociationHeader.fromAssociation(association)!!)
         )
 
     @Before
@@ -87,6 +90,14 @@ class SupabaseDataSourceTest {
             source.getAssociation("b0122e3e-82ed-4409-83f9-dbfb9761db20")
         }
         assertEquals(association, associationFetched)
+    }
+
+    @Test
+    fun getAssociationsTest() {
+        val associationsFetched = runBlocking {
+            source.getAssociations(listOf("b0122e3e-82ed-4409-83f9-dbfb9761db20"))
+        }
+        assertEquals(listOf(association), associationsFetched)
     }
 
     @Test
