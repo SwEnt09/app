@@ -3,11 +3,13 @@ package com.github.swent.echo.viewmodels.association
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.model.toAssociationHeader
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.fakes.FakeAuthenticationService
 import io.mockk.coEvery
@@ -37,16 +39,22 @@ class AssociationViewModelTest {
                 associationId = "a",
                 name = "Association A",
                 description = "Description A",
+                url = "url A",
+                setOf(Tag("tagId", "tagDescription")),
             ),
             Association(
                 associationId = "b",
                 name = "Association B",
                 description = "Description B",
+                url = "url B",
+                setOf(Tag.EMPTY),
             ),
             Association(
                 associationId = "c",
                 name = "Association C",
                 description = "Description C",
+                url = "url C",
+                setOf(),
             )
         )
     private val userProfile =
@@ -56,15 +64,15 @@ class AssociationViewModelTest {
             semester = null,
             section = null,
             tags = setOf(),
-            committeeMember = associationList.subList(0, 1).toSet(),
-            associationsSubscriptions = associationList.subList(0, 2).toSet()
+            committeeMember = associationList.subList(0, 1).toAssociationHeader().toSet(),
+            associationsSubscriptions = associationList.subList(0, 2).toAssociationHeader().toSet()
         )
     private val eventList =
         listOf(
             Event(
                 eventId = "wow",
                 creator = EventCreator("a", ""),
-                organizer = associationList[0],
+                organizer = AssociationHeader.fromAssociation(associationList[0]),
                 title = "Bowling Event",
                 description = "",
                 location = Location("Location 1", MAP_CENTER.toLatLng()),
@@ -78,7 +86,7 @@ class AssociationViewModelTest {
             Event(
                 eventId = "test",
                 creator = EventCreator("a", ""),
-                organizer = associationList[1],
+                organizer = AssociationHeader.fromAssociation(associationList[1]),
                 title = "Test Event",
                 description = "",
                 location = Location("Location 2", MAP_CENTER.toLatLng()),
@@ -92,7 +100,7 @@ class AssociationViewModelTest {
             Event(
                 eventId = "wow2",
                 creator = EventCreator("a", ""),
-                organizer = associationList[2],
+                organizer = AssociationHeader.fromAssociation(associationList[2]),
                 title = "Bowling Event 2",
                 description = "",
                 location = Location("Location 3", MAP_CENTER.toLatLng()),
@@ -150,7 +158,7 @@ class AssociationViewModelTest {
         val association = associationList[0]
         val events = associationViewModel.associationEvents(association)
         assert(events.size == 1)
-        assert(events[0].organizer == association)
+        assert(events[0].organizer == AssociationHeader.fromAssociation(association))
     }
 
     @Test
@@ -171,7 +179,7 @@ class AssociationViewModelTest {
                 Event(
                     eventId = "newEvent",
                     creator = EventCreator("a", ""),
-                    organizer = associationList[0],
+                    organizer = AssociationHeader.fromAssociation(associationList[0]),
                     title = "New Event",
                     description = "",
                     location = Location("Location 2", MAP_CENTER.toLatLng()),

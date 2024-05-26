@@ -1,6 +1,6 @@
 package com.github.swent.echo.data.supabase.entities
 
-import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -16,7 +16,7 @@ class EventSupabaseTest {
         Event(
             "eventId",
             EventCreator("creatorId", "creatorName"),
-            Association("organizerId", "organizerName", "organizerDescription"),
+            AssociationHeader("organizerId", "organizerName"),
             "title",
             "description",
             Location("locationName", 0.2, 0.3),

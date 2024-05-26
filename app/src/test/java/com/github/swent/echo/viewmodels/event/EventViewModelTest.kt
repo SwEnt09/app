@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -39,7 +40,7 @@ class EventViewModelTest {
         Event(
             eventId = "testid",
             creator = EventCreator("testid", "testname"),
-            organizer = Association("testid", "testname", "testdesc"),
+            organizer = AssociationHeader("testid", "testname"),
             title = "test title",
             description = "test description",
             location = Location("test location", 10.0, 10.0),
@@ -232,12 +233,16 @@ class EventViewModelTest {
 
     @Test
     fun setOrganizerNameAsAssociationSetTheCorrectValue() {
-        val testAssociation = Association("testAid", "testAname", "testDescription")
+        val testAssociation =
+            Association("testAid", "testAname", "testDescription", "testUrl", setOf())
         eventViewModel.setEvent(TEST_EVENT)
         coEvery { mockedRepository.getAllAssociations() } returns listOf(testAssociation)
         eventViewModel.setOrganizer(testAssociation.name)
         scheduler.runCurrent()
-        assertEquals(testAssociation, eventViewModel.event.value.organizer)
+        assertEquals(
+            AssociationHeader.fromAssociation(testAssociation),
+            eventViewModel.event.value.organizer
+        )
     }
 
     @Test

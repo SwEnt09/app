@@ -5,6 +5,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.Tag
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -18,9 +19,15 @@ class AssociationListScreenTest {
 
     private val testAssociations =
         listOf(
-            Association("id 1", "name 1", "description 1"),
-            Association("id 2", "name 2", "description 2"),
-            Association("id 3", "name 3", "description 3")
+            Association(
+                "id 1",
+                "name 1",
+                "description 1",
+                "url 1",
+                setOf(Tag("tag id 1", "tag description"))
+            ),
+            Association("id 2", "name 2", "description 2", "url 2", setOf(Tag.EMPTY)),
+            Association("id 3", "name 3", "description 3", "url 3", setOf())
         )
     private var onRowClicked = 0
     private var onAssociationClicked = 0

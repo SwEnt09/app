@@ -7,9 +7,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
+import com.github.swent.echo.data.model.Tag
 import java.time.ZonedDateTime
 import org.junit.Before
 import org.junit.Rule
@@ -21,13 +23,20 @@ class AssociationDetailsTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
-    private val testAssociation = Association("id 1", "name 1", "description 1")
+    private val testAssociation =
+        Association(
+            "id 1",
+            "name 1",
+            "description 1",
+            "url1",
+            setOf(Tag("tagId 1", "tag description"))
+        )
     private var isFollowed = mutableStateOf(false)
     private val testEvent =
         Event(
             "event 1",
             EventCreator.EMPTY,
-            testAssociation,
+            AssociationHeader.fromAssociation(testAssociation),
             "title 1",
             "",
             Location.EMPTY,

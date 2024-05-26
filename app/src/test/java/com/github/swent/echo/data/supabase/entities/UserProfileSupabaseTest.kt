@@ -1,6 +1,6 @@
 package com.github.swent.echo.data.supabase.entities
 
-import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
@@ -16,8 +16,8 @@ class UserProfileSupabaseTest {
             SemesterEPFL.BA6,
             SectionEPFL.IN,
             setOf(Tag("tagId", "tagName")),
-            setOf(Association("associationId", "associationName", "associationDescription")),
-            setOf(Association("associationId2", "associationName", "associationDescription")),
+            setOf(AssociationHeader("associationId", "associationName")),
+            setOf(AssociationHeader("associationId2", "associationName")),
         )
 
     val userProfileSupabase =

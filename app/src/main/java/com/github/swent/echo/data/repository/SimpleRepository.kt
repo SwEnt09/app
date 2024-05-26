@@ -3,6 +3,7 @@ package com.github.swent.echo.data.repository
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.event.SECTION_ROOT_TAG_ID
 import com.github.swent.echo.compose.event.SEMESTER_ROOT_TAG_ID
+import com.github.swent.echo.data.SAMPLE_ASSOCIATIONS
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
@@ -46,9 +47,6 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
         SAMPLE_EVENTS.forEach { event ->
             events.add(event)
             tags.addAll(event.tags)
-            if (event.organizer != null) {
-                associations.add(event.organizer)
-            }
             userProfiles.add(
                 UserProfile(
                     event.creator.userId,
@@ -61,6 +59,7 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
                 )
             )
         }
+        SAMPLE_ASSOCIATIONS.forEach { association -> associations.add(association) }
 
         // Add a user profile for the current user
         val userId = authenticationService.getCurrentUserID()
@@ -81,6 +80,10 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
 
     override suspend fun getAssociation(associationId: String): Association {
         return associations.find { it.associationId == associationId }!!
+    }
+
+    override suspend fun getAssociations(associationIds: List<String>): List<Association> {
+        return associations.filter { associationIds.contains(it.associationId) }
     }
 
     override suspend fun getAllAssociations(): List<Association> {

@@ -50,6 +50,13 @@ class SimpleRepositoryTest {
     }
 
     @Test
+    fun `get Associations should return the associations with the given ids`() = runBlocking {
+        val associations = simpleRepository.getAllAssociations()
+        val result = simpleRepository.getAssociations(associations.map { it.associationId })
+        assertEquals(associations, result)
+    }
+
+    @Test
     fun `getEvent should return the event with the given id`() = runBlocking {
         val events = simpleRepository.getAllEvents()
         val expected = events.first()
