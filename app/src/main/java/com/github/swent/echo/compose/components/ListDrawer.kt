@@ -75,7 +75,7 @@ fun ListDrawer(
         // Iterate over the list of events and display them
         items(eventsList.size) { index ->
             val event = eventsList[index]
-            val canModifyEvent = eventsList[index].creator.userId == userId
+            val canModifyEvent = event.creator.userId == userId
 
             EventListItem(
                 event = event,
@@ -164,7 +164,10 @@ fun EventListItem(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Icon(painterResource(R.drawable.full), contentDescription = "Group")
+                    Icon(
+                        painterResource(R.drawable.full),
+                        contentDescription = "Number of participants",
+                    )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${event.participantCount} / ${event.maxParticipants}",
