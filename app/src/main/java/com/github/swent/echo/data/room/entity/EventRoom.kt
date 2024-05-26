@@ -15,7 +15,7 @@ import java.time.ZonedDateTime
 data class EventRoom(
     @PrimaryKey val eventId: String,
     @Embedded val creator: EventCreatorRoom,
-    val organizerId: String?,
+    @Embedded val organizer: AssociationHeaderRoom?,
     val title: String,
     val description: String,
     @Embedded val location: LocationRoom,
@@ -32,7 +32,7 @@ data class EventRoom(
     ) : this(
         event.eventId,
         EventCreatorRoom(event.creator),
-        event.organizer?.associationId,
+        AssociationHeaderRoom.fromAssociationHeader(event.organizer),
         event.title,
         event.description,
         LocationRoom(event.location),
@@ -68,13 +68,8 @@ data class EventTagCrossRef(
     val tagId: String,
 )
 
-data class EventWithOrganizerAndTags(
+data class EventWithTags(
     @Embedded val event: EventRoom,
-    @Relation(
-        parentColumn = "organizerId",
-        entityColumn = "associationId",
-    )
-    val organizer: AssociationRoom?,
     @Relation(
         parentColumn = "eventId",
         entityColumn = "tagId",
@@ -87,7 +82,7 @@ data class EventWithOrganizerAndTags(
         Event(
             event.eventId,
             event.creator.toEventCreator(),
-            organizer?.toAssociation(),
+            event.organizer?.toAssociationHeader(),
             event.title,
             event.description,
             event.location.toLocation(),

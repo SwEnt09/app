@@ -131,7 +131,7 @@ data class UserProfileWithTagsCommitteeMemberAndAssociationSubscription(
             userProfile.semester?.toSemesterEPFL(),
             userProfile.section?.toSectionEPFL(),
             tags.toTagSet(),
-            committeeMember.toAssociationSet(),
-            associationsSubscriptions.toAssociationSet(),
+            committeeMember.toAssociationHeaderSet(),
+            associationsSubscriptions.toAssociationHeaderSet(),
         )
 }

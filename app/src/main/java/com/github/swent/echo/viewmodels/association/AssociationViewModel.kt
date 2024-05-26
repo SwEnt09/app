@@ -6,6 +6,7 @@ import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.toAssociationHeader
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -43,10 +44,14 @@ constructor(
             val user = authenticationService.getCurrentUserID() ?: ""
             allAssociations = repository.getAllAssociations()
             allEvents = repository.getAllEvents()
-            _followedAssociations.value =
-                repository.getUserProfile(user)?.associationsSubscriptions?.toList() ?: listOf()
-            _committeeAssociations.value =
-                repository.getUserProfile(user)?.committeeMember?.toList() ?: listOf()
+            val followedAssociationIds =
+                repository.getUserProfile(user)?.associationsSubscriptions?.map { it.associationId }
+                    ?: listOf()
+            _followedAssociations.value = repository.getAssociations(followedAssociationIds)
+            val committeeAssociationIds =
+                repository.getUserProfile(user)?.committeeMember?.map { it.associationId }
+                    ?: listOf()
+            _committeeAssociations.value = repository.getAssociations(committeeAssociationIds)
             _showAllAssociations.value = allAssociations
         }
     }
@@ -60,7 +65,10 @@ constructor(
         viewModelScope.launch {
             val userProfile = repository.getUserProfile(authenticationService.getCurrentUserID()!!)
             val updatedProfile =
-                userProfile?.copy(associationsSubscriptions = _followedAssociations.value.toSet())
+                userProfile?.copy(
+                    associationsSubscriptions =
+                        _followedAssociations.value.toAssociationHeader().toSet()
+                )
             repository.setUserProfile(updatedProfile!!)
         }
     }
@@ -70,7 +78,7 @@ constructor(
     }
 
     fun associationEvents(association: Association): List<Event> {
-        return allEvents.filter { it.organizer == association }
+        return allEvents.filter { it.organizer?.associationId == association.associationId }
     }
 
     fun filterAssociations(associations: List<Association>): List<Association> {

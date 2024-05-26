@@ -22,7 +22,17 @@ interface LocalDataSource {
 
     suspend fun setAssociation(association: Association)
 
+    suspend fun getAssociations(
+        associationIds: List<String>,
+        syncedSecondsAgo: Long
+    ): List<Association>
+
     suspend fun getAllAssociations(syncedSecondsAgo: Long): List<Association>
+
+    suspend fun getAssociationIds(
+        associationIds: List<String>,
+        syncedSecondsAgo: Long
+    ): List<String>
 
     suspend fun getAllAssociationIds(secondsAgo: Long): List<String>
 

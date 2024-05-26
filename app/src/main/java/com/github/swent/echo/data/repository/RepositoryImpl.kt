@@ -50,6 +50,20 @@ class RepositoryImpl(
         return localResult
     }
 
+    override suspend fun getAssociations(associationIds: List<String>): List<Association> {
+        if (isOffline()) {
+            return localDataSource.getAssociations(associationIds, FETCH_ALL)
+        }
+        val localResult = localDataSource.getAssociations(associationIds, ASSOCIATION_CACHE_TTL)
+        val associationIdsNotInLocalResult = associationIds - localResult.map { it.associationId }
+        if (associationIdsNotInLocalResult != emptyList<String>()) {
+            val remoteResult = remoteDataSource.getAssociations(associationIdsNotInLocalResult)
+            localDataSource.setAssociations(remoteResult)
+            return localResult + remoteResult
+        }
+        return localResult
+    }
+
     override suspend fun getAllAssociations(): List<Association> {
         if (isOffline() || notExpired(associations_last_cached_all, ASSOCIATION_CACHE_TTL)) {
             return localDataSource.getAllAssociations(FETCH_ALL)
@@ -214,6 +228,22 @@ class RepositoryImpl(
             if (remoteResult == null) {
                 localDataSource.deleteUserProfile(userId)
             } else {
+                // make sure Associations linked in UserProfile are present locally
+                val associationIdsLinkedInProfile =
+                    (remoteResult.committeeMember + remoteResult.associationsSubscriptions).map {
+                        it.associationId
+                    }
+                val locallyPresentAssociationIds =
+                    localDataSource.getAssociationIds(
+                        associationIdsLinkedInProfile,
+                        ASSOCIATION_CACHE_TTL
+                    )
+                val remoteAssociationsResult =
+                    remoteDataSource.getAssociations(
+                        associationIdsLinkedInProfile - locallyPresentAssociationIds
+                    )
+                localDataSource.setAssociations(remoteAssociationsResult)
+
                 localDataSource.setUserProfile(remoteResult)
             }
             return remoteResult

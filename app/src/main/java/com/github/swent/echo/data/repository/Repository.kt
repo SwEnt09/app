@@ -21,6 +21,8 @@ interface Repository {
      */
     suspend fun getAssociation(associationId: String): Association?
 
+    suspend fun getAssociations(associationIds: List<String>): List<Association>
+
     suspend fun getAllAssociations(): List<Association>
 
     /**

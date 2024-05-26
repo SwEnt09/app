@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.connectivity.NetworkService
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -96,9 +97,11 @@ constructor(
                 setEvent(
                     event.value.copy(
                         organizer =
-                            repository.getAllAssociations().find { association ->
-                                association.name == organizerName
-                            }
+                            AssociationHeader.fromAssociation(
+                                repository.getAllAssociations().find { association ->
+                                    association.name == organizerName
+                                }
+                            )
                     )
                 )
             }

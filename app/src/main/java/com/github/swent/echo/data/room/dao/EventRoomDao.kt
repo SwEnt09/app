@@ -7,7 +7,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.github.swent.echo.data.room.entity.EventRoom
 import com.github.swent.echo.data.room.entity.EventTagCrossRef
-import com.github.swent.echo.data.room.entity.EventWithOrganizerAndTags
+import com.github.swent.echo.data.room.entity.EventWithTags
 import com.github.swent.echo.data.room.entity.JoinedEventRoom
 
 @Dao
@@ -26,13 +26,13 @@ interface EventRoomDao {
 
     @Transaction
     @Query("SELECT * FROM EventRoom WHERE eventId = :eventId AND timestamp >= :after")
-    suspend fun get(eventId: String, after: Long): EventWithOrganizerAndTags?
+    suspend fun get(eventId: String, after: Long): EventWithTags?
 
     @Query("DELETE FROM EventRoom WHERE eventId = :eventId") suspend fun delete(eventId: String)
 
     @Transaction
     @Query("SELECT * FROM EventRoom WHERE timestamp >= :after")
-    suspend fun getAll(after: Long): List<EventWithOrganizerAndTags>
+    suspend fun getAll(after: Long): List<EventWithTags>
 
     @Query("SELECT eventId FROM EventRoom WHERE timestamp >= :after")
     suspend fun getAllIds(after: Long): List<String>
@@ -56,5 +56,5 @@ interface EventRoomDao {
 
     @Transaction
     @Query("SELECT * FROM EventRoom WHERE eventId IN (:eventIds)")
-    suspend fun getEventsByIds(eventIds: List<String>): List<EventWithOrganizerAndTags>
+    suspend fun getEventsByIds(eventIds: List<String>): List<EventWithTags>
 }
