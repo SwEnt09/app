@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.connectivity.NetworkService
-import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Section
 import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.Tag
@@ -47,10 +47,10 @@ constructor(
     private val _tagList = MutableStateFlow<Set<Tag>>(emptySet())
     val tagList = _tagList.asStateFlow()
 
-    private val _committeeMember = MutableStateFlow<Set<Association>>(emptySet())
+    private val _committeeMember = MutableStateFlow<Set<AssociationHeader>>(emptySet())
     val committeeMember = _committeeMember.asStateFlow()
 
-    private val _associationSubscriptions = MutableStateFlow<Set<Association>>(emptySet())
+    private val _associationSubscriptions = MutableStateFlow<Set<AssociationHeader>>(emptySet())
     val associationSubscriptions = _associationSubscriptions.asStateFlow()
 
     private val _errorMessage = MutableStateFlow<String?>(null)

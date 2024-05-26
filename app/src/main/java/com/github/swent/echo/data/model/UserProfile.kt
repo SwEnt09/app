@@ -6,8 +6,8 @@ data class UserProfile(
     val semester: Semester?,
     val section: Section?,
     val tags: Set<Tag>,
-    val committeeMember: Set<Association>,
-    val associationsSubscriptions: Set<Association>,
+    val committeeMember: Set<AssociationHeader>,
+    val associationsSubscriptions: Set<AssociationHeader>,
 ) {
     fun toEventCreator(): EventCreator = EventCreator(userId, name)
 

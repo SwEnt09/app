@@ -1,6 +1,6 @@
 package com.github.swent.echo.data.supabase.entities
 
-import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 data class EventSupabase(
     @SerialName("event_id") val eventId: String,
     @SerialName("user_profiles") val creator: EventCreator,
-    @SerialName("associations") val organizer: Association?,
+    @SerialName("associations") val organizer: AssociationHeader?,
     val title: String,
     val description: String,
     @SerialName("location_name") val locationName: String,

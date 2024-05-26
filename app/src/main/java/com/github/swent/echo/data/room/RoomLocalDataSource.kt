@@ -6,6 +6,7 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.room.entity.AssociationRoom
+import com.github.swent.echo.data.room.entity.AssociationTagCrossRef
 import com.github.swent.echo.data.room.entity.EventRoom
 import com.github.swent.echo.data.room.entity.EventTagCrossRef
 import com.github.swent.echo.data.room.entity.JoinedEventRoom
@@ -14,7 +15,7 @@ import com.github.swent.echo.data.room.entity.UserProfileAssociationSubscription
 import com.github.swent.echo.data.room.entity.UserProfileCommitteeMemberCrossRef
 import com.github.swent.echo.data.room.entity.UserProfileRoom
 import com.github.swent.echo.data.room.entity.UserProfileTagCrossRef
-import com.github.swent.echo.data.room.entity.toAssociationRoomList
+import com.github.swent.echo.data.room.entity.toAssociations
 import com.github.swent.echo.data.room.entity.toTagList
 import com.github.swent.echo.data.room.entity.toTagRoomList
 import java.time.ZonedDateTime
@@ -42,7 +43,23 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     }
 
     override suspend fun setAssociation(association: Association) {
+        val crossRefs =
+            association.relatedTags.map {
+                AssociationTagCrossRef(association.associationId, it.tagId)
+            }
+
+        associationDao.deleteAllAssociationTagCrossRefsForAssociation(association.associationId)
+        tagDao.insertAll(association.relatedTags.toTagRoomList())
         associationDao.insert(AssociationRoom(association))
+        associationDao.insertAssociationTagCrossRefs(crossRefs)
+    }
+
+    override suspend fun getAssociations(
+        associationIds: List<String>,
+        syncedSecondsAgo: Long
+    ): List<Association> {
+        val after = computeTimestamp(syncedSecondsAgo)
+        return associationDao.get(associationIds, after).toAssociations()
     }
 
     override suspend fun getAllAssociations(syncedSecondsAgo: Long): List<Association> {
@@ -50,12 +67,30 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         return associationDao.getAll(after).map { it.toAssociation() }
     }
 
+    override suspend fun getAssociationIds(
+        associationIds: List<String>,
+        syncedSecondsAgo: Long
+    ): List<String> {
+        return associationDao.getIdsFrom(associationIds, computeTimestamp(syncedSecondsAgo))
+    }
+
     override suspend fun getAllAssociationIds(secondsAgo: Long): List<String> {
         return associationDao.getAllIds(computeTimestamp(secondsAgo))
     }
 
     override suspend fun setAssociations(associations: List<Association>) {
+        val tags = associations.flatMap { it.relatedTags }.toSet()
+        val crossRefs =
+            associations.flatMap { association ->
+                association.relatedTags.map {
+                    AssociationTagCrossRef(association.associationId, it.tagId)
+                }
+            }
+
+        eventDao.deleteAllEventTagCrossRefsForEvents(associations.map { it.associationId })
+        tagDao.insertAll(tags.toTagRoomList())
         associationDao.insertAll(associations.map { AssociationRoom(it) })
+        associationDao.insertAssociationTagCrossRefs(crossRefs)
     }
 
     override suspend fun deleteAssociationsNotIn(associationIds: List<String>) {
@@ -70,7 +105,6 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     override suspend fun setEvent(event: Event) {
         val crossRefs = event.tags.map { EventTagCrossRef(event.eventId, it.tagId) }
 
-        event.organizer?.let { associationDao.insert(AssociationRoom(it)) }
         eventDao.deleteAllEventTagCrossRefsForEvent(event.eventId)
         tagDao.insertAll(event.tags.toTagRoomList())
         eventDao.insert(EventRoom(event))
@@ -97,7 +131,6 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
             events.flatMap { event -> event.tags.map { EventTagCrossRef(event.eventId, it.tagId) } }
 
         eventDao.deleteAllEventTagCrossRefsForEvents(events.map { it.eventId })
-        associationDao.insertAll(associations.map { AssociationRoom(it) })
         tagDao.insertAll(tags.toTagRoomList())
         eventDao.insertAll(events.map { EventRoom(it) })
         eventDao.insertEventTagCrossRefs(crossRefs)
@@ -151,15 +184,13 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         val tags = userProfile.tags.toTagRoomList()
         val tagCrossRefs = tags.map { UserProfileTagCrossRef(userProfile.userId, it.tagId) }
 
-        val committeeMemberAssociations = userProfile.committeeMember.toAssociationRoomList()
         val committeeMemberCrossRefs =
-            committeeMemberAssociations.map {
+            userProfile.committeeMember.map {
                 UserProfileCommitteeMemberCrossRef(userProfile.userId, it.associationId)
             }
 
-        val associationSubscriptions = userProfile.associationsSubscriptions.toAssociationRoomList()
         val associationSubscriptionCrossRefs =
-            associationSubscriptions.map {
+            userProfile.associationsSubscriptions.map {
                 UserProfileAssociationSubscriptionCrossRef(userProfile.userId, it.associationId)
             }
 
@@ -169,8 +200,6 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
             userProfile.userId
         )
         tagDao.insertAll(tags)
-        associationDao.insertAll(committeeMemberAssociations)
-        associationDao.insertAll(associationSubscriptions)
         userProfileDao.insert(UserProfileRoom(userProfile))
 
         userProfileDao.insertUserProfileTagCrossRefs(tagCrossRefs)

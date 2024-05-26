@@ -8,6 +8,7 @@ import com.github.swent.echo.data.room.dao.EventRoomDao
 import com.github.swent.echo.data.room.dao.TagRoomDao
 import com.github.swent.echo.data.room.dao.UserProfileRoomDao
 import com.github.swent.echo.data.room.entity.AssociationRoom
+import com.github.swent.echo.data.room.entity.AssociationTagCrossRef
 import com.github.swent.echo.data.room.entity.EventRoom
 import com.github.swent.echo.data.room.entity.EventTagCrossRef
 import com.github.swent.echo.data.room.entity.JoinedEventRoom
@@ -21,6 +22,7 @@ import com.github.swent.echo.data.room.entity.UserProfileTagCrossRef
     entities =
         [
             AssociationRoom::class,
+            AssociationTagCrossRef::class,
             EventRoom::class,
             EventTagCrossRef::class,
             JoinedEventRoom::class,

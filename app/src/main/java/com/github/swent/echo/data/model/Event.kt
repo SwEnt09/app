@@ -6,7 +6,7 @@ import kotlinx.serialization.Contextual
 data class Event(
     val eventId: String,
     val creator: EventCreator,
-    val organizer: Association?,
+    val organizer: AssociationHeader?,
     val title: String,
     val description: String,
     val location: Location,

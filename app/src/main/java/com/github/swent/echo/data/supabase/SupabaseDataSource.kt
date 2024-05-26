@@ -6,6 +6,7 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import com.github.swent.echo.data.supabase.entities.AssociationSubscriptionSupabase
+import com.github.swent.echo.data.supabase.entities.AssociationSupabase
 import com.github.swent.echo.data.supabase.entities.EventJoinSupabase
 import com.github.swent.echo.data.supabase.entities.EventSupabase
 import com.github.swent.echo.data.supabase.entities.EventSupabaseSetter
@@ -13,6 +14,7 @@ import com.github.swent.echo.data.supabase.entities.EventTagSupabase
 import com.github.swent.echo.data.supabase.entities.UserProfileSupabase
 import com.github.swent.echo.data.supabase.entities.UserProfileSupabaseSetter
 import com.github.swent.echo.data.supabase.entities.UserTagSupabase
+import com.github.swent.echo.data.supabase.entities.toAssociations
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.exceptions.BadRequestRestException
 import io.github.jan.supabase.exceptions.UnknownRestException
@@ -44,12 +46,22 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         return output.toString()
     }
 
+    companion object {
+        const val QUERY_ASSOCIATION =
+            "association_id, name, description, association_url, association_tags!association_tags_association_id_fkey(tags!association_tags_tag_id_fkey(tag_id, name, parent_id))"
+        const val QUERY_EVENT =
+            "event_id, user_profiles!public_events_creator_id_fkey(user_id, name), associations!public_events_organizer_id_fkey(association_id, name), title, description, event_tags!event_tags_event_id_fkey(tags!event_tags_tag_id_fkey(tag_id, name, parent_id)), location_name, location_lat, location_long, start_date, end_date, participant_count, max_participants, image_id"
+    }
+
     override suspend fun getAssociation(associationId: String): Association? {
         return try {
             supabase
                 .from("associations")
-                .select() { filter { eq("association_id", associationId) } }
-                .decodeSingle()
+                .select(Columns.raw(QUERY_ASSOCIATION)) {
+                    filter { eq("association_id", associationId) }
+                }
+                .decodeSingle<AssociationSupabase>()
+                .toAssociation()
         } catch (e: BadRequestRestException) {
             null
         }
@@ -58,38 +70,40 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
     override suspend fun getAssociations(associations: List<String>): List<Association> {
         return supabase
             .from("associations")
-            .select { filter { isIn("association_id", associations) } }
-            .decodeList()
+            .select(Columns.raw(QUERY_ASSOCIATION)) {
+                filter { isIn("association_id", associations) }
+            }
+            .decodeList<AssociationSupabase>()
+            .toAssociations()
     }
 
     override suspend fun getAssociationsNotIn(associationIds: List<String>): List<Association> {
         return supabase
             .from("associations")
-            .select {
+            .select(Columns.raw(QUERY_ASSOCIATION)) {
                 filter {
                     filterNot("association_id", FilterOperator.IN, toFilterList(associationIds))
                 }
             }
-            .decodeList()
+            .decodeList<AssociationSupabase>()
+            .toAssociations()
     }
 
     override suspend fun getAllAssociations(): List<Association> {
-        return supabase.from("associations").select().decodeList<Association>()
-    }
-
-    companion object {
-        const val QUERY_EVENT =
-            "event_id, user_profiles!public_events_creator_id_fkey(user_id, name), associations!public_events_organizer_id_fkey(association_id, name, description), title, description, event_tags!event_tags_event_id_fkey(tags!event_tags_tag_id_fkey(tag_id, name, parent_id)), location_name, location_lat, location_long, start_date, end_date, participant_count, max_participants, image_id"
+        return supabase
+            .from("associations")
+            .select(Columns.raw(QUERY_ASSOCIATION))
+            .decodeList<AssociationSupabase>()
+            .toAssociations()
     }
 
     override suspend fun getEvent(eventId: String): Event? {
         return try {
-            val event =
-                supabase
-                    .from("events")
-                    .select(Columns.raw(QUERY_EVENT)) { filter { eq("event_id", eventId) } }
-                    .decodeSingle<EventSupabase>()
-            event.toEvent()
+            supabase
+                .from("events")
+                .select(Columns.raw(QUERY_EVENT)) { filter { eq("event_id", eventId) } }
+                .decodeSingle<EventSupabase>()
+                .toEvent()
         } catch (e: NoSuchElementException) {
             null
         }
@@ -247,7 +261,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                     .from("user_profiles")
                     .select(
                         Columns.raw(
-                            "user_id, name, semester, section, user_tags!user_tags_user_id_fkey(tags!user_tags_tag_id_fkey(tag_id, name, parent_id)), committee_members!public_associationMembers_user_id_fkey(associations!public_associationMembers_association_id_fkey(association_id, name, description)), association_subscriptions!association_subscription_user_id_fkey(associations!association_subscription_association_id_fkey(association_id, name, description))"
+                            "user_id, name, semester, section, user_tags!user_tags_user_id_fkey(tags!user_tags_tag_id_fkey(tag_id, name, parent_id)), committee_members!public_associationMembers_user_id_fkey(associations!public_associationMembers_association_id_fkey(association_id, name)), association_subscriptions!association_subscription_user_id_fkey(associations!association_subscription_association_id_fkey(association_id, name))"
                         )
                     ) {
                         filter { eq("user_id", userId) }
