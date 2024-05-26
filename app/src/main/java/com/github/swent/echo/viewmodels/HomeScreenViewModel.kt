@@ -1,5 +1,9 @@
 package com.github.swent.echo.viewmodels
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.R
@@ -144,6 +148,8 @@ constructor(
     val initialPage = _initialPage.asStateFlow()
     // Flow to observe the network status
     val isOnline = networkService.isOnline
+    private val _profilePicture = MutableStateFlow<Bitmap?>(null)
+    val profilePicture = _profilePicture.asStateFlow()
     // Flow to observe the followed associations
     private val _followedAssociations = MutableStateFlow<List<String>>(listOf())
     val followedAssociations = _followedAssociations.asStateFlow()
@@ -175,6 +181,13 @@ constructor(
                 } ?: listOf()
             _followedAssociations.value =
                 repository.getAssociations(followedAssociationIds).map { it.name }
+            val profilePictureFile = repository.getUserProfilePicture(userId)
+            _profilePicture.value =
+                if (profilePictureFile != null) {
+                    BitmapFactory.decodeStream(profilePictureFile.inputStream())
+                } else {
+                    null
+                }
             refreshFiltersContainer()
         }
     }
