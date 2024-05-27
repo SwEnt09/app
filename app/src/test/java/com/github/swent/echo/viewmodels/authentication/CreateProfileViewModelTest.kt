@@ -108,6 +108,8 @@ class CreateProfileViewModelTest {
         assertEquals(actualUserProfile, userProfile)
     }
 
+    // Test for adding a tag to the tag list
+
     @Test
     fun addTagTest() {
         val tag = Tag("tag3", "Dance")
@@ -115,6 +117,8 @@ class CreateProfileViewModelTest {
         val tagList = viewModel.tagList.value
         assertTrue(tagList.contains(tag))
     }
+
+    // Test for removing a tag from the tag list
 
     @Test
     fun removeTagTest() {
