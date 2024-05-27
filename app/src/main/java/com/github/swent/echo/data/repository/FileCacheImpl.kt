@@ -1,24 +1,25 @@
 package com.github.swent.echo.data.repository
 
-import android.app.Application
 import com.github.swent.echo.data.repository.datasources.FileCache
 import java.io.File
-import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-class FileCacheImpl
-@Inject
-constructor(
-    application: Application,
+/**
+ * Implementation of [FileCache] that uses the file system for caching.
+ *
+ * @param cacheDir The directory to store the cached files.
+ * @param dispatcher The dispatcher to use for file operations.
+ */
+class FileCacheImpl(
+    private val cacheDir: File,
+    private val dispatcher: CoroutineDispatcher,
 ) : FileCache {
-
-    private val cacheDir: File = application.cacheDir
 
     override suspend fun get(name: String): ByteArray? {
         val file = File(cacheDir, name)
         return if (file.exists()) {
-            withContext(Dispatchers.IO) { file.readBytes() }
+            withContext(dispatcher) { file.readBytes() }
         } else {
             null
         }
@@ -26,7 +27,7 @@ constructor(
 
     override suspend fun set(name: String, content: ByteArray) {
         val writer = File(cacheDir, name).outputStream()
-        withContext(Dispatchers.IO) { writer.write(content) }
+        withContext(dispatcher) { writer.write(content) }
     }
 
     override suspend fun delete(name: String): Boolean {
