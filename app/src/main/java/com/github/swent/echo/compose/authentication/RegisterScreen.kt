@@ -30,6 +30,12 @@ import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.AuthenticationState
 import com.github.swent.echo.viewmodels.authentication.RegisterViewModel
 
+/**
+ * The register screen.
+ *
+ * @param registerViewModel The view model for the register screen.
+ * @param navActions The navigation actions.
+ */
 @Composable
 fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationActions) {
     val state by registerViewModel.state.collectAsState()
@@ -40,6 +46,8 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
     val startGoogleSignInCallback = registerViewModel.startGoogleSignInCallback()
 
     if (state is AuthenticationState.SignedIn) {
+        // Redirect to the appropriate screen if the user is signed in.
+        // Note that the user is always redirected to the login screen after registering with email.
         LaunchedEffect(state) {
             if (usingGoogleAuthentication) {
                 navActions.navigateTo((state as AuthenticationState.SignedIn).redirect)
@@ -51,6 +59,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
         }
     }
 
+    // Make the screen scrollable for small devices.
     val scrollState = rememberScrollState()
 
     Column(
@@ -81,6 +90,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
     }
 }
 
+/** A link to navigate to the login screen. */
 @Composable
 fun NavigateToLoginScreen(onClick: () -> Unit) {
     Row(

@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
  * ViewModel for the login screen.
  *
  * @param auth The authentication service to use.
+ * @param repository The repository to use.
+ * @param networkService The network service to use.
  */
 @HiltViewModel
 class LoginViewModel

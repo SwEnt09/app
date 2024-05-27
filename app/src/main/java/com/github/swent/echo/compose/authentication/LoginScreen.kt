@@ -25,17 +25,25 @@ import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.AuthenticationState
 import com.github.swent.echo.viewmodels.authentication.LoginViewModel
 
+/**
+ * The login screen.
+ *
+ * @param loginViewModel The view model for the login screen.
+ * @param navActions The navigation actions.
+ */
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, navActions: NavigationActions) {
     val state by loginViewModel.state.collectAsState()
     val isOnline by loginViewModel.isOnline.collectAsState()
 
+    // Redirect to the appropriate screen if the user is signed in.
     if (state is AuthenticationState.SignedIn) {
         LaunchedEffect(state) {
             navActions.navigateTo((state as AuthenticationState.SignedIn).redirect)
         }
     }
 
+    // Make the screen scrollable for small devices.
     val scrollState = rememberScrollState()
 
     Column(
@@ -61,6 +69,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, navActions: NavigationActions) {
     }
 }
 
+/** A link to navigate to the register screen. */
 @Composable
 fun NavigateToRegisterScreen(onClick: () -> Unit) {
     Row(
