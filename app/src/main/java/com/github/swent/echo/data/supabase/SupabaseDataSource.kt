@@ -302,10 +302,10 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
 
     override suspend fun getUserProfilePicture(userId: String): File? {
         val outputFile =
-            File.createTempFile(userId, ".png", null) // the cache directory is used by default
+            File.createTempFile(userId, ".jpeg", null) // the cache directory is used by default
         supabase.storage
             .from("user-profile-picture")
-            .downloadAuthenticatedTo("$userId.png", outputFile)
+            .downloadAuthenticatedTo("$userId.jpeg", outputFile)
         if (outputFile.length() > EMPTY_FILE_SIZE) {
             return outputFile
         } else {
@@ -316,10 +316,10 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
     override suspend fun setUserProfilePicture(userId: String, picture: File) {
         supabase.storage
             .from("user-profile-picture")
-            .upload("$userId.png", picture.readBytes(), upsert = true)
+            .upload("$userId.jpeg", picture.readBytes(), upsert = true)
     }
 
     override suspend fun deleteUserProfilePicture(userId: String) {
-        supabase.storage.from("user-profile-picture").delete("$userId.png")
+        supabase.storage.from("user-profile-picture").delete("$userId.jpeg")
     }
 }
