@@ -37,6 +37,7 @@ class CreateProfileViewModelTest {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         authenticationService.userID = "test_user_id"
         every { mockedNetworkService.isOnline } returns MutableStateFlow(true)
+        coEvery { repository.getUserProfilePicture(any()) } returns null
         viewModel = CreateProfileViewModel(authenticationService, repository, mockedNetworkService)
     }
 

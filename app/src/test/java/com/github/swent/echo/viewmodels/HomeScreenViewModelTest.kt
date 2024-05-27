@@ -1,5 +1,6 @@
 package com.github.swent.echo.viewmodels
 
+import android.graphics.BitmapFactory
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.AssociationHeader
@@ -14,6 +15,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import java.time.ZonedDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -73,7 +75,10 @@ class HomeScreenViewModelTest {
         coEvery { mockedRepository.getAllEvents() } returns eventList
         coEvery { mockedRepository.getAllTags() } returns tagSet
         coEvery { mockedRepository.getUserProfile("u0") } returns userProfile
+        coEvery { mockedRepository.getUserProfilePicture("u0") } returns null
         every { mockedNetworkService.isOnline } returns isOnline
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeStream(any()) } returns null
         runBlocking {
             homeScreenViewModel =
                 HomeScreenViewModel(
