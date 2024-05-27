@@ -29,8 +29,12 @@ constructor(
         withContext(Dispatchers.IO) { writer.write(content) }
     }
 
-    override suspend fun delete(name: String) {
+    override suspend fun delete(name: String): Boolean {
         val file = File(cacheDir, name)
-        if (file.exists()) file.delete()
+        return if (file.exists()) {
+            file.delete()
+        } else {
+            false
+        }
     }
 }

@@ -22,6 +22,7 @@ interface FileCache {
      * Delete the file by name.
      *
      * @param name The name of the file to delete.
+     * @return `true` if the file is deleted, `false` otherwise.
      */
-    suspend fun delete(name: String)
+    suspend fun delete(name: String): Boolean
 }
