@@ -39,7 +39,9 @@ class CreateProfileTest {
                 onSecChange = {},
                 onSemChange = {},
                 isEditing = true,
-                isOnline = true
+                isOnline = true,
+                picture = null,
+                onPictureChange = {}
             )
         }
         // Assert that certain elements are present on the screen
