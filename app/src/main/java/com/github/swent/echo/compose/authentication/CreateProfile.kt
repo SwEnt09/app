@@ -458,13 +458,16 @@ fun ProfilePictureEdit(picture: Bitmap?, onPictureChange: (newPicture: Bitmap?) 
         Box {
             Image(
                 modifier =
-                    Modifier.size(pictureDisplaySize).clip(CircleShape).clickable {
-                        pickPhotoActivity.launch(
-                            PickVisualMediaRequest(
-                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                    Modifier.size(pictureDisplaySize)
+                        .clip(CircleShape)
+                        .clickable {
+                            pickPhotoActivity.launch(
+                                PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                )
                             )
-                        )
-                    },
+                        }
+                        .testTag("profile-picture-image"),
                 painter =
                     if (picture != null) {
                         BitmapPainter(picture!!.asImageBitmap())
@@ -481,7 +484,10 @@ fun ProfilePictureEdit(picture: Bitmap?, onPictureChange: (newPicture: Bitmap?) 
             )
         }
         IconButton(
-            modifier = Modifier.align(Alignment.End).offset(x = 10.dp, y = (-10).dp),
+            modifier =
+                Modifier.align(Alignment.End)
+                    .offset(x = 10.dp, y = (-10).dp)
+                    .testTag("profile-picture-delete"),
             onClick = { onPictureChange(null) }
         ) {
             Icon(
@@ -552,7 +558,7 @@ fun PictureTransformer(
                 offset
             }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().testTag("profile-picture-transformer")) {
         Image(
             modifier =
                 Modifier.fillMaxSize()
@@ -587,11 +593,16 @@ fun PictureTransformer(
                 Modifier.align(Alignment.BottomEnd).padding(horizontal = 0.dp, vertical = 15.dp)
         ) {
             val button_Padding = 5.dp
-            FilledTonalButton(modifier = Modifier.padding(button_Padding), onClick = onCancel) {
+            FilledTonalButton(
+                modifier =
+                    Modifier.padding(button_Padding).testTag("profile-picture-transformer-cancel"),
+                onClick = onCancel
+            ) {
                 Text(stringResource(R.string.edit_event_screen_cancel))
             }
             FilledTonalButton(
-                modifier = Modifier.padding(button_Padding),
+                modifier =
+                    Modifier.padding(button_Padding).testTag("profile-picture-transformer-confirm"),
                 onClick = {
                     val pictureCenter =
                         Pair(
