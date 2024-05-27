@@ -180,7 +180,7 @@ fun ProfileCreationUI(
                         }
                     }
                 },
-                title = { Text(text = "Create Profile") },
+                title = { Text(text = "My Profile") },
                 modifier = Modifier.fillMaxWidth()
             )
         },

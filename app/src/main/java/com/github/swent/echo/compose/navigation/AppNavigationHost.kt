@@ -98,8 +98,8 @@ fun AppNavigationHost(
 
     NavHost(
         navController = navController,
-        // startDestination = Routes.LOADING.name,
-        startDestination = Routes.PROFILE_CREATION.name,
+        startDestination = Routes.LOADING.name,
+
     ) {
         composable(Routes.LOADING.name) {
             QuitAppOnHardwareBackButtonPressPress()
