@@ -83,6 +83,12 @@ fun AuthenticationScreen(
     }
 }
 
+/**
+ * Google sign-in button.
+ *
+ * @param isOnline A boolean indicating whether the user is online.
+ * @param onClick The callback to be invoked when the user clicks the button.
+ */
 @Composable
 fun GoogleSignInButton(isOnline: Boolean, onClick: () -> Unit) {
     return OutlinedButton(
@@ -101,6 +107,7 @@ fun GoogleSignInButton(isOnline: Boolean, onClick: () -> Unit) {
     }
 }
 
+/** A separator between the authentication form and the Google sign-in button. */
 @Composable
 fun AuthenticationMethodSeparator() {
     Row(
@@ -117,6 +124,7 @@ fun AuthenticationMethodSeparator() {
     }
 }
 
+/** A screen that displays a message indicating that the user is signing in. */
 @Composable
 fun SigningInScreen() {
     Column(

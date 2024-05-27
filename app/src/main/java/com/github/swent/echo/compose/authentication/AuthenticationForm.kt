@@ -142,6 +142,16 @@ fun AuthenticationForm(
     }
 }
 
+/**
+ * A text field for entering authentication information.
+ *
+ * @param modifier The modifier to be applied to the text field.
+ * @param label The text to be displayed as the label for the text field.
+ * @param value The current value of the text field.
+ * @param errorText The text to be displayed as an error message.
+ * @param onValueChange The callback to be invoked when the value of the text field changes.
+ * @param isPasswordField A boolean indicating whether the text field should be a password field.
+ */
 @Composable
 fun AuthenticationTextField(
     modifier: Modifier,

@@ -12,6 +12,11 @@ import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
 import java.util.Locale
 
+/**
+ * A title for the authentication screen. Displays the app name and a subtitle.
+ *
+ * @param subtitle The subtitle to be displayed below the title.
+ */
 @Composable
 fun AuthenticationScreenTitle(subtitle: String) {
     Column(

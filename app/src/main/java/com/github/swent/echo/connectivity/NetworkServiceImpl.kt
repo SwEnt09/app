@@ -8,6 +8,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * Implementation of [NetworkService] that uses [ConnectivityManager] to check if the device is
+ * connected to the internet.
+ *
+ * @param connectivityManager The [ConnectivityManager] to use to check the network status.
+ */
 class NetworkServiceImpl(connectivityManager: ConnectivityManager) : NetworkService {
     private val _isOnline = MutableStateFlow(false)
 
