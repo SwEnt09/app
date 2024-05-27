@@ -1,5 +1,6 @@
 package com.github.swent.echo.data.repository
 
+import com.github.swent.echo.data.repository.datasources.FileCache
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
@@ -18,7 +19,7 @@ class FileCacheImplTest {
         val FILE_CONTENT = "Hello, World!".toByteArray()
     }
 
-    @Inject lateinit var fileCache: FileCacheImpl
+    @Inject lateinit var fileCache: FileCache
 
     @get:Rule val hiltRule = HiltAndroidRule(this)
 
