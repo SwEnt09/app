@@ -46,7 +46,8 @@ class FileCacheImplTest {
     fun testDeleteFile() {
         runBlocking {
             fileCache.set(FILE_NAME, FILE_CONTENT)
-            fileCache.delete(FILE_NAME)
+            val success = fileCache.delete(FILE_NAME)
+            assertTrue(success)
             val retrievedFile = fileCache.get(FILE_NAME)
             assertNull(retrievedFile)
         }
