@@ -28,7 +28,6 @@ class CreateProfileViewModelTest {
 
     private val authenticationService = FakeAuthenticationService()
     private val repository = mockk<Repository>(relaxed = true)
-    // private val repository: SimpleRepository = mockk()
     private lateinit var viewModel: CreateProfileViewModel
     private val mockedNetworkService = mockk<NetworkService>()
 
@@ -54,7 +53,6 @@ class CreateProfileViewModelTest {
                 emptySet()
             )
 
-        // coEvery { authenticationService.getCurrentUserID() } returns userId
         coEvery { (repository.getUserProfile(userId)) } returns (userProfile)
 
         val viewModel =
@@ -74,8 +72,6 @@ class CreateProfileViewModelTest {
     @Test
     fun loggedInUser() = runBlocking {
         val userId = "test_user_id"
-        // whenever(authenticationService.getCurrentUserID()).thenReturn(userId)
-        // coEvery { authenticationService.getCurrentUserID() } returns userId
 
         viewModel.setFirstName("John")
         viewModel.setLastName("Doe")
