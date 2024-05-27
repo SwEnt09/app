@@ -1,5 +1,8 @@
 package com.github.swent.echo.compose.authentication
 
+import android.graphics.Bitmap
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -9,6 +12,8 @@ import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import io.mockk.mockk
+import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -63,5 +68,44 @@ class CreateProfileTest {
         composeTestRule.onAllNodesWithContentDescription("list dropdown")[1].performClick()
         composeTestRule.onNodeWithTag("BA1").assertExists()
         composeTestRule.onNodeWithTag("BA2").assertExists()
+    }
+
+    @Test
+    fun profileCreationPictureIsCorrect() {
+        val picture = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888)
+        var changedPicture: Bitmap? = picture
+        composeTestRule.setContent {
+            ProfilePictureEdit(picture = picture, onPictureChange = { changedPicture = it })
+        }
+        composeTestRule
+            .onNodeWithTag("profile-picture-image")
+            .assertIsDisplayed()
+            .assertHasClickAction()
+        composeTestRule
+            .onNodeWithTag("profile-picture-delete")
+            .assertIsDisplayed()
+            .assertHasClickAction()
+        composeTestRule.onNodeWithTag("profile-picture-delete").performClick()
+        assertNull(changedPicture)
+    }
+
+    @Test
+    fun profileCreationPictureTransformerCallbacksTest() {
+        val picture = Bitmap.createBitmap(300, 1000, Bitmap.Config.ARGB_8888)
+        var changedPicture: Bitmap = picture
+        var canceled = false
+        composeTestRule.setContent {
+            PictureTransformer(
+                picture = picture,
+                onConfirm = { changedPicture = it },
+                onCancel = { canceled = true }
+            )
+        }
+        composeTestRule.onNodeWithTag("profile-picture-transformer").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("profile-picture-transformer-confirm").performClick()
+        assertTrue(changedPicture != picture)
+        assertTrue(changedPicture.height == changedPicture.width)
+        composeTestRule.onNodeWithTag("profile-picture-transformer-cancel").performClick()
+        assertTrue(canceled)
     }
 }
