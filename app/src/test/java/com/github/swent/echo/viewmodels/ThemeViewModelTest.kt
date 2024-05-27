@@ -1,9 +1,13 @@
 package com.github.swent.echo.viewmodels
 
+import android.app.Application
+import android.content.res.Configuration
+import android.content.res.Resources
 import app.cash.turbine.test
 import com.github.swent.echo.ThemePreferenceManager
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,13 +26,21 @@ class ThemeViewModelTest {
     private lateinit var themePreferenceManager: ThemePreferenceManager
     private lateinit var viewModel: ThemeViewModel
     private val themeFlow = MutableStateFlow(AppTheme.MODE_NIGHT)
+    private val application = mockk<Application>()
+    private val resources = mockk<Resources>()
+    private val configuration = mockk<Configuration>()
+    private val uiMode = Configuration.UI_MODE_NIGHT_YES
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         themePreferenceManager = mockk(relaxed = true) { coEvery { theme } returns themeFlow }
-        viewModel = ThemeViewModel(themePreferenceManager)
+        every { application.applicationContext } returns application
+        every { application.resources } returns resources
+        every { resources.configuration } returns configuration
+        // coEvery { configuration.uiMode } returns Configuration.UI_MODE_NIGHT_YES
+        viewModel = ThemeViewModel(themePreferenceManager, application)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
