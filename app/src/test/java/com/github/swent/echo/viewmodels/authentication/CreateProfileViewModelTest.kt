@@ -1,12 +1,13 @@
 package com.github.swent.echo.viewmodels.authentication
 
 import androidx.lifecycle.viewModelScope
+import com.github.swent.echo.authentication.AuthenticationService
+import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
-import com.github.swent.echo.data.repository.Repository
-import com.github.swent.echo.fakes.FakeAuthenticationService
+import com.github.swent.echo.data.repository.SimpleRepository
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -26,16 +27,16 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 class CreateProfileViewModelTest {
 
-    private val authenticationService = FakeAuthenticationService()
-    private val repository = mockk<Repository>(relaxed = true)
+    private val authenticationService: AuthenticationService = mockk()
+    private val repository: SimpleRepository = mockk()
     private lateinit var viewModel: CreateProfileViewModel
     private val mockedNetworkService = mockk<NetworkService>()
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        authenticationService.userID = "test_user_id"
-        viewModel = CreateProfileViewModel(authenticationService, repository)
+        every { mockedNetworkService.isOnline } returns MutableStateFlow(true)
+        viewModel = CreateProfileViewModel(authenticationService, repository, mockedNetworkService)
     }
 
     @Test
@@ -52,7 +53,7 @@ class CreateProfileViewModelTest {
                 emptySet(),
                 emptySet()
             )
-
+        coEvery { authenticationService.getCurrentUserID() } returns userId
         coEvery { (repository.getUserProfile(userId)) } returns (userProfile)
 
         val viewModel =
@@ -71,7 +72,8 @@ class CreateProfileViewModelTest {
 
     @Test
     fun loggedInUser() = runBlocking {
-        val userId = "test_user_id"
+        val userId = "userId"
+        coEvery { authenticationService.getCurrentUserID() } returns userId
 
         viewModel.setFirstName("John")
         viewModel.setLastName("Doe")
@@ -108,8 +110,6 @@ class CreateProfileViewModelTest {
         assertEquals(actualUserProfile, userProfile)
     }
 
-    // Test for adding a tag to the tag list
-
     @Test
     fun addTagTest() {
         val tag = Tag("tag3", "Dance")
@@ -117,8 +117,6 @@ class CreateProfileViewModelTest {
         val tagList = viewModel.tagList.value
         assertTrue(tagList.contains(tag))
     }
-
-    // Test for removing a tag from the tag list
 
     @Test
     fun removeTagTest() {
