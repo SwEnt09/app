@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.data.repository.RepositoryImpl
+import com.github.swent.echo.data.repository.datasources.FileCache
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import com.github.swent.echo.data.room.AppDatabase
@@ -26,7 +27,8 @@ object RepositoryModule {
     fun provideRepository(
         supabaseClient: SupabaseClient,
         application: Application,
-        networkService: NetworkService
+        networkService: NetworkService,
+        fileCache: FileCache
     ): Repository {
         val remoteDataSource: RemoteDataSource = SupabaseDataSource(supabaseClient)
         val localDataSource: LocalDataSource =
@@ -39,7 +41,7 @@ object RepositoryModule {
                     .build()
             )
 
-        return RepositoryImpl(remoteDataSource, localDataSource, networkService)
+        return RepositoryImpl(remoteDataSource, localDataSource, networkService, fileCache)
     }
 
     /*
