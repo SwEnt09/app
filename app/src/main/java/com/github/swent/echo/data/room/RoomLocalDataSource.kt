@@ -87,7 +87,9 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
                 }
             }
 
-        eventDao.deleteAllEventTagCrossRefsForEvents(associations.map { it.associationId })
+        associationDao.deleteAllAssociationTagCrossRefsForAssociations(
+            associations.map { it.associationId }
+        )
         tagDao.insertAll(tags.toTagRoomList())
         associationDao.insertAll(associations.map { AssociationRoom(it) })
         associationDao.insertAssociationTagCrossRefs(crossRefs)
@@ -125,7 +127,6 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
     }
 
     override suspend fun setEvents(events: List<Event>) {
-        val associations = events.mapNotNull { it.organizer }
         val tags = events.flatMap { it.tags }.toSet()
         val crossRefs =
             events.flatMap { event -> event.tags.map { EventTagCrossRef(event.eventId, it.tagId) } }
