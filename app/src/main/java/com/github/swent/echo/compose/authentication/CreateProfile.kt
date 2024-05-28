@@ -569,7 +569,8 @@ fun PictureTransformer(
                         translationX = offset.x,
                         translationY = offset.y
                     )
-                    .transformable(state = state),
+                    .transformable(state = state)
+                    .testTag("profile-picture-image"),
             painter = BitmapPainter(picture.asImageBitmap()),
             contentDescription = ""
         )
