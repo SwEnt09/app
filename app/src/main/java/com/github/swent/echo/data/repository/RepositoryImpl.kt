@@ -5,6 +5,7 @@ import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.repository.datasources.FileCache
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import java.time.ZonedDateTime
@@ -12,7 +13,8 @@ import java.time.ZonedDateTime
 class RepositoryImpl(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
-    private val networkService: NetworkService
+    private val networkService: NetworkService,
+    private val fileCache: FileCache
 ) : Repository {
 
     private val isOffline: () -> Boolean = { !networkService.isOnlineNow() }
@@ -268,10 +270,18 @@ class RepositoryImpl(
     }
 
     override suspend fun getUserProfilePicture(userId: String): ByteArray? {
+        val fileName = "$userId.jpeg"
         if (isOffline()) {
-            return null
+            return fileCache.get(fileName)
         }
-        return remoteDataSource.getUserProfilePicture(userId)
+        var picture = fileCache.get(fileName)
+        if (picture == null) {
+            picture = remoteDataSource.getUserProfilePicture(userId)
+            if (picture != null) {
+                fileCache.set(fileName, picture)
+            }
+        }
+        return picture
     }
 
     override suspend fun setUserProfilePicture(userId: String, picture: ByteArray) {
@@ -279,6 +289,7 @@ class RepositoryImpl(
             throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
         }
         remoteDataSource.setUserProfilePicture(userId, picture)
+        fileCache.set("$userId.jpeg", picture)
     }
 
     override suspend fun deleteUserProfilePicture(userId: String) {
@@ -286,6 +297,7 @@ class RepositoryImpl(
             throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
         }
         remoteDataSource.deleteUserProfilePicture(userId)
+        fileCache.delete("$userId.jpeg")
     }
 }
 
