@@ -15,7 +15,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.compose.auth.composeAuth
 import io.github.jan.supabase.gotrue.auth
-import java.io.File
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Arrays
@@ -231,7 +230,7 @@ class SupabaseDataSourceTest {
 
     @Test
     fun getUserProfilePictureTest() {
-        var res: File? = null
+        var res: ByteArray? = null
         runBlocking { res = source.getUserProfilePicture(userProfile.userId) }
         assertNotNull(res)
     }
@@ -244,7 +243,7 @@ class SupabaseDataSourceTest {
     */
     @Test
     fun setUserProfilePictureTest() {
-        var testPic: File? = null
+        var testPic: ByteArray? = null
         runBlocking { testPic = source.getUserProfilePicture(userProfile.userId) }
         print("breakpoint: delete from supabase now")
         runBlocking { source.setUserProfilePicture(userProfile.userId, testPic!!) }
