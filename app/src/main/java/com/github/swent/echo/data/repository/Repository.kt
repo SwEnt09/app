@@ -4,7 +4,6 @@ import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
-import java.io.File
 
 interface Repository {
 
@@ -89,9 +88,9 @@ interface Repository {
      * @param userId the id of the user
      * @return a picture as a file.
      */
-    suspend fun getUserProfilePicture(userId: String): File?
+    suspend fun getUserProfilePicture(userId: String): ByteArray?
 
-    suspend fun setUserProfilePicture(userId: String, picture: File)
+    suspend fun setUserProfilePicture(userId: String, picture: ByteArray)
 
     suspend fun deleteUserProfilePicture(userId: String)
 }

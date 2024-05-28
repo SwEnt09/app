@@ -17,15 +17,12 @@ import com.github.swent.echo.data.supabase.entities.UserTagSupabase
 import com.github.swent.echo.data.supabase.entities.toAssociations
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.exceptions.BadRequestRestException
+import io.github.jan.supabase.exceptions.NotFoundRestException
 import io.github.jan.supabase.exceptions.UnknownRestException
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
-import io.github.jan.supabase.storage.downloadAuthenticatedTo
 import io.github.jan.supabase.storage.storage
-import java.io.File
-
-val EMPTY_FILE_SIZE = 69
 
 class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSource {
 
@@ -300,23 +297,16 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         supabase.from("user_profiles").delete { filter { eq("user_id", userProfile.userId) } }
     }
 
-    override suspend fun getUserProfilePicture(userId: String): File? {
-        val outputFile =
-            File.createTempFile(userId, ".jpeg", null) // the cache directory is used by default
-        supabase.storage
-            .from("user-profile-picture")
-            .downloadAuthenticatedTo("$userId.jpeg", outputFile)
-        if (outputFile.length() > EMPTY_FILE_SIZE) {
-            return outputFile
-        } else {
-            return null
+    override suspend fun getUserProfilePicture(userId: String): ByteArray? {
+        return try {
+            supabase.storage.from("user-profile-picture").downloadAuthenticated("$userId.jpeg")
+        } catch (e: NotFoundRestException) {
+            null
         }
     }
 
-    override suspend fun setUserProfilePicture(userId: String, picture: File) {
-        supabase.storage
-            .from("user-profile-picture")
-            .upload("$userId.jpeg", picture.readBytes(), upsert = true)
+    override suspend fun setUserProfilePicture(userId: String, picture: ByteArray) {
+        supabase.storage.from("user-profile-picture").upload("$userId.jpeg", picture, upsert = true)
     }
 
     override suspend fun deleteUserProfilePicture(userId: String) {
