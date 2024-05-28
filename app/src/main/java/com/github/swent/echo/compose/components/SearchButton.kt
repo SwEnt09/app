@@ -8,6 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 
+/**
+ * Button to open the search bottom sheet.
+ *
+ * @param onClick the action to perform when the button is clicked
+ */
 @Composable
 fun SearchButton(onClick: () -> Unit) {
     FloatingActionButton(modifier = Modifier.testTag("search_button"), onClick = onClick) {

@@ -28,6 +28,7 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 
+/** Tests for the HomeScreenViewModel class. */
 class HomeScreenViewModelTest {
 
     private val fakeAuthenticationService = FakeAuthenticationService()

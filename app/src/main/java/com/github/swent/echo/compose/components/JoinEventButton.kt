@@ -14,6 +14,16 @@ import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.viewmodels.myevents.MyEventsViewModel
 
+/**
+ * Button to join or leave an event. Automatically disables the button if the user is offline or the
+ * event is full. The button text and action changes depending on whether the user has joined the
+ * event.
+ *
+ * @param event the event to join or leave
+ * @param isOnline whether the user is online
+ * @param buttonWidth the width of the button
+ * @param refreshEvents callback to refresh the events
+ */
 @Composable
 fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEvents: () -> Unit) {
     val myEventsViewModel: MyEventsViewModel = hiltViewModel()
