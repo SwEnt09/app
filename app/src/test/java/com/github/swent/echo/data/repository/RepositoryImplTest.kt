@@ -16,7 +16,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import java.io.File
 import java.time.ZonedDateTime
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -90,7 +89,7 @@ class RepositoryImplTest {
 
     private var isOnline: () -> Boolean = { true }
 
-    private val userProfilePicture = File(userProfile.userId)
+    private val userProfilePicture = ByteArray(50)
 
     @Before
     fun setUp() {
@@ -539,7 +538,7 @@ class RepositoryImplTest {
         every { mockedNetworkService.isOnlineNow() } returns true
         coEvery { mockedRemoteDataSource.getUserProfilePicture(userProfile.userId) } returns
             userProfilePicture
-        var res: File? = null
+        var res: ByteArray? = null
         runBlocking { res = repositoryImpl.getUserProfilePicture(userProfile.userId) }
         assertEquals(userProfilePicture, res)
         every { mockedNetworkService.isOnlineNow() } returns false

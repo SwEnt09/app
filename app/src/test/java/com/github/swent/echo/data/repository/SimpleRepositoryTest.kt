@@ -8,7 +8,6 @@ import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.UserProfile
 import io.mockk.every
 import io.mockk.mockk
-import java.io.File
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
@@ -158,7 +157,7 @@ class SimpleRepositoryTest {
 
     @Test
     fun setGetAndDeleteUserProfileTest() {
-        val picture = File.createTempFile(USER_ID, ".png", null)
+        val picture = ByteArray(50)
         runBlocking {
             simpleRepository.setUserProfilePicture(USER_ID, picture)
             val res = simpleRepository.getUserProfilePicture(USER_ID)

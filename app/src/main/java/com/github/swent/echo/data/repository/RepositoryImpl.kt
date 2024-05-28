@@ -7,7 +7,6 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
-import java.io.File
 import java.time.ZonedDateTime
 
 class RepositoryImpl(
@@ -268,14 +267,14 @@ class RepositoryImpl(
         localDataSource.deleteUserProfile(userProfile.userId)
     }
 
-    override suspend fun getUserProfilePicture(userId: String): File? {
+    override suspend fun getUserProfilePicture(userId: String): ByteArray? {
         if (isOffline()) {
             return null
         }
         return remoteDataSource.getUserProfilePicture(userId)
     }
 
-    override suspend fun setUserProfilePicture(userId: String, picture: File) {
+    override suspend fun setUserProfilePicture(userId: String, picture: ByteArray) {
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
         }
