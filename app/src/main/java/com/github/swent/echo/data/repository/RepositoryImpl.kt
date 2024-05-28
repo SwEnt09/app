@@ -8,6 +8,7 @@ import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.FileCache
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
+import io.github.jan.supabase.exceptions.HttpRequestException
 import java.time.ZonedDateTime
 
 class RepositoryImpl(
@@ -45,8 +46,17 @@ class RepositoryImpl(
         }
         val localResult = localDataSource.getAssociation(associationId, ASSOCIATION_CACHE_TTL)
         if (localResult == null) {
-            val remoteResult = remoteDataSource.getAssociation(associationId)
-            if (remoteResult != null) localDataSource.setAssociation(remoteResult)
+            val remoteResult =
+                try {
+                    remoteDataSource.getAssociation(associationId)
+                } catch (e: HttpRequestException) {
+                    return localDataSource.getAssociation(associationId, FETCH_ALL)
+                }
+            if (remoteResult == null) {
+                localDataSource.deleteAssociation(associationId)
+            } else {
+                localDataSource.setAssociation(remoteResult)
+            }
             return remoteResult
         }
         return localResult
@@ -59,7 +69,12 @@ class RepositoryImpl(
         val localResult = localDataSource.getAssociations(associationIds, ASSOCIATION_CACHE_TTL)
         val associationIdsNotInLocalResult = associationIds - localResult.map { it.associationId }
         if (associationIdsNotInLocalResult != emptyList<String>()) {
-            val remoteResult = remoteDataSource.getAssociations(associationIdsNotInLocalResult)
+            val remoteResult =
+                try {
+                    remoteDataSource.getAssociations(associationIdsNotInLocalResult)
+                } catch (e: HttpRequestException) {
+                    return localDataSource.getAssociations(associationIds, FETCH_ALL)
+                }
             localDataSource.setAssociations(remoteResult)
             return localResult + remoteResult
         }
@@ -72,7 +87,12 @@ class RepositoryImpl(
         }
         val nonExpired = localDataSource.getAllAssociations(ASSOCIATION_CACHE_TTL)
         val nonExpiredIds = nonExpired.map { it.associationId }
-        val remoteUpdate = remoteDataSource.getAssociationsNotIn(nonExpiredIds)
+        val remoteUpdate =
+            try {
+                remoteDataSource.getAssociationsNotIn(nonExpiredIds)
+            } catch (e: HttpRequestException) {
+                return localDataSource.getAllAssociations(FETCH_ALL)
+            }
         localDataSource.deleteAssociationsNotIn(nonExpiredIds)
         localDataSource.setAssociations(remoteUpdate)
         associations_last_cached_all = currentTimeStamp()
@@ -85,7 +105,12 @@ class RepositoryImpl(
         }
         val localResult = localDataSource.getEvent(eventId, EVENT_CACHE_TTL)
         if (localResult == null) {
-            val remoteResult = remoteDataSource.getEvent(eventId)
+            val remoteResult =
+                try {
+                    remoteDataSource.getEvent(eventId)
+                } catch (e: HttpRequestException) {
+                    return localDataSource.getEvent(eventId, FETCH_ALL)
+                }
             if (remoteResult == null) {
                 localDataSource.deleteEvent(eventId)
             } else {
@@ -100,7 +125,12 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("Event")
         }
-        val newEventId = remoteDataSource.createEvent(event)
+        val newEventId =
+            try {
+                remoteDataSource.createEvent(event)
+            } catch (e: HttpRequestException) {
+                throw RepositoryStoreWhileNoInternetException("Event")
+            }
         localDataSource.setEvent(event.copy(eventId = newEventId))
         return newEventId
     }
@@ -109,7 +139,11 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("Event")
         }
-        remoteDataSource.setEvent(event)
+        try {
+            remoteDataSource.setEvent(event)
+        } catch (e: HttpRequestException) {
+            throw RepositoryStoreWhileNoInternetException("Event")
+        }
         localDataSource.setEvent(event)
     }
 
@@ -117,7 +151,11 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("Event")
         }
-        remoteDataSource.deleteEvent(event)
+        try {
+            remoteDataSource.deleteEvent(event)
+        } catch (e: HttpRequestException) {
+            throw RepositoryStoreWhileNoInternetException("Event")
+        }
         localDataSource.deleteEvent(event.eventId)
     }
 
@@ -127,7 +165,12 @@ class RepositoryImpl(
         }
         val nonExpired = localDataSource.getAllEvents(EVENT_CACHE_TTL)
         val nonExpiredIds = nonExpired.map { it.eventId }
-        val remoteUpdate = remoteDataSource.getEventsNotIn(nonExpiredIds)
+        val remoteUpdate =
+            try {
+                remoteDataSource.getEventsNotIn(nonExpiredIds)
+            } catch (e: HttpRequestException) {
+                return localDataSource.getAllEvents(FETCH_ALL)
+            }
         localDataSource.deleteEventsNotIn(nonExpiredIds)
         localDataSource.setEvents(remoteUpdate)
         events_last_cached_all = currentTimeStamp()
@@ -138,24 +181,40 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("Event Join")
         }
-        val remoteResult = remoteDataSource.joinEvent(userId, event.eventId)
+        val remoteResult =
+            try {
+                remoteDataSource.joinEvent(userId, event.eventId)
+            } catch (e: HttpRequestException) {
+                throw RepositoryStoreWhileNoInternetException("Event Join")
+            }
         localDataSource.joinEvent(userId, event.eventId)
-        forceRefetchEvent(event.eventId)
+        forceRefetchEvent(event.eventId, { x, y -> x + y })
         return remoteResult
     }
 
     override suspend fun leaveEvent(userId: String, event: Event): Boolean {
         if (isOffline()) {
-            throw RepositoryStoreWhileNoInternetException("Event Join")
+            throw RepositoryStoreWhileNoInternetException("Event Leave")
         }
-        val remoteResult = remoteDataSource.leaveEvent(userId, event.eventId)
+        val remoteResult =
+            try {
+                remoteDataSource.leaveEvent(userId, event.eventId)
+            } catch (e: HttpRequestException) {
+                throw RepositoryStoreWhileNoInternetException("Event Leave")
+            }
         localDataSource.leaveEvent(userId, event.eventId)
-        forceRefetchEvent(event.eventId)
+        forceRefetchEvent(event.eventId, { x, y -> x - y })
         return remoteResult
     }
 
-    private suspend fun forceRefetchEvent(eventId: String) {
-        val eventUpdate = remoteDataSource.getEvent(eventId)
+    private suspend fun forceRefetchEvent(eventId: String, failoverAction: (Int, Int) -> Int) {
+        val eventUpdate =
+            try {
+                remoteDataSource.getEvent(eventId, 10u)
+            } catch (e: HttpRequestException) {
+                val event = localDataSource.getEvent(eventId, FETCH_ALL)
+                event?.copy(participantCount = failoverAction(event.participantCount, 1))
+            }
         if (eventUpdate != null) {
             localDataSource.setEvent(eventUpdate)
         }
@@ -170,7 +229,12 @@ class RepositoryImpl(
         }
         val nonExpired = localDataSource.getJoinedEvents(userId, EVENT_CACHE_TTL)
         val nonExpiredIds = nonExpired.map { it.eventId }
-        val remoteUpdate = remoteDataSource.getJoinedEventsNotIn(userId, nonExpiredIds)
+        val remoteUpdate =
+            try {
+                remoteDataSource.getJoinedEventsNotIn(userId, nonExpiredIds)
+            } catch (e: HttpRequestException) {
+                return localDataSource.getJoinedEvents(userId, FETCH_ALL)
+            }
         localDataSource.leaveEventsNotIn(userId, nonExpiredIds)
         localDataSource.joinEvents(userId, remoteUpdate.map { it.eventId })
         events_last_cached_joined.put(userId, currentTimeStamp())
@@ -183,7 +247,12 @@ class RepositoryImpl(
         }
         val localResult = localDataSource.getTag(tagId, TAG_CACHE_TTL)
         if (localResult == null) {
-            val remoteResult = remoteDataSource.getTag(tagId)
+            val remoteResult =
+                try {
+                    remoteDataSource.getTag(tagId)
+                } catch (e: HttpRequestException) {
+                    return localDataSource.getTag(tagId, FETCH_ALL)
+                }
             if (remoteResult != null) localDataSource.setTag(remoteResult)
             return remoteResult
         }
@@ -200,7 +269,12 @@ class RepositoryImpl(
         }
         val nonExpired = localDataSource.getSubTags(tagId, TAG_CACHE_TTL)
         val nonExpiredIds = nonExpired.map { it.tagId }
-        val remoteUpdate = remoteDataSource.getSubTagsNotIn(tagId, nonExpiredIds)
+        val remoteUpdate =
+            try {
+                remoteDataSource.getSubTagsNotIn(tagId, nonExpiredIds)
+            } catch (e: HttpRequestException) {
+                return localDataSource.getSubTags(tagId, FETCH_ALL)
+            }
         localDataSource.deleteSubTagsNotIn(tagId, nonExpiredIds)
         localDataSource.setTags(remoteUpdate)
         tags_last_cached_subs.put(tagId, currentTimeStamp())
@@ -213,7 +287,12 @@ class RepositoryImpl(
         }
         val nonExpired = localDataSource.getAllTags(TAG_CACHE_TTL)
         val nonExpiredIds = nonExpired.map { it.tagId }
-        val remoteUpdate = remoteDataSource.getAllTagsNotIn(nonExpiredIds)
+        val remoteUpdate =
+            try {
+                remoteDataSource.getAllTagsNotIn(nonExpiredIds)
+            } catch (e: HttpRequestException) {
+                return localDataSource.getAllTags(FETCH_ALL)
+            }
         localDataSource.deleteAllTagsNotIn(nonExpiredIds)
         localDataSource.setTags(remoteUpdate)
         tags_last_cached_all = currentTimeStamp()
@@ -226,7 +305,12 @@ class RepositoryImpl(
         }
         val localResult = localDataSource.getUserProfile(userId, USERPROFILE_CACHE_TTL)
         if (localResult == null) {
-            val remoteResult = remoteDataSource.getUserProfile(userId)
+            val remoteResult =
+                try {
+                    remoteDataSource.getUserProfile(userId)
+                } catch (e: HttpRequestException) {
+                    return localDataSource.getUserProfile(userId, FETCH_ALL)
+                }
             if (remoteResult == null) {
                 localDataSource.deleteUserProfile(userId)
             } else {
@@ -241,9 +325,13 @@ class RepositoryImpl(
                         ASSOCIATION_CACHE_TTL
                     )
                 val remoteAssociationsResult =
-                    remoteDataSource.getAssociations(
-                        associationIdsLinkedInProfile - locallyPresentAssociationIds
-                    )
+                    try {
+                        remoteDataSource.getAssociations(
+                            associationIdsLinkedInProfile - locallyPresentAssociationIds
+                        )
+                    } catch (e: HttpRequestException) {
+                        return localDataSource.getUserProfile(userId, FETCH_ALL)
+                    }
                 localDataSource.setAssociations(remoteAssociationsResult)
 
                 localDataSource.setUserProfile(remoteResult)
@@ -257,7 +345,11 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("UserProfile")
         }
-        remoteDataSource.setUserProfile(userProfile)
+        try {
+            remoteDataSource.setUserProfile(userProfile)
+        } catch (e: HttpRequestException) {
+            throw RepositoryStoreWhileNoInternetException("UserProfile")
+        }
         localDataSource.setUserProfile(userProfile)
     }
 
@@ -265,7 +357,11 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("UserProfile")
         }
-        remoteDataSource.deleteUserProfile(userProfile)
+        try {
+            remoteDataSource.deleteUserProfile(userProfile)
+        } catch (e: HttpRequestException) {
+            throw RepositoryStoreWhileNoInternetException("UserProfile")
+        }
         localDataSource.deleteUserProfile(userProfile.userId)
     }
 
@@ -276,7 +372,12 @@ class RepositoryImpl(
         }
         var picture = fileCache.get(fileName)
         if (picture == null) {
-            picture = remoteDataSource.getUserProfilePicture(userId)
+            picture =
+                try {
+                    remoteDataSource.getUserProfilePicture(userId)
+                } catch (e: HttpRequestException) {
+                    return null
+                }
             if (picture != null) {
                 fileCache.set(fileName, picture)
             }
@@ -288,7 +389,11 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
         }
-        remoteDataSource.setUserProfilePicture(userId, picture)
+        try {
+            remoteDataSource.setUserProfilePicture(userId, picture)
+        } catch (e: HttpRequestException) {
+            throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
+        }
         fileCache.set("$userId.jpeg", picture)
     }
 
@@ -296,7 +401,11 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
         }
-        remoteDataSource.deleteUserProfilePicture(userId)
+        try {
+            remoteDataSource.deleteUserProfilePicture(userId)
+        } catch (e: HttpRequestException) {
+            throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
+        }
         fileCache.delete("$userId.jpeg")
     }
 }
