@@ -8,6 +8,7 @@ import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.repository.datasources.FileCache
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import io.mockk.coEvery
@@ -29,6 +30,7 @@ class RepositoryImplTest {
     private lateinit var mockedLocalDataSource: LocalDataSource
     private lateinit var mockedNetworkService: NetworkService
     private lateinit var repositoryImpl: RepositoryImpl
+    private lateinit var mockedFileCache: FileCache
 
     private val association =
         Association(
@@ -96,8 +98,14 @@ class RepositoryImplTest {
         mockedRemoteDataSource = mockk<RemoteDataSource>(relaxed = true)
         mockedLocalDataSource = mockk<LocalDataSource>(relaxed = true)
         mockedNetworkService = mockk<NetworkService>(relaxed = true)
+        mockedFileCache = mockk<FileCache>(relaxed = true)
         repositoryImpl =
-            RepositoryImpl(mockedRemoteDataSource, mockedLocalDataSource, mockedNetworkService)
+            RepositoryImpl(
+                mockedRemoteDataSource,
+                mockedLocalDataSource,
+                mockedNetworkService,
+                mockedFileCache
+            )
 
         mockkStatic(ZonedDateTime::class)
     }
@@ -536,6 +544,7 @@ class RepositoryImplTest {
     @Test
     fun getUserProfilePictureTest() {
         every { mockedNetworkService.isOnlineNow() } returns true
+        coEvery { mockedFileCache.get(any()) } returns null
         coEvery { mockedRemoteDataSource.getUserProfilePicture(userProfile.userId) } returns
             userProfilePicture
         var res: ByteArray? = null
@@ -549,6 +558,7 @@ class RepositoryImplTest {
     @Test
     fun setUserProfilePictureTest() {
         every { mockedNetworkService.isOnlineNow() } returns true
+        coEvery { mockedFileCache.get(any()) } returns null
         runBlocking { repositoryImpl.setUserProfilePicture(userProfile.userId, userProfilePicture) }
         coVerify {
             mockedRemoteDataSource.setUserProfilePicture(userProfile.userId, userProfilePicture)
@@ -567,6 +577,7 @@ class RepositoryImplTest {
     @Test
     fun deleteUserProfilePictureTest() {
         every { mockedNetworkService.isOnlineNow() } returns true
+        coEvery { mockedFileCache.get(any()) } returns null
         runBlocking { repositoryImpl.deleteUserProfilePicture(userProfile.userId) }
         coVerify { mockedRemoteDataSource.deleteUserProfilePicture(userProfile.userId) }
         every { mockedNetworkService.isOnlineNow() } returns false
