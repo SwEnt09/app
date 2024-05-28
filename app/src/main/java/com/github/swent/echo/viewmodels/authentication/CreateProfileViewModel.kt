@@ -14,7 +14,7 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -100,10 +100,14 @@ constructor(
                     _tagList.value = userProfile.tags
                     _committeeMember.value = userProfile.committeeMember
                     _associationSubscriptions.value = userProfile.associationsSubscriptions
-                    val pictureFile = repository.getUserProfilePicture(userId)
+                    val pictureByteArray = repository.getUserProfilePicture(userId)
                     _picture.value =
-                        if (pictureFile != null) {
-                            BitmapFactory.decodeStream(pictureFile.inputStream())
+                        if (pictureByteArray != null) {
+                            BitmapFactory.decodeByteArray(
+                                pictureByteArray,
+                                0,
+                                pictureByteArray.size
+                            )
                         } else {
                             null
                         }
@@ -140,18 +144,9 @@ constructor(
                 if (picture.value == null) {
                     repository.deleteUserProfilePicture(userId)
                 } else {
-                    val pictureFile =
-                        File.createTempFile(
-                            userId,
-                            ".jpeg",
-                            null
-                        ) // the cache directory is used by default
-                    picture.value!!.compress(
-                        Bitmap.CompressFormat.JPEG,
-                        100,
-                        pictureFile.outputStream()
-                    )
-                    repository.setUserProfilePicture(userId, pictureFile)
+                    val pictureStream = ByteArrayOutputStream()
+                    picture.value!!.compress(Bitmap.CompressFormat.JPEG, 100, pictureStream)
+                    repository.setUserProfilePicture(userId, pictureStream.toByteArray())
                 }
             }
         }
