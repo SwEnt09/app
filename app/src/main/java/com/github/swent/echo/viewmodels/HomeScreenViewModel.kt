@@ -17,19 +17,32 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * Overlay to display on top of the main screen. NONE: No overlay. EVENT_INFO_SHEET: Display the
+ * event info sheet. SEARCH_SHEET: Display the search sheet.
+ */
 enum class Overlay {
     NONE,
     EVENT_INFO_SHEET,
     SEARCH_SHEET
 }
 
+/**
+ * Mode to display the events. MAP: Display the events on the map. LIST: Display the events in a
+ * list.
+ */
 enum class MapOrListMode {
     MAP,
     LIST
 }
 
+// Threshold for the status of an event to be considered full or pending
 const val STATUS_THRESHOLD = 0.5
 
+/**
+ * ViewModel for the home screen. Contains the logic to display the events, filter them, and display
+ * the event info sheet.
+ */
 @HiltViewModel
 class HomeScreenViewModel
 @Inject
@@ -38,20 +51,28 @@ constructor(
     private val authenticationService: AuthenticationService,
     private val networkService: NetworkService
 ) : ViewModel() {
+    // Flow to observe the overlay to display on top of the main screen
     private val _overlay = MutableStateFlow(Overlay.NONE)
     val overlay = _overlay.asStateFlow()
+    // Flow to observe the mode to display the events
     private val _mode = MutableStateFlow(MapOrListMode.MAP)
     val mode = _mode.asStateFlow()
+    // private variables to store the filter values
     private var filterTagSet: Set<Tag> = setOf()
     private var filterWordList = listOf<String>()
+    // private variables to store the events and tags
     private lateinit var allEventsList: List<Event>
     private lateinit var allTagSet: Set<Tag>
+    // Flow to observe the list of events to display
     private val _displayEventList = MutableStateFlow<List<Event>>(listOf())
     val displayEventList = _displayEventList.asStateFlow()
+    // Flow to observe the event to display in the event info sheet
     private val _displayEventInfo = MutableStateFlow<Event?>(null)
     val displayEventInfo = _displayEventInfo.asStateFlow()
+    // Flow to observe if the user can modify the event
     private val _canUserModifyEvent = MutableStateFlow(false)
     val canUserModifyEvent = _canUserModifyEvent.asStateFlow()
+    // Flow to observe the filters container
     private val _filtersContainer =
         MutableStateFlow(
             FiltersContainer(
@@ -81,27 +102,38 @@ constructor(
             sortBy = SortBy.NONE
         )
     val filtersContainer = _filtersContainer.asStateFlow()
+    // Flow to observe the profile name
     private val _profileName = MutableStateFlow("")
     val profileName = _profileName.asStateFlow()
+    // Flow to observe the profile class
     private val _profileClass = MutableStateFlow("")
     val profileClass = _profileClass.asStateFlow()
+    // Flow to observe the section
     private val _section = MutableStateFlow("")
     val section = _section.asStateFlow()
+    // Flow to observe the semester
     private val _semester = MutableStateFlow("")
     val semester = _semester.asStateFlow()
+    // root tag ids for the section and semester
     private val sectionTagId = "30f27641-bd63-42e7-9d95-6117ad997554"
     private val semesterTagId = "319715cd-6210-4e62-a061-c533095bd098"
+    // list of all tags that are considered section or semester tags
     private lateinit var sectionTags: List<Tag>
     private lateinit var semesterTags: List<Tag>
+    // Flow to observe the followed tags
     private val _followedTags = MutableStateFlow<List<Tag>>(listOf())
     val followedTags = _followedTags.asStateFlow()
+    // Flow to observe the selected tag ids
     private val _selectedTagIds = MutableStateFlow<List<String>>(listOf())
     val selectedTagIds = _selectedTagIds.asStateFlow()
     private var followedTagFilter = listOf<Tag>()
+    // Flow to observe the search mode
     private var _searchMode = MutableStateFlow(false)
     val searchMode = _searchMode.asStateFlow()
+    // Flow to observe the network status
     val isOnline = networkService.isOnline
 
+    // Initialize the view model
     init {
         viewModelScope.launch {
             val userId = authenticationService.getCurrentUserID() ?: ""
@@ -123,6 +155,11 @@ constructor(
         }
     }
 
+    /**
+     * change the selection of tags to display and filter the events accordingly
+     *
+     * @param tag the tag that was clicked
+     */
     fun onFollowedTagClicked(tag: Tag) {
         if (_followedTags.value.contains(tag)) {
             if (_selectedTagIds.value.contains(tag.tagId)) {
@@ -142,10 +179,17 @@ constructor(
         filterEvents()
     }
 
+    /**
+     * changes the filtered information based on the search entry
+     *
+     * @param searchEntry the search entry to filter the events
+     */
     fun onSearchEntryChanged(searchEntry: String) {
         _filtersContainer.value = _filtersContainer.value.copy(searchEntry = searchEntry)
         refreshFiltersContainer()
     }
+
+    // Methods to set the filters container values
 
     fun onEpflCheckedSwitch() {
         _filtersContainer.value =
@@ -206,10 +250,12 @@ constructor(
         refreshFiltersContainer()
     }
 
+    /** Sign out the user. */
     fun signOut() {
         viewModelScope.launch { authenticationService.signOut() }
     }
 
+    /** Refresh the filters container and filter the events accordingly. */
     private fun refreshFiltersContainer() {
         filterWordList = _filtersContainer.value.searchEntry.lowercase().split(" ")
         val temp = allTagSet.filter { tag -> areWordsInTag(tag, filterWordList) }
@@ -219,6 +265,11 @@ constructor(
         filterEvents()
     }
 
+    /**
+     * Get all the tags and their sub tags from the initial tag list.
+     *
+     * @param initialTagList the initial list of tags
+     */
     private fun getTagsAndSubTags(initialTagList: List<Tag>): Set<Tag> {
         if (initialTagList.isEmpty()) return setOf()
 
@@ -232,26 +283,54 @@ constructor(
         return ret
     }
 
+    /**
+     * Method to do locally the recursive search of the sub tags instead of calling the repository.
+     *
+     * @param tagId the id of the tag to get the sub tags from
+     */
     private fun getSubTagsLocal(tagId: String): List<Tag> {
         return allTagSet.filter { tag -> tag.parentId == tagId }
     }
 
+    /**
+     * Update the search mode based on the filters container values. If the filter container is not
+     * the default one, the search mode is on.
+     */
     private fun updateSearchMode() {
         _searchMode.value = _filtersContainer.value != defaultFiltersContainer
     }
 
+    /**
+     * Check if the tag contains any of the words in the list of words.
+     *
+     * @param tag the tag to check
+     * @param listOfWords the list of words to check
+     */
     private fun areWordsInTag(tag: Tag, listOfWords: List<String>): Boolean {
         return listOfWords.any { word -> tag.name.lowercase().contains(word) }
     }
 
+    /**
+     * Check if any of the words in the list of words are in the title of the event.
+     *
+     * @param event the event to check
+     * @param listOfWords the list of words to check
+     */
     private fun areWordsInTitle(event: Event, listOfWords: List<String>): Boolean {
         return listOfWords.any { word -> event.title.lowercase().contains(word) }
     }
 
+    /**
+     * Check if any of the words in the list of words are in the description of the event.
+     *
+     * @param event the event to check
+     * @param listOfWords the list of words to check
+     */
     private fun areWordsInDescription(event: Event, listOfWords: List<String>): Boolean {
         return listOfWords.any { word -> event.description.lowercase().contains(word) }
     }
 
+    /** Reset the filters container to the default values. */
     fun resetFiltersContainer() {
         _filtersContainer.value = defaultFiltersContainer
         refreshFiltersContainer()
@@ -259,6 +338,12 @@ constructor(
 
     // End of methods to set the filters container values
 
+    /**
+     * Filter the events based on one of the two modes, search or follow. If the search mode is off,
+     * the events are filtered based on the tags the user follows. If the search mode is on, the
+     * events are filtered based on the search entry and the filters container values. The events
+     * are always filtered by date to avoid displaying past events.
+     */
     private fun filterEvents() {
         if (!_searchMode.value) {
             _displayEventList.value =
@@ -355,7 +440,11 @@ constructor(
         }
     }
 
-    /** Displays the event info sheet for the given event. Set the overlay to EVENT_INFO_SHEET. */
+    /**
+     * Displays the event info sheet for the given event. Set the overlay to EVENT_INFO_SHEET.
+     *
+     * @param event the event to display
+     */
     fun onEventSelected(event: Event) {
         _displayEventInfo.value = event
         _canUserModifyEvent.value = authenticationService.getCurrentUserID() == event.creator.userId

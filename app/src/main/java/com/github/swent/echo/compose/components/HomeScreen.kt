@@ -43,9 +43,11 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     val mode by homeScreenViewModel.mode.collectAsState()
 
+    // Profile information for the hamburger menu
     val profileName by homeScreenViewModel.profileName.collectAsState()
     val profileClass by homeScreenViewModel.profileClass.collectAsState()
 
+    // Search mode for displaying events
     val searchMode by homeScreenViewModel.searchMode.collectAsState()
 
     // Hamburger menu compose
@@ -82,6 +84,10 @@ fun HomeScreen(
     }
 }
 
+/**
+ * The content of the home screen. Contains the list view or the map view, the tag UI, the event
+ * info sheet, and the search menu sheet.
+ */
 @Composable
 private fun Content(
     paddingValues: PaddingValues,
@@ -90,26 +96,34 @@ private fun Content(
     hasLocationPermissions: Boolean = false
 ) {
 
+    // display mode for the list or map view, and the overlay for the event info sheet or the search
     val mode by homeScreenViewModel.mode.collectAsState()
     val overlay by homeScreenViewModel.overlay.collectAsState()
 
+    // display event info and event list
     val displayEventInfo by homeScreenViewModel.displayEventInfo.collectAsState()
     val displayEventList by homeScreenViewModel.displayEventList.collectAsState()
 
+    // filters for the search menu
     val filters by homeScreenViewModel.filtersContainer.collectAsState()
     val canUserModifyEvent by homeScreenViewModel.canUserModifyEvent.collectAsState()
 
+    // tags for the tag UI
     val tags by homeScreenViewModel.followedTags.collectAsState()
     val selectedTagIds by homeScreenViewModel.selectedTagIds.collectAsState()
 
+    // section and semester for the search menu
     val section by homeScreenViewModel.section.collectAsState()
     val semester by homeScreenViewModel.semester.collectAsState()
 
+    // search mode for displaying events
     val searchMode by homeScreenViewModel.searchMode.collectAsState()
 
+    // online status for disabling the buttons
     val isOnline by homeScreenViewModel.isOnline.collectAsState()
 
     Box(modifier = Modifier.padding(paddingValues)) {
+        // Display the list view or the map view
         if (mode == MapOrListMode.LIST) {
             Column {
                 if (tags.isNotEmpty() && !searchMode) {
@@ -142,6 +156,7 @@ private fun Content(
             }
         }
 
+        // Display the event info sheet
         if (overlay == Overlay.EVENT_INFO_SHEET && displayEventInfo != null) {
             EventInfoSheet(
                 event = displayEventInfo!!,
@@ -158,6 +173,7 @@ private fun Content(
             // the event info
         }
 
+        // Display the search menu sheet
         if (overlay == Overlay.SEARCH_SHEET) {
             SearchMenuSheet(
                 filters,

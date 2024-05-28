@@ -24,6 +24,17 @@ import com.github.swent.echo.viewmodels.MapOrListMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * The top app bar for the app. Contains the app title, the hamburger menu, the search reset button,
+ * and the list/map mode switch button.
+ *
+ * @param scope the coroutine scope to launch the drawer state
+ * @param drawerState the drawer state to open and close the hamburger menu
+ * @param mode the current mode of the app, either list or map
+ * @param searchMode whether the search mode is active
+ * @param resetSearch callback to reset the search
+ * @param switchMode callback to switch between list and map mode
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
