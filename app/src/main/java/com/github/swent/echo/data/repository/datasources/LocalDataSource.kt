@@ -22,6 +22,8 @@ interface LocalDataSource {
 
     suspend fun setAssociation(association: Association)
 
+    suspend fun deleteAssociation(associationId: String)
+
     suspend fun getAssociations(
         associationIds: List<String>,
         syncedSecondsAgo: Long

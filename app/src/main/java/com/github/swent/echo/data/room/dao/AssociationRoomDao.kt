@@ -12,6 +12,9 @@ import com.github.swent.echo.data.room.entity.AssociationWithTags
 interface AssociationRoomDao {
     @Upsert suspend fun insert(association: AssociationRoom)
 
+    @Query("DELETE FROM AssociationRoom WHERE associationId = :associationId")
+    suspend fun delete(associationId: String)
+
     @Upsert
     suspend fun insertAssociationTagCrossRefs(associationTagCrossRefs: List<AssociationTagCrossRef>)
 
