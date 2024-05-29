@@ -8,6 +8,7 @@ import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.repository.datasources.FileCache
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import io.mockk.coEvery
@@ -29,6 +30,7 @@ class RepositoryImplTest {
     private lateinit var mockedLocalDataSource: LocalDataSource
     private lateinit var mockedNetworkService: NetworkService
     private lateinit var repositoryImpl: RepositoryImpl
+    private lateinit var mockedFileCache: FileCache
 
     private val association =
         Association(
@@ -89,13 +91,21 @@ class RepositoryImplTest {
 
     private var isOnline: () -> Boolean = { true }
 
+    private val userProfilePicture = ByteArray(50)
+
     @Before
     fun setUp() {
         mockedRemoteDataSource = mockk<RemoteDataSource>(relaxed = true)
         mockedLocalDataSource = mockk<LocalDataSource>(relaxed = true)
         mockedNetworkService = mockk<NetworkService>(relaxed = true)
+        mockedFileCache = mockk<FileCache>(relaxed = true)
         repositoryImpl =
-            RepositoryImpl(mockedRemoteDataSource, mockedLocalDataSource, mockedNetworkService)
+            RepositoryImpl(
+                mockedRemoteDataSource,
+                mockedLocalDataSource,
+                mockedNetworkService,
+                mockedFileCache
+            )
 
         mockkStatic(ZonedDateTime::class)
     }
@@ -529,5 +539,53 @@ class RepositoryImplTest {
             mockedRemoteDataSource.deleteUserProfile(userProfile)
             mockedLocalDataSource.deleteUserProfile(userProfile.userId)
         }
+    }
+
+    @Test
+    fun getUserProfilePictureTest() {
+        every { mockedNetworkService.isOnlineNow() } returns true
+        coEvery { mockedFileCache.get(any()) } returns null
+        coEvery { mockedRemoteDataSource.getUserProfilePicture(userProfile.userId) } returns
+            userProfilePicture
+        var res: ByteArray? = null
+        runBlocking { res = repositoryImpl.getUserProfilePicture(userProfile.userId) }
+        assertEquals(userProfilePicture, res)
+        every { mockedNetworkService.isOnlineNow() } returns false
+        runBlocking { res = repositoryImpl.getUserProfilePicture(userProfile.userId) }
+        assertNull(res)
+    }
+
+    @Test
+    fun setUserProfilePictureTest() {
+        every { mockedNetworkService.isOnlineNow() } returns true
+        coEvery { mockedFileCache.get(any()) } returns null
+        runBlocking { repositoryImpl.setUserProfilePicture(userProfile.userId, userProfilePicture) }
+        coVerify {
+            mockedRemoteDataSource.setUserProfilePicture(userProfile.userId, userProfilePicture)
+        }
+        every { mockedNetworkService.isOnlineNow() } returns false
+        assertThrows(
+            RepositoryStoreWhileNoInternetException::class.java,
+            ThrowingRunnable {
+                runBlocking {
+                    repositoryImpl.setUserProfilePicture(userProfile.userId, userProfilePicture)
+                }
+            }
+        )
+    }
+
+    @Test
+    fun deleteUserProfilePictureTest() {
+        every { mockedNetworkService.isOnlineNow() } returns true
+        coEvery { mockedFileCache.get(any()) } returns null
+        runBlocking { repositoryImpl.deleteUserProfilePicture(userProfile.userId) }
+        coVerify { mockedRemoteDataSource.deleteUserProfilePicture(userProfile.userId) }
+        every { mockedNetworkService.isOnlineNow() } returns false
+        assertThrows(
+            RepositoryStoreWhileNoInternetException::class.java,
+            ThrowingRunnable {
+                runBlocking { repositoryImpl.deleteUserProfilePicture(userProfile.userId) }
+            }
+        )
     }
 }

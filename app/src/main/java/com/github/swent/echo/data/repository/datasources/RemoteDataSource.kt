@@ -49,4 +49,10 @@ interface RemoteDataSource {
     suspend fun setUserProfile(userProfile: UserProfile)
 
     suspend fun deleteUserProfile(userProfile: UserProfile)
+
+    suspend fun getUserProfilePicture(userId: String): ByteArray?
+
+    suspend fun setUserProfilePicture(userId: String, picture: ByteArray)
+
+    suspend fun deleteUserProfilePicture(userId: String)
 }

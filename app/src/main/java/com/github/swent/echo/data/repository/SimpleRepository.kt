@@ -41,6 +41,7 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
             Tag(SEMESTER_ROOT_TAG_ID, "Semester")
         )
     private val userProfiles = mutableSetOf<UserProfile>()
+    private val userProfilesPicturesMap = mutableMapOf<String, ByteArray>()
 
     init {
         // Populate the repository with sample data
@@ -156,5 +157,17 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
 
     override suspend fun deleteUserProfile(userProfile: UserProfile) {
         userProfiles.removeIf { it.userId == userProfile.userId }
+    }
+
+    override suspend fun getUserProfilePicture(userId: String): ByteArray? {
+        return userProfilesPicturesMap[userId]
+    }
+
+    override suspend fun setUserProfilePicture(userId: String, picture: ByteArray) {
+        userProfilesPicturesMap[userId] = picture
+    }
+
+    override suspend fun deleteUserProfilePicture(userId: String) {
+        userProfilesPicturesMap.remove(userId)
     }
 }
