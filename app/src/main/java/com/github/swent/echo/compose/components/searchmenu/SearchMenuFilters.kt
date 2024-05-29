@@ -181,7 +181,7 @@ data class CheckBoxItems(
 )
 
 @Composable
-fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
+fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>, modifier: Modifier = Modifier) {
     // Define the space between the title and the items, and between the items themselves
     val spaceBetweenTitleAndItems = 10.dp
     val spaceBetweenItems = 5.dp
@@ -211,7 +211,7 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
                     // When the checkbox is clicked, call the callback function
                     onCheckedChange = { checkBoxItem.callback() },
                     modifier =
-                        Modifier.size(checkboxSize)
+                        modifier.size(checkboxSize)
                             .testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
                 Text(checkBoxItem.contentDescription, fontSize = 13.sp)
