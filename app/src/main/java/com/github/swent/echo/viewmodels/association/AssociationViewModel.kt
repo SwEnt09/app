@@ -86,8 +86,10 @@ constructor(
             associations
         } else {
             associations.filter {
-                it.name.lowercase().contains(_searched.value.lowercase())
-                // || it.tags.lowercase().contains(_searched.value.lowercase())
+                it.name.lowercase().contains(_searched.value.lowercase()) ||
+                    it.relatedTags
+                        .map { tag -> tag.name.lowercase() }
+                        .contains(_searched.value.lowercase())
             }
         }
     }
