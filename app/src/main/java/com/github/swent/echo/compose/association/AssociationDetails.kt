@@ -39,7 +39,7 @@ fun AssociationDetails(
     refreshEvents: () -> Unit
 ) {
     val paddingValues = 10.dp
-    val phoneVerticalCenter = (LocalConfiguration.current.screenWidthDp / 2).dp
+    val phoneHorizontalCenter = (LocalConfiguration.current.screenWidthDp / 2).dp
     val followWidth = 150.dp
     val followHeight = 40.dp
     val followSpaceInside = 5.dp
@@ -50,7 +50,8 @@ fun AssociationDetails(
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
                 association.name,
-                modifier = Modifier.align(Alignment.CenterStart).widthIn(max = phoneVerticalCenter),
+                modifier =
+                    Modifier.align(Alignment.CenterStart).widthIn(max = phoneHorizontalCenter),
                 style = MaterialTheme.typography.titleLarge
             )
             Button(
