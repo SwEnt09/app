@@ -72,7 +72,7 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
-    fun testGetAndSetAssociation() = runBlocking {
+    fun testGetAndSetAndDeleteAssociation() = runBlocking {
         assertTrue(associations.isNotEmpty())
 
         every { ZonedDateTime.now() } returns time
@@ -84,6 +84,10 @@ class RoomLocalDataSourceTest {
         assertEquals(expected, actual)
 
         every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo * 2)
+        assertNull(localDataSource.getAssociation(expected.associationId, syncedSecondsAgo))
+
+        every { ZonedDateTime.now() } returns time.plusSeconds(syncedSecondsAgo / 2)
+        localDataSource.deleteAssociation(expected.associationId)
         assertNull(localDataSource.getAssociation(expected.associationId, syncedSecondsAgo))
     }
 
@@ -412,6 +416,9 @@ class RoomLocalDataSourceTest {
             userProfileDeletedRelationalAttributes,
             localDataSource.getUserProfile(userProfile.userId, syncedSecondsAgo)
         )
+
+        localDataSource.deleteUserProfile(userProfile.userId)
+        assertNull(localDataSource.getUserProfile(userProfile.userId, syncedSecondsAgo))
     }
 
     @Test
