@@ -119,6 +119,8 @@ private fun Content(
     // search mode for displaying events
     val searchMode by homeScreenViewModel.searchMode.collectAsState()
 
+    val initialPage by homeScreenViewModel.initialPage.collectAsState()
+
     // online status for disabling the buttons
     val isOnline by homeScreenViewModel.isOnline.collectAsState()
 
@@ -188,7 +190,9 @@ private fun Content(
                 fullCallback = homeScreenViewModel::onFullCheckedSwitch,
                 sortByCallback = homeScreenViewModel::onSortByChanged,
                 resetFiltersCallback = homeScreenViewModel::resetFiltersContainer,
-                timeFilterCallback = homeScreenViewModel::onDateFilterChanged
+                timeFilterCallback = homeScreenViewModel::onDateFilterChanged,
+                initialPage = initialPage,
+                mode = mode
             )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu
