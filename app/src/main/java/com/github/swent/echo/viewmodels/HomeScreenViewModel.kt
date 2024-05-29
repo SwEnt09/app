@@ -93,7 +93,7 @@ constructor(
                 fullChecked = false,
                 from = 0f,
                 to = 14f,
-                sortBy = null
+                sortBy = SortBy.DATE_ASC
             )
         )
     private val defaultFiltersContainer =
@@ -107,7 +107,7 @@ constructor(
             fullChecked = false,
             from = 0f,
             to = 14f,
-            sortBy = null
+            sortBy = SortBy.DATE_ASC
         )
     val filtersContainer = _filtersContainer.asStateFlow()
     // Flow to observe the profile name
@@ -147,7 +147,7 @@ constructor(
     init {
         viewModelScope.launch {
             val userId = authenticationService.getCurrentUserID() ?: ""
-            allEventsList = repository.getAllEvents()
+            allEventsList = repository.getAllEvents().sortedBy{ it.startDate }
             allTagSet = repository.getAllTags().toSet()
             _semester.value = repository.getUserProfile(userId)?.semester?.name ?: ""
             _section.value = repository.getUserProfile(userId)?.section?.name ?: ""
@@ -257,7 +257,7 @@ constructor(
 
     fun onSortByChanged(sortBy: Int) {
         _filtersContainer.value =
-            _filtersContainer.value.copy(sortBy = if (sortBy < 0) null else SortBy.entries[sortBy])
+            _filtersContainer.value.copy(sortBy = if (sortBy < 0) SortBy.DATE_ASC else SortBy.entries[sortBy])
         refreshFiltersContainer()
     }
 

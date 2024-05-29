@@ -12,5 +12,5 @@ data class FiltersContainer(
     var fullChecked: Boolean,
     var from: Float,
     var to: Float,
-    var sortBy: SortBy?
+    var sortBy: SortBy
 )
