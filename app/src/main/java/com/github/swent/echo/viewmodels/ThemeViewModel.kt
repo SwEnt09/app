@@ -1,7 +1,6 @@
 package com.github.swent.echo.viewmodels
 
 import android.app.Application
-import android.content.res.Configuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.ThemePreferenceManager
@@ -24,7 +23,10 @@ constructor(
     private val themePreferenceManager: ThemePreferenceManager,
     private val application: Application
 ) : ViewModel() {
-    private val _themeUserSetting = MutableStateFlow(getSystemDefaultTheme(application))
+    private val _themeUserSetting =
+        MutableStateFlow(
+            themePreferenceManager.getSystemDefaultTheme(application.applicationContext)
+        )
     val themeUserSetting: StateFlow<AppTheme> = _themeUserSetting.asStateFlow()
 
     init {
@@ -43,18 +45,6 @@ constructor(
                 }
             themePreferenceManager.setTheme(newTheme)
             _themeUserSetting.value = newTheme
-        }
-    }
-
-    private fun getSystemDefaultTheme(application: Application): AppTheme {
-        val context = application.applicationContext
-        return if (
-            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
-                Configuration.UI_MODE_NIGHT_YES
-        ) {
-            AppTheme.MODE_NIGHT
-        } else {
-            AppTheme.MODE_DAY
         }
     }
 }

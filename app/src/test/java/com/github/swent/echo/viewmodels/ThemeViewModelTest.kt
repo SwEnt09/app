@@ -29,7 +29,6 @@ class ThemeViewModelTest {
     private val application = mockk<Application>()
     private val resources = mockk<Resources>()
     private val configuration = mockk<Configuration>()
-    private val uiMode = Configuration.UI_MODE_NIGHT_YES
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
@@ -39,7 +38,6 @@ class ThemeViewModelTest {
         every { application.applicationContext } returns application
         every { application.resources } returns resources
         every { resources.configuration } returns configuration
-        // coEvery { configuration.uiMode } returns Configuration.UI_MODE_NIGHT_YES
         viewModel = ThemeViewModel(themePreferenceManager, application)
     }
 

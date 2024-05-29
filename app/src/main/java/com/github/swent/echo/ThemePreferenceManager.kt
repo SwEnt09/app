@@ -22,7 +22,7 @@ class ThemePreferenceManager @Inject constructor(context: Context) {
             AppTheme.valueOf(themeString)
         }
 
-    private fun getSystemDefaultTheme(context: Context): AppTheme {
+    fun getSystemDefaultTheme(context: Context): AppTheme {
         return if (
             context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
                 Configuration.UI_MODE_NIGHT_YES
