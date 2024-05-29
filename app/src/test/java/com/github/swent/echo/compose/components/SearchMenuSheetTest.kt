@@ -35,7 +35,7 @@ class SearchMenuSheetTest {
             fullChecked = true,
             from = 0f,
             to = 14f,
-            sortBy = SortBy.NONE
+            sortBy = SortBy.DATE_ASC
         )
     private var callback = 0
 

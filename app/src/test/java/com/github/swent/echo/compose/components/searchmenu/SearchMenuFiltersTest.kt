@@ -29,7 +29,7 @@ class SearchMenuFiltersTest {
             fullChecked = true,
             from = 0f,
             to = 14f,
-            sortBy = SortBy.NONE
+            sortBy = SortBy.DATE_ASC
         )
     private var checkboxes = listOf("EPFL", "Section", "Class", "Pending", "Confirmed", "Full")
     private var callback = 0
