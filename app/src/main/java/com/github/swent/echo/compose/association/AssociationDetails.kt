@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.association
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,12 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
+import com.github.swent.echo.compose.components.Hypertext
 import com.github.swent.echo.compose.components.ListDrawer
 import com.github.swent.echo.compose.components.Pager
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
+import com.github.swent.echo.data.model.Tag
 
 @Composable
 fun AssociationDetails(
@@ -36,7 +44,8 @@ fun AssociationDetails(
     follow: (Association) -> Unit,
     events: List<Event>,
     isOnline: Boolean,
-    refreshEvents: () -> Unit
+    refreshEvents: () -> Unit,
+    onTagPressed: (Tag) -> Unit = {},
 ) {
     val paddingValues = 10.dp
     val phoneHorizontalCenter = (LocalConfiguration.current.screenWidthDp / 2).dp
@@ -79,7 +88,7 @@ fun AssociationDetails(
         Pager(
             listOf(
                 Pair(stringResource(R.string.association_details_description)) {
-                    AssociationDescription(association)
+                    AssociationDescription(association, verticalSpace, onTagPressed)
                 },
                 Pair(stringResource(R.string.association_details_events)) {
                     AssociationEvents(events, isOnline, refreshEvents)
@@ -90,8 +99,46 @@ fun AssociationDetails(
 }
 
 @Composable
-fun AssociationDescription(association: Association) {
-    Text(association.description)
+fun AssociationDescription(
+    association: Association,
+    verticalSpace: Dp,
+    onTagPressed: (Tag) -> Unit
+) {
+    val tags = association.relatedTags.toList()
+    val spaceBetweenTagChips = 6.dp
+    Column {
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(spaceBetweenTagChips)
+        ) {
+            items(tags) { tag ->
+                AssistChip(
+                    onClick = { onTagPressed(tag) },
+                    label = { Text(tag.name) },
+                    border =
+                        AssistChipDefaults.assistChipBorder(
+                            enabled = true,
+                            borderColor = MaterialTheme.colorScheme.primary,
+                            borderWidth = 1.dp,
+                        ),
+                    colors =
+                        AssistChipDefaults.assistChipColors(
+                            labelColor = MaterialTheme.colorScheme.primary,
+                        ),
+                )
+            }
+        }
+        Text(association.description)
+        if (association.url != null) {
+            Spacer(modifier = Modifier.height(verticalSpace))
+            Text(
+                stringResource(R.string.association_details_contact),
+                style = MaterialTheme.typography.titleSmall
+            )
+            Spacer(modifier = Modifier.height(verticalSpace))
+            Hypertext(association.url)
+        }
+    }
 }
 
 @Composable
