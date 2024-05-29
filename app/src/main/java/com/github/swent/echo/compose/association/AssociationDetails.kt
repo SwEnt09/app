@@ -52,7 +52,7 @@ fun AssociationDetails(
     val followWidth = 150.dp
     val followHeight = 40.dp
     val followSpaceInside = 5.dp
-    val verticalSpace = 20.dp
+    val verticalSpace = 12.dp
     Column(
         modifier = Modifier.fillMaxSize().padding(paddingValues).testTag("association_details")
     ) {
