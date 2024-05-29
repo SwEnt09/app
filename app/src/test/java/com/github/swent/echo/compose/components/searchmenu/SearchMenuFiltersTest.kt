@@ -1,13 +1,16 @@
 package com.github.swent.echo.compose.components.searchmenu
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.test.center
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.swent.echo.viewmodels.MapOrListMode
+import com.github.swent.echo.viewmodels.SortBy
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -49,7 +52,8 @@ class SearchMenuFiltersTest {
                 { f, t ->
                     filters.from = f
                     filters.to = t
-                }
+                },
+                MapOrListMode.LIST
             )
         }
     }
@@ -60,26 +64,8 @@ class SearchMenuFiltersTest {
     }
 
     @Test
-    fun testSortByDisplayerContainerExists() {
-        composeTestRule.onNodeWithTag("sort_by_displayer_container").assertExists()
-    }
-
-    @Test
-    fun testSortByButtonExists() {
-        composeTestRule.onNodeWithTag("sort_by_button").assertExists()
-    }
-
-    @Test
-    fun testSortByDisplayerDisplayAndHideItemsWhenClicked() {
-        composeTestRule.onNodeWithTag("sort_by_button").performClick()
-        SortBy.entries.forEach { composeTestRule.onNodeWithTag(it.stringKey).assertExists() }
-        composeTestRule.onNodeWithTag("sort_by_button").performClick()
-        SortBy.entries.forEach { composeTestRule.onNodeWithTag(it.stringKey).assertDoesNotExist() }
-    }
-
-    @Test
-    fun testCheckBoxesContainerExists() {
-        composeTestRule.onNodeWithTag("checkboxes_container").assertExists()
+    fun dropdownMenusExist() {
+        composeTestRule.onAllNodesWithTag("dropdown_button").assertCountEquals(2)
     }
 
     @Test
@@ -107,18 +93,5 @@ class SearchMenuFiltersTest {
             swipe(start = Offset(x = 0f, y = center.y), end = Offset(x = 100f, y = center.y))
         }
         assertEquals(filters.from.toInt(), 1)
-    }
-
-    @Test
-    fun testDateSliderTextAdaptWhenTooClose() {
-        composeTestRule.onNodeWithTag("search_menu_filter_from").assertExists()
-        composeTestRule.onNodeWithTag("search_menu_filter_to").assertExists()
-        composeTestRule.onNodeWithTag("search_menu_time_slider").performTouchInput {
-            swipe(start = Offset(x = 0f, y = center.y), end = Offset(x = 700f, y = center.y))
-        }
-        assertEquals(filters.from.toInt(), 13)
-        composeTestRule.onNodeWithTag("search_menu_filter_from").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("search_menu_filter_to").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("search_menu_filter_from_and_to").assertExists()
     }
 }

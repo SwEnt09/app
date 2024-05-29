@@ -2,9 +2,9 @@ package com.github.swent.echo.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
-import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.components.searchmenu.floatToDate
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
@@ -34,6 +34,14 @@ enum class Overlay {
 enum class MapOrListMode {
     MAP,
     LIST
+}
+
+// Enum class for the different states of the sort by filter
+enum class SortBy(val stringKey: Int) {
+    DATE_ASC(R.string.filters_container_sort_by_date_asc),
+    DATE_DESC(R.string.filters_container_sort_by_date_desc),
+    DISTANCE_ASC(R.string.filters_container_sort_by_distance_asc),
+    DISTANCE_DESC(R.string.filters_container_sort_by_distance_desc),
 }
 
 // Threshold for the status of an event to be considered full or pending
@@ -85,7 +93,7 @@ constructor(
                 fullChecked = false,
                 from = 0f,
                 to = 14f,
-                sortBy = SortBy.NONE
+                sortBy = SortBy.DATE_ASC
             )
         )
     private val defaultFiltersContainer =
@@ -99,7 +107,7 @@ constructor(
             fullChecked = false,
             from = 0f,
             to = 14f,
-            sortBy = SortBy.NONE
+            sortBy = SortBy.DATE_ASC
         )
     val filtersContainer = _filtersContainer.asStateFlow()
     // Flow to observe the profile name
@@ -130,6 +138,8 @@ constructor(
     // Flow to observe the search mode
     private var _searchMode = MutableStateFlow(false)
     val searchMode = _searchMode.asStateFlow()
+    private val _initialPage = MutableStateFlow(0)
+    val initialPage = _initialPage.asStateFlow()
     // Flow to observe the network status
     val isOnline = networkService.isOnline
 
@@ -137,7 +147,7 @@ constructor(
     init {
         viewModelScope.launch {
             val userId = authenticationService.getCurrentUserID() ?: ""
-            allEventsList = repository.getAllEvents()
+            allEventsList = repository.getAllEvents().sortedBy { it.startDate }
             allTagSet = repository.getAllTags().toSet()
             _semester.value = repository.getUserProfile(userId)?.semester?.name ?: ""
             _section.value = repository.getUserProfile(userId)?.section?.name ?: ""
@@ -245,8 +255,11 @@ constructor(
         refreshFiltersContainer()
     }
 
-    fun onSortByChanged(sortBy: SortBy) {
-        _filtersContainer.value = _filtersContainer.value.copy(sortBy = sortBy)
+    fun onSortByChanged(sortBy: Int) {
+        _filtersContainer.value =
+            _filtersContainer.value.copy(
+                sortBy = if (sortBy < 0) SortBy.DATE_ASC else SortBy.entries[sortBy]
+            )
         refreshFiltersContainer()
     }
 
