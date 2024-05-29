@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.viewmodels.MapOrListMode
+import com.github.swent.echo.viewmodels.SortBy
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -34,7 +35,7 @@ class SearchMenuSheetTest {
             fullChecked = true,
             from = 0f,
             to = 14f,
-            sortBy = null
+            sortBy = SortBy.DATE_ASC
         )
     private var callback = 0
 

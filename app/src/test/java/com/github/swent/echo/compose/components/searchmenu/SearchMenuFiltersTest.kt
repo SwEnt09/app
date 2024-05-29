@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.viewmodels.MapOrListMode
+import com.github.swent.echo.viewmodels.SortBy
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -31,7 +32,7 @@ class SearchMenuFiltersTest {
             fullChecked = true,
             from = 0f,
             to = 14f,
-            sortBy = null
+            sortBy = SortBy.DATE_ASC
         )
     private var checkboxes = listOf("EPFL", "Section", "Class", "Pending", "Confirmed", "Full")
     private var callback = 0
