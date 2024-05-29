@@ -4,41 +4,37 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import androidx.compose.ui.unit.times
 import com.github.swent.echo.R
+import com.github.swent.echo.compose.components.Dropdown
 import com.github.swent.echo.compose.components.colorClass
 import com.github.swent.echo.compose.components.colorEpfl
 import com.github.swent.echo.compose.components.colorSection
+import com.github.swent.echo.viewmodels.MapOrListMode
+import com.github.swent.echo.viewmodels.SortBy
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -54,8 +50,9 @@ fun SearchMenuFilters(
     pendingCallback: () -> Unit,
     confirmedCallback: () -> Unit,
     fullCallback: () -> Unit,
-    sortByCallback: (SortBy) -> Unit,
-    timeFilterCallback: (Float, Float) -> Unit
+    sortByCallback: (Int) -> Unit,
+    timeFilterCallback: (Float, Float) -> Unit,
+    mode: MapOrListMode
 ) {
     // Content of the Events for filters
     val eventsForItems =
@@ -114,40 +111,54 @@ fun SearchMenuFilters(
                 fullCallback()
             }
         )
+    val followedAssociations = listOf("1", "2", "3", "4", "5")
+    var selectedAssociation = -1
+    val associationCallback = { id: Int -> selectedAssociation = id }
+    val verticalSpacer = 8.dp
 
-    Box(modifier = Modifier.fillMaxSize().testTag("search_menu_filters_content")) {
-        // Sort by filter
-        Row(
-            modifier =
-                Modifier.align(Alignment.TopStart)
-                    .fillMaxWidth()
-                    .zIndex(1f)
-                    .testTag("sort_by_displayer_container")
-        ) {
-            SortByDisplayer(filters.sortBy, sortByCallback)
-        }
-        // Checkbox filters
-        Row(
-            modifier =
-                Modifier.align(Alignment.TopCenter)
-                    .absoluteOffset(y = 50.dp)
-                    .testTag("checkboxes_container")
-        ) {
-            // Events for Checkboxes
-            CheckBoxesDisplayer(
-                stringResource(id = R.string.search_menu_filters_events_for),
-                checkBoxItems = eventsForItems
-            )
-            Spacer(modifier = Modifier.width(100.dp))
-            // Events Status Checkboxes
-            CheckBoxesDisplayer(
-                stringResource(id = R.string.search_menu_filters_events_status),
-                checkBoxItems = eventsStatusItems
-            )
-        }
-        Row(modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = 170.dp)) {
-            DateFilter(filters, timeFilterCallback)
-        }
+    Column(
+        modifier = Modifier.fillMaxSize().testTag("search_menu_filters_content"),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TwoBoxesDisplayer(
+            {
+                Dropdown(
+                    "Associations",
+                    followedAssociations,
+                    selectedAssociation,
+                    associationCallback
+                )
+            },
+            if (mode == MapOrListMode.LIST) {
+                {
+                    Dropdown(
+                        "Sort By",
+                        SortBy.entries.map { stringResource(it.stringKey) },
+                        filters.sortBy?.ordinal ?: -1,
+                        sortByCallback
+                    )
+                }
+            } else {
+                null
+            }
+        )
+        Spacer(modifier = Modifier.height(verticalSpacer))
+        TwoBoxesDisplayer(
+            {
+                CheckBoxesDisplayer(
+                    stringResource(id = R.string.search_menu_filters_events_for),
+                    checkBoxItems = eventsForItems
+                )
+            },
+            {
+                CheckBoxesDisplayer(
+                    stringResource(id = R.string.search_menu_filters_events_status),
+                    checkBoxItems = eventsStatusItems
+                )
+            }
+        )
+        Spacer(modifier = Modifier.height(verticalSpacer))
+        DateFilter(filters, timeFilterCallback)
     }
 }
 
@@ -163,9 +174,12 @@ data class CheckBoxItems(
 /** Composable to display the checkboxes in the correct format */
 @Composable
 fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
+    val spaceBetweenTitleAndItems = 10.dp
+    val spaceBetweenItems = 5.dp
+    val checkboxSize = 25.dp
     Column {
         Text(title, modifier = Modifier.testTag("checkboxes_title"))
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(spaceBetweenTitleAndItems))
         checkBoxItems.forEach { checkBoxItem ->
             Row(modifier = Modifier.testTag("${checkBoxItem.contentDescription}_checkbox_row")) {
                 Icon(
@@ -177,51 +191,12 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
                     checked = checkBoxItem.checked,
                     onCheckedChange = { checkBoxItem.callback() },
                     modifier =
-                        Modifier.height(25.dp)
-                            .width(25.dp)
+                        Modifier.size(checkboxSize)
                             .testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
                 Text(checkBoxItem.contentDescription)
             }
-            Spacer(modifier = Modifier.height(5.dp))
-        }
-    }
-}
-
-/** Composable to display the dropdown menu for the sort by filter */
-@Composable
-fun SortByDisplayer(sortBy: SortBy, sortByCallback: (SortBy) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Column {
-        Button(
-            onClick = { expanded = !expanded },
-            shape = RoundedCornerShape(10),
-            modifier = Modifier.width(170.dp).testTag("sort_by_button")
-        ) {
-            Text(
-                if (sortBy == SortBy.NONE) stringResource(id = R.string.search_menu_filters_sort_by)
-                else stringResource(id = stringResourceSortBy(sortBy.stringKey))
-            )
-            Icon(
-                if (!expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
-                contentDescription = stringResource(id = R.string.search_menu_filters_sort_by)
-            )
-        }
-        // Check if the sort by filter is expanded
-        if (expanded) {
-            SortBy.entries.forEach {
-                Button(
-                    onClick = {
-                        sortByCallback(it)
-                        expanded = false
-                    },
-                    shape = RoundedCornerShape(5),
-                    modifier = Modifier.width(170.dp).height(35.dp).testTag(it.stringKey)
-                ) {
-                    Text(stringResource(id = stringResourceSortBy(it.stringKey)))
-                }
-            }
+            Spacer(modifier = Modifier.height(spaceBetweenItems))
         }
     }
 }
@@ -229,42 +204,55 @@ fun SortByDisplayer(sortBy: SortBy, sortByCallback: (SortBy) -> Unit) {
 /** Composable to select the date range for the events */
 @Composable
 fun DateFilter(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> Unit) {
-    var sliderPosition by remember { mutableStateOf(filters.from..filters.to) }
-    Column(modifier = Modifier.width(350.dp)) {
+    val sliderLength = (LocalConfiguration.current.screenWidthDp - 40).dp
+    val lowerBoundSlider = 0f
+    val upperBoundSlider = 14f
+    val steps = 13
+    val textOffsetX = (-12).dp
+    val textOffsetY = (-10).dp
+    val multiplyFactorHorizontalOffset = 4
+    val leftSideTooCloseToStart = 0.5f
+    val rightSideTooCloseToEnd = 13.5f
+    val combineOffsetEnd = 60.dp
+    val combineOffsetInBetween = 35.dp
+    val minDistanceJoinDates = 2.5f
+    val minDistanceOneDate = 0.5f
+    Column(modifier = Modifier.width(sliderLength)) {
         // Slider for the date range
         RangeSlider(
-            value = sliderPosition,
-            steps = 13,
-            onValueChange = { range ->
-                sliderPosition = range
-                timeSliderCallback(sliderPosition.start, sliderPosition.endInclusive)
-            },
-            valueRange = 0f..14f,
+            value = filters.from..filters.to,
+            steps = steps,
+            onValueChange = { range -> timeSliderCallback(range.start, range.endInclusive) },
+            valueRange = lowerBoundSlider..upperBoundSlider,
             onValueChangeFinished = {},
-            modifier = Modifier.testTag("search_menu_time_slider")
+            modifier = Modifier.fillMaxWidth().testTag("search_menu_time_slider")
         )
         // Text under the slider to display the date range
-        Box(modifier = Modifier.absoluteOffset(y = (-10).dp)) {
+        Box(modifier = Modifier.offset(x = textOffsetX, y = textOffsetY)) {
             // Function to calculate the offset of the text when the range is big enough to display
             // two dates
-            fun sliderTextOffsetSolo(x: Float): Dp = (23 * x - 10).dp
+            fun sliderTextOffsetSolo(x: Float): Dp =
+                (x * (sliderLength / (steps)) - (multiplyFactorHorizontalOffset * x).dp)
             // Function to calculate the offset of the text when the range is too close to display
             // two dates
             fun sliderTextOffsetCombine(x: Float, y: Float): Dp =
                 // Check if the left side of the slider is too close to the start
-                if (x < 0.5f) {
+                if (x < leftSideTooCloseToStart) {
                     sliderTextOffsetSolo(x)
                     // Check if the right side of the slider is too close to the end
-                } else if (y > 13.5f) {
-                    (sliderTextOffsetSolo(y) - 60.dp)
+                } else if (y > rightSideTooCloseToEnd) {
+                    (sliderTextOffsetSolo(y) - combineOffsetEnd)
                     // In between
                 } else {
-                    (sliderTextOffsetSolo((x + y) / 2) - 35.dp)
+                    (sliderTextOffsetSolo((x + y) / 2) - combineOffsetInBetween)
                 }
             // Choose if we display two dates or one combination of them
             // For simplicity, if both dates are equal, we simply display one on the other
             // (they will have same offset)
-            if ((filters.to - filters.from) > 2.5f || (filters.to - filters.from) < 0.5) {
+            if (
+                (filters.to - filters.from) > minDistanceJoinDates ||
+                    (filters.to - filters.from) < minDistanceOneDate
+            ) {
                 Text(
                     floatToDate(filters.from).format(DateTimeFormatter.ofPattern("dd/MM")),
                     modifier =
@@ -273,7 +261,7 @@ fun DateFilter(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> 
                 )
                 Text(
                     floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")) +
-                        if (filters.to.roundToInt() == 14) "+" else "",
+                        if (filters.to.roundToInt() == upperBoundSlider.roundToInt()) "+" else "",
                     modifier =
                         Modifier.offset(sliderTextOffsetSolo(filters.to))
                             .testTag("search_menu_filter_to")
@@ -283,12 +271,23 @@ fun DateFilter(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> 
                     floatToDate(filters.from).format(DateTimeFormatter.ofPattern("dd/MM")) +
                         " - " +
                         floatToDate(filters.to).format(DateTimeFormatter.ofPattern("dd/MM")) +
-                        if (filters.to.roundToInt() == 14) "+" else "",
+                        if (filters.to.roundToInt() == upperBoundSlider.roundToInt()) "+" else "",
                     modifier =
                         Modifier.offset(sliderTextOffsetCombine(filters.from, filters.to))
                             .testTag("search_menu_filter_from_and_to")
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun TwoBoxesDisplayer(firstBox: @Composable () -> Unit, secondBox: (@Composable () -> Unit)?) {
+    val padding = 20.dp
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.align(Alignment.TopStart).padding(start = padding)) { firstBox() }
+        if (secondBox != null) {
+            Box(modifier = Modifier.align(Alignment.TopEnd).padding(end = padding)) { secondBox() }
         }
     }
 }
