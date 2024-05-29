@@ -1,6 +1,5 @@
 package com.github.swent.echo.viewmodels
 
-import com.github.swent.echo.compose.components.searchmenu.SortBy
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.AssociationHeader
@@ -207,8 +206,8 @@ class HomeScreenViewModelTest {
         homeScreenViewModel.onDateFilterChanged(2f, v8)
         assertEquals(homeScreenViewModel.filtersContainer.value.to, v8)
 
-        val v9 = SortBy.DATE_ASC
-        homeScreenViewModel.onSortByChanged(v9)
+        val v9 = SortBy.DATE_DESC
+        homeScreenViewModel.onSortByChanged(v9.ordinal)
         assertEquals(homeScreenViewModel.filtersContainer.value.sortBy, v9)
     }
 
