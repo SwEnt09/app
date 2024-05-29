@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.Dropdown
 import com.github.swent.echo.compose.components.colorClass
