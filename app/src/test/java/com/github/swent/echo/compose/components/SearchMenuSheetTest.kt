@@ -3,11 +3,10 @@ package com.github.swent.echo.compose.components
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
-import com.github.swent.echo.compose.components.searchmenu.SortBy
+import com.github.swent.echo.viewmodels.MapOrListMode
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -35,7 +34,7 @@ class SearchMenuSheetTest {
             fullChecked = true,
             from = 0f,
             to = 14f,
-            sortBy = SortBy.NONE
+            sortBy = null
         )
     private var callback = 0
 
@@ -61,6 +60,8 @@ class SearchMenuSheetTest {
                 sortByCallback = { callback++ },
                 resetFiltersCallback = { callback++ },
                 timeFilterCallback = { _, _ -> callback++ },
+                initialPage = 0,
+                mode = MapOrListMode.MAP
             )
         }
     }
@@ -76,36 +77,13 @@ class SearchMenuSheetTest {
     }
 
     @Test
-    fun shouldShowSearchMenuFirstLayer() {
-        composeTestRule.onNodeWithTag("search_menu_first_layer").assertExists()
+    fun searchBarExists() {
+        composeTestRule.onNodeWithTag("search_bar_Search Interests").assertExists()
     }
 
     @Test
-    fun shouldShowSearchMenuSheetContentSearchBarTags() {
-        composeTestRule.onNodeWithTag("search_menu_search_bar_tags").assertExists()
-    }
-
-    @Test
-    fun shouldShowSearchMenuSheetContentSwitchSearchModeButton() {
-        composeTestRule.onNodeWithTag("search_menu_switch_mode_button").assertExists()
-    }
-
-    @Test
-    fun shouldSwitchSearchModeWhenSwitchModeButtonClicked() {
-        composeTestRule.onNodeWithTag("search_menu_switch_mode_button").performClick()
-        composeTestRule.onNodeWithTag("search_menu_filters_content").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("search_menu_switch_mode_button").performClick()
-        composeTestRule.onNodeWithTag("search_menu_filters_content").assertExists()
-    }
-
-    @Test
-    fun shouldShowSearchMenuSecondLayer() {
-        composeTestRule.onNodeWithTag("search_menu_second_layer").assertExists()
-    }
-
-    @Test
-    fun shouldShowSearchMenuThirdLayer() {
-        composeTestRule.onNodeWithTag("search_menu_third_layer").assertExists()
+    fun pagerExists() {
+        composeTestRule.onNodeWithTag("pager").assertExists()
     }
 
     @Test
