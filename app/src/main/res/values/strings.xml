@@ -58,7 +58,7 @@
     <string name="search_menu_filters_events_for">Events For:</string>
     <string name="search_menu_filters_events_status">Events Status:</string>
     <string name="search_menu_filters_sort_by">Sort By&#8230;</string>
-    <string name="search_menu_sheet_search_interests">Search Interests&#8230;</string>
+    <string name="search_menu_sheet_search_interests">Search Interests</string>
     <string name="search_menu_sheet_reset_filters">Reset Filters</string>
     <string name="search_menu_sheet_discover">Discover</string>
     <string name="search_menu_sheet_filters">Filters</string>
