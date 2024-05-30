@@ -199,6 +199,9 @@ fun ProfileCreationUI(
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val spacerHeight = 5.dp
+    val spaceBetweenTags = 5.dp
+    val contentPadding = 16.dp
 
     Scaffold(
         topBar = {
@@ -226,7 +229,10 @@ fun ProfileCreationUI(
         ) {
             Column(
                 modifier =
-                    modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
+                    modifier
+                        .fillMaxSize()
+                        .padding(contentPadding)
+                        .verticalScroll(rememberScrollState())
             ) {
                 Row {
                     Column {
@@ -247,7 +253,7 @@ fun ProfileCreationUI(
                             isError = firstName.isBlank()
                         )
 
-                        Spacer(modifier = modifier.height(5.dp))
+                        Spacer(modifier = modifier.height(spacerHeight))
 
                         OutlinedTextField(
                             value = lastName,
@@ -267,7 +273,7 @@ fun ProfileCreationUI(
                     }
                     ProfilePictureEdit(picture, onPictureChange)
                 }
-                Spacer(modifier = modifier.height(5.dp))
+                Spacer(modifier = modifier.height(spacerHeight))
 
                 // Section and semester dropdown menus
                 DropDownListFunctionWrapper(
@@ -276,7 +282,7 @@ fun ProfileCreationUI(
                     selectedSec ?: "",
                     onSecChange
                 )
-                Spacer(modifier = modifier.height(5.dp))
+                Spacer(modifier = modifier.height(spacerHeight))
                 DropDownListFunctionWrapper(
                     semList,
                     R.string.profile_creation_semester,
@@ -284,7 +290,7 @@ fun ProfileCreationUI(
                     onSemChange
                 )
 
-                Spacer(modifier = modifier.height(10.dp))
+                Spacer(modifier = modifier.height(spacerHeight.times(2)))
 
                 // Tags
                 Text(
@@ -293,9 +299,9 @@ fun ProfileCreationUI(
                     fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = modifier.height(10.dp))
+                Spacer(modifier = modifier.height(spacerHeight.times(2)))
 
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(spaceBetweenTags)) {
                     for (tag in tagList) {
                         InputChipFun(tag.name) { tagDelete(tag) }
                     }
@@ -454,7 +460,10 @@ fun ProfilePictureEdit(picture: Bitmap?, onPictureChange: (newPicture: Bitmap?) 
             }
         }
     val pictureDisplaySize = 100.dp
-    Column(modifier = Modifier.padding(start = 5.dp)) {
+    val pictureStartPadding = 5.dp
+    val pictureAlpha = 0.5f
+    val deleteButtonOffset = 10.dp
+    Column(modifier = Modifier.padding(start = pictureStartPadding)) {
         Box {
             Image(
                 modifier =
@@ -475,7 +484,7 @@ fun ProfilePictureEdit(picture: Bitmap?, onPictureChange: (newPicture: Bitmap?) 
                         painterResource(R.drawable.echologoround)
                     },
                 contentDescription = "",
-                alpha = 0.5f
+                alpha = pictureAlpha
             )
             Icon(
                 imageVector = Icons.Outlined.Edit,
@@ -486,7 +495,7 @@ fun ProfilePictureEdit(picture: Bitmap?, onPictureChange: (newPicture: Bitmap?) 
         IconButton(
             modifier =
                 Modifier.align(Alignment.End)
-                    .offset(x = 10.dp, y = (-10).dp)
+                    .offset(x = deleteButtonOffset, y = -deleteButtonOffset)
                     .testTag("profile-picture-delete"),
             onClick = { onPictureChange(null) }
         ) {
@@ -529,6 +538,9 @@ fun PictureTransformer(
     val maxResolution = 500 // the picture is cropped to output a square
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
+    val centerTextPadding = 5.dp
+    val centerTextCardOffset = 20.dp
+    val buttonsVerticalPadding = 15.dp
 
     // helper function to find out if the new transformation is inside the picture depending on
     // offset and scale
@@ -582,16 +594,16 @@ fun PictureTransformer(
                 style = Stroke(strokeSize)
             )
         }
-        Card(modifier = Modifier.align(Alignment.TopCenter).offset(y = 20.dp)) {
+        Card(modifier = Modifier.align(Alignment.TopCenter).offset(y = centerTextCardOffset)) {
             Text(
-                modifier = Modifier.padding(5.dp),
+                modifier = Modifier.padding(centerTextPadding),
                 text = stringResource(R.string.profile_creation_center_picture),
                 style = MaterialTheme.typography.titleLarge
             )
         }
         Row(
             modifier =
-                Modifier.align(Alignment.BottomEnd).padding(horizontal = 0.dp, vertical = 15.dp)
+                Modifier.align(Alignment.BottomEnd).padding(vertical = buttonsVerticalPadding)
         ) {
             val button_Padding = 5.dp
             FilledTonalButton(
