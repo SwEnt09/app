@@ -101,16 +101,14 @@ constructor(
                     _committeeMember.value = userProfile.committeeMember
                     _associationSubscriptions.value = userProfile.associationsSubscriptions
                     val pictureByteArray = repository.getUserProfilePicture(userId)
-                    _picture.value =
-                        if (pictureByteArray != null) {
+                    if (pictureByteArray != null) {
+                        _picture.value =
                             BitmapFactory.decodeByteArray(
                                 pictureByteArray,
                                 0,
                                 pictureByteArray.size
                             )
-                        } else {
-                            null
-                        }
+                    }
                 } else {
                     _isEditing.value = false
                 }

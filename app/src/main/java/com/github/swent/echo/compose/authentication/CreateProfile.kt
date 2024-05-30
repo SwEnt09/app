@@ -545,10 +545,12 @@ fun PictureTransformer(
     // helper function to find out if the new transformation is inside the picture depending on
     // offset and scale
     fun isTransformInside(offs: Offset, sca: Float): Boolean {
-        return offs.x > -picture.width * sca / 2f + circleRadius &&
-            offs.y > -picture.height * sca / 2f + circleRadius &&
-            offs.x < picture.width * sca / 2f - circleRadius &&
-            offs.y < picture.height * sca / 2f - circleRadius &&
+        val scaledWidthLimit = picture.width * sca / 2f
+        val scaledHeightLimit = picture.height * sca / 2f
+        return offs.x > -scaledWidthLimit + circleRadius &&
+            offs.y > -scaledHeightLimit + circleRadius &&
+            offs.x < scaledWidthLimit - circleRadius &&
+            offs.y < scaledHeightLimit - circleRadius &&
             sca > minMaxScale.first &&
             sca < minMaxScale.second
     }
@@ -556,19 +558,12 @@ fun PictureTransformer(
     val state = rememberTransformableState { zoomChange, offsetChange, _ ->
         val newScale = scale * zoomChange
         val newOffset = offset + offsetChange
-        scale =
-            if (isTransformInside(offset, newScale)) {
-                newScale
-            } else {
-                scale
-            }
-
-        offset =
-            if (isTransformInside(newOffset, scale)) {
-                newOffset
-            } else {
-                offset
-            }
+        if (isTransformInside(offset, newScale)) {
+            scale = newScale
+        }
+        if (isTransformInside(newOffset, scale)) {
+            offset = newOffset
+        }
     }
     Box(modifier = Modifier.fillMaxSize().testTag("profile-picture-transformer")) {
         Image(

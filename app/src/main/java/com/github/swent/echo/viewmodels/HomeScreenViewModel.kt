@@ -174,12 +174,10 @@ constructor(
             sectionTags = repository.getSubTags(sectionTagId)
             semesterTags = repository.getSubTags(semesterTagId)
             val pictureByteArray = repository.getUserProfilePicture(userId)
-            _profilePicture.value =
-                if (pictureByteArray != null) {
+            if (pictureByteArray != null) {
+                _profilePicture.value =
                     BitmapFactory.decodeByteArray(pictureByteArray, 0, pictureByteArray.size)
-                } else {
-                    null
-                }
+            }
             val followedAssociationIds =
                 repository.getUserProfile(userId)?.associationsSubscriptions?.map {
                     it.associationId
