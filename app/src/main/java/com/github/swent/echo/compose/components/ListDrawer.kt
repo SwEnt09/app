@@ -119,18 +119,25 @@ fun EventListItem(
     canModifyEvent: Boolean,
     distance: Double?,
 ) {
+    // Format the date to be displayed
     val date = event.startDate.format(DateTimeFormatter.ofPattern("E, dd.MM.yyyy HH:mm"))
+    // Format the association name to be displayed
     val association = event.organizer?.name?.let { "$it • " } ?: ""
+    // Format the distance to be displayed
     val dist = distance?.let { "${it}km • " } ?: ""
 
+    // Layout constants
     val spaceBetweenTagChips = 6.dp
     val spaceBetweenElements = 12.dp
 
+    // Colors
     val onSurfaceFaded = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
 
+    // Display the event in a card
     Card(
         modifier =
             Modifier.clickable {
+                    // If the event is already selected, deselect it, otherwise select it
                     if (selectedEvent.value == event.eventId) selectedEvent.value = ""
                     else selectedEvent.value = event.eventId
                 }
@@ -138,12 +145,14 @@ fun EventListItem(
                 .fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            // Fist floor of the card, with the title, date, association and number of participants
             Row(
                 modifier = Modifier.fillMaxWidth().testTag("list_event_row_${event.eventId}"),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {
+                    // Title
                     Text(
                         text = event.title,
                         modifier =
@@ -154,12 +163,14 @@ fun EventListItem(
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
+                    // Date, association and number of participants
                     Text(
                         text = "$association$dist$date",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.testTag("list_event_date_${event.eventId}"),
                     )
                 }
+                // Number of participants
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -176,8 +187,10 @@ fun EventListItem(
                     )
                 }
             }
-
+            // Second floor of the card, with the tags, description and buttons. Appears only if
+            // the event is selected
             if (selectedEvent.value == event.eventId) {
+                // Tags corresponding to the event
                 val tags = event.tags.toList()
                 val iconButtonColors =
                     IconButtonDefaults.iconButtonColors(
@@ -188,12 +201,14 @@ fun EventListItem(
                 Spacer(modifier = Modifier.height(spaceBetweenElements))
                 HorizontalDivider(thickness = 2.dp, color = onSurfaceFaded)
                 Spacer(modifier = Modifier.height(spaceBetweenElements))
+                // Display the related tags in a horizontal scrollable row
                 LazyRow(
                     modifier =
                         Modifier.fillMaxWidth().testTag("list_event_details_${event.eventId}"),
                     horizontalArrangement = Arrangement.spacedBy(spaceBetweenTagChips)
                 ) {
                     items(tags) { tag ->
+                        // Each tag is displayed as a chip
                         AssistChip(
                             onClick = { onTagPressed(tag) },
                             label = { Text(tag.name) },
@@ -211,16 +226,19 @@ fun EventListItem(
                     }
                 }
                 Spacer(modifier = Modifier.height(spaceBetweenElements))
+                // Description of the event
                 Text(
                     event.description,
                     modifier = Modifier.testTag("list_event_description_${event.eventId}")
                 )
                 Spacer(modifier = Modifier.height(spaceBetweenElements))
+                // Buttons to view the event on the map and to modify the event
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Row {
+                        // View on map button
                         if (viewOnMap != null) {
                             IconButton(
                                 onClick = { viewOnMap(event) },
@@ -234,6 +252,7 @@ fun EventListItem(
                             }
                             Spacer(modifier = Modifier.width(4.dp))
                         }
+                        // Modify button
                         if (canModifyEvent) {
                             IconButton(
                                 onClick = { modify(event) },
@@ -247,6 +266,7 @@ fun EventListItem(
                             }
                         }
                     }
+                    // Join event button
                     JoinEventButton(event, isOnline, 130.dp, refreshEvents)
                 }
             }

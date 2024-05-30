@@ -210,6 +210,7 @@ private fun Content(
     }
 }
 
+// Colors for the epfl/section/class tags
 val colorEpfl = Color.Red.copy(0.6f)
 val colorSection = Color.Blue.copy(0.6f)
 val colorClass = Color.Green.copy(0.6f)

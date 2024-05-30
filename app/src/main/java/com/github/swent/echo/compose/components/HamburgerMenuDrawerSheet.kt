@@ -72,17 +72,6 @@ fun HamburgerMenuDrawerSheet(
                 selectedIcon = Icons.Filled.DateRange,
                 navOnClick = { navActions.navigateTo(Routes.MY_EVENTS) }
             ),
-            /*
-            NavigationItem(
-                title = stringResource(id = R.string.hamburger_friends),
-                selectedIcon = Icons.Filled.Face,
-            ),
-            NavigationItem(
-                title = stringResource(id = R.string.hamburger_settings),
-                selectedIcon = Icons.Filled.Settings,
-            ),
-
-             */
             NavigationItem(
                 title = stringResource(id = R.string.hamburger_create_event),
                 selectedIcon = Icons.Filled.AddCircle,
@@ -91,12 +80,6 @@ fun HamburgerMenuDrawerSheet(
                     navActions.navigateTo(Routes.CREATE_EVENT.build(encodedMapCenter))
                 }
             ),
-            /*
-            NavigationItem(
-                title = stringResource(id = R.string.hamburger_add_friends),
-                selectedIcon = Icons.Filled.Add,
-            ),
-             */
             NavigationItem(
                 title = stringResource(R.string.hamburger_associations),
                 selectedIcon = Icons.Filled.Star,
@@ -125,14 +108,12 @@ fun HamburgerMenuDrawerSheet(
             Column(
                 modifier = Modifier.align(Alignment.TopStart).padding(8.dp).testTag("profile_sheet")
             ) {
-                // TO-DO: Replace with actual profile picture
                 Image(
                     modifier = Modifier.testTag("profile_picture"),
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
                     contentDescription = "profile picture"
                 )
                 Row(modifier = Modifier.padding(8.dp).testTag("profile_info")) {
-                    // TO-DO: Replace with actual name and class
                     Text(
                         text = profileName,
                         modifier = Modifier.testTag("profile_name"),
