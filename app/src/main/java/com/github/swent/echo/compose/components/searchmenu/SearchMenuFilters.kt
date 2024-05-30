@@ -53,6 +53,9 @@ fun SearchMenuFilters(
     sortByCallback: (Int) -> Unit, // Callback function when the sort by filter is changed
     timeFilterCallback: (Float, Float) -> Unit, // Callback function when the time filter is changed
     mode: MapOrListMode // The current display mode (map or list)
+    followedAssociations: List<String>,
+    selectedAssociation: Int,
+    associationCallback: (Int) -> Unit
 ) {
     // Define the items for the "Events for" filter section
     val eventsForItems =
@@ -112,11 +115,6 @@ fun SearchMenuFilters(
             }
         )
 
-    // Define the list of followed associations and the currently selected association
-    val followedAssociations = listOf("1", "2", "3", "4", "5")
-    var selectedAssociation = -1
-    val associationCallback = { id: Int -> selectedAssociation = id }
-
     // Define the vertical space between elements
     val verticalSpacer = 8.dp
 
@@ -141,7 +139,7 @@ fun SearchMenuFilters(
                     Dropdown(
                         "Sort By",
                         SortBy.entries.map { stringResource(it.stringKey) },
-                        filters.sortBy?.ordinal ?: -1,
+                        filters.sortBy.ordinal,
                         sortByCallback
                     )
                 }
