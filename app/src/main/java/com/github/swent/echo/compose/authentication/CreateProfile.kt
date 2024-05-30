@@ -252,7 +252,7 @@ fun ProfileCreationUI(
         }
     ) { innerPadding ->
         Box(
-            modifier = modifier.fillMaxSize().padding(innerPadding).testTag("pofile-creation"),
+            modifier = modifier.fillMaxSize().padding(innerPadding).testTag("profile-creation"),
             contentAlignment = Alignment.Center
         ) {
             Column(
