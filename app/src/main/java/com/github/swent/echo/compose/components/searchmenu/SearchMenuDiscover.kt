@@ -115,19 +115,22 @@ fun SearchMenuDiscover(searchEntryCallback: (String) -> Unit, tagViewModel: TagV
 // Component that displays a tag in the discover mode
 @Composable
 fun SearchMenuDiscoverItem(
-    tag: Tag,
-    onTagClicked: (Tag) -> Unit,
-    selectedTag: String,
-    subTags: List<String>,
-    randomSeed: Int
+    tag: Tag, // The tag associated with this item
+    onTagClicked: (Tag) -> Unit, // Callback function when the tag is clicked
+    selectedTag: String, // The currently selected tag
+    subTags: List<String>, // List of subtags associated with this item
+    randomSeed: Int // Seed for randomizing the display of subtags
 ) {
+    // Create a box that fills the width, has a specific height, padding, rounded corners, and a
+    // background color
+    // that changes based on whether the tag is selected or not. It also has a click listener that
+    // triggers the callback function.
     Box(
         modifier =
             Modifier.fillMaxWidth()
                 .height(90.dp)
                 .padding(3.dp)
                 .clip(RoundedCornerShape(8.dp))
-                // Change the background color of the tag if it is selected
                 .background(
                     if (selectedTag == tag.name) {
                         MaterialTheme.colorScheme.primaryContainer
@@ -138,17 +141,21 @@ fun SearchMenuDiscoverItem(
                 .clickable(onClick = { onTagClicked(tag) })
                 .testTag("discover_child_${tag.name}")
     ) {
+        // Create a column that aligns its children in the center.
         Column(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Determine the text color based on whether the tag is selected or not.
             val textColor =
                 if (selectedTag == tag.name) {
                     MaterialTheme.colorScheme.onPrimaryContainer
                 } else {
                     MaterialTheme.colorScheme.onSecondaryContainer
                 }
+            // Display the tag name.
             Text(text = tag.name, color = textColor)
+            // If there are subtags, display them in a randomized order.
             if (subTags.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(5.dp),

@@ -36,24 +36,31 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Pager(content: List<Pair<String, @Composable () -> Unit>>, initialPage: Int = 0) {
+    // Remember the state of the pager, including the current page and the total number of pages.
     val pagerState = rememberPagerState(initialPage = initialPage, pageCount = { content.size })
+    // Remember a CoroutineScope for launching coroutines.
     val coroutineScope = rememberCoroutineScope()
+    // Define some constants for padding and spacing.
     val itemsPadding = 2.dp
     val itemsWeight = 1f
     val spaceBetweenTitleAndItem = 8.dp
     val titlePadding = 8.dp
     val underlineHeight = 1.dp
+    // Create a column for the pager.
     Column(modifier = Modifier.testTag("pager")) {
         Box {
             Row(
                 Modifier.wrapContentHeight().fillMaxWidth().align(Alignment.TopCenter),
                 horizontalArrangement = Arrangement.Center
             ) {
+                // For each page, create a title and an underline.
                 content.forEachIndexed { id, item ->
                     Column(
                         modifier = Modifier.padding(horizontal = itemsPadding).weight(itemsWeight),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // The title is a button that scrolls to the corresponding page when
+                        // clicked.
                         TextButton(
                             onClick = {
                                 coroutineScope.launch {
@@ -70,6 +77,7 @@ fun Pager(content: List<Pair<String, @Composable () -> Unit>>, initialPage: Int 
                                 textAlign = TextAlign.Center
                             )
                         }
+                        // The underline is visible only for the current page.
                         if (pagerState.currentPage == id) {
                             Box(
                                 modifier =
@@ -83,12 +91,15 @@ fun Pager(content: List<Pair<String, @Composable () -> Unit>>, initialPage: Int 
                 }
             }
         }
+        // Add some space between the titles and the content.
         Spacer(modifier = Modifier.height(spaceBetweenTitleAndItem))
+        // Create a horizontal pager for the content.
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxHeight(),
             verticalAlignment = Alignment.Top,
         ) {
+            // Display the content of the current page.
             content[it].second()
         }
     }

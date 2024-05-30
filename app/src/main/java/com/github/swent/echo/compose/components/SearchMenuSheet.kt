@@ -27,6 +27,7 @@ import com.github.swent.echo.compose.components.searchmenu.SearchMenuFilters
 import com.github.swent.echo.viewmodels.MapOrListMode
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
+// This Composable function creates a search menu sheet with various filters and options.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchMenuSheet(
@@ -46,12 +47,13 @@ fun SearchMenuSheet(
     initialPage: Int,
     mode: MapOrListMode
 ) {
-    // TagViewModel
+    // Get the TagViewModel from Hilt.
     val tagViewModel: TagViewModel =
         hiltViewModel<TagViewModel, TagViewModel.TagViewModelFactory> { factory ->
             factory.create()
         }
 
+    // Remember the state of the modal bottom sheet.
     val sheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = true) { value ->
             if (value == SheetValue.Expanded) {
@@ -59,10 +61,14 @@ fun SearchMenuSheet(
             }
             true
         }
+
+    // Define some constants for dimensions and padding.
     val bottomSheetHeight = 500.dp
     val paddingValues = 5.dp
     val pageHeight = 385.dp
     val paddingBottomResetFilters = 10.dp
+
+    // Create a modal bottom sheet.
     ModalBottomSheet(
         modifier = Modifier.fillMaxWidth().height(bottomSheetHeight).testTag("search_menu_sheet"),
         onDismissRequest = onDismiss,
@@ -75,13 +81,14 @@ fun SearchMenuSheet(
             Column(
                 modifier = Modifier.fillMaxWidth().height(pageHeight).align(Alignment.TopCenter)
             ) {
-                // Sheet content
+                // Create a search bar at the top of the sheet.
                 SearchBar(
                     stringResource(R.string.search_menu_sheet_search_interests),
                     filters.searchEntry,
                     searchEntryCallback
                 )
-                // Display filters or discover according to the selected mode
+
+                // Create a pager with two pages: one for filters and one for discover.
                 Pager(
                     listOf(
                         Pair(stringResource(R.string.search_menu_sheet_filters)) {
@@ -105,7 +112,8 @@ fun SearchMenuSheet(
                     initialPage
                 )
             }
-            // Close Search Button
+
+            // Create a button at the bottom of the sheet that resets the filters.
             Row(
                 modifier =
                     Modifier.fillMaxWidth()

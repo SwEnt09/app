@@ -18,26 +18,42 @@ import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.myevents.MyEventsViewModel
 
+// This Composable function creates a screen for displaying the user's events.
 @Composable
-fun MyEventsScreen(myEventsViewModel: MyEventsViewModel, navActions: NavigationActions) {
+fun MyEventsScreen(
+    myEventsViewModel: MyEventsViewModel, // ViewModel for managing the user's events
+    navActions: NavigationActions // Actions for navigating between screens
+) {
+    // Create a scaffold, which is a Material Design layout structure.
     Scaffold(
+        // The top bar of the scaffold is a title and a back button.
         topBar = {
             EventTitleAndBackButton(stringResource(R.string.hamburger_my_events)) {
+                // When the back button is clicked, navigate to the map screen.
                 navActions.navigateTo(Routes.MAP)
             }
         },
-        modifier = Modifier.fillMaxSize().testTag("my_events_screen")
+        modifier = Modifier.fillMaxSize().testTag("my_events_screen") // Fill the entire screen.
     ) {
+        // Get the list of events the user has joined.
         val joinedEventsList by myEventsViewModel.joinedEvents.collectAsState()
+        // Get the list of events the user has created.
         val createdEventsList by myEventsViewModel.createdEvents.collectAsState()
+        // Get whether the user is online.
         val isOnline by myEventsViewModel.isOnline.collectAsState()
+        // Create a box with padding.
         Box(modifier = Modifier.padding(it)) {
+            // Create a pager with two tabs: one for joined events and one for created events.
             Pager(
                 listOf(
+                    // The first tab is for joined events.
                     Pair(stringResource(R.string.my_events_joined_events)) {
+                        // Display the joined events in a list.
                         ListDrawer(joinedEventsList, isOnline, myEventsViewModel::refreshEvents)
                     },
+                    // The second tab is for created events.
                     Pair(stringResource(R.string.my_events_created_events)) {
+                        // Display the created events in a list.
                         ListDrawer(createdEventsList, isOnline, myEventsViewModel::refreshEvents)
                     }
                 )
