@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -51,7 +52,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
@@ -98,6 +98,7 @@ import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
+import com.github.swent.echo.data.repository.RepositoryStoreWhileNoInternetException
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.authentication.CreateProfileState
@@ -341,9 +342,10 @@ fun ProfileCreationUI(
                 Spacer(modifier = modifier.weight(1f))
                 val errorLN = stringResource(R.string.profile_creation_empty_LN)
                 val errorFN = stringResource(R.string.profile_creation_empty_FN)
+                val errorNetwork = stringResource(R.string.profile_creation_error_network_failure)
 
                 // Save button
-                OutlinedButton(
+                Button(
                     onClick = {
                         if (firstName.isBlank() || lastName.isBlank()) {
                             scope.launch {
@@ -360,8 +362,17 @@ fun ProfileCreationUI(
                                 }
                             }
                         } else {
-                            onSave(firstName, lastName)
-                            navAction.navigateTo(Routes.MAP)
+                            try {
+                                onSave(firstName, lastName)
+                                navAction.navigateTo(Routes.MAP)
+                            } catch (e: RepositoryStoreWhileNoInternetException) {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        errorNetwork,
+                                        withDismissAction = true
+                                    )
+                                }
+                            }
                         }
                     },
                     modifier = modifier.fillMaxWidth().testTag("Save"),

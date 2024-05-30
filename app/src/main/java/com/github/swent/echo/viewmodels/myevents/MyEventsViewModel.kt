@@ -6,6 +6,7 @@ import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.repository.Repository
+import com.github.swent.echo.data.repository.RepositoryStoreWhileNoInternetException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,8 @@ constructor(
     val createdEvents = _createdEvents.asStateFlow()
     // Online status
     val isOnline = networkService.isOnline
+    private val _status = MutableStateFlow<MyEventStatus>(MyEventStatus.Okay)
+    val status = _status.asStateFlow()
 
     // Initialize the ViewModel
     init {
@@ -43,14 +46,23 @@ constructor(
     // Handle join/leave event
     fun joinOrLeaveEvent(event: Event, onFinished: () -> Unit) {
         viewModelScope.launch {
-            if (_joinedEvents.value.map { it.eventId }.contains(event.eventId)) {
-                repository.leaveEvent(user, event)
-            } else {
-                repository.joinEvent(user, event)
+            try {
+                if (_joinedEvents.value.map { it.eventId }.contains(event.eventId)) {
+                    repository.leaveEvent(user, event)
+                } else {
+                    repository.joinEvent(user, event)
+                }
+                _joinedEvents.value = repository.getJoinedEvents(user)
+                onFinished()
+            } catch (e: RepositoryStoreWhileNoInternetException) {
+                _status.value = MyEventStatus.Error
             }
-            _joinedEvents.value = repository.getJoinedEvents(user)
-            onFinished()
         }
+    }
+
+    // Reset error state
+    fun resetErrorState() {
+        _status.value = MyEventStatus.Okay
     }
 
     // Refresh events
@@ -60,4 +72,11 @@ constructor(
             _createdEvents.value = repository.getAllEvents().filter { it.creator.userId == user }
         }
     }
+}
+
+// Status of the Event joining viewmodel
+sealed class MyEventStatus {
+    data object Okay : MyEventStatus()
+
+    data object Error : MyEventStatus()
 }

@@ -49,6 +49,7 @@
     <string name="event_creation_error_end_date_before_start_date">The end date is before the start date</string>
     <string name="event_creation_error_empty_title">The title is empty</string>
     <string name="event_creation_error_max_participant">The maximum number of participants is too low</string>
+    <string name="event_creation_error_network_failure">Network problem while saving event. Please retry.</string>
     <string name="search_menu_filters_epfl">EPFL</string>
     <string name="search_menu_filters_section">Section</string>
     <string name="search_menu_filters_class">Class</string>
@@ -87,6 +88,7 @@
     <string name="profile_creation_edit_picture">Edit picture</string>
     <string name="profile_creation_delete_picture">Delete picture</string>
     <string name="profile_creation_center_picture">Adjust the zoom</string>
+    <string name="profile_creation_error_network_failure">Network problem while saving profile. Please retry.</string>
     <string name="event_successfully_joined">Event successfully joined!</string>
     <string name="event_info_sheet_modify_event">Modify Event</string>
     <string name="list_drawer_event_status">Event Status</string>
@@ -106,6 +108,7 @@
     <string name="association_subscription_screen_snackbar_message">You unfollowed&#160;</string>
     <string name="association_subscription_screen_snackbar_undo">Undo</string>
     <string name="association_committee_member_screen_title">Your association memberships</string>
+    <string name="association_subscription_error_network_failure">Network problem while subscribing or unsubscribing to association. Please retry.</string>
     <string name="my_events_joined_events">Joined Events</string>
     <string name="my_events_created_events">Created Events</string>
     <string name="association_details_unfollow">Unfollow</string>
@@ -134,5 +137,6 @@
     <string name="authentication_password_too_short">Password must be at least 8 characters</string>
     <string name="authentication_error_passwords_do_not_match">Passwords do not match</string>
     <string name="association_details_contact">Contact :</string>
+    <string name="event_join_error_network_failure">Network problem while joining or leaving event. Please retry.</string>
 </resources>
 

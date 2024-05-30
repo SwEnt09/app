@@ -13,6 +13,7 @@ import com.github.swent.echo.data.model.EventCreator
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
+import com.github.swent.echo.data.repository.RepositoryStoreWhileNoInternetException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -141,17 +142,23 @@ constructor(
         } else if (_status.value == EventStatus.Saved) {
             Log.w("save event", "trying to save the event but it's already saved")
         } else {
+            val eventStatusBeforeSaving = _status.value
             if (eventIsValid()) {
                 _status.value = EventStatus.Saving
                 viewModelScope.launch {
-                    if (isEventNew.value) {
-                        val eventId = repository.createEvent(event.value)
-                        _event.value = event.value.copy(eventId = eventId)
-                    } else {
-                        repository.setEvent(event.value)
+                    try {
+                        if (isEventNew.value) {
+                            val eventId = repository.createEvent(event.value)
+                            _event.value = event.value.copy(eventId = eventId)
+                        } else {
+                            repository.setEvent(event.value)
+                        }
+                        _isEventNew.value = false
+                        _status.value = EventStatus.Saved
+                    } catch (e: RepositoryStoreWhileNoInternetException) {
+                        _status.value =
+                            EventStatus.Error(R.string.event_creation_error_network_failure)
                     }
-                    _isEventNew.value = false
-                    _status.value = EventStatus.Saved
                 }
             }
         }
