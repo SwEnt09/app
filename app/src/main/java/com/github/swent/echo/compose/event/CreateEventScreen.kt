@@ -7,7 +7,12 @@ import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.event.EventViewModel
 
-/** This screen allow the user to create an event. */
+/**
+ * This screen allow the user to create an event.
+ *
+ * @param eventViewModel the event viewmodel
+ * @param navigationActions the navigation actions
+ */
 @Composable
 fun CreateEventScreen(eventViewModel: EventViewModel, navigationActions: NavigationActions) {
     EventScreen(
