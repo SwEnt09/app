@@ -168,9 +168,11 @@ constructor(
             sectionTags = repository.getSubTags(sectionTagId)
             semesterTags = repository.getSubTags(semesterTagId)
             val followedAssociationIds =
-                repository.getUserProfile(userId)?.associationsSubscriptions?.map { it.associationId }
-                    ?: listOf()
-            _followedAssociations.value = repository.getAssociations(followedAssociationIds).map { it.name }
+                repository.getUserProfile(userId)?.associationsSubscriptions?.map {
+                    it.associationId
+                } ?: listOf()
+            _followedAssociations.value =
+                repository.getAssociations(followedAssociationIds).map { it.name }
             refreshFiltersContainer()
         }
     }
@@ -330,8 +332,8 @@ constructor(
      * the default one, the search mode is on.
      */
     private fun updateSearchMode() {
-        _searchMode.value = _filtersContainer.value != defaultFiltersContainer ||
-            _selectedAssociation.value != -1
+        _searchMode.value =
+            _filtersContainer.value != defaultFiltersContainer || _selectedAssociation.value != -1
     }
 
     /**
@@ -456,10 +458,11 @@ constructor(
                                 tag.name.lowercase() == _semester.value.lowercase()
                             }
                     }
-                    .filter {event ->
+                    .filter { event ->
                         // filter by association
                         _selectedAssociation.value == -1 ||
-                            event.organizer?.name == _followedAssociations.value[_selectedAssociation.value]
+                            event.organizer?.name ==
+                                _followedAssociations.value[_selectedAssociation.value]
                     }
                     .sortedBy { event ->
                         event.startDate
@@ -473,7 +476,9 @@ constructor(
                     .toList()
 
             // reverse the list if the sort by is descending
-            if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) { // when we can filter by distance, update this too
+            if (
+                _filtersContainer.value.sortBy == SortBy.DATE_DESC
+            ) { // when we can filter by distance, update this too
                 _displayEventList.value = _displayEventList.value.reversed()
             }
         }
