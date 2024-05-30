@@ -73,7 +73,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, navActions: NavigationA
             )
         }
         AuthenticationScreen(
-            action = stringResource(R.string.register_screen_action_button),
+            action = stringResource(R.string.register),
             isOnline = isOnline,
             confirmPassword = true,
             validate = true,
@@ -98,7 +98,7 @@ fun NavigateToLoginScreen(onClick: () -> Unit) {
     ) {
         Text(stringResource(R.string.register_screen_do_you_have_an_account) + " ")
         Text(
-            text = stringResource(R.string.register_screen_login_link),
+            text = stringResource(R.string.login_button),
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.clickable(onClick = onClick).testTag("login-button")
         )

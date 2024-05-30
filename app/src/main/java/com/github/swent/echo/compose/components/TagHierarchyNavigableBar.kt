@@ -56,7 +56,7 @@ fun TagHierarchyNavigableBar(
                     // if else here to display "All" instead of the root tag name
                     text =
                         if (id == 0) {
-                            stringResource(R.string.discover_all)
+                            stringResource(R.string.edit_event_screen_tag_not_selected)
                         } else {
                             tag.name
                         },

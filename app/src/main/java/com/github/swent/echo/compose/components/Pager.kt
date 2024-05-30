@@ -40,8 +40,7 @@ fun Pager(content: List<Pair<String, @Composable () -> Unit>>, initialPage: Int 
     val pagerState = rememberPagerState(initialPage = initialPage, pageCount = { content.size })
     // Remember a CoroutineScope for launching coroutines.
     val coroutineScope = rememberCoroutineScope()
-    // Define some constants for padding and spacing.
-    val itemsPadding = 2.dp
+    val itemsPadding = 0.dp
     val itemsWeight = 1f
     val spaceBetweenTitleAndItem = 8.dp
     val titlePadding = 8.dp
