@@ -45,7 +45,10 @@ fun SearchMenuSheet(
     resetFiltersCallback: () -> Unit,
     timeFilterCallback: (Float, Float) -> Unit,
     initialPage: Int,
-    mode: MapOrListMode
+    mode: MapOrListMode,
+    followedAssociations: List<String>,
+    selectedAssociation: Int,
+    associationCallback: (Int) -> Unit
 ) {
     // Get the TagViewModel from Hilt.
     val tagViewModel: TagViewModel =
@@ -102,7 +105,10 @@ fun SearchMenuSheet(
                                 fullCallback,
                                 sortByCallback,
                                 timeFilterCallback,
-                                mode
+                                mode,
+                                followedAssociations,
+                                selectedAssociation,
+                                associationCallback
                             )
                         },
                         Pair(stringResource(R.string.search_menu_sheet_discover)) {

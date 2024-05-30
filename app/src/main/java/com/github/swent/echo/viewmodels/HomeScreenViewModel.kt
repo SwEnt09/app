@@ -142,6 +142,12 @@ constructor(
     val initialPage = _initialPage.asStateFlow()
     // Flow to observe the network status
     val isOnline = networkService.isOnline
+    // Flow to observe the followed associations
+    private val _followedAssociations = MutableStateFlow<List<String>>(listOf())
+    val followedAssociations = _followedAssociations.asStateFlow()
+    // Flow to observe the selected association
+    private val _selectedAssociation = MutableStateFlow(-1)
+    val selectedAssociation = _selectedAssociation.asStateFlow()
 
     // Initialize the view model
     init {
@@ -161,8 +167,22 @@ constructor(
             followedTagFilter = getTagsAndSubTags(_followedTags.value).toList()
             sectionTags = repository.getSubTags(sectionTagId)
             semesterTags = repository.getSubTags(semesterTagId)
+            val followedAssociationIds =
+                repository.getUserProfile(userId)?.associationsSubscriptions?.map { it.associationId }
+                    ?: listOf()
+            _followedAssociations.value = repository.getAssociations(followedAssociationIds).map { it.name }
             refreshFiltersContainer()
         }
+    }
+
+    /**
+     * Change the selected association to display the events of the selected association.
+     *
+     * @param selectedAssociation the index of the selected association
+     */
+    fun onAssociationSelected(selectedAssociation: Int) {
+        _selectedAssociation.value = selectedAssociation
+        refreshFiltersContainer()
     }
 
     /**
@@ -310,7 +330,8 @@ constructor(
      * the default one, the search mode is on.
      */
     private fun updateSearchMode() {
-        _searchMode.value = _filtersContainer.value != defaultFiltersContainer
+        _searchMode.value = _filtersContainer.value != defaultFiltersContainer ||
+            _selectedAssociation.value != -1
     }
 
     /**
@@ -366,7 +387,7 @@ constructor(
                         -> // filter by time to avoid displaying past events
                         dateFilterConditions(event)
                     }
-                } else /*if (selectedTagId.value == null)*/ {
+                } else {
                     allEventsList
                         .filter { event ->
                             event.tags.any { tag ->
@@ -376,20 +397,13 @@ constructor(
                         .filter { event -> // filter by time to avoid displaying past events
                             dateFilterConditions(event)
                         }
-                } /* else {
-                      allEventsList
-                          .filter { event ->
-                              event.tags.any { tag -> tag.tagId == _selectedTagId.value!! }
-                          }
-                          .filter { event -> // filter by time to avoid displaying past events
-                              dateFilterConditions(event)
-                          }
-                  }*/
+                }
         } else {
             _displayEventList.value =
                 allEventsList
                     .asSequence()
-                    .filter { event -> // filter by tags, title or description
+                    .filter { event ->
+                        // filter by tags, title or description
                         _filtersContainer.value.searchEntry == "" ||
                             event.tags.any { tag ->
                                 filterTagSet.any { tag2 -> tag.tagId == tag2.tagId }
@@ -397,31 +411,37 @@ constructor(
                             areWordsInTitle(event, filterWordList) ||
                             areWordsInDescription(event, filterWordList)
                     }
-                    .filter { event -> // filter by time
+                    .filter { event ->
+                        // filter by time
                         dateFilterConditions(event)
                     }
                     .filter { event ->
+                        // filter by confirmed check
                         !_filtersContainer.value.confirmedChecked ||
                             event.maxParticipants <= 0 ||
                             (event.participantCount >= event.maxParticipants * STATUS_THRESHOLD &&
                                 event.participantCount < event.maxParticipants)
                     }
                     .filter { event ->
+                        // filter by pending check
                         !_filtersContainer.value.pendingChecked ||
                             event.maxParticipants <= 0 ||
                             event.participantCount < event.maxParticipants * STATUS_THRESHOLD
                     }
                     .filter { event ->
+                        // filter by full check
                         !_filtersContainer.value.fullChecked ||
                             event.maxParticipants <= 0 ||
                             event.participantCount == event.maxParticipants
                     }
                     .filter { event ->
+                        // filter by epfl check
                         !_filtersContainer.value.epflChecked ||
                             (!event.tags.any { tag -> sectionTags.contains(tag) } &&
                                 !event.tags.any { tag -> semesterTags.contains(tag) })
                     }
                     .filter { event ->
+                        // filter by section
                         !_filtersContainer.value.sectionChecked ||
                             _section.value == "" ||
                             event.tags.any { tag ->
@@ -429,25 +449,31 @@ constructor(
                             }
                     }
                     .filter { event ->
+                        // filter by semester
                         !_filtersContainer.value.classChecked ||
                             _semester.value == "" ||
                             event.tags.any { tag ->
                                 tag.name.lowercase() == _semester.value.lowercase()
                             }
                     }
+                    .filter {event ->
+                        // filter by association
+                        _selectedAssociation.value == -1 ||
+                            event.organizer?.name == _followedAssociations.value[_selectedAssociation.value]
+                    }
                     .sortedBy { event ->
                         event.startDate
                         // when we can sort by distance, update this
                         /*when (_filtersContainer.value.sortBy) {
                             SortBy.DATE_ASC -> event.startDate
-                            SortBy.DATE_DESC ->
+                            SortBy.DATE_DESC -> event.startDate
                             else ->
                         }*/
                     }
                     .toList()
 
             // reverse the list if the sort by is descending
-            if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) {
+            if (_filtersContainer.value.sortBy == SortBy.DATE_DESC) { // when we can filter by distance, update this too
                 _displayEventList.value = _displayEventList.value.reversed()
             }
         }

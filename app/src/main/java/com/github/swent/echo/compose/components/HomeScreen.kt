@@ -134,6 +134,10 @@ private fun Content(
     // online status for disabling the buttons
     val isOnline by homeScreenViewModel.isOnline.collectAsState()
 
+    // followed associations for the search menu
+    val followedAssociations by homeScreenViewModel.followedAssociations.collectAsState()
+    val selectedAssociation by homeScreenViewModel.selectedAssociation.collectAsState()
+
     Box(modifier = Modifier.padding(paddingValues)) {
         // Display the list view or the map view
         if (mode == MapOrListMode.LIST) {
@@ -142,7 +146,7 @@ private fun Content(
                     TagUI(
                         tags = tags,
                         selectedTagIds = selectedTagIds,
-                        leftPadding = 8.dp,
+                        leftPadding = 14.dp,
                         onTagClick = homeScreenViewModel::onFollowedTagClicked
                     )
                 }
@@ -202,7 +206,10 @@ private fun Content(
                 resetFiltersCallback = homeScreenViewModel::resetFiltersContainer,
                 timeFilterCallback = homeScreenViewModel::onDateFilterChanged,
                 initialPage = initialPage,
-                mode = mode
+                mode = mode,
+                followedAssociations = followedAssociations,
+                selectedAssociation = selectedAssociation,
+                associationCallback = homeScreenViewModel::onAssociationSelected
             )
             // {navActions.navigateTo(Routes.SearchScreen)}) <- when we make a whole screen for
             // the search menu
