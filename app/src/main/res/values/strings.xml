@@ -49,7 +49,7 @@
     <string name="event_creation_error_end_date_before_start_date">The end date is before the start date</string>
     <string name="event_creation_error_empty_title">The title is empty</string>
     <string name="event_creation_error_max_participant">The maximum number of participants is too low</string>
-    <string name="event_creation_error_network_failure">Network problem while saving event. Please retry.</string>
+    <string name="event_creation_error_network_failure">Network problem while saving or deleting event. Please retry.</string>
     <string name="search_menu_filters_epfl">EPFL</string>
     <string name="search_menu_filters_section">Section</string>
     <string name="search_menu_filters_class">Class</string>

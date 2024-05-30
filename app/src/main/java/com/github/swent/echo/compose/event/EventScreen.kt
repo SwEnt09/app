@@ -103,8 +103,7 @@ fun EventScreen(
             ) {
                 if (canDelete) {
                     DeleteEventButton(enabled = isOnline) {
-                        // TODO: delete the event in the repository
-                        onEventDeleted()
+                        eventViewModel.deleteEvent(onEventDeleted)
                     }
                 }
                 OutlinedButton(
