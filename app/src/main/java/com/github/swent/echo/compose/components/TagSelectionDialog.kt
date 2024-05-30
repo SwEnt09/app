@@ -30,7 +30,15 @@ import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
-/** The tag selection dialog */
+/**
+ * The tag selection dialog.
+ *
+ * @param onDismissRequest a callback called when user want to dismiss the dialog
+ * @param dialogProperties the properties of the Dialog composable
+ * @param tagViewModel the viewmodel of the tags
+ * @param tagType a string for the type of the tag tree (== what these tags select)
+ * @param onTagSelected a callback called when a specific tag is selected
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TagSelectionDialog(
@@ -84,7 +92,14 @@ fun TagSelectionDialog(
     }
 }
 
-/** A line for a tag in the dialog */
+/**
+ * A line for a tag in the tag selection dialog.
+ *
+ * @param tag the tag to display
+ * @param onTagClicked a callback called when the tag is clicked
+ * @param onTagArrowClicked a callback called when the subtag arrow of a tag is clicked
+ * @param hasSubTags a boolean which is true if the tag has subtags
+ */
 @Composable
 fun TagSelectionDialogEntry(
     tag: Tag,
