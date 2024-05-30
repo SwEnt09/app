@@ -132,8 +132,8 @@
     <string name="authentication_error_email_is_required">Email is required</string>
     <string name="authentication_password_too_short">Password must be at least 8 characters</string>
     <string name="authentication_error_passwords_do_not_match">Passwords do not match</string>
-    <string name="association_details_contact">Contact :</string>
     <string name="event_join_error_network_failure">Network problem while joining or leaving event. Please retry.</string>
+    <string name="association_details_contact" translatable="false">Contact :</string>
     <string name="followed_associations">Followed Associations</string>
     <string name="committee_associations">Committee Associations</string>
     <string name="all_associations">All Associations</string>
