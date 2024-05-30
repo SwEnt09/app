@@ -52,7 +52,7 @@ fun SearchMenuFilters(
     fullCallback: () -> Unit, // Callback function when the full filter is toggled
     sortByCallback: (Int) -> Unit, // Callback function when the sort by filter is changed
     timeFilterCallback: (Float, Float) -> Unit, // Callback function when the time filter is changed
-    mode: MapOrListMode // The current display mode (map or list)
+    mode: MapOrListMode, // The current display mode (map or list)
     followedAssociations: List<String>,
     selectedAssociation: Int,
     associationCallback: (Int) -> Unit
