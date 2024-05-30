@@ -34,7 +34,11 @@ class HomeScreenTest {
 
         navActions = mockk(relaxed = true)
         composeTestRule.activity.setContent {
-            HomeScreen(homeScreenViewModel = hiltViewModel(), navActions = navActions)
+            HomeScreen(
+                homeScreenViewModel = hiltViewModel(),
+                navActions = navActions,
+                themeViewModel = hiltViewModel()
+            )
         }
     }
 

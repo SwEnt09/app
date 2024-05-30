@@ -127,7 +127,8 @@ fun AppNavigationHost(
             HomeScreen(
                 homeScreenViewModel = hiltViewModel(),
                 navActions = navActions,
-                hasLocationPermissions = hasLocationPermissions
+                hasLocationPermissions = hasLocationPermissions,
+                themeViewModel = hiltViewModel()
             )
         }
 
