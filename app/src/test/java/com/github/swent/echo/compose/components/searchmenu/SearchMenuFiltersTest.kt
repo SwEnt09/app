@@ -53,7 +53,10 @@ class SearchMenuFiltersTest {
                     filters.from = f
                     filters.to = t
                 },
-                MapOrListMode.LIST
+                MapOrListMode.LIST,
+                listOf(),
+                -1,
+                { callback++ }
             )
         }
     }
