@@ -27,8 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.Dropdown
 import com.github.swent.echo.compose.components.colorClass
@@ -210,7 +210,8 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>, modif
                     // When the checkbox is clicked, call the callback function
                     onCheckedChange = { checkBoxItem.callback() },
                     modifier =
-                        modifier.size(checkboxSize)
+                        modifier
+                            .size(checkboxSize)
                             .testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
                 Text(checkBoxItem.contentDescription, fontSize = 13.sp)
