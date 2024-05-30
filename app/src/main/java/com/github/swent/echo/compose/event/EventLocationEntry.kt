@@ -27,7 +27,13 @@ import com.github.swent.echo.compose.map.LocationDisplayer
 import com.github.swent.echo.compose.map.LocationSelector
 import com.github.swent.echo.data.model.Location
 
-/** this composable contains the Location title, text field and button */
+/**
+ * This composable contains the Location title, text field and button.
+ *
+ * @param location the current location
+ * @param enabled the status of the button to select the location
+ * @param onLocationChanged a callback called when the location is changed
+ */
 @Composable
 fun EventLocationEntry(
     location: Location,
@@ -67,10 +73,15 @@ fun EventLocationEntry(
     }
 }
 
-/** This composable is the dialog to select the location on the map the map isn't implemented yet */
+/**
+ * This composable is the dialog to select the location on the map.
+ *
+ * @param currentLocation the current location
+ * @param onDismissRequest a callback called when the user dismiss the dialog
+ * @param onSelectLocation a callback called when a location is selected by the user
+ */
 @Composable
 fun SelectLocationDialog(
-    modifier: Modifier = Modifier,
     currentLocation: Location,
     onDismissRequest: () -> Unit,
     onSelectLocation: (newLocation: Location) -> Unit
