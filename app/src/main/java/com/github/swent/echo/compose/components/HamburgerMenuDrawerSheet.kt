@@ -70,7 +70,7 @@ fun HamburgerMenuDrawerSheet(
     val items =
         listOf(
             NavigationItem(
-                title = stringResource(id = R.string.hamburger_my_profile),
+                title = stringResource(id = R.string.my_profile),
                 selectedIcon = Icons.Filled.Person,
                 navOnClick = { navActions.navigateTo(Routes.PROFILE_CREATION) }
             ),
@@ -80,7 +80,7 @@ fun HamburgerMenuDrawerSheet(
                 navOnClick = { navActions.navigateTo(Routes.MY_EVENTS) }
             ),
             NavigationItem(
-                title = stringResource(id = R.string.hamburger_create_event),
+                title = stringResource(id = R.string.create_event),
                 selectedIcon = Icons.Filled.AddCircle,
                 navOnClick = {
                     val encodedMapCenter = Json.encodeToString(MAP_CENTER)

@@ -1,42 +1,39 @@
 <resources>
-    <string name="app_name">echo</string>
-    <string name="supabase_url">https://ulejnivguxeiibkbpwnb.supabase.co</string>
-    <string name="supabase_public_key">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZWpuaXZndXhlaWlia2Jwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA4MzgxODQsImV4cCI6MjAyNjQxNDE4NH0.9Hkj-Gox2XHcHfs_U2GyQFc9sZ_nu2Xs16-KYBri32g</string>
-    <string name="google_web_client_id">442952145416-mfuc6f0h27oa7efapkrto4veguk0e62u.apps.googleusercontent.com</string>
+    <string name="app_name" translatable="false">echo</string>
+    <string name="supabase_url" translatable="false">https://ulejnivguxeiibkbpwnb.supabase.co</string>
+    <string name="supabase_public_key" translatable="false">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZWpuaXZndXhlaWlia2Jwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA4MzgxODQsImV4cCI6MjAyNjQxNDE4NH0.9Hkj-Gox2XHcHfs_U2GyQFc9sZ_nu2Xs16-KYBri32g</string>
+    <string name="google_web_client_id" translatable="false">442952145416-mfuc6f0h27oa7efapkrto4veguk0e62u.apps.googleusercontent.com</string>
     <string name="authentication_form_email_label">Email</string>
     <string name="authentication_form_password_label">Password</string>
     <string name="authentication_form_confirm_password_label">Confirm password</string>
     <string name="authentication_screen_sign_in_with_google">Sign in with Google</string>
-    <string name="authentication_screen_google_logo_description">Google Logo</string>
-    <string name="authentication_screen_sign_in_method_separator">OR</string>
+    <string name="authentication_screen_google_logo_description" translatable="false">Google Logo</string>
+    <string name="authentication_screen_sign_in_method_separator" translatable="false">OR</string>
     <string name="login_screen_don_t_have_an_account">Don\'t have an account?</string>
-    <string name="login_screen_action_button">Login</string>
-    <string name="login_screen_register_link">Register</string>
+    <string name="login_button">Login</string>
+    <string name="register">Register</string>
     <string name="register_screen_confirm_your_email">Confirm your email to continue</string>
-    <string name="register_screen_action_button">Register</string>
+    <string name="register_screen_action_button" translatable="false">Register</string>
     <string name="register_screen_do_you_have_an_account">Do you have an account?</string>
-    <string name="register_screen_login_link">Login</string>
-    <string name="maptiler_api_key">8tGwLwPFCHwJ5D8g7pic</string>
-    <string name="maptiler_base_style_url">https://api.maptiler.com/maps/streets-v2/style.json?key=</string>
-    <string name="hamburger_my_profile">My Profile</string>
+    <string name="maptiler_api_key" translatable="false">8tGwLwPFCHwJ5D8g7pic</string>
+    <string name="maptiler_base_style_url" translatable="false">https://api.maptiler.com/maps/streets-v2/style.json?key=</string>
+    <string name="my_profile">My Profile</string>
     <string name="hamburger_my_events">My Events</string>
     <!--<string name="hamburger_friends">Friends</string>
     <string name="hamburger_settings">Settings</string>-->
-    <string name="hamburger_create_event">Create Event</string>
+    <string name="create_event">Create Event</string>
     <string name="hamburger_associations">Associations</string>
     <!--<string name="hamburger_add_friends">Add Friends</string>-->
     <string name="hamburger_help">Help</string>
     <string name="hamburger_log_out">Log Out</string>
-    <string name="app_title">Echo</string>
+    <string name="app_title" translatable="false">Echo</string>
     <string name="event_info_sheet_join_event_button_text">Join Event</string>
-    <string name="create_event_screen_title">Create event</string>
     <string name="edit_event_screen_name">Edit event</string>
-    <string name="edit_event_screen_save">Save</string>
+    <string name="save_button">Save</string>
     <string name="edit_event_screen_saving">Saving</string>
-    <string name="edit_event_screen_confirm_date">OK</string>
+    <string name="edit_event_screen_confirm_date" translatable="false">OK</string>
     <string name="edit_event_screen_title">Title</string>
-    <string name="edit_event_screen_description">Description</string>
-    <string name="edit_event_screen_tags">Tags</string>
+    <string name="tags" translatable="false">Tags</string>
     <string name="edit_event_screen_organizer">Organizer</string>
     <string name="edit_event_screen_location">Name of place</string>
     <string name="edit_event_screen_start_date">Start date</string>
@@ -50,8 +47,9 @@
     <string name="event_creation_error_empty_title">The title is empty</string>
     <string name="event_creation_error_max_participant">The maximum number of participants is too low</string>
     <string name="event_creation_error_network_failure">Network problem while saving or deleting event. Please retry.</string>
-    <string name="search_menu_filters_epfl">EPFL</string>
     <string name="search_menu_filters_section">Section</string>
+    <string name="search_menu_filters_epfl" translatable="false">EPFL</string>
+    <string name="section" translatable="false">Section</string>
     <string name="search_menu_filters_class">Class</string>
     <string name="search_menu_filters_pending">Pending</string>
     <string name="search_menu_filters_confirmed">Confirmed</string>
@@ -63,19 +61,18 @@
     <string name="search_menu_sheet_reset_filters">Reset Filters</string>
     <string name="search_menu_sheet_discover">Discover</string>
     <string name="search_menu_sheet_filters">Filters</string>
-    <string name="filters_container_sort_by_none">---</string>
+    <string name="filters_container_sort_by_none" translatable="false">---</string>
     <string name="filters_container_sort_by_date_asc">Date (Asc)</string>
     <string name="filters_container_sort_by_date_desc">Date (Desc)</string>
     <string name="filters_container_sort_by_distance_asc">Distance (Asc)</string>
     <string name="filters_container_sort_by_distance_desc">Distance (Desc)</string>
-    <string name="event_location_latitude">Latitude</string>
-    <string name="event_location_longitude">Longitude</string>
+    <string name="event_location_latitude" translatable="false">Latitude</string>
+    <string name="event_location_longitude" translatable="false">Longitude</string>
     <string name="edit_event_screen_cancel">Cancel</string>
-    <string name="edit_event_screen_confirm">OK</string>
+    <string name="edit_event_screen_confirm" translatable="false">OK</string>
     <string name="list_drawer_view_on_map">View On Map</string>
     <string name="list_drawer_join_event">Join Event</string>
     <string name="profile_creation_dismiss">Dismiss</string>
-    <string name="profile_creation_empty_fields_error">Both First name and Last name must be filled in!</string>
     <string name="profile_creation_empty_FN">First name cannot be blank!</string>
     <string name="profile_creation_empty_LN">Last name cannot be blank!</string>
    <!-- <string name="profile_creation_error">Profile creation error: Not logged in</string> -->
@@ -89,18 +86,17 @@
     <string name="profile_creation_delete_picture">Delete picture</string>
     <string name="profile_creation_center_picture">Adjust the zoom</string>
     <string name="profile_creation_error_network_failure">Network problem while saving profile. Please retry.</string>
+    <string name="select_semester">Semester</string>
     <string name="event_successfully_joined">Event successfully joined!</string>
     <string name="event_info_sheet_modify_event">Modify Event</string>
     <string name="list_drawer_event_status">Event Status</string>
     <string name="edit_event_screen_alert_deletion_message">You will delete permanently this event !</string>
     <string name="edit_event_screen_delete_button">Delete</string>
     <string name="edit_event_screen_tag_not_selected">All</string>
-    <string name="edit_event_screen_select_section">Section</string>
-    <string name="edit_event_screen_select_semester">Semester</string>
+    <string name="edit_event_screen_select_section" translatable="false">Section</string>
     <string name="edit_event_screen_select_category">Category</string>
     <string name="tag_navigation_bar_before_type">Select a&#160;</string>
     <string name="discover_select_a_category">Select a Category :</string>
-    <string name="discover_all">All</string>
     <string name="Offline_mode">Offline Mode</string>
     <string name="Online_mode">Back Online!</string>
     <string name="association_subscription_screen_title">Associations you follow</string>
@@ -113,12 +109,12 @@
     <string name="my_events_created_events">Created Events</string>
     <string name="association_details_unfollow">Unfollow</string>
     <string name="association_details_follow">Follow</string>
-    <string name="association_details_description">Description</string>
+    <string name="description" translatable="false">Description</string>
     <string name="association_details_events">Events</string>
     <string name="list_drawer_leave_event">Leave Event</string>
     <string name="event_successfully_left">Event successfully left!</string>
     <string name="help_screen_how_can_i_find_events">How can I find events?</string>
-    <string name="help_screen_how_can_i_find_events_description">Good question! By default you see all events that match your interests. You can filter by only one of your interests by tapping on the chips on the top of the map.\n\nTap on the search icon in the bottom left part of the screen to open the search options. This mode will consider all events, not only your interests. Perfect for discovering new events on the campus! In the top right corner you have an icon button to cancel the search.</string>
+    <string name="help_screen_how_can_i_find_events_description">Good question! By default you see all events that match your interests. You can filter by only one of your interests by tapping on the chips on the top of the map.  Tap on the search icon in the bottom right part of the screen to open the search options. This mode will consider all events, not only your interests. Perfect for discovering new events on the campus! In the top right corner you have an icon button to cancel the search.</string>
     <string name="help_screen_create_event">I want to create an event</string>
     <string name="help_screen_create_event_description">Great! You have two options: either you open the hamburger menu and tap on \'Create Event\' or you simply long press on the map. Then fill in the details and save it! It\'s that simple.</string>
     <string name="help_screen_following_associations">Following associations</string>
@@ -129,14 +125,17 @@
     <string name="help_screen_subtitle">This page is here to help you get started with the Echo app. Use the list below to discover all the amazing features!</string>
     <string name="help_screen_navigate_back">Navigate back</string>
     <string name="help_screen_top_appbar_title">Get Help</string>
-    <string name="help_screen_toggle_description">Toggle description</string>
+    <string name="help_screen_toggle_description" translatable="false">Toggle description</string>
     <string name="help_screen_list_mode">It\'s hard to see the events on the map</string>
     <string name="help_screen_list_mode_description">No worries! You can change the display of events to a list by clicking the button in the upper right of the screen. You can even sort it by date or distance!</string>
-    <string name="associations_categories">Associations/Categories</string>
+    <string name="associations_categories" translatable="false">Associations/Categories</string>
     <string name="authentication_error_email_is_required">Email is required</string>
     <string name="authentication_password_too_short">Password must be at least 8 characters</string>
     <string name="authentication_error_passwords_do_not_match">Passwords do not match</string>
     <string name="association_details_contact">Contact :</string>
     <string name="event_join_error_network_failure">Network problem while joining or leaving event. Please retry.</string>
+    <string name="followed_associations">Followed Associations</string>
+    <string name="committee_associations">Committee Associations</string>
+    <string name="all_associations">All Associations</string>
 </resources>
 

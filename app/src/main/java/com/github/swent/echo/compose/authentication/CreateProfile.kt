@@ -240,7 +240,7 @@ fun ProfileCreationUI(
                         }
                     }
                 },
-                title = { Text(text = "My Profile") },
+                title = { Text(text = stringResource(id = R.string.my_profile)) },
                 modifier = Modifier.fillMaxWidth()
             )
         },
@@ -252,7 +252,7 @@ fun ProfileCreationUI(
         }
     ) { innerPadding ->
         Box(
-            modifier = modifier.fillMaxSize().padding(innerPadding).testTag("profile-creation"),
+            modifier = modifier.fillMaxSize().padding(innerPadding).testTag("pofile-creation"),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -306,14 +306,14 @@ fun ProfileCreationUI(
                 // Section and semester dropdown menus
                 DropDownListFunctionWrapper(
                     sectionList,
-                    R.string.profile_creation_section,
+                    R.string.section,
                     selectedSec ?: "",
                     onSecChange
                 )
                 Spacer(modifier = modifier.height(spacerHeight))
                 DropDownListFunctionWrapper(
                     semList,
-                    R.string.profile_creation_semester,
+                    R.string.select_semester,
                     selectedSem ?: "",
                     onSemChange
                 )
@@ -322,7 +322,7 @@ fun ProfileCreationUI(
 
                 // Tags
                 Text(
-                    stringResource(id = R.string.profile_creation_tags),
+                    stringResource(id = R.string.tags),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -383,7 +383,7 @@ fun ProfileCreationUI(
                     modifier = modifier.fillMaxWidth().testTag("Save"),
                     enabled = isOnline
                 ) {
-                    Text(text = stringResource(id = R.string.profile_creation_save_button))
+                    Text(text = stringResource(id = R.string.save_button))
                 }
             }
         }

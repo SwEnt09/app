@@ -28,6 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.Dropdown
 import com.github.swent.echo.compose.components.colorClass
@@ -70,7 +72,7 @@ fun SearchMenuFilters(
             },
             CheckBoxItems(
                 painterResource(id = R.drawable.paint),
-                stringResource(id = R.string.search_menu_filters_section),
+                stringResource(id = R.string.section),
                 filters.sectionChecked,
                 tint = colorSection
             ) {
@@ -212,8 +214,7 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
                         Modifier.size(checkboxSize)
                             .testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
-                // Display the description of the checkbox
-                Text(checkBoxItem.contentDescription)
+                Text(checkBoxItem.contentDescription, fontSize = 13.sp)
             }
             // Add some space after the checkbox
             Spacer(modifier = Modifier.height(spaceBetweenItems))

@@ -16,7 +16,7 @@ import com.github.swent.echo.viewmodels.event.EventViewModel
 @Composable
 fun CreateEventScreen(eventViewModel: EventViewModel, navigationActions: NavigationActions) {
     EventScreen(
-        title = stringResource(R.string.create_event_screen_title),
+        title = stringResource(R.string.create_event),
         onEventBackButtonPressed = navigationActions::goBack,
         onEventSaved = { navigationActions.navigateTo(Routes.MAP) },
         eventViewModel = eventViewModel
