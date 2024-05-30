@@ -3,6 +3,13 @@ package com.github.swent.echo.data.model
 import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.serialization.Serializable
 
+/**
+ * The location data class.
+ *
+ * @property name the common name of the location
+ * @property lat the latitude of the location
+ * @property long the longitude of the location
+ */
 @Serializable
 data class Location(val name: String, val lat: Double, val long: Double) {
 
