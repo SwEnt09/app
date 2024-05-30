@@ -335,7 +335,8 @@ constructor(
      */
     private fun updateSearchMode() {
         _searchMode.value =
-            _filtersContainer.value != defaultFiltersContainer || _selectedAssociation.value != DEFAULT_DROPDOWN_VALUE
+            _filtersContainer.value != defaultFiltersContainer ||
+                _selectedAssociation.value != DEFAULT_DROPDOWN_VALUE
     }
 
     /**

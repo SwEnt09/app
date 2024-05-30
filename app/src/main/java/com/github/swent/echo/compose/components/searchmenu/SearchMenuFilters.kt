@@ -53,9 +53,9 @@ fun SearchMenuFilters(
     sortByCallback: (Int) -> Unit, // Callback function when the sort by filter is changed
     timeFilterCallback: (Float, Float) -> Unit, // Callback function when the time filter is changed
     mode: MapOrListMode, // The current display mode (map or list)
-    followedAssociations: List<String>,
-    selectedAssociation: Int,
-    associationCallback: (Int) -> Unit
+    followedAssociations: List<String>, // The list of followed associations
+    selectedAssociation: Int, // The currently selected association
+    associationCallback: (Int) -> Unit // Callback function when the association filter is changed
 ) {
     // Define the items for the "Events for" filter section
     val eventsForItems =
