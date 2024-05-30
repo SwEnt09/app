@@ -180,7 +180,11 @@ data class CheckBoxItems(
 )
 
 @Composable
-fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>, modifier: Modifier = Modifier) {
+fun CheckBoxesDisplayer(
+    title: String,
+    checkBoxItems: List<CheckBoxItems>,
+    modifier: Modifier = Modifier
+) {
     // Define the space between the title and the items, and between the items themselves
     val spaceBetweenTitleAndItems = 10.dp
     val spaceBetweenItems = 5.dp
