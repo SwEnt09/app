@@ -64,7 +64,7 @@ fun TagItem(tag: Tag, isSelected: Boolean, onClick: () -> Unit) {
 
     FilledTonalButton(
         onClick = onClick,
-        contentPadding = PaddingValues(0.dp),
+        contentPadding = PaddingValues(5.dp),
         colors =
             ButtonDefaults.buttonColors(
                 containerColor = backgroundColor,
