@@ -20,7 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.github.swent.echo.R
 
-/** current organizer button and dropdown list of organizers */
+/**
+ * Organizer button and dropdown list of organizers
+ *
+ * @param organizerName the name of the current organizer
+ * @param organizerList the list of organizers
+ * @param enabled the status of the button
+ * @param onOrganizerSelected callback called when an organizer is chosen in the list
+ */
 @Composable
 fun EventDropDownSelectOrganizer(
     organizerName: String,

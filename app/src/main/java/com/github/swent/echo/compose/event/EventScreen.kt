@@ -34,7 +34,16 @@ import com.github.swent.echo.viewmodels.event.EventStatus
 import com.github.swent.echo.viewmodels.event.EventViewModel
 
 val EVENT_PADDING_BETWEEN_INPUTS = 10.dp
-/** This screen allows the user to create or edit an event. */
+/**
+ * This screen allows the user to create or edit an event.
+ *
+ * @param title the title of the screen
+ * @param canDelete a boolean to display or not the delete button
+ * @param onEventSaved a callback called when the event is saved
+ * @param onEventDeleted a callback called when the event is deleted
+ * @param onEventBackButtonPressed a callback called when the back button is pressed
+ * @param eventViewModel the viewmodel of the created/edited event
+ */
 @Composable
 fun EventScreen(
     title: String,
@@ -115,7 +124,11 @@ fun EventScreen(
 }
 
 /**
- * Modifiable fields of an event: title, description, tags, location, start date, end date, pictures
+ * This is a composable containing the modifiable fields of an event: title, description, tags,
+ * location, start date, end date and maximum number of participants.
+ *
+ * @param eventViewModel the viewmodel of the event
+ * @param isOnline a boolean to know if the user is online
  */
 @Composable
 fun EventPropertiesFields(eventViewModel: EventViewModel, isOnline: Boolean) {

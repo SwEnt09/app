@@ -14,7 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
-/** the top of the screen: a title and a back button */
+/**
+ * The top bar of the event creation and edition screens: a title and a back button.
+ *
+ * @param title the title of the screen
+ * @param onBackButtonPressed a callback called when the back button is clicked
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventTitleAndBackButton(title: String, onBackButtonPressed: () -> Unit) {

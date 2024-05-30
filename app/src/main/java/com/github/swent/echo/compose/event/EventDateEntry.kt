@@ -39,7 +39,14 @@ val MILLISECINDAY = 24 * 60 * 60 * 1000
 /** the year max value in date picker from this year */
 val YEARRANGE = 10
 
-/** Event date entry: start and end date */
+/**
+ * Event date entry copmosable with a start and an end date
+ *
+ * @param startDate the start date
+ * @param endDate the end date
+ * @param onStartDateChanged a callback called when the start date changes
+ * @param onEndDateChanged a callback called when the end date changes
+ */
 @Composable
 fun EventDateEntry(
     startDate: ZonedDateTime,
@@ -71,7 +78,13 @@ fun EventDateEntry(
     }
 }
 
-/** Composable of a date and time: each one represented by a button */
+/**
+ * Composable of a date and time: each one represented by a button.
+ *
+ * @param label the name to display above the buttons
+ * @param currentDate the current date
+ * @param onDateChanged a callback called when the date changes
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDateEntryUnit(

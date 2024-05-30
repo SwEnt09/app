@@ -30,10 +30,18 @@ import com.github.swent.echo.compose.components.TagSelectionDialog
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 
+/** the root tag of the section and the semester respectively */
 const val SECTION_ROOT_TAG_ID = "30f27641-bd63-42e7-9d95-6117ad997554"
 const val SEMESTER_ROOT_TAG_ID = "319715cd-6210-4e62-a061-c533095bd098"
 
-/** this composable contains the Tags title, text field and list of tags */
+/**
+ * This composable contains the Tags title, the list of tags and buttons to choose tags.
+ *
+ * @param tags the list of tags of the event
+ * @param enabled true if the buttons are enabled
+ * @param onTagDeleted a callback called when a tag is added to the event
+ * @param onTagSelected a callback called when a tag is deleted from the event
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EventTagEntry(
@@ -81,6 +89,14 @@ fun EventTagEntry(
     }
 }
 
+/**
+ * A button to add a tag.
+ *
+ * @param type the type of tag displayed on the button
+ * @param rootTagId the id of the root tag, the category root tag is used if empty
+ * @param enabled true if the button in enabled
+ * @param onTagSelected a callback called when a tag is selected
+ */
 @Composable
 fun AddTagButton(
     type: String,
