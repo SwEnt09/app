@@ -11,7 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// represent a user profile
+/**
+ * This class is the viewmodel of a user profile.
+ *
+ * @param repository a repository
+ * @param authenticationService an authentication service
+ */
 @HiltViewModel
 class UserProfileViewModel
 @Inject
@@ -22,6 +27,7 @@ constructor(
     private val _userProfile = MutableStateFlow(UserProfile.EMPTY)
     val userProfile = _userProfile.asStateFlow()
 
+    /** Fetch the user profile from the repository. */
     init {
         viewModelScope.launch {
             assert(authenticationService.userIsLoggedIn())
@@ -30,7 +36,11 @@ constructor(
         }
     }
 
-    // change the user profile in the database
+    /**
+     * Change the user profile in the repository.
+     *
+     * @param newUserProfile the new user profile
+     */
     fun setUserProfile(newUserProfile: UserProfile) {
         viewModelScope.launch {
             repository.setUserProfile(newUserProfile)
