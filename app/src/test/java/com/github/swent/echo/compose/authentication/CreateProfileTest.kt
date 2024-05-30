@@ -141,7 +141,6 @@ class CreateProfileTest {
         image.assertPositionInRootIsEqualTo(15.dp, 15.dp)
     }
 
-    // this test needs to be run there because of the Bitmap class which require android
     @Test
     fun setProfilePictureViewModelWithBitmapTest() {
         val authenticationService: AuthenticationService = mockk(relaxed = true)
