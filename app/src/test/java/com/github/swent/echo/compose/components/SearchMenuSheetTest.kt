@@ -62,7 +62,10 @@ class SearchMenuSheetTest {
                 resetFiltersCallback = { callback++ },
                 timeFilterCallback = { _, _ -> callback++ },
                 initialPage = 0,
-                mode = MapOrListMode.MAP
+                mode = MapOrListMode.MAP,
+                followedAssociations = listOf(),
+                selectedAssociation = -1,
+                associationCallback = { callback++ }
             )
         }
     }
