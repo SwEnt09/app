@@ -46,6 +46,8 @@ enum class SortBy(val stringKey: Int) {
 
 // Threshold for the status of an event to be considered full or pending
 const val STATUS_THRESHOLD = 0.5
+// default value for when a dropdown is not selected
+const val DEFAULT_DROPDOWN_VALUE = -1
 
 /**
  * ViewModel for the home screen. Contains the logic to display the events, filter them, and display
@@ -146,7 +148,7 @@ constructor(
     private val _followedAssociations = MutableStateFlow<List<String>>(listOf())
     val followedAssociations = _followedAssociations.asStateFlow()
     // Flow to observe the selected association
-    private val _selectedAssociation = MutableStateFlow(-1)
+    private val _selectedAssociation = MutableStateFlow(DEFAULT_DROPDOWN_VALUE)
     val selectedAssociation = _selectedAssociation.asStateFlow()
 
     // Initialize the view model
@@ -333,7 +335,7 @@ constructor(
      */
     private fun updateSearchMode() {
         _searchMode.value =
-            _filtersContainer.value != defaultFiltersContainer || _selectedAssociation.value != -1
+            _filtersContainer.value != defaultFiltersContainer || _selectedAssociation.value != DEFAULT_DROPDOWN_VALUE
     }
 
     /**
@@ -460,7 +462,7 @@ constructor(
                     }
                     .filter { event ->
                         // filter by association
-                        _selectedAssociation.value == -1 ||
+                        _selectedAssociation.value == DEFAULT_DROPDOWN_VALUE ||
                             event.organizer?.name ==
                                 _followedAssociations.value[_selectedAssociation.value]
                     }
