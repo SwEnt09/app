@@ -164,6 +164,18 @@ constructor(
         }
     }
 
+    // delete the current event in the repository
+    fun deleteEvent(onEventDeleted: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                repository.deleteEvent(event.value)
+                onEventDeleted()
+            } catch (e: RepositoryStoreWhileNoInternetException) {
+                _status.value = EventStatus.Error(R.string.event_creation_error_network_failure)
+            }
+        }
+    }
+
     /** Change event status from error to modified. */
     fun dismissError() {
         if (_status.value is EventStatus.Error) {
