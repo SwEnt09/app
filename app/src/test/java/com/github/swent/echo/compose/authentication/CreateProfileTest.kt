@@ -18,8 +18,14 @@ import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
+import com.github.swent.echo.data.model.UserProfile
+import com.github.swent.echo.data.repository.RepositoryImpl
+import com.github.swent.echo.data.repository.RepositoryStoreWhileNoInternetException
 import com.github.swent.echo.data.repository.SimpleRepository
+import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.viewmodels.authentication.CreateProfileViewModel
+import com.github.swent.echo.viewmodels.tag.TagViewModel
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import java.io.ByteArrayOutputStream
@@ -82,6 +88,34 @@ class CreateProfileTest {
         composeTestRule.onAllNodesWithContentDescription("list dropdown")[1].performClick()
         composeTestRule.onNodeWithTag("BA1").assertExists()
         composeTestRule.onNodeWithTag("BA2").assertExists()
+    }
+
+    @Test
+    fun `profile creation while network error shows error snackbar`() {
+        val authenticationService: AuthenticationService = mockk(relaxed = true)
+        val mockedRepository = mockk<RepositoryImpl>()
+        val mockedNetworkService = mockk<NetworkService>()
+        every { mockedNetworkService.isOnline } returns MutableStateFlow(true)
+        coEvery { mockedRepository.getUserProfile(any()) } returns UserProfile.EMPTY
+        coEvery { mockedRepository.getUserProfilePicture(any()) } returns ByteArray(0)
+
+        val viewModel =
+            CreateProfileViewModel(authenticationService, mockedRepository, mockedNetworkService)
+
+        val mockedNavAction = mockk<NavigationActions>()
+        val mockedTagViewModel = mockk<TagViewModel>()
+
+        composeTestRule.setContent {
+            ProfileCreationScreen(
+                viewModel = viewModel,
+                navAction = mockedNavAction,
+                tagviewModel = mockedTagViewModel
+            )
+        }
+        coEvery { mockedRepository.setUserProfile(any()) } throws
+            RepositoryStoreWhileNoInternetException("test")
+        composeTestRule.onNodeWithTag("Save").performClick()
+        composeTestRule.onNodeWithTag("profile-creation-snackbar").assertIsDisplayed()
     }
 
     @Test
