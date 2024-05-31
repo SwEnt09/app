@@ -19,7 +19,7 @@ data class UserProfile(
     val tags: Set<Tag>,
     val committeeMember: Set<AssociationHeader>,
     val associationsSubscriptions: Set<AssociationHeader>,
-) {
+) : DataModel() {
     fun toEventCreator(): EventCreator = EventCreator(userId, name)
 
     companion object {

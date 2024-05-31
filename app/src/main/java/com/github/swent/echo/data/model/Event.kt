@@ -33,7 +33,7 @@ data class Event(
     val participantCount: Int,
     val maxParticipants: Int,
     val imageId: Int
-) {
+) : DataModel() {
     companion object {
         val EMPTY =
             Event(
