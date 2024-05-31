@@ -109,9 +109,7 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                 }
 
                 // Add listener to update the last camera position so we can restore it later
-                map.addOnCameraMoveListener {
-                    lastCameraPosition = CameraPosition.Builder(map.cameraPosition).build()
-                }
+                map.addOnCameraMoveListener { lastCameraPosition = map.cameraPosition }
 
                 // Call the on create callback once the map is configured
                 onCreate()
