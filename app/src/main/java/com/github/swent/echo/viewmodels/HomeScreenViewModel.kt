@@ -381,6 +381,7 @@ constructor(
     /** Reset the filters container to the default values. */
     fun resetFiltersContainer() {
         _filtersContainer.value = defaultFiltersContainer
+        _selectedAssociation.value = DEFAULT_DROPDOWN_VALUE
         refreshFiltersContainer()
     }
 
