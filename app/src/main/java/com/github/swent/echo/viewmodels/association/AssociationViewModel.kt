@@ -23,6 +23,8 @@ constructor(
     private val authenticationService: AuthenticationService, // Service for managing authentication
     private val networkService: NetworkService // Service for managing network
 ) : ViewModel() {
+    // The user ID
+    val userId = authenticationService.getCurrentUserID()
     // All associations
     private lateinit var allAssociations: List<Association>
     // All events

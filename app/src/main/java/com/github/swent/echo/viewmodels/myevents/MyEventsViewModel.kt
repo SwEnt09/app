@@ -22,7 +22,7 @@ constructor(
     private val networkService: NetworkService // Service for managing network
 ) : ViewModel() {
     // User ID
-    private lateinit var user: String
+    val user = authenticationService.getCurrentUserID() ?: ""
     // Joined events
     private val _joinedEvents = MutableStateFlow<List<Event>>(listOf())
     val joinedEvents = _joinedEvents.asStateFlow()
@@ -35,7 +35,6 @@ constructor(
     // Initialize the ViewModel
     init {
         viewModelScope.launch {
-            user = authenticationService.getCurrentUserID() ?: ""
             _joinedEvents.value = repository.getJoinedEvents(user)
             _createdEvents.value = repository.getAllEvents().filter { it.creator.userId == user }
         }
