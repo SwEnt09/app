@@ -11,7 +11,7 @@ import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.FileCache
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
-import io.github.jan.supabase.exceptions.HttpRequestException
+import com.github.swent.echo.data.repository.datasources.RemoteDataSourceRequestMaxRetryExceededException
 import io.ktor.client.request.HttpRequestBuilder
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -145,7 +145,7 @@ class RepositoryImplTest {
         assertNull(associationResultOnlineDeleted)
 
         coEvery { mockedRemoteDataSource.getAssociation("testAssoc2") } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery {
             mockedLocalDataSource.getAssociation("testAssoc2", RepositoryImpl.FETCH_ALL)
         } returns association2
@@ -200,7 +200,7 @@ class RepositoryImplTest {
             )
         } returns emptyList()
         coEvery { mockedRemoteDataSource.getAssociations(listOf("throwsAssoc")) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery {
             mockedLocalDataSource.getAssociations(listOf("throwsAssoc"), RepositoryImpl.FETCH_ALL)
         } returns listOf(association)
@@ -239,7 +239,7 @@ class RepositoryImplTest {
         coVerify { mockedLocalDataSource.setAssociations(listOf(association2)) }
         assertEquals(
             ZonedDateTime.now().toEpochSecond(),
-            RepositoryImpl.associations_last_cached_all
+            RepositoryImpl.associations_last_cached_all[0]
         )
         assertEquals(listOf(association, association2), resultOnline)
 
@@ -248,7 +248,7 @@ class RepositoryImplTest {
         } returns listOf(association)
         coEvery {
             mockedRemoteDataSource.getAssociationsNotIn(listOf(association.associationId))
-        } throws HttpRequestException("test", HttpRequestBuilder())
+        } throws RemoteDataSourceRequestMaxRetryExceededException()
         coEvery { mockedLocalDataSource.getAllAssociations(RepositoryImpl.FETCH_ALL) } returns
             listOf(association, association2)
         val resultOnlineThrows = runBlocking { repositoryImpl.getAllAssociations() }
@@ -276,7 +276,7 @@ class RepositoryImplTest {
             mockedLocalDataSource.getEvent("throwsEvent", RepositoryImpl.EVENT_CACHE_TTL)
         } returns null
         coEvery { mockedRemoteDataSource.getEvent("throwsEvent") } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery { mockedLocalDataSource.getEvent("throwsEvent", RepositoryImpl.FETCH_ALL) } returns
             event
 
@@ -307,7 +307,7 @@ class RepositoryImplTest {
         coVerify { mockedRemoteDataSource.createEvent(event) }
 
         coEvery { mockedRemoteDataSource.createEvent(event) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable { runBlocking { repositoryImpl.createEvent(event) } }
@@ -330,7 +330,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.setEvent(event) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable { runBlocking { repositoryImpl.setEvent(event) } }
@@ -353,7 +353,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.deleteEvent(event) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable { runBlocking { repositoryImpl.deleteEvent(event) } }
@@ -382,13 +382,13 @@ class RepositoryImplTest {
         val resultOnline = runBlocking { repositoryImpl.getAllEvents() }
         coVerify { mockedLocalDataSource.deleteEventsNotIn(listOf(event.eventId)) }
         coVerify { mockedLocalDataSource.setEvents(listOf(event2)) }
-        assertEquals(ZonedDateTime.now().toEpochSecond(), RepositoryImpl.events_last_cached_all)
+        assertEquals(ZonedDateTime.now().toEpochSecond(), RepositoryImpl.events_last_cached_all[0])
         assertEquals(listOf(event, event2), resultOnline)
 
         coEvery { mockedLocalDataSource.getAllEvents(RepositoryImpl.EVENT_CACHE_TTL) } returns
             listOf(event)
         coEvery { mockedRemoteDataSource.getAllEvents() } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery { mockedLocalDataSource.getAllEvents(RepositoryImpl.FETCH_ALL) } returns
             listOf(event, event2)
         val resultOnlineThrows = runBlocking { repositoryImpl.getAllEvents() }
@@ -416,7 +416,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.getEvent(event.eventId, 10u) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery { mockedLocalDataSource.getEvent(event.eventId, RepositoryImpl.FETCH_ALL) } returns
             event
         runBlocking { repositoryImpl.joinEvent(userProfile.userId, event) }
@@ -427,7 +427,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.joinEvent(userProfile.userId, event.eventId) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable { runBlocking { repositoryImpl.joinEvent(userProfile.userId, event) } }
@@ -457,7 +457,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.getEvent(event.eventId, 10u) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery { mockedLocalDataSource.getEvent(event.eventId, RepositoryImpl.FETCH_ALL) } returns
             event
         runBlocking { repositoryImpl.leaveEvent(userProfile.userId, event) }
@@ -468,7 +468,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.leaveEvent(userProfile.userId, event.eventId) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable {
@@ -516,7 +516,7 @@ class RepositoryImplTest {
             )
         } returns listOf(event)
         coEvery { mockedRemoteDataSource.getJoinedEvents(userProfile.userId) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery {
             mockedLocalDataSource.getJoinedEvents(userProfile.userId, RepositoryImpl.FETCH_ALL)
         } returns listOf(event, event2)
@@ -548,7 +548,7 @@ class RepositoryImplTest {
         coEvery { mockedLocalDataSource.getTag("throwsTag", RepositoryImpl.TAG_CACHE_TTL) } returns
             null
         coEvery { mockedRemoteDataSource.getTag("throwsTag") } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery { mockedLocalDataSource.getTag("throwsTag", RepositoryImpl.FETCH_ALL) } returns tag
         val resultOnlineThrows = runBlocking { repositoryImpl.getTag("throwsTag") }
         assertEquals(tag, resultOnlineThrows)
@@ -558,7 +558,7 @@ class RepositoryImplTest {
     fun getSubTagsTest() {
         every { ZonedDateTime.now() } returns time
 
-        RepositoryImpl.tags_last_cached_all = 0
+        RepositoryImpl.tags_last_cached_all[0] = 0
 
         every { mockedNetworkService.isOnlineNow() } returns false
         coEvery { mockedLocalDataSource.getSubTags("randomTag", any()) } returns listOf(tag)
@@ -588,7 +588,7 @@ class RepositoryImplTest {
             mockedLocalDataSource.getSubTags("throwsTag", RepositoryImpl.TAG_CACHE_TTL)
         } returns listOf(tag)
         coEvery { mockedRemoteDataSource.getSubTagsNotIn("throwsTag", listOf(tag.tagId)) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery { mockedLocalDataSource.getSubTags("throwsTag", RepositoryImpl.FETCH_ALL) } returns
             listOf(tag, tag2)
         val resultOnlineThrows = runBlocking { repositoryImpl.getSubTags("throwsTag") }
@@ -616,13 +616,13 @@ class RepositoryImplTest {
         val resultOnline = runBlocking { repositoryImpl.getAllTags() }
         coVerify { mockedLocalDataSource.deleteAllTagsNotIn(listOf(tag.tagId)) }
         coVerify { mockedLocalDataSource.setTags(listOf(tag2)) }
-        assertEquals(ZonedDateTime.now().toEpochSecond(), RepositoryImpl.tags_last_cached_all)
+        assertEquals(ZonedDateTime.now().toEpochSecond(), RepositoryImpl.tags_last_cached_all[0])
         assertEquals(listOf(tag, tag2), resultOnline)
 
         coEvery { mockedLocalDataSource.getAllTags(RepositoryImpl.TAG_CACHE_TTL) } returns
             listOf(tag)
         coEvery { mockedRemoteDataSource.getAllTagsNotIn(listOf(tag.tagId)) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery { mockedLocalDataSource.getAllTags(RepositoryImpl.FETCH_ALL) } returns
             listOf(tag, tag2)
         val resultOnlineThrows = runBlocking { repositoryImpl.getAllTags() }
@@ -680,7 +680,7 @@ class RepositoryImplTest {
         } returns null
 
         coEvery { mockedRemoteDataSource.getAssociations(any()) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery {
             mockedLocalDataSource.getUserProfile("throwsUser", RepositoryImpl.FETCH_ALL)
         } returns userProfile
@@ -690,7 +690,7 @@ class RepositoryImplTest {
         assertEquals(userProfile, resultOnlineGetAssociationsThrows)
 
         coEvery { mockedRemoteDataSource.getUserProfile("throwsUser") } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         coEvery {
             mockedLocalDataSource.getUserProfile("throwsUser", RepositoryImpl.FETCH_ALL)
         } returns userProfile2
@@ -714,7 +714,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.setUserProfile(userProfile) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable { runBlocking { repositoryImpl.setUserProfile(userProfile) } }
@@ -737,7 +737,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.deleteUserProfile(userProfile) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable { runBlocking { repositoryImpl.deleteUserProfile(userProfile) } }
@@ -755,7 +755,7 @@ class RepositoryImplTest {
         assertEquals(userProfilePicture, res)
 
         coEvery { mockedRemoteDataSource.getUserProfilePicture(userProfile2.userId) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertNull(runBlocking { repositoryImpl.getUserProfilePicture(userProfile2.userId) })
 
         every { mockedNetworkService.isOnlineNow() } returns false
@@ -773,7 +773,7 @@ class RepositoryImplTest {
         }
 
         coEvery { mockedRemoteDataSource.setUserProfilePicture(userProfile2.userId, any()) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable {
@@ -802,7 +802,7 @@ class RepositoryImplTest {
         coVerify { mockedRemoteDataSource.deleteUserProfilePicture(userProfile.userId) }
 
         coEvery { mockedRemoteDataSource.deleteUserProfilePicture(userProfile2.userId) } throws
-            HttpRequestException("test", HttpRequestBuilder())
+            RemoteDataSourceRequestMaxRetryExceededException()
         assertThrows(
             RepositoryStoreWhileNoInternetException::class.java,
             ThrowingRunnable {
