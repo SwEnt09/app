@@ -25,6 +25,7 @@ import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.data.repository.SimpleRepository
+import com.github.swent.echo.data.repository.SimpleRepository.Companion.ROOT_TAG_ID
 import com.github.swent.echo.viewmodels.event.EventViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -185,7 +186,7 @@ class EventScreenTest {
         }
         setCompose(eventViewModel)
         val addTagButton = composeTestRule.onNodeWithTag("add-tag-button-$categoryName")
-        val tag1 = Tag("1", "Sport", Repository.ROOT_TAG_ID) // first tag of simple repository
+        val tag1 = Tag("1", "Sport", ROOT_TAG_ID) // first tag of simple repository
         val firstTag = composeTestRule.onNodeWithTag("${tag1.name}-select-button")
         addTagButton.performClick()
         composeTestRule.onNodeWithTag("tag-dialog").assertIsDisplayed()

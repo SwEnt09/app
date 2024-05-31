@@ -7,11 +7,6 @@ import com.github.swent.echo.data.model.UserProfile
 
 interface Repository {
 
-    companion object {
-        /** The root tag of the tag tree. Note the sub-tags of this tag are the top-level tags. */
-        const val ROOT_TAG_ID = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
-    }
-
     /**
      * Gets the association info details. If the association does not exist, returns null.
      *
