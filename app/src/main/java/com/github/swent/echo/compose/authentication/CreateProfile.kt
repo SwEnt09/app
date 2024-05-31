@@ -177,7 +177,10 @@ fun ProfileCreationScreen(
 
     if (state == CreateProfileState.SAVING) {
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.4f)),
+            modifier =
+                Modifier.fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .testTag("saving-overlay"),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
