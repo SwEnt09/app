@@ -110,7 +110,9 @@ fun AssociationScreen(
                     { associationViewModel.onFollowAssociationChanged(it) },
                     associationViewModel.associationEvents(currentAssociationPage),
                     isOnline,
-                    associationViewModel::refreshEvents
+                    associationViewModel::refreshEvents,
+                    userId = associationViewModel.userId,
+                    modify = { navActions.navigateTo(Routes.EDIT_EVENT.build(it.eventId)) },
                 )
             }
         }

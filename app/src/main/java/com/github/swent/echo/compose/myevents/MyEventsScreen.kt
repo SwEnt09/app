@@ -49,12 +49,28 @@ fun MyEventsScreen(
                     // The first tab is for joined events.
                     Pair(stringResource(R.string.my_events_joined_events)) {
                         // Display the joined events in a list.
-                        ListDrawer(joinedEventsList, isOnline, myEventsViewModel::refreshEvents)
+                        ListDrawer(
+                            joinedEventsList,
+                            isOnline,
+                            myEventsViewModel::refreshEvents,
+                            userId = myEventsViewModel.user,
+                            modify = { event ->
+                                navActions.navigateTo(Routes.EDIT_EVENT.build(event.eventId))
+                            },
+                        )
                     },
                     // The second tab is for created events.
                     Pair(stringResource(R.string.my_events_created_events)) {
                         // Display the created events in a list.
-                        ListDrawer(createdEventsList, isOnline, myEventsViewModel::refreshEvents)
+                        ListDrawer(
+                            createdEventsList,
+                            isOnline,
+                            myEventsViewModel::refreshEvents,
+                            userId = myEventsViewModel.user,
+                            modify = { event ->
+                                navActions.navigateTo(Routes.EDIT_EVENT.build(event.eventId))
+                            },
+                        )
                     }
                 )
             )

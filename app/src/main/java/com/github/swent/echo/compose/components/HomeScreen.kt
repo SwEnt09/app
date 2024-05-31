@@ -152,7 +152,13 @@ private fun Content(
                         onTagClick = homeScreenViewModel::onFollowedTagClicked
                     )
                 }
-                ListDrawer(displayEventList, isOnline, homeScreenViewModel::refreshEvents)
+                ListDrawer(
+                    displayEventList,
+                    isOnline,
+                    homeScreenViewModel::refreshEvents,
+                    userId = homeScreenViewModel.userId,
+                    modify = { navActions.navigateTo(Routes.EDIT_EVENT.build(it.eventId)) },
+                )
             }
         } else {
             MapDrawer(
