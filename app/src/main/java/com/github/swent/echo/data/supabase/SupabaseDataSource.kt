@@ -27,6 +27,11 @@ import io.github.jan.supabase.storage.storage
 import kotlin.text.StringBuilder
 import kotlinx.coroutines.delay
 
+/**
+ * Implementation of [RemoteDataSource] that uses Supabase as the source for all data.
+ *
+ * @param supabase The instance of [SupabaseClient] used by the data source.
+ */
 class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSource {
 
     /**
