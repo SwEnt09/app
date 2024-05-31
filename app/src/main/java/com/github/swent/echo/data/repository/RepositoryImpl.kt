@@ -12,6 +12,17 @@ import com.github.swent.echo.data.repository.datasources.RemoteDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSourceRequestMaxRetryExceededException
 import java.time.ZonedDateTime
 
+/**
+ * Implementation of [Repository] that uses a [RemoteDataSource], a [LocalDataSource] as well as a
+ * [FileCache].
+ *
+ * @param remoteDataSource The RemoteDataSource implementation used by the repository.
+ * @param localDataSource The LocalDataSource implementation used by the repository for
+ *   caching/synchronisation of structured data.
+ * @param networkService The NetworkService implementation determining whether the device is
+ *   connected to the internet.
+ * @param fileCache The FileCache implementation used by the repository for caching files/media.
+ */
 class RepositoryImpl(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
