@@ -15,7 +15,7 @@ data class Association(
     val description: String,
     val url: String?,
     val relatedTags: Set<Tag>
-) {
+) : DataModel() {
     companion object {
         val EMPTY = Association("", "", "", "", setOf())
     }

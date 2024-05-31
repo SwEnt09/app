@@ -2,6 +2,7 @@ package com.github.swent.echo.data.repository
 
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.DataModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
@@ -40,14 +41,14 @@ class RepositoryImpl(
         var tags_last_cached_subs: MutableMap<String, Long> = mutableMapOf()
     }
 
-    private suspend fun <DataObject> getObject(
+    private suspend fun <T : DataModel> getObject(
         objectId: String,
         objectTTL: Long,
-        getLocal: suspend (String, Long) -> DataObject?,
-        getRemote: suspend (String) -> DataObject?,
+        getLocal: suspend (String, Long) -> T?,
+        getRemote: suspend (String) -> T?,
         deleteLocal: suspend (String) -> Unit,
-        setLocal: suspend (DataObject) -> Unit
-    ): DataObject? {
+        setLocal: suspend (T) -> Unit
+    ): T? {
         if (isOffline()) {
             return getLocal(objectId, FETCH_ALL)
         }
@@ -69,13 +70,13 @@ class RepositoryImpl(
         return localResult
     }
 
-    private suspend fun <DataObject> getObjects(
+    private suspend fun <T : DataModel> getObjects(
         objectIds: List<String>,
         objectTTL: Long,
-        getLocal: suspend (List<String>, Long) -> List<DataObject>,
-        getRemote: suspend (List<String>) -> List<DataObject>,
-        setLocal: suspend (List<DataObject>) -> Unit
-    ): List<DataObject> {
+        getLocal: suspend (List<String>, Long) -> List<T>,
+        getRemote: suspend (List<String>) -> List<T>,
+        setLocal: suspend (List<T>) -> Unit
+    ): List<T> {
         if (isOffline()) {
             return getLocal(objectIds, FETCH_ALL)
         }
@@ -94,14 +95,14 @@ class RepositoryImpl(
         return localResult
     }
 
-    private suspend fun <DataObject> getAllObjects(
+    private suspend fun <T : DataModel> getAllObjects(
         objectsLastCachedAll: MutableList<Long>,
         objectTTL: Long,
-        getAllLocal: suspend (Long) -> List<DataObject>,
-        getAllNotInRemote: suspend (List<String>) -> List<DataObject>,
+        getAllLocal: suspend (Long) -> List<T>,
+        getAllNotInRemote: suspend (List<String>) -> List<T>,
         deleteAllNotInLocal: suspend (List<String>) -> Unit,
-        setLocal: suspend (List<DataObject>) -> Unit
-    ): List<DataObject> {
+        setLocal: suspend (List<T>) -> Unit
+    ): List<T> {
         if (isOffline() || notExpired(objectsLastCachedAll[0], objectTTL)) {
             return getAllLocal(FETCH_ALL)
         }
@@ -119,10 +120,10 @@ class RepositoryImpl(
         return nonExpired + remoteUpdate
     }
 
-    private suspend fun <DataObject> setObject(
-        obj: DataObject,
-        setLocal: suspend (DataObject) -> Unit,
-        setRemote: suspend (DataObject) -> Unit,
+    private suspend fun <T : DataModel> setObject(
+        obj: T,
+        setLocal: suspend (T) -> Unit,
+        setRemote: suspend (T) -> Unit,
         exceptionType: String
     ) {
         if (isOffline()) {
@@ -428,12 +429,3 @@ class RepositoryImpl(
         fileCache.delete("$userId.jpeg")
     }
 }
-
-private fun <DataObject> DataObject.getId(): String =
-    when (this) {
-        is Association -> this.associationId
-        is Event -> this.eventId
-        is Tag -> this.tagId
-        is UserProfile -> this.userId
-        else -> ""
-    }

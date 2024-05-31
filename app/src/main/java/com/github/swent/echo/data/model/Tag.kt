@@ -16,7 +16,7 @@ data class Tag(
     val name: String,
     @SerialName("parent_id")
     val parentId: String? = null, // TODO: We might want to remove the default value here...
-) {
+) : DataModel() {
     companion object {
         val EMPTY = Tag(tagId = "", name = "")
     }
