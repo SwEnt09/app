@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.isPhotoPickerAvailable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,6 +60,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -97,6 +100,7 @@ import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
+import com.github.swent.echo.viewmodels.authentication.CreateProfileState
 import com.github.swent.echo.viewmodels.authentication.CreateProfileViewModel
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 import kotlin.math.min
@@ -118,6 +122,7 @@ fun ProfileCreationScreen(
     tagviewModel: TagViewModel
 ) {
     var dialogVisible by remember { mutableStateOf(false) }
+    val state by viewModel.state.collectAsState()
     val firstName by viewModel.firstName.collectAsState()
     val lastName by viewModel.lastName.collectAsState()
     val semesterSelected by viewModel.selectedSemester.collectAsState()
@@ -125,6 +130,10 @@ fun ProfileCreationScreen(
     val isEditing by viewModel.isEditing.collectAsState()
     val isOnline by viewModel.isOnline.collectAsState()
     val picture by viewModel.picture.collectAsState()
+
+    if (state == CreateProfileState.SAVED) {
+        LaunchedEffect(state) { navAction.navigateTo(Routes.MAP) }
+    }
 
     ProfileCreationUI(
         modifier = modifier,
@@ -150,7 +159,7 @@ fun ProfileCreationScreen(
         onFirstNameChange = viewModel::setFirstName,
         onLastNameChange = viewModel::setLastName,
         isEditing = isEditing,
-        isOnline = isOnline,
+        isOnline = isOnline && state != CreateProfileState.SAVING,
         picture = picture,
         onPictureChange = viewModel::setPicture
     )
@@ -164,6 +173,15 @@ fun ProfileCreationScreen(
                 dialogVisible = false
             }
         )
+    }
+
+    if (state == CreateProfileState.SAVING) {
+        Box(
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.4f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
 /**
