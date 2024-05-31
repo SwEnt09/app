@@ -53,31 +53,29 @@ fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEve
         }
     }
 
-    // Create a button for joining or leaving the event.
-    Button(
-        // The button is enabled if the user is online and the event is not full.
-        enabled = isOnline && (event.participantCount < event.maxParticipants),
-        // When the button is clicked, the user joins or leaves the event.
-        onClick = { myEventsViewModel.joinOrLeaveEvent(event, refreshEvents) },
-        // Set the width of the button and a test tag for testing purposes.
-        modifier =
-            androidx.compose.ui.Modifier.width(buttonWidth)
-                .testTag("list_join_event_${event.eventId}")
-    ) {
-        // The text of the button depends on whether the user has joined the event.
-        Text(
-            if (joinedEvents.map { it.eventId }.contains(event.eventId))
-            // If the user has joined the event, the button says "Leave".
-            stringResource(id = R.string.list_drawer_leave_event)
-            else
-            // If the user has not joined the event, the button says "Join".
-            stringResource(id = R.string.list_drawer_join_event)
-        )
-    }
     Box {
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+        // Create a button for joining or leaving the event.
+        Button(
+            // The button is enabled if the user is online and the event is not full.
+            enabled = isOnline && (event.participantCount < event.maxParticipants),
+            // When the button is clicked, the user joins or leaves the event.
+            onClick = { myEventsViewModel.joinOrLeaveEvent(event, refreshEvents) },
+            // Set the width of the button and a test tag for testing purposes.
+            modifier =
+                androidx.compose.ui.Modifier.width(buttonWidth)
+                    .align(Alignment.Center)
+                    .testTag("list_join_event_${event.eventId}")
+        ) {
+            // The text of the button depends on whether the user has joined the event.
+            Text(
+                if (joinedEvents.map { it.eventId }.contains(event.eventId))
+                // If the user has joined the event, the button says "Leave".
+                stringResource(id = R.string.list_drawer_leave_event)
+                else
+                // If the user has not joined the event, the button says "Join".
+                stringResource(id = R.string.list_drawer_join_event)
+            )
+        }
+        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.Center))
     }
 }
