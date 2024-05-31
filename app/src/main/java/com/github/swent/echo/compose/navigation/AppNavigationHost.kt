@@ -141,11 +141,10 @@ fun AppNavigationHost(
                     }
                 ) {
                     locationServices.lastLocation
-                        .addOnSuccessListener { location ->
-                            // TODO if the location is null, try again with scope.invalidate()
-                            location?.let(onSuccess)
+                        .addOnSuccessListener {
+                            it?:scope.invalidate()
+                            it?.let(onSuccess)
                         }
-                        .addOnFailureListener { scope.invalidate() }
                 }
             }
             HomeScreen(
