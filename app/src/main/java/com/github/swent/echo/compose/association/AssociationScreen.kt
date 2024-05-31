@@ -23,11 +23,22 @@ import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.association.AssociationViewModel
 
+/**
+ * A screen which displays associations. This Composable function takes an AssociationViewModel and
+ * NavigationActions. It uses a Scaffold to provide a layout structure for the screen.
+ */
 @Composable
-fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: NavigationActions) {
+fun AssociationScreen(
+    associationViewModel:
+        AssociationViewModel, // The ViewModel that provides the data for the screen
+    navActions: NavigationActions // The actions that can be performed for navigation
+) {
+    // Collect the state of followed associations, committee associations, and all associations
     val followedAssociations by associationViewModel.followedAssociations.collectAsState()
     val committeeAssociations by associationViewModel.committeeAssociations.collectAsState()
     val showAllAssociations by associationViewModel.showAllAssociations.collectAsState()
+
+    // Create a list of pages for the Pager
     val pages =
         listOf(
             Pair("Followed Associations", followedAssociations),
@@ -35,21 +46,29 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
             Pair("All Associations", showAllAssociations)
         )
 
+    // Collect the state of the current association page and the initial page
     val currentAssociationPage by associationViewModel.currentAssociationPage.collectAsState()
     val initialPage by associationViewModel.initialPage.collectAsState()
 
+    // Collect the state of the searched text
     val searched by associationViewModel.searched.collectAsState()
 
+    // Collect the state of the online status
     val isOnline by associationViewModel.isOnline.collectAsState()
 
+    // Define the space between the search bar and the pages
     val spaceBetweenSearchAndPages = 8.dp
 
+    // Scaffold provides a framework for material design surfaces
     Scaffold(
         topBar = {
+            // Display the title and back button
             EventTitleAndBackButton(stringResource(R.string.hamburger_associations)) {
                 if (currentAssociationPage == Association.EMPTY) {
+                    // Navigate to the map if the current association page is empty
                     navActions.navigateTo(Routes.MAP)
                 } else {
+                    // Set the current association page to empty
                     associationViewModel.setCurrentAssociationPage(Association.EMPTY)
                 }
             }
@@ -60,13 +79,17 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
             modifier = Modifier.padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Check if the current association page is empty, which means we must display the
+            // default screen
             if (currentAssociationPage == Association.EMPTY) {
+                // Display the search bar
                 SearchBar(
                     stringResource(R.string.associations_categories),
                     searched,
                     associationViewModel::setSearched
                 )
                 Spacer(modifier = Modifier.height(spaceBetweenSearchAndPages))
+                // Display the pager with the list of pages
                 Pager(
                     pages.mapIndexed { id, page ->
                         Pair(page.first) {
@@ -80,6 +103,7 @@ fun AssociationScreen(associationViewModel: AssociationViewModel, navActions: Na
                     initialPage
                 )
             } else {
+                // Display the association details
                 AssociationDetails(
                     currentAssociationPage,
                     followedAssociations.contains(currentAssociationPage),

@@ -10,9 +10,17 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
 
+/**
+ * A Composable function that creates a clickable hyperlink. This function takes a URL as a string.
+ */
 @Composable
 fun Hypertext(url: String) {
+    // Get the current context
     val context = LocalContext.current
+
+    // Create an AnnotatedString with the URL
+    // The URL is styled with blue color and underline
+    // A string annotation is added with the tag "URL"
     val annotatedString =
         AnnotatedString.Builder(url)
             .apply {
@@ -25,6 +33,8 @@ fun Hypertext(url: String) {
             }
             .toAnnotatedString()
 
+    // Create a ClickableText with the AnnotatedString
+    // When clicked, it opens the URL in a browser
     ClickableText(
         text = annotatedString,
         onClick = { offset ->

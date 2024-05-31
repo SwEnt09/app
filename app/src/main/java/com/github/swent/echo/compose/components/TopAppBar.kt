@@ -45,11 +45,14 @@ fun TopAppBar(
     resetSearch: () -> Unit,
     switchMode: () -> Unit
 ) {
-    // Scroll behavior for the top app bar, makes it pinned
+    // Define the scroll behavior for the top app bar. In this case, it's pinned, meaning it stays
+    // at the top of the screen.
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
+    // Create a top app bar that is centered.
     CenterAlignedTopAppBar(
         title = {
+            // The title of the app bar is the app's title.
             Text(
                 stringResource(R.string.app_title),
                 maxLines = 1,
@@ -58,6 +61,7 @@ fun TopAppBar(
             )
         },
         navigationIcon = { // hamburger menu
+            // The navigation icon is a hamburger menu that opens the drawer when clicked.
             IconButton(
                 onClick = { scope.launch { drawerState.open() } },
                 modifier = Modifier.testTag("menu_button")
@@ -69,6 +73,8 @@ fun TopAppBar(
             }
         },
         actions = { // search reset button and list/map mode switch button
+            // If the search mode is active, show a search reset button that resets the search when
+            // clicked.
             if (searchMode) {
                 IconButton(
                     onClick = resetSearch,
@@ -80,6 +86,7 @@ fun TopAppBar(
                     )
                 }
             }
+            // Show a list/map mode switch button that switches the mode when clicked.
             IconButton(onClick = switchMode, modifier = Modifier.testTag("list_map_mode_button")) {
                 Icon(
                     painter =

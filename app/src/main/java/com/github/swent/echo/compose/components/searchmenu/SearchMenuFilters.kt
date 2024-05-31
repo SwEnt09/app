@@ -40,21 +40,24 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-/** Composable to display the filters sheet */
+// This Composable function is responsible for displaying the search menu filters.
 @Composable
 fun SearchMenuFilters(
-    filters: FiltersContainer,
-    epflCallback: () -> Unit,
-    sectionCallback: () -> Unit,
-    classCallback: () -> Unit,
-    pendingCallback: () -> Unit,
-    confirmedCallback: () -> Unit,
-    fullCallback: () -> Unit,
-    sortByCallback: (Int) -> Unit,
-    timeFilterCallback: (Float, Float) -> Unit,
-    mode: MapOrListMode
+    filters: FiltersContainer, // The current state of the filters
+    epflCallback: () -> Unit, // Callback function when the EPFL filter is toggled
+    sectionCallback: () -> Unit, // Callback function when the section filter is toggled
+    classCallback: () -> Unit, // Callback function when the class filter is toggled
+    pendingCallback: () -> Unit, // Callback function when the pending filter is toggled
+    confirmedCallback: () -> Unit, // Callback function when the confirmed filter is toggled
+    fullCallback: () -> Unit, // Callback function when the full filter is toggled
+    sortByCallback: (Int) -> Unit, // Callback function when the sort by filter is changed
+    timeFilterCallback: (Float, Float) -> Unit, // Callback function when the time filter is changed
+    mode: MapOrListMode, // The current display mode (map or list)
+    followedAssociations: List<String>, // The list of followed associations
+    selectedAssociation: Int, // The currently selected association
+    associationCallback: (Int) -> Unit // Callback function when the association filter is changed
 ) {
-    // Content of the Events for filters
+    // Define the items for the "Events for" filter section
     val eventsForItems =
         listOf(
             CheckBoxItems(
@@ -83,7 +86,7 @@ fun SearchMenuFilters(
             }
         )
 
-    // Content of the Events Status filters
+    // Define the items for the "Events status" filter section
     val eventsStatusItems =
         listOf(
             CheckBoxItems(
@@ -111,15 +114,16 @@ fun SearchMenuFilters(
                 fullCallback()
             }
         )
-    val followedAssociations = listOf("1", "2", "3", "4", "5")
-    var selectedAssociation = -1
-    val associationCallback = { id: Int -> selectedAssociation = id }
+
+    // Define the vertical space between elements
     val verticalSpacer = 8.dp
 
+    // Define the layout of the filters
     Column(
         modifier = Modifier.fillMaxSize().testTag("search_menu_filters_content"),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Display the dropdowns for selecting the association and the sort order
         TwoBoxesDisplayer(
             {
                 Dropdown(
@@ -129,12 +133,13 @@ fun SearchMenuFilters(
                     associationCallback
                 )
             },
+            // Display the sort by dropdown only in list mode
             if (mode == MapOrListMode.LIST) {
                 {
                     Dropdown(
                         "Sort By",
                         SortBy.entries.map { stringResource(it.stringKey) },
-                        filters.sortBy?.ordinal ?: -1,
+                        filters.sortBy.ordinal,
                         sortByCallback
                     )
                 }
@@ -143,6 +148,7 @@ fun SearchMenuFilters(
             }
         )
         Spacer(modifier = Modifier.height(verticalSpacer))
+        // Display the checkboxes for selecting the event filters
         TwoBoxesDisplayer(
             {
                 CheckBoxesDisplayer(
@@ -158,6 +164,7 @@ fun SearchMenuFilters(
             }
         )
         Spacer(modifier = Modifier.height(verticalSpacer))
+        // Display the date filter
         DateFilter(filters, timeFilterCallback)
     }
 }
@@ -171,31 +178,44 @@ data class CheckBoxItems(
     val callback: () -> Unit
 )
 
-/** Composable to display the checkboxes in the correct format */
 @Composable
 fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
+    // Define the space between the title and the items, and between the items themselves
     val spaceBetweenTitleAndItems = 10.dp
     val spaceBetweenItems = 5.dp
+    // Define the size of the checkboxes
     val checkboxSize = 25.dp
+
+    // Start a column to arrange the elements vertically
     Column {
+        // Display the title
         Text(title, modifier = Modifier.testTag("checkboxes_title"))
+        // Add some space after the title
         Spacer(modifier = Modifier.height(spaceBetweenTitleAndItems))
+
+        // For each item in the list of checkboxes
         checkBoxItems.forEach { checkBoxItem ->
+            // Start a row to arrange the elements horizontally
             Row(modifier = Modifier.testTag("${checkBoxItem.contentDescription}_checkbox_row")) {
+                // Display the icon for the checkbox
                 Icon(
                     checkBoxItem.icon,
                     contentDescription = checkBoxItem.contentDescription,
                     tint = checkBoxItem.tint
                 )
+                // Display the checkbox itself
                 Checkbox(
                     checked = checkBoxItem.checked,
+                    // When the checkbox is clicked, call the callback function
                     onCheckedChange = { checkBoxItem.callback() },
                     modifier =
                         Modifier.size(checkboxSize)
                             .testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
+                // Display the description of the checkbox
                 Text(checkBoxItem.contentDescription)
             }
+            // Add some space after the checkbox
             Spacer(modifier = Modifier.height(spaceBetweenItems))
         }
     }
@@ -283,11 +303,21 @@ fun DateFilter(filters: FiltersContainer, timeSliderCallback: (Float, Float) -> 
 
 @Composable
 fun TwoBoxesDisplayer(firstBox: @Composable () -> Unit, secondBox: (@Composable () -> Unit)?) {
-    val padding = 20.dp
+    // Define the padding around the boxes
+    val padding = 12.dp
+
+    // Start a box that fills the maximum width of the parent
     Box(modifier = Modifier.fillMaxWidth()) {
-        Box(modifier = Modifier.align(Alignment.TopStart).padding(start = padding)) { firstBox() }
+        // Start a box for the first composable, align it to the start (left) and add padding
+        Box(modifier = Modifier.align(Alignment.TopStart).padding(start = padding)) {
+            firstBox() // Call the first composable
+        }
+        // If a second composable is provided
         if (secondBox != null) {
-            Box(modifier = Modifier.align(Alignment.TopEnd).padding(end = padding)) { secondBox() }
+            // Start a box for the second composable, align it to the end (right) and add padding
+            Box(modifier = Modifier.align(Alignment.TopEnd).padding(end = padding)) {
+                secondBox() // Call the second composable
+            }
         }
     }
 }

@@ -37,32 +37,39 @@ import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 
+// This Composable function displays the details of an association.
 @Composable
 fun AssociationDetails(
-    association: Association,
-    isFollowed: Boolean,
-    follow: (Association) -> Unit,
-    events: List<Event>,
-    isOnline: Boolean,
-    refreshEvents: () -> Unit,
-    onTagPressed: (Tag) -> Unit = {},
+    association: Association, // The association to display
+    isFollowed: Boolean, // Whether the association is followed by the user
+    follow: (Association) -> Unit, // Function to follow/unfollow the association
+    events: List<Event>, // List of events related to the association
+    isOnline: Boolean, // Whether the user is online
+    refreshEvents: () -> Unit, // Function to refresh the list of events
+    onTagPressed: (Tag) -> Unit = {}, // Function to handle tag press events
 ) {
+    // Define layout parameters
     val paddingValues = 10.dp
     val phoneHorizontalCenter = (LocalConfiguration.current.screenWidthDp / 2).dp
     val followWidth = 150.dp
     val followHeight = 40.dp
     val followSpaceInside = 5.dp
     val verticalSpace = 12.dp
+
+    // Start of the layout
     Column(
         modifier = Modifier.fillMaxSize().padding(paddingValues).testTag("association_details")
     ) {
+        // Association name and follow/unfollow button
         Box(modifier = Modifier.fillMaxWidth()) {
+            // Association name
             Text(
                 association.name,
                 modifier =
                     Modifier.align(Alignment.CenterStart).widthIn(max = phoneHorizontalCenter),
                 style = MaterialTheme.typography.titleLarge
             )
+            // Follow/unfollow button
             Button(
                 enabled = isOnline,
                 onClick = { follow(association) },
@@ -72,11 +79,13 @@ fun AssociationDetails(
                         .height(followHeight)
                         .testTag("association_details_follow_button")
             ) {
+                // Icon for follow/unfollow
                 Icon(
                     if (isFollowed) Icons.Filled.Clear else Icons.Filled.Add,
                     "Follow/Unfollow association"
                 )
                 Spacer(modifier = Modifier.padding(followSpaceInside))
+                // Text for follow/unfollow
                 Text(
                     if (isFollowed) stringResource(R.string.association_details_unfollow)
                     else stringResource(R.string.association_details_follow),
@@ -85,6 +94,7 @@ fun AssociationDetails(
             }
         }
         Spacer(modifier = Modifier.height(verticalSpace))
+        // Pager for association description and events
         Pager(
             listOf(
                 Pair(stringResource(R.string.association_details_description)) {
@@ -98,20 +108,26 @@ fun AssociationDetails(
     }
 }
 
+// This Composable function displays the description of an association.
 @Composable
 fun AssociationDescription(
-    association: Association,
-    verticalSpace: Dp,
-    onTagPressed: (Tag) -> Unit
+    association: Association, // The association to display
+    verticalSpace: Dp, // The vertical space to use in the layout
+    onTagPressed: (Tag) -> Unit // Function to handle tag press events
 ) {
+    // Convert the set of related tags to a list
     val tags = association.relatedTags.toList()
     val spaceBetweenTagChips = 6.dp
+
+    // Start of the layout
     Column {
+        // Display the related tags in a horizontal scrollable row
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(spaceBetweenTagChips)
         ) {
             items(tags) { tag ->
+                // Each tag is displayed as a chip
                 AssistChip(
                     onClick = { onTagPressed(tag) },
                     label = { Text(tag.name) },
@@ -128,7 +144,9 @@ fun AssociationDescription(
                 )
             }
         }
+        // Display the association description
         Text(association.description)
+        // If the association has a URL, display it as a hyperlink
         if (association.url != null) {
             Spacer(modifier = Modifier.height(verticalSpace))
             Text(
@@ -141,7 +159,9 @@ fun AssociationDescription(
     }
 }
 
+// This Composable function displays the events of an association.
 @Composable
 fun AssociationEvents(events: List<Event>, isOnline: Boolean, refreshEvents: () -> Unit) {
+    // Use a ListDrawer to display the events
     ListDrawer(events, isOnline, refreshEvents)
 }

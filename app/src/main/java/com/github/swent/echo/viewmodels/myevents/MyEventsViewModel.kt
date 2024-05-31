@@ -12,21 +12,27 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+// This ViewModel is responsible for managing the data related to the user's events.
 @HiltViewModel
 class MyEventsViewModel
 @Inject
 constructor(
-    private val repository: Repository,
-    private val authenticationService: AuthenticationService,
-    private val networkService: NetworkService
+    private val repository: Repository, // Repository for fetching data
+    private val authenticationService: AuthenticationService, // Service for managing authentication
+    private val networkService: NetworkService // Service for managing network
 ) : ViewModel() {
+    // User ID
     private lateinit var user: String
+    // Joined events
     private val _joinedEvents = MutableStateFlow<List<Event>>(listOf())
     val joinedEvents = _joinedEvents.asStateFlow()
+    // Created events
     private val _createdEvents = MutableStateFlow<List<Event>>(listOf())
     val createdEvents = _createdEvents.asStateFlow()
+    // Online status
     val isOnline = networkService.isOnline
 
+    // Initialize the ViewModel
     init {
         viewModelScope.launch {
             user = authenticationService.getCurrentUserID() ?: ""
@@ -35,6 +41,7 @@ constructor(
         }
     }
 
+    // Handle join/leave event
     fun joinOrLeaveEvent(event: Event, onFinished: () -> Unit) {
         viewModelScope.launch {
             if (_joinedEvents.value.map { it.eventId }.contains(event.eventId)) {
@@ -47,6 +54,7 @@ constructor(
         }
     }
 
+    // Refresh events
     fun refreshEvents() {
         viewModelScope.launch {
             _joinedEvents.value = repository.getJoinedEvents(user)
