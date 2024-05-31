@@ -131,12 +131,6 @@ class HomeScreenTest {
         composeTestRule.onNodeWithTag("profile_class").assertExists()
     }
 
-    @Test
-    fun shouldShowCloseButtonWhenMenuButtonClicked() {
-        composeTestRule.onNodeWithTag("menu_button").performClick()
-        composeTestRule.onNodeWithTag("close_button_hamburger_menu").assertExists()
-    }
-
     // Change number of items to check according to the number of button in hamburger menu
 
     @Test

@@ -139,20 +139,11 @@ fun HamburgerMenuDrawerSheet(
                     )
                 }
             }
-            // Close button for the hamburger menu
-            IconButton(
-                onClick = { scope.launch { drawerState.close() } },
-                modifier =
-                    Modifier.align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .testTag("close_button_hamburger_menu")
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Close button hamburger menu"
-                )
+
+            // button to toggle the theme
+            Box(modifier = Modifier.align(Alignment.TopEnd).padding(8.dp)) {
+                ThemeToggleButton(onToggle = onToggle)
             }
-            ThemeToggleButton(onToggle = onToggle)
         }
         // Display the navigation items
         items.forEachIndexed { index, item ->
