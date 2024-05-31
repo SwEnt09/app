@@ -154,6 +154,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         tagDao.insert(TagRoom(tag))
     }
 
+    override suspend fun deleteTag(tagId: String) {
+        tagDao.delete(tagId)
+    }
+
     override suspend fun getSubTags(tagId: String, syncedSecondsAgo: Long): List<Tag> {
         val after = computeTimestamp(syncedSecondsAgo)
         return tagDao.getSubTags(tagId, after).toTagList()

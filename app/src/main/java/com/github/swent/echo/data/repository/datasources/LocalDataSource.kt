@@ -60,6 +60,8 @@ interface LocalDataSource {
 
     suspend fun setTag(tag: Tag)
 
+    suspend fun deleteTag(tagId: String)
+
     /**
      * Get all sub-tags of a given tag.
      *
