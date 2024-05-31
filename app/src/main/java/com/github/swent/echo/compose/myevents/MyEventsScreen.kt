@@ -54,12 +54,24 @@ fun MyEventsScreen(
                     // The first tab is for joined events.
                     Pair(stringResource(R.string.my_events_joined_events)) {
                         // Display the joined events in a list.
-                        ListDrawer(joinedEvents, isOnline, refresh, modify, userId = userId)
+                        ListDrawer(
+                            joinedEvents,
+                            isOnline,
+                            refresh,
+                            modify = modify,
+                            userId = userId,
+                        )
                     },
                     // The second tab is for created events.
                     Pair(stringResource(R.string.my_events_created_events)) {
                         // Display the created events in a list.
-                        ListDrawer(createdEvents, isOnline, refresh, modify, userId = userId)
+                        ListDrawer(
+                            createdEvents,
+                            isOnline,
+                            refresh,
+                            modify = modify,
+                            userId = userId,
+                        )
                     }
                 )
             )
