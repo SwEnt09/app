@@ -67,7 +67,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -75,6 +74,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -87,6 +87,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.PopupProperties
+import androidx.core.graphics.scale
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.TagSelectionDialog
 import com.github.swent.echo.data.model.Section
@@ -533,36 +534,20 @@ fun PictureTransformer(
     onConfirm: (picture: Bitmap) -> Unit,
     onCancel: () -> Unit
 ) {
-    val circleRadius = min(picture.width, picture.height) * 3 / 8
-    val minMaxScale = Pair(0.75f, 2f)
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val screenPicture = picture.scale(screenWidth, picture.height * screenWidth / picture.width)
+    val circleRadius = min(screenPicture.width, screenPicture.height) * 1 / 2
+    val minMaxScale = Pair(1f, 3f)
     val maxResolution = 500 // the picture is cropped to output a square
     var scale by remember { mutableStateOf(1f) }
-    var offset by remember { mutableStateOf(Offset.Zero) }
     val centerTextPadding = 5.dp
     val centerTextCardOffset = 20.dp
     val buttonsVerticalPadding = 15.dp
 
-    // helper function to find out if the new transformation is inside the picture depending on
-    // offset and scale
-    fun isTransformInside(offs: Offset, sca: Float): Boolean {
-        val scaledWidthLimit = picture.width * sca / 2f
-        val scaledHeightLimit = picture.height * sca / 2f
-        return offs.x > -scaledWidthLimit + circleRadius &&
-            offs.y > -scaledHeightLimit + circleRadius &&
-            offs.x < scaledWidthLimit - circleRadius &&
-            offs.y < scaledHeightLimit - circleRadius &&
-            sca > minMaxScale.first &&
-            sca < minMaxScale.second
-    }
-
-    val state = rememberTransformableState { zoomChange, offsetChange, _ ->
+    val state = rememberTransformableState { zoomChange, _, _ ->
         val newScale = scale * zoomChange
-        val newOffset = offset + offsetChange
-        if (isTransformInside(offset, newScale)) {
+        if (newScale > minMaxScale.first && newScale < minMaxScale.second) {
             scale = newScale
-        }
-        if (isTransformInside(newOffset, scale)) {
-            offset = newOffset
         }
     }
     Box(modifier = Modifier.fillMaxSize().testTag("profile-picture-transformer")) {
@@ -573,19 +558,19 @@ fun PictureTransformer(
                         scaleX = scale,
                         scaleY = scale,
                         rotationZ = 0f,
-                        translationX = offset.x,
-                        translationY = offset.y
+                        translationX = 0f,
+                        translationY = 0f
                     )
                     .transformable(state = state)
                     .testTag("profile-picture-image"),
-            painter = BitmapPainter(picture.asImageBitmap()),
+            painter = BitmapPainter(screenPicture.asImageBitmap()),
             contentDescription = ""
         )
         val strokeSize = 10f
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
                 color = Color.Black,
-                radius = (circleRadius - strokeSize).toFloat(),
+                radius = (circleRadius * 2).toFloat(),
                 style = Stroke(strokeSize)
             )
         }
@@ -612,15 +597,11 @@ fun PictureTransformer(
                 modifier =
                     Modifier.padding(button_Padding).testTag("profile-picture-transformer-confirm"),
                 onClick = {
-                    val pictureCenter =
-                        Pair(
-                            (picture.width / 2 - offset.x / scale).toInt(),
-                            (picture.height / 2 - offset.y / scale).toInt()
-                        )
+                    val pictureCenter = Pair((screenPicture.width / 2), (screenPicture.height / 2))
                     val scaledCircleRadius = (circleRadius / scale).toInt()
                     var newPicture =
                         Bitmap.createBitmap(
-                            picture,
+                            screenPicture,
                             pictureCenter.first - scaledCircleRadius,
                             pictureCenter.second - scaledCircleRadius,
                             2 * scaledCircleRadius,

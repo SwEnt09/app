@@ -138,7 +138,7 @@ class CreateProfileTest {
         val image = composeTestRule.onNodeWithTag("profile-picture-image")
         image.assertIsDisplayed()
         image.performTouchInput { this.swipe(Offset.Zero, Offset(50f, 50f)) }
-        image.assertPositionInRootIsEqualTo(15.dp, 15.dp)
+        image.assertPositionInRootIsEqualTo(0.dp, 0.dp)
     }
 
     @Test
