@@ -85,37 +85,6 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         }
     }
 
-    /**
-     * List variant of the same wrapper as above. It returns emptyLists instead of null.
-     *
-     * @param maxRetriesCount: the number of times the request will be retried
-     * @param delay: (optional) Delay between retries. Default = RETRY_DELAY_MILLI
-     * @param request: the request to be executed
-     */
-    private suspend fun <T> supabaseRequestExceptionHandlerAndRetryWrapperS(
-        maxRetriesCount: UInt,
-        delay: Long = RETRY_DELAY_MILLI,
-        request: suspend () -> List<T>,
-    ): List<T> {
-        return try {
-            request()
-        } catch (e: NoSuchElementException) {
-            emptyList<T>()
-        } catch (e: BadRequestRestException) {
-            emptyList<T>()
-        } catch (e: NotFoundRestException) {
-            emptyList<T>()
-        } catch (e: HttpRequestException) {
-            if (maxRetriesCount == 0u) throw RemoteDataSourceRequestMaxRetryExceededException()
-            delay(delay)
-            return supabaseRequestExceptionHandlerAndRetryWrapperS(
-                maxRetriesCount - 1u,
-                delay,
-                request
-            )
-        }
-    }
-
     companion object {
         const val QUERY_ASSOCIATION =
             "association_id, name, description, association_url, association_tags!association_tags_association_id_fkey(tags!association_tags_tag_id_fkey(tag_id, name, parent_id))"
@@ -142,7 +111,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         associations: List<String>,
         maxRetriesCount: UInt
     ): List<Association> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("associations")
                 .select(Columns.raw(QUERY_ASSOCIATION)) {
@@ -150,13 +119,13 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                 }
                 .decodeList<AssociationSupabase>()
                 .toAssociations()
-        }
+        } ?: emptyList()
 
     override suspend fun getAssociationsNotIn(
         associationIds: List<String>,
         maxRetriesCount: UInt
     ): List<Association> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("associations")
                 .select(Columns.raw(QUERY_ASSOCIATION)) {
@@ -166,16 +135,16 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                 }
                 .decodeList<AssociationSupabase>()
                 .toAssociations()
-        }
+        } ?: emptyList()
 
     override suspend fun getAllAssociations(maxRetriesCount: UInt): List<Association> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("associations")
                 .select(Columns.raw(QUERY_ASSOCIATION))
                 .decodeList<AssociationSupabase>()
                 .toAssociations()
-        }
+        } ?: emptyList()
 
     override suspend fun getEvent(eventId: String, maxRetriesCount: UInt): Event? =
         supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
@@ -240,7 +209,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         eventIds: List<String>,
         maxRetriesCount: UInt
     ): List<Event> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("events")
                 .select(Columns.raw(QUERY_EVENT)) {
@@ -248,16 +217,16 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                 }
                 .decodeList<EventSupabase>()
                 .map { event -> event.toEvent() }
-        }
+        } ?: emptyList()
 
     override suspend fun getAllEvents(maxRetriesCount: UInt): List<Event> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("events")
                 .select(Columns.raw(QUERY_EVENT))
                 .decodeList<EventSupabase>()
                 .map { event -> event.toEvent() }
-        }
+        } ?: emptyList()
 
     override suspend fun joinEvent(
         userId: String,
@@ -293,7 +262,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
     }
 
     override suspend fun getJoinedEvents(userId: String, maxRetriesCount: UInt): List<Event> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("events")
                 .select(
@@ -306,14 +275,14 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                 }
                 .decodeList<EventSupabase>()
                 .map { event -> event.toEvent() }
-        }
+        } ?: emptyList()
 
     override suspend fun getJoinedEventsNotIn(
         userId: String,
         eventIds: List<String>,
         maxRetriesCount: UInt
     ): List<Event> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("joined_event_view")
                 .select(Columns.raw(QUERY_EVENT + ", join_user_id")) {
@@ -326,7 +295,7 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                 }
                 .decodeList<EventSupabase>()
                 .map { event -> event.toEvent() }
-        }
+        } ?: emptyList()
 
     override suspend fun getTag(tagId: String, maxRetriesCount: UInt): Tag? =
         supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
@@ -334,16 +303,16 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
         }
 
     override suspend fun getSubTags(tagId: String, maxRetriesCount: UInt): List<Tag> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase.from("tags").select() { filter { eq("parent_id", tagId) } }.decodeList()
-        }
+        } ?: emptyList()
 
     override suspend fun getSubTagsNotIn(
         tagId: String,
         childTagIds: List<String>,
         maxRetriesCount: UInt
     ): List<Tag> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("tags")
                 .select {
@@ -355,20 +324,20 @@ class SupabaseDataSource(private val supabase: SupabaseClient) : RemoteDataSourc
                     }
                 }
                 .decodeList()
-        }
+        } ?: emptyList()
 
     override suspend fun getAllTags(maxRetriesCount: UInt): List<Tag> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase.from("tags").select().decodeList<Tag>()
-        }
+        } ?: emptyList()
 
     override suspend fun getAllTagsNotIn(tagIds: List<String>, maxRetriesCount: UInt): List<Tag> =
-        supabaseRequestExceptionHandlerAndRetryWrapperS(maxRetriesCount) {
+        supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
             supabase
                 .from("tags")
                 .select { filter { filterNot("tag_id", FilterOperator.IN, toFilterList(tagIds)) } }
                 .decodeList()
-        }
+        } ?: emptyList()
 
     override suspend fun getUserProfile(userId: String, maxRetriesCount: UInt): UserProfile? =
         supabaseRequestExceptionHandlerAndRetryWrapper(maxRetriesCount) {
