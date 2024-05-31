@@ -244,7 +244,12 @@ fun ProfileCreationUI(
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.testTag("profile-creation-snackbar")
+            )
+        }
     ) { innerPadding ->
         Box(
             modifier = modifier.fillMaxSize().padding(innerPadding).testTag("profile-creation"),
