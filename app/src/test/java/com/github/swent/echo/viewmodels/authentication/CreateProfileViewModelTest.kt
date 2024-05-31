@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,6 +38,7 @@ class CreateProfileViewModelTest {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         authenticationService.userID = "test_user_id"
         every { mockedNetworkService.isOnline } returns MutableStateFlow(true)
+        coEvery { repository.getUserProfilePicture(any()) } returns null
         viewModel = CreateProfileViewModel(authenticationService, repository, mockedNetworkService)
     }
 
@@ -126,5 +128,11 @@ class CreateProfileViewModelTest {
         viewModel.removeTag(tag)
         val tagList1 = viewModel.tagList.value
         assertFalse(tagList1.contains(tag))
+    }
+
+    @Test
+    fun setNullProfilePictureTest() {
+        viewModel.setPicture(null)
+        assertNull(viewModel.picture.value)
     }
 }

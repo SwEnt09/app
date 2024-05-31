@@ -22,6 +22,8 @@ interface LocalDataSource {
 
     suspend fun setAssociation(association: Association)
 
+    suspend fun deleteAssociation(associationId: String)
+
     suspend fun getAssociations(
         associationIds: List<String>,
         syncedSecondsAgo: Long
@@ -57,6 +59,8 @@ interface LocalDataSource {
     suspend fun getTag(tagId: String, syncedSecondsAgo: Long): Tag?
 
     suspend fun setTag(tag: Tag)
+
+    suspend fun deleteTag(tagId: String)
 
     /**
      * Get all sub-tags of a given tag.

@@ -16,7 +16,15 @@ import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Tag
 import java.util.Stack
 
-// Hierarchy of tags displayed as a top bar and navigable in click
+/**
+ * Hierarchy of tags displayed as a top bar and navigable in click.
+ *
+ * @param tagParents a stack of the parent tags of the current tag
+ * @param currentDepth the current depth in the tree
+ * @param onParentTagClicked a callback called when a parent tag is clicked
+ * @param onCurrentTagClicked a callback called when the current tag is clicked
+ * @param rootName the string to display when at the root of the tag hierarchy
+ */
 @Composable
 fun TagHierarchyNavigableBar(
     tagParents: Stack<Tag>,

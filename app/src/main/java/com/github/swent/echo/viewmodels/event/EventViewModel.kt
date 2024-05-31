@@ -20,7 +20,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
-/** represents an event, used in the event screens */
+/**
+ * This class is the viewmodel of an event, it used in the event screens.
+ *
+ * @param repository a repository
+ * @param authenticationService an authentication service
+ * @param savedState a SavedStateHandle to pass some arguments (userId and location) to the
+ *   viewmodel through the navigation
+ * @param networkService a network service used to get the state of the network
+ */
 @HiltViewModel
 class EventViewModel
 @Inject
@@ -42,7 +50,7 @@ constructor(
     val organizerList = _organizerList.asStateFlow()
     val isOnline = networkService.isOnline
 
-    // initialize async values
+    /** Initialize async values */
     init {
         viewModelScope.launch {
             val userid = authenticationService.getCurrentUserID()
@@ -88,7 +96,11 @@ constructor(
         }
     }
 
-    // set the organizer of the event
+    /**
+     * Set the organizer of the event.
+     *
+     * @param organizerName the name of the organizer
+     */
     fun setOrganizer(organizerName: String) {
         viewModelScope.launch {
             if (organizerName == _event.value.creator.name) {
@@ -108,7 +120,11 @@ constructor(
         }
     }
 
-    // update the event in the ViewModel
+    /**
+     * Update the event in the ViewModel.
+     *
+     * @param newEvent the new event
+     */
     fun setEvent(newEvent: Event) {
         if (_status.value == EventStatus.Saving) {
             Log.w("set event", "trying to update the event but it's not saved yet")
@@ -118,7 +134,7 @@ constructor(
         }
     }
 
-    // save the current event in the repository
+    /** Save the current event in the repository. */
     fun saveEvent() {
         if (_status.value == EventStatus.Saving) {
             Log.w("save event", "trying to save the event but it's already saving")
@@ -141,14 +157,14 @@ constructor(
         }
     }
 
-    /** change event status from error to modified */
+    /** Change event status from error to modified. */
     fun dismissError() {
         if (_status.value is EventStatus.Error) {
             _status.value = EventStatus.Modified
         }
     }
 
-    /** check the current event has valid data if not return false and set _status to Error */
+    /** Check the current event has valid data if not return false and set _status to Error. */
     private fun eventIsValid(): Boolean {
         val event = _event.value
         if (event.startDate.isAfter(event.endDate)) {
@@ -168,7 +184,7 @@ constructor(
     }
 }
 
-/** the different status of an event */
+/** The different status of an event. */
 sealed class EventStatus {
     // same as in the repository
     data object Saved : EventStatus()

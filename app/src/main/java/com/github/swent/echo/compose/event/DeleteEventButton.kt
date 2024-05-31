@@ -24,7 +24,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
 
-/** a button to delete an event */
+/**
+ * A button to delete an event.
+ *
+ * @param enabled true if the button is enabled
+ * @param onDelete a callback called when to button is pressed
+ */
 @Composable
 fun DeleteEventButton(enabled: Boolean, onDelete: () -> Unit) {
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -51,7 +56,13 @@ fun DeleteEventButton(enabled: Boolean, onDelete: () -> Unit) {
     }
 }
 
-/** a confirmation dialog for the delete button */
+/**
+ * A confirmation dialog for the delete button.
+ *
+ * @param text the text to display to the user
+ * @param onDismissRequest a callback called when the user dismiss the dialog
+ * @param onConfirm a callback called when the user confirm the action
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmActionDialog(text: String, onDismissRequest: () -> Unit, onConfirm: () -> Unit) {

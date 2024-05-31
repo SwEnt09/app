@@ -94,3 +94,8 @@ interface Repository {
 
     suspend fun deleteUserProfilePicture(userId: String)
 }
+
+class RepositoryStoreWhileNoInternetException(objectTryingToStore: String) :
+    Exception(
+        "Storing/Deleting a " + objectTryingToStore + " while the App is offline is not supported"
+    )

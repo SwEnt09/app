@@ -2,12 +2,14 @@ package com.github.swent.echo.data.repository
 
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Association
+import com.github.swent.echo.data.model.DataModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.datasources.FileCache
 import com.github.swent.echo.data.repository.datasources.LocalDataSource
 import com.github.swent.echo.data.repository.datasources.RemoteDataSource
+import com.github.swent.echo.data.repository.datasources.RemoteDataSourceRequestMaxRetryExceededException
 import java.time.ZonedDateTime
 
 class RepositoryImpl(
@@ -32,130 +34,229 @@ class RepositoryImpl(
         const val FETCH_ALL: Long =
             1715885732 // Epoch seconds of ~16.05.2024 so we fetch everything up to ~50 years ago
 
-        var associations_last_cached_all: Long = 0
-        var events_last_cached_all: Long = 0
+        var associations_last_cached_all: MutableList<Long> = mutableListOf(0)
+        var events_last_cached_all: MutableList<Long> = mutableListOf(0)
         var events_last_cached_joined: MutableMap<String, Long> = mutableMapOf()
-        var tags_last_cached_all: Long = 0
+        var tags_last_cached_all: MutableList<Long> = mutableListOf(0)
         var tags_last_cached_subs: MutableMap<String, Long> = mutableMapOf()
     }
 
-    override suspend fun getAssociation(associationId: String): Association? {
+    private suspend fun <T : DataModel> getObject(
+        objectId: String,
+        objectTTL: Long,
+        getLocal: suspend (String, Long) -> T?,
+        getRemote: suspend (String) -> T?,
+        deleteLocal: suspend (String) -> Unit,
+        setLocal: suspend (T) -> Unit
+    ): T? {
         if (isOffline()) {
-            return localDataSource.getAssociation(associationId, FETCH_ALL)
+            return getLocal(objectId, FETCH_ALL)
         }
-        val localResult = localDataSource.getAssociation(associationId, ASSOCIATION_CACHE_TTL)
+        val localResult = getLocal(objectId, objectTTL)
         if (localResult == null) {
-            val remoteResult = remoteDataSource.getAssociation(associationId)
-            if (remoteResult != null) localDataSource.setAssociation(remoteResult)
-            return remoteResult
-        }
-        return localResult
-    }
-
-    override suspend fun getAssociations(associationIds: List<String>): List<Association> {
-        if (isOffline()) {
-            return localDataSource.getAssociations(associationIds, FETCH_ALL)
-        }
-        val localResult = localDataSource.getAssociations(associationIds, ASSOCIATION_CACHE_TTL)
-        val associationIdsNotInLocalResult = associationIds - localResult.map { it.associationId }
-        if (associationIdsNotInLocalResult != emptyList<String>()) {
-            val remoteResult = remoteDataSource.getAssociations(associationIdsNotInLocalResult)
-            localDataSource.setAssociations(remoteResult)
-            return localResult + remoteResult
-        }
-        return localResult
-    }
-
-    override suspend fun getAllAssociations(): List<Association> {
-        if (isOffline() || notExpired(associations_last_cached_all, ASSOCIATION_CACHE_TTL)) {
-            return localDataSource.getAllAssociations(FETCH_ALL)
-        }
-        val nonExpired = localDataSource.getAllAssociations(ASSOCIATION_CACHE_TTL)
-        val nonExpiredIds = nonExpired.map { it.associationId }
-        val remoteUpdate = remoteDataSource.getAssociationsNotIn(nonExpiredIds)
-        localDataSource.deleteAssociationsNotIn(nonExpiredIds)
-        localDataSource.setAssociations(remoteUpdate)
-        associations_last_cached_all = currentTimeStamp()
-        return nonExpired + remoteUpdate
-    }
-
-    override suspend fun getEvent(eventId: String): Event? {
-        if (isOffline()) {
-            return localDataSource.getEvent(eventId, FETCH_ALL)
-        }
-        val localResult = localDataSource.getEvent(eventId, EVENT_CACHE_TTL)
-        if (localResult == null) {
-            val remoteResult = remoteDataSource.getEvent(eventId)
+            val remoteResult =
+                try {
+                    getRemote(objectId)
+                } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                    return getLocal(objectId, FETCH_ALL)
+                }
             if (remoteResult == null) {
-                localDataSource.deleteEvent(eventId)
+                deleteLocal(objectId)
             } else {
-                localDataSource.setEvent(remoteResult)
+                setLocal(remoteResult)
             }
             return remoteResult
         }
         return localResult
     }
 
+    private suspend fun <T : DataModel> getObjects(
+        objectIds: List<String>,
+        objectTTL: Long,
+        getLocal: suspend (List<String>, Long) -> List<T>,
+        getRemote: suspend (List<String>) -> List<T>,
+        setLocal: suspend (List<T>) -> Unit
+    ): List<T> {
+        if (isOffline()) {
+            return getLocal(objectIds, FETCH_ALL)
+        }
+        val localResult = getLocal(objectIds, objectTTL)
+        val associationIdsNotInLocalResult = objectIds - localResult.map { it.getId() }
+        if (associationIdsNotInLocalResult != emptyList<String>()) {
+            val remoteResult =
+                try {
+                    getRemote(associationIdsNotInLocalResult)
+                } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                    return getLocal(objectIds, FETCH_ALL)
+                }
+            setLocal(remoteResult)
+            return localResult + remoteResult
+        }
+        return localResult
+    }
+
+    private suspend fun <T : DataModel> getAllObjects(
+        objectsLastCachedAll: MutableList<Long>,
+        objectTTL: Long,
+        getAllLocal: suspend (Long) -> List<T>,
+        getAllNotInRemote: suspend (List<String>) -> List<T>,
+        deleteAllNotInLocal: suspend (List<String>) -> Unit,
+        setLocal: suspend (List<T>) -> Unit
+    ): List<T> {
+        if (isOffline() || notExpired(objectsLastCachedAll[0], objectTTL)) {
+            return getAllLocal(FETCH_ALL)
+        }
+        val nonExpired = getAllLocal(objectTTL)
+        val nonExpiredIds = nonExpired.map { it.getId() }
+        val remoteUpdate =
+            try {
+                getAllNotInRemote(nonExpiredIds)
+            } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                return getAllLocal(FETCH_ALL)
+            }
+        deleteAllNotInLocal(nonExpiredIds)
+        setLocal(remoteUpdate)
+        objectsLastCachedAll[0] = currentTimeStamp()
+        return nonExpired + remoteUpdate
+    }
+
+    private suspend fun <T : DataModel> setObject(
+        obj: T,
+        setLocal: suspend (T) -> Unit,
+        setRemote: suspend (T) -> Unit,
+        exceptionType: String
+    ) {
+        if (isOffline()) {
+            throw RepositoryStoreWhileNoInternetException(exceptionType)
+        }
+        try {
+            setRemote(obj)
+        } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+            throw RepositoryStoreWhileNoInternetException(exceptionType)
+        }
+        setLocal(obj)
+    }
+
+    override suspend fun getAssociation(associationId: String): Association? =
+        getObject(
+            associationId,
+            ASSOCIATION_CACHE_TTL,
+            { id, ttl -> localDataSource.getAssociation(id, ttl) },
+            { remoteDataSource.getAssociation(it) },
+            { localDataSource.deleteAssociation(it) },
+            { localDataSource.setAssociation(it) }
+        )
+
+    override suspend fun getAssociations(associationIds: List<String>): List<Association> =
+        getObjects(
+            associationIds,
+            ASSOCIATION_CACHE_TTL,
+            { ids, ttl -> localDataSource.getAssociations(ids, ttl) },
+            { remoteDataSource.getAssociations(it) },
+            { localDataSource.setAssociations(it) }
+        )
+
+    override suspend fun getAllAssociations(): List<Association> =
+        getAllObjects(
+            associations_last_cached_all,
+            ASSOCIATION_CACHE_TTL,
+            { localDataSource.getAllAssociations(it) },
+            { remoteDataSource.getAssociationsNotIn(it) },
+            { localDataSource.deleteAssociationsNotIn(it) },
+            { localDataSource.setAssociations(it) }
+        )
+
+    override suspend fun getEvent(eventId: String): Event? =
+        getObject(
+            eventId,
+            EVENT_CACHE_TTL,
+            { id, ttl -> localDataSource.getEvent(id, ttl) },
+            { remoteDataSource.getEvent(it) },
+            { localDataSource.deleteEvent(it) },
+            { localDataSource.setEvent(it) }
+        )
+
     override suspend fun createEvent(event: Event): String {
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("Event")
         }
-        val newEventId = remoteDataSource.createEvent(event)
+        val newEventId =
+            try {
+                remoteDataSource.createEvent(event)
+            } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                throw RepositoryStoreWhileNoInternetException("Event")
+            }
+        newEventId ?: throw RepositoryStoreWhileNoInternetException("Event")
         localDataSource.setEvent(event.copy(eventId = newEventId))
         return newEventId
     }
 
     override suspend fun setEvent(event: Event) {
-        if (isOffline()) {
-            throw RepositoryStoreWhileNoInternetException("Event")
-        }
-        remoteDataSource.setEvent(event)
-        localDataSource.setEvent(event)
+        setObject(
+            event,
+            { localDataSource.setEvent(it) },
+            { remoteDataSource.setEvent(it) },
+            "Event"
+        )
     }
 
     override suspend fun deleteEvent(event: Event) {
-        if (isOffline()) {
-            throw RepositoryStoreWhileNoInternetException("Event")
-        }
-        remoteDataSource.deleteEvent(event)
-        localDataSource.deleteEvent(event.eventId)
+        setObject(
+            event,
+            { localDataSource.deleteEvent(it.getId()) },
+            { remoteDataSource.deleteEvent(it) },
+            "Event"
+        )
     }
 
-    override suspend fun getAllEvents(): List<Event> {
-        if (isOffline() || notExpired(events_last_cached_all, EVENT_CACHE_TTL)) {
-            return localDataSource.getAllEvents(FETCH_ALL)
-        }
-        val nonExpired = localDataSource.getAllEvents(EVENT_CACHE_TTL)
-        val nonExpiredIds = nonExpired.map { it.eventId }
-        val remoteUpdate = remoteDataSource.getEventsNotIn(nonExpiredIds)
-        localDataSource.deleteEventsNotIn(nonExpiredIds)
-        localDataSource.setEvents(remoteUpdate)
-        events_last_cached_all = currentTimeStamp()
-        return nonExpired + remoteUpdate
-    }
+    override suspend fun getAllEvents(): List<Event> =
+        getAllObjects(
+            events_last_cached_all,
+            EVENT_CACHE_TTL,
+            { localDataSource.getAllEvents(it) },
+            { remoteDataSource.getEventsNotIn(it) },
+            { localDataSource.deleteEventsNotIn(it) },
+            { localDataSource.setEvents(it) }
+        )
 
     override suspend fun joinEvent(userId: String, event: Event): Boolean {
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("Event Join")
         }
-        val remoteResult = remoteDataSource.joinEvent(userId, event.eventId)
+        val remoteResult =
+            try {
+                remoteDataSource.joinEvent(userId, event.eventId)
+            } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                throw RepositoryStoreWhileNoInternetException("Event Join")
+            }
         localDataSource.joinEvent(userId, event.eventId)
-        forceRefetchEvent(event.eventId)
+        forceRefetchEvent(event.eventId, { x, y -> x + y })
         return remoteResult
     }
 
     override suspend fun leaveEvent(userId: String, event: Event): Boolean {
         if (isOffline()) {
-            throw RepositoryStoreWhileNoInternetException("Event Join")
+            throw RepositoryStoreWhileNoInternetException("Event Leave")
         }
-        val remoteResult = remoteDataSource.leaveEvent(userId, event.eventId)
+        val remoteResult =
+            try {
+                remoteDataSource.leaveEvent(userId, event.eventId)
+            } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                throw RepositoryStoreWhileNoInternetException("Event Leave")
+            }
         localDataSource.leaveEvent(userId, event.eventId)
-        forceRefetchEvent(event.eventId)
+        forceRefetchEvent(event.eventId, { x, y -> x - y })
         return remoteResult
     }
 
-    private suspend fun forceRefetchEvent(eventId: String) {
-        val eventUpdate = remoteDataSource.getEvent(eventId)
+    private suspend fun forceRefetchEvent(eventId: String, failoverAction: (Int, Int) -> Int) {
+        val eventUpdate =
+            try {
+                remoteDataSource.getEvent(eventId, 10u)
+            } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                val event = localDataSource.getEvent(eventId, FETCH_ALL)
+                event?.copy(participantCount = failoverAction(event.participantCount, 1))
+            }
         if (eventUpdate != null) {
             localDataSource.setEvent(eventUpdate)
         }
@@ -170,55 +271,59 @@ class RepositoryImpl(
         }
         val nonExpired = localDataSource.getJoinedEvents(userId, EVENT_CACHE_TTL)
         val nonExpiredIds = nonExpired.map { it.eventId }
-        val remoteUpdate = remoteDataSource.getJoinedEventsNotIn(userId, nonExpiredIds)
+        val remoteUpdate =
+            try {
+                remoteDataSource.getJoinedEventsNotIn(userId, nonExpiredIds)
+            } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                return localDataSource.getJoinedEvents(userId, FETCH_ALL)
+            }
         localDataSource.leaveEventsNotIn(userId, nonExpiredIds)
         localDataSource.joinEvents(userId, remoteUpdate.map { it.eventId })
         events_last_cached_joined.put(userId, currentTimeStamp())
         return nonExpired + remoteUpdate
     }
 
-    override suspend fun getTag(tagId: String): Tag? {
-        if (isOffline()) {
-            return localDataSource.getTag(tagId, FETCH_ALL)
-        }
-        val localResult = localDataSource.getTag(tagId, TAG_CACHE_TTL)
-        if (localResult == null) {
-            val remoteResult = remoteDataSource.getTag(tagId)
-            if (remoteResult != null) localDataSource.setTag(remoteResult)
-            return remoteResult
-        }
-        return localResult
-    }
+    override suspend fun getTag(tagId: String): Tag? =
+        getObject(
+            tagId,
+            TAG_CACHE_TTL,
+            { id, ttl -> localDataSource.getTag(id, ttl) },
+            { remoteDataSource.getTag(it) },
+            { localDataSource.deleteTag(it) },
+            { localDataSource.setTag(it) }
+        )
 
     override suspend fun getSubTags(tagId: String): List<Tag> {
         if (
             isOffline() ||
-                notExpired(tags_last_cached_all, TAG_CACHE_TTL) ||
+                notExpired(tags_last_cached_all[0], TAG_CACHE_TTL) ||
                 notExpired(tags_last_cached_subs.getOrDefault(tagId, 0), TAG_CACHE_TTL)
         ) {
             return localDataSource.getSubTags(tagId, FETCH_ALL)
         }
         val nonExpired = localDataSource.getSubTags(tagId, TAG_CACHE_TTL)
         val nonExpiredIds = nonExpired.map { it.tagId }
-        val remoteUpdate = remoteDataSource.getSubTagsNotIn(tagId, nonExpiredIds)
+        val remoteUpdate =
+            try {
+                remoteDataSource.getSubTagsNotIn(tagId, nonExpiredIds)
+            } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                return localDataSource.getSubTags(tagId, FETCH_ALL)
+            }
         localDataSource.deleteSubTagsNotIn(tagId, nonExpiredIds)
         localDataSource.setTags(remoteUpdate)
         tags_last_cached_subs.put(tagId, currentTimeStamp())
         return nonExpired + remoteUpdate
     }
 
-    override suspend fun getAllTags(): List<Tag> {
-        if (isOffline() || notExpired(tags_last_cached_all, TAG_CACHE_TTL)) {
-            return localDataSource.getAllTags(FETCH_ALL)
-        }
-        val nonExpired = localDataSource.getAllTags(TAG_CACHE_TTL)
-        val nonExpiredIds = nonExpired.map { it.tagId }
-        val remoteUpdate = remoteDataSource.getAllTagsNotIn(nonExpiredIds)
-        localDataSource.deleteAllTagsNotIn(nonExpiredIds)
-        localDataSource.setTags(remoteUpdate)
-        tags_last_cached_all = currentTimeStamp()
-        return nonExpired + remoteUpdate
-    }
+    override suspend fun getAllTags(): List<Tag> =
+        getAllObjects(
+            tags_last_cached_all,
+            TAG_CACHE_TTL,
+            { localDataSource.getAllTags(it) },
+            { remoteDataSource.getAllTagsNotIn(it) },
+            { localDataSource.deleteAllTagsNotIn(it) },
+            { localDataSource.setTags(it) }
+        )
 
     override suspend fun getUserProfile(userId: String): UserProfile? {
         if (isOffline()) {
@@ -226,7 +331,12 @@ class RepositoryImpl(
         }
         val localResult = localDataSource.getUserProfile(userId, USERPROFILE_CACHE_TTL)
         if (localResult == null) {
-            val remoteResult = remoteDataSource.getUserProfile(userId)
+            val remoteResult =
+                try {
+                    remoteDataSource.getUserProfile(userId)
+                } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                    return localDataSource.getUserProfile(userId, FETCH_ALL)
+                }
             if (remoteResult == null) {
                 localDataSource.deleteUserProfile(userId)
             } else {
@@ -241,9 +351,13 @@ class RepositoryImpl(
                         ASSOCIATION_CACHE_TTL
                     )
                 val remoteAssociationsResult =
-                    remoteDataSource.getAssociations(
-                        associationIdsLinkedInProfile - locallyPresentAssociationIds
-                    )
+                    try {
+                        remoteDataSource.getAssociations(
+                            associationIdsLinkedInProfile - locallyPresentAssociationIds
+                        )
+                    } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                        return localDataSource.getUserProfile(userId, FETCH_ALL)
+                    }
                 localDataSource.setAssociations(remoteAssociationsResult)
 
                 localDataSource.setUserProfile(remoteResult)
@@ -254,19 +368,21 @@ class RepositoryImpl(
     }
 
     override suspend fun setUserProfile(userProfile: UserProfile) {
-        if (isOffline()) {
-            throw RepositoryStoreWhileNoInternetException("UserProfile")
-        }
-        remoteDataSource.setUserProfile(userProfile)
-        localDataSource.setUserProfile(userProfile)
+        setObject(
+            userProfile,
+            { localDataSource.setUserProfile(it) },
+            { remoteDataSource.setUserProfile(it) },
+            "UserProfile"
+        )
     }
 
     override suspend fun deleteUserProfile(userProfile: UserProfile) {
-        if (isOffline()) {
-            throw RepositoryStoreWhileNoInternetException("UserProfile")
-        }
-        remoteDataSource.deleteUserProfile(userProfile)
-        localDataSource.deleteUserProfile(userProfile.userId)
+        setObject(
+            userProfile,
+            { localDataSource.deleteUserProfile(it.getId()) },
+            { remoteDataSource.deleteUserProfile(it) },
+            "UserProfile"
+        )
     }
 
     override suspend fun getUserProfilePicture(userId: String): ByteArray? {
@@ -276,7 +392,12 @@ class RepositoryImpl(
         }
         var picture = fileCache.get(fileName)
         if (picture == null) {
-            picture = remoteDataSource.getUserProfilePicture(userId)
+            picture =
+                try {
+                    remoteDataSource.getUserProfilePicture(userId)
+                } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+                    return null
+                }
             if (picture != null) {
                 fileCache.set(fileName, picture)
             }
@@ -288,7 +409,11 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
         }
-        remoteDataSource.setUserProfilePicture(userId, picture)
+        try {
+            remoteDataSource.setUserProfilePicture(userId, picture)
+        } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+            throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
+        }
         fileCache.set("$userId.jpeg", picture)
     }
 
@@ -296,12 +421,11 @@ class RepositoryImpl(
         if (isOffline()) {
             throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
         }
-        remoteDataSource.deleteUserProfilePicture(userId)
+        try {
+            remoteDataSource.deleteUserProfilePicture(userId)
+        } catch (e: RemoteDataSourceRequestMaxRetryExceededException) {
+            throw RepositoryStoreWhileNoInternetException("UserProfilePicture")
+        }
         fileCache.delete("$userId.jpeg")
     }
 }
-
-class RepositoryStoreWhileNoInternetException(objectTryingToStore: String) :
-    Exception(
-        "Storing/Deleting a " + objectTryingToStore + " while the App is offline is not supported"
-    )

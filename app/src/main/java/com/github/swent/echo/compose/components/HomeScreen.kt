@@ -48,6 +48,7 @@ fun HomeScreen(
     // Profile information for the hamburger menu
     val profileName by homeScreenViewModel.profileName.collectAsState()
     val profileClass by homeScreenViewModel.profileClass.collectAsState()
+    val profilePicture by homeScreenViewModel.profilePicture.collectAsState()
 
     // Search mode for displaying events
     val searchMode by homeScreenViewModel.searchMode.collectAsState()
@@ -62,6 +63,7 @@ fun HomeScreen(
                 scope,
                 profileName,
                 profileClass,
+                profilePicture,
                 {
                     homeScreenViewModel.signOut()
                     navActions.navigateTo(Routes.LOGIN)

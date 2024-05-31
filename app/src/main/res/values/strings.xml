@@ -84,6 +84,9 @@
     <string name="profile_creation_section">Section</string>
     <string name="profile_creation_semester">Semester</string>
     <string name="profile_creation_tags">Tags</string>
+    <string name="profile_creation_edit_picture">Edit picture</string>
+    <string name="profile_creation_delete_picture">Delete picture</string>
+    <string name="profile_creation_center_picture">Adjust the zoom</string>
     <string name="event_successfully_joined">Event successfully joined!</string>
     <string name="event_info_sheet_modify_event">Modify Event</string>
     <string name="list_drawer_event_status">Event Status</string>

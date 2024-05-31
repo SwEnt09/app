@@ -15,8 +15,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
- * Represent the tags tree. This viewModel allows the composables get the tags from the repository
- * easily.
+ * This class represents the tags tree. This viewModel allows the composables get the tags from the
+ * repository easily.
+ *
+ * @param repository a repository
+ * @param rootTagId the id of the root tag of the tags tree
  */
 @HiltViewModel(assistedFactory = TagViewModel.TagViewModelFactory::class)
 class TagViewModel
@@ -41,7 +44,7 @@ constructor(private val repository: Repository, @Assisted private val rootTagId:
         initialize()
     }
 
-    // initialize the variables exposed by the viewmodel
+    /** Initialize the variables exposed by the viewmodel. */
     private fun initialize() {
         viewModelScope.launch {
             _rootTag.value = repository.getTag(rootTagId) ?: _rootTag.value
@@ -52,6 +55,11 @@ constructor(private val repository: Repository, @Assisted private val rootTagId:
         }
     }
 
+    /**
+     * Fetch the sub-tags of the tag list before they are displayed.
+     *
+     * @param tagList the list of tags to prefetch sub-tags from
+     */
     private fun prefetchTags(tagList: List<Tag>) {
         viewModelScope.launch {
             for (tag in tagList) {
@@ -60,7 +68,7 @@ constructor(private val repository: Repository, @Assisted private val rootTagId:
         }
     }
 
-    // goes up in the tag tree
+    /** Goes up in the tag tree. */
     fun goUp() {
         viewModelScope.launch {
             if (_currentDepth.value > 0) {
@@ -79,7 +87,11 @@ constructor(private val repository: Repository, @Assisted private val rootTagId:
         }
     }
 
-    // goes down in the tag tree
+    /**
+     * Goes down in the tag tree.
+     *
+     * @param tag the new parent tag
+     */
     fun goDown(tag: Tag) {
         viewModelScope.launch {
             var subTags = subTagsMap.value[tag]?.toList()
@@ -96,22 +108,33 @@ constructor(private val repository: Repository, @Assisted private val rootTagId:
         }
     }
 
-    // return the tag associated to a tagId
+    /**
+     * Return the tag associated to a tagId.
+     *
+     * @param tagId a tag id
+     */
     fun getTag(tagId: String): StateFlow<Tag> {
         val tag = MutableStateFlow<Tag>(Tag("", ""))
         viewModelScope.launch { tag.value = repository.getTag(tagId) ?: Tag("", "") }
         return tag
     }
 
-    // reset the tag tree
+    /** Reset the tag tree. */
     fun reset() {
         _currentDepth.value = 0
         _tagParents.value.clear()
         initialize()
     }
 
+    /** Factory for the TagViewModel class. Allow to inject the id of the root tag. */
     @AssistedFactory
     interface TagViewModelFactory {
+
+        /**
+         * Create a new TagViewModel.
+         *
+         * @param rootTagId the id of the root tag
+         */
         fun create(rootTagId: String = ""): TagViewModel
     }
 }

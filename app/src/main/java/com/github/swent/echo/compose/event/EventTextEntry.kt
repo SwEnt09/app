@@ -15,7 +15,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/** A text entry with a name above */
+/**
+ * A text entry with a name above.
+ *
+ * @param name the name to display above the text entry
+ * @param value the value of the text field
+ * @param modifier the modifier of the composable
+ * @param onValueChange a callback called when the text field is modified
+ */
 @Composable
 fun EventTextEntry(
     name: String,
@@ -33,7 +40,11 @@ fun EventTextEntry(
     }
 }
 
-/** name above an entry field */
+/**
+ * The name above an entry field.
+ *
+ * @param name the text to display
+ */
 @Composable
 fun EventEntryName(name: String) {
     Text(
@@ -48,7 +59,13 @@ fun EventEntryName(name: String) {
     )
 }
 
-/** a text input field */
+/**
+ * A text input field.
+ *
+ * @param value the value of the text field
+ * @param modifier the modifier of the composable
+ * @param onValueChange a callback called when the text field is modified
+ */
 @Composable
 fun EventEntryField(
     value: String,

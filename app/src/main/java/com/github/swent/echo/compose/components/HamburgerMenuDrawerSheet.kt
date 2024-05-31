@@ -1,5 +1,6 @@
 package com.github.swent.echo.compose.components
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,7 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Close
@@ -26,6 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -48,6 +54,7 @@ fun HamburgerMenuDrawerSheet(
     scope: CoroutineScope,
     profileName: String,
     profileClass: String,
+    profilePicture: Bitmap? = null,
     onSignOutPressed: () -> Unit,
     onToggle: () -> Unit
 ) {
@@ -109,8 +116,13 @@ fun HamburgerMenuDrawerSheet(
                 modifier = Modifier.align(Alignment.TopStart).padding(8.dp).testTag("profile_sheet")
             ) {
                 Image(
-                    modifier = Modifier.testTag("profile_picture"),
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    modifier = Modifier.testTag("profile_picture").size(150.dp).clip(CircleShape),
+                    painter =
+                        if (profilePicture != null) {
+                            BitmapPainter(profilePicture!!.asImageBitmap())
+                        } else {
+                            painterResource(R.drawable.echologoround)
+                        },
                     contentDescription = "profile picture"
                 )
                 Row(modifier = Modifier.padding(8.dp).testTag("profile_info")) {
@@ -127,20 +139,11 @@ fun HamburgerMenuDrawerSheet(
                     )
                 }
             }
-            // Close button for the hamburger menu
-            IconButton(
-                onClick = { scope.launch { drawerState.close() } },
-                modifier =
-                    Modifier.align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .testTag("close_button_hamburger_menu")
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Close button hamburger menu"
-                )
+
+            // button to toggle the theme
+            Box(modifier = Modifier.align(Alignment.TopEnd).padding(8.dp)) {
+                ThemeToggleButton(onToggle = onToggle)
             }
-            ThemeToggleButton(onToggle = onToggle)
         }
         // Display the navigation items
         items.forEachIndexed { index, item ->

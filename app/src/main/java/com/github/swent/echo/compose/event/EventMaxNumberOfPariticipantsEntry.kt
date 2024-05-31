@@ -20,6 +20,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.github.swent.echo.R
 import kotlin.math.max
 
+/**
+ * A text field to enter the maximum number of participants.
+ *
+ * @param maxNumberOfParticipants the actual maximum number of participant
+ * @param onMaxNbParticipantsChange a callback called when the maximum number of participant is
+ *   changed
+ */
 @Composable
 fun EventMaxNumberOfParticipantsEntry(
     maxNumberOfParticipants: Int,

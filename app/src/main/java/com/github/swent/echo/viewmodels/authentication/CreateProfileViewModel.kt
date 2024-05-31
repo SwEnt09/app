@@ -1,5 +1,7 @@
 package com.github.swent.echo.viewmodels.authentication
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +14,7 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,6 +59,9 @@ constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
+    private val _picture = MutableStateFlow<Bitmap?>(null)
+    val picture = _picture.asStateFlow()
+
     // functions to change the name of the private variables from outside the class.  (setters)
 
     fun setFirstName(firstName: String) {
@@ -94,6 +100,15 @@ constructor(
                     _tagList.value = userProfile.tags
                     _committeeMember.value = userProfile.committeeMember
                     _associationSubscriptions.value = userProfile.associationsSubscriptions
+                    val pictureByteArray = repository.getUserProfilePicture(userId)
+                    if (pictureByteArray != null) {
+                        _picture.value =
+                            BitmapFactory.decodeByteArray(
+                                pictureByteArray,
+                                0,
+                                pictureByteArray.size
+                            )
+                    }
                 } else {
                     _isEditing.value = false
                 }
@@ -124,6 +139,13 @@ constructor(
                         associationsSubscriptions = _associationSubscriptions.value
                     )
                 )
+                if (picture.value == null) {
+                    repository.deleteUserProfilePicture(userId)
+                } else {
+                    val pictureStream = ByteArrayOutputStream()
+                    picture.value!!.compress(Bitmap.CompressFormat.JPEG, 100, pictureStream)
+                    repository.setUserProfilePicture(userId, pictureStream.toByteArray())
+                }
             }
         }
     }
@@ -135,5 +157,9 @@ constructor(
 
     fun removeTag(tag: Tag) {
         _tagList.value -= tag
+    }
+
+    fun setPicture(picture: Bitmap?) {
+        _picture.value = picture
     }
 }

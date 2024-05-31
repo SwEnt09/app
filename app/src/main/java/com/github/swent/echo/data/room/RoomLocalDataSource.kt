@@ -54,6 +54,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
         associationDao.insertAssociationTagCrossRefs(crossRefs)
     }
 
+    override suspend fun deleteAssociation(associationId: String) {
+        associationDao.delete(associationId)
+    }
+
     override suspend fun getAssociations(
         associationIds: List<String>,
         syncedSecondsAgo: Long
@@ -148,6 +152,10 @@ class RoomLocalDataSource @Inject constructor(db: AppDatabase) : LocalDataSource
 
     override suspend fun setTag(tag: Tag) {
         tagDao.insert(TagRoom(tag))
+    }
+
+    override suspend fun deleteTag(tagId: String) {
+        tagDao.delete(tagId)
     }
 
     override suspend fun getSubTags(tagId: String, syncedSecondsAgo: Long): List<Tag> {
