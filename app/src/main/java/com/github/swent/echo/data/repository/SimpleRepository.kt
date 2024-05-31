@@ -21,6 +21,9 @@ import com.github.swent.echo.data.model.UserProfile
 class SimpleRepository(authenticationService: AuthenticationService) : Repository {
 
     companion object {
+        /** The root tag of the tag tree. Note the sub-tags of this tag are the top-level tags. */
+        const val ROOT_TAG_ID = "1d253a7e-eb8c-4546-bc98-1d3adadcffe8"
+
         const val NUM_OF_TOP_LEVEL_TAGS = 3
         const val NUM_OF_HARDCODED_TAGS = 6
     }
@@ -30,13 +33,13 @@ class SimpleRepository(authenticationService: AuthenticationService) : Repositor
     private val eventJoins = mutableMapOf<String, List<Event>>()
     private val tags =
         mutableSetOf(
-            Tag("1", "Sport", Repository.ROOT_TAG_ID),
-            Tag("2", "Culture", Repository.ROOT_TAG_ID),
-            Tag("3", "Music", Repository.ROOT_TAG_ID),
+            Tag("1", "Sport", ROOT_TAG_ID),
+            Tag("2", "Culture", ROOT_TAG_ID),
+            Tag("3", "Music", ROOT_TAG_ID),
             Tag("4", "Football", "1"),
             Tag("5", "Basketball", "1"),
             Tag("6", "Theatre", "2"),
-            Tag(Repository.ROOT_TAG_ID, "ROOT TAG: DO NOT DELETE"),
+            Tag(ROOT_TAG_ID, "ROOT TAG: DO NOT DELETE"),
             Tag(SECTION_ROOT_TAG_ID, "Section"),
             Tag(SEMESTER_ROOT_TAG_ID, "Semester")
         )

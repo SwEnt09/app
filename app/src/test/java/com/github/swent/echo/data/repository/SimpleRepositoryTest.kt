@@ -151,7 +151,7 @@ class SimpleRepositoryTest {
 
     @Test
     fun `getSubTags should return top level tags when called with ROOT_TAG_ID`() = runBlocking {
-        val subTags = simpleRepository.getSubTags(Repository.ROOT_TAG_ID)
+        val subTags = simpleRepository.getSubTags(SimpleRepository.ROOT_TAG_ID)
         assertEquals(SimpleRepository.NUM_OF_TOP_LEVEL_TAGS, subTags.size)
     }
 
