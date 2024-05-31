@@ -14,6 +14,7 @@ import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.ListDrawer
 import com.github.swent.echo.compose.components.Pager
 import com.github.swent.echo.compose.event.EventTitleAndBackButton
+import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.myevents.MyEventsViewModel
@@ -35,10 +36,14 @@ fun MyEventsScreen(
         },
         modifier = Modifier.fillMaxSize().testTag("my_events_screen") // Fill the entire screen.
     ) {
+        val userId = myEventsViewModel.user
+        val modify = { e: Event -> navActions.navigateTo(Routes.EDIT_EVENT.build(e.eventId)) }
+        val refresh = myEventsViewModel::refreshEvents
+
         // Get the list of events the user has joined.
-        val joinedEventsList by myEventsViewModel.joinedEvents.collectAsState()
+        val joinedEvents by myEventsViewModel.joinedEvents.collectAsState()
         // Get the list of events the user has created.
-        val createdEventsList by myEventsViewModel.createdEvents.collectAsState()
+        val createdEvents by myEventsViewModel.createdEvents.collectAsState()
         // Get whether the user is online.
         val isOnline by myEventsViewModel.isOnline.collectAsState()
         // Create a box with padding.
@@ -49,28 +54,12 @@ fun MyEventsScreen(
                     // The first tab is for joined events.
                     Pair(stringResource(R.string.my_events_joined_events)) {
                         // Display the joined events in a list.
-                        ListDrawer(
-                            joinedEventsList,
-                            isOnline,
-                            myEventsViewModel::refreshEvents,
-                            userId = myEventsViewModel.user,
-                            modify = { event ->
-                                navActions.navigateTo(Routes.EDIT_EVENT.build(event.eventId))
-                            },
-                        )
+                        ListDrawer(joinedEvents, isOnline, refresh, modify, userId = userId)
                     },
                     // The second tab is for created events.
                     Pair(stringResource(R.string.my_events_created_events)) {
                         // Display the created events in a list.
-                        ListDrawer(
-                            createdEventsList,
-                            isOnline,
-                            myEventsViewModel::refreshEvents,
-                            userId = myEventsViewModel.user,
-                            modify = { event ->
-                                navActions.navigateTo(Routes.EDIT_EVENT.build(event.eventId))
-                            },
-                        )
+                        ListDrawer(createdEvents, isOnline, refresh, modify, userId = userId)
                     }
                 )
             )
