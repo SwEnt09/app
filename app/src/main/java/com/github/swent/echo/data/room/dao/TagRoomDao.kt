@@ -9,6 +9,8 @@ import com.github.swent.echo.data.room.entity.TagRoom
 interface TagRoomDao {
     @Upsert suspend fun insert(tags: TagRoom)
 
+    @Query("DELETE FROM TagRoom WHERE tagId = :tagId") suspend fun delete(tagId: String)
+
     @Upsert suspend fun insertAll(tags: List<TagRoom>)
 
     @Query("SELECT * FROM TagRoom WHERE tagId = :tagId AND timestamp >= :after")

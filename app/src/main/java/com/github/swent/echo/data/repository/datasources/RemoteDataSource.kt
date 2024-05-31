@@ -29,7 +29,7 @@ interface RemoteDataSource {
 
     suspend fun getEvent(eventId: String, maxRetriesCount: UInt = RETRY_MAX): Event?
 
-    suspend fun createEvent(event: Event, maxRetriesCount: UInt = RETRY_MAX): String
+    suspend fun createEvent(event: Event, maxRetriesCount: UInt = RETRY_MAX): String?
 
     suspend fun setEvent(event: Event, maxRetriesCount: UInt = RETRY_MAX)
 
@@ -92,3 +92,6 @@ interface RemoteDataSource {
 
     suspend fun deleteUserProfilePicture(userId: String, maxRetriesCount: UInt = RETRY_MAX)
 }
+
+class RemoteDataSourceRequestMaxRetryExceededException :
+    Exception("Network retries for RemoteDataSource operation exceeded.")
