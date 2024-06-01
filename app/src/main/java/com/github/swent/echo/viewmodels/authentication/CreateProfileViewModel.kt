@@ -2,7 +2,6 @@ package com.github.swent.echo.viewmodels.authentication
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.swent.echo.authentication.AuthenticationService
@@ -129,15 +128,11 @@ constructor(
 
         val userId = authenticationService.getCurrentUserID()
         if (userId == null) {
-            Log.d("nullUserId", "User ID is null")
             _errorMessage.value = "Profile creation error: Not logged in"
         } else {
             // TODO: show loading animation while saving the profile
             viewModelScope.launch {
                 _state.value = CreateProfileState.SAVING
-                println("User profile name: ${_firstName.value}\n")
-                println("User profile section: ${_selectedSection.value}\n")
-                println("User profile semester: ${_selectedSemester.value}\n")
                 repository.setUserProfile(
                     UserProfile(
                         userId,
@@ -166,10 +161,12 @@ constructor(
         _tagList.value += tag
     }
 
+    // Remove tag button
     fun removeTag(tag: Tag) {
         _tagList.value -= tag
     }
 
+    // set profile picture to update it
     fun setPicture(picture: Bitmap?) {
         _picture.value = picture
     }

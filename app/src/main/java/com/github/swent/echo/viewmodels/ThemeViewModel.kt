@@ -34,7 +34,7 @@ constructor(
             themePreferenceManager.theme.collect { theme -> _themeUserSetting.value = theme }
         }
     }
-
+    // Toggle the theme by clicking on the button
     fun toggleTheme() {
         viewModelScope.launch {
             val newTheme =

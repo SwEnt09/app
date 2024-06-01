@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.github.swent.echo.R
 import kotlinx.coroutines.delay
 
+// Connectivity status
 @Composable
 fun ConnectivityStatus(isConnected: Boolean) {
     var visibility by remember { mutableStateOf(false) }
@@ -50,6 +51,7 @@ fun ConnectivityStatus(isConnected: Boolean) {
     }
 }
 
+// Connectivity status box
 @Composable
 fun ConnectivityStatusBox(isConnected: Boolean, modifier: Modifier = Modifier) {
     val backgroundColor by animateColorAsState(if (!isConnected) Color.DarkGray else Color.Green)
@@ -57,6 +59,7 @@ fun ConnectivityStatusBox(isConnected: Boolean, modifier: Modifier = Modifier) {
     SmallTopAppBarFunc(text = stringResource(id = message), color = backgroundColor)
 }
 
+// TopAppBar (Online/Offline Banner) for the connectivity status
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallTopAppBarFunc(text: String, color: Color) {
