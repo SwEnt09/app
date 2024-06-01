@@ -13,7 +13,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
  * A simple map view provider that uses a [ComposeView] to display a list of events. No map is shown
  * in this implementation.
  */
-class SimpleMapViewProvider : IMapViewProvider<ComposeView> {
+class SimpleMapViewProvider : MapViewProvider<ComposeView> {
     override fun factory(
         context: android.content.Context,
         withLocation: Boolean,
@@ -44,4 +44,6 @@ class SimpleMapViewProvider : IMapViewProvider<ComposeView> {
             }
         }
     }
+
+    override fun setSavedCameraPosition(newPosition: LatLng, zoomLevel: Double) {}
 }

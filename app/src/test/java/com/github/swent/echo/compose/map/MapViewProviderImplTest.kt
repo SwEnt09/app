@@ -7,13 +7,13 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 
-class MapLibreMapViewProviderTest {
+class MapViewProviderImplTest {
 
-    private lateinit var mapLibreMapViewProvider: MapLibreMapViewProvider
+    private lateinit var mapLibreMapViewProvider: MapViewProviderImpl
 
     @Before
     fun setUp() {
-        mapLibreMapViewProvider = MapLibreMapViewProvider()
+        mapLibreMapViewProvider = MapViewProviderImpl()
     }
 
     @Test

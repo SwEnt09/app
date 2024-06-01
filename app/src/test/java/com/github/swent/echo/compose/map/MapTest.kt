@@ -29,7 +29,7 @@ class MapTest {
     fun setUp() {
         clickedEvent = null
         provider = SimpleMapViewProvider()
-        viewModel = MapDrawerViewModel(provider as IMapViewProvider<View>)
+        viewModel = MapDrawerViewModel(provider as MapViewProvider<View>)
         composeTestRule.setContent {
             MapDrawer(
                 events = SAMPLE_EVENTS,

@@ -17,7 +17,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 
-class MapLibreMapViewProvider : IMapViewProvider<MapView> {
+class MapViewProviderImpl : MapViewProvider<MapView> {
 
     // Stores the last camera position so we can restore it when the map is recreated (i.e. when the
     // user switches between the list and map mode or when the user switches between the light and
@@ -76,6 +76,11 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
                     CameraPosition.Builder().target(pos).zoom(DEFAULT_ZOOM).bearing(0.0).build()
             }
         }
+    }
+
+    override fun setSavedCameraPosition(newPosition: LatLng, zoomLevel: Double) {
+        lastCameraPosition =
+            CameraPosition.Builder().target(newPosition).zoom(zoomLevel).bearing(0.0).build()
     }
 
     override fun factory(

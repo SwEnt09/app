@@ -10,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.viewmodels.MapDrawerViewModel
@@ -52,7 +51,7 @@ fun MapDrawer(
     events: List<Event>,
     callback: (Event) -> Unit = {},
     launchEventCreation: (LatLng) -> Unit = {},
-    mapDrawerViewModel: MapDrawerViewModel = hiltViewModel(),
+    mapDrawerViewModel: MapDrawerViewModel,
     displayLocation: Boolean = false
 ) {
     EchoAndroidView(
