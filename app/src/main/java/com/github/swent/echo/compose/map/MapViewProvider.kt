@@ -13,7 +13,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
  *
  * @author alejandrocalles
  */
-interface IMapViewProvider<T : View> {
+interface MapViewProvider<T : View> {
     fun factory(
         context: Context,
         withLocation: Boolean,
@@ -22,4 +22,6 @@ interface IMapViewProvider<T : View> {
     ): T
 
     fun update(view: T, events: List<Event>, callback: (Event) -> Unit, withLocation: Boolean)
+
+    fun setSavedCameraPosition(newPosition: LatLng, zoomLevel: Double)
 }

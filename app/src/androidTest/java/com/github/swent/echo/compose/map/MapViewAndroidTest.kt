@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -22,7 +21,7 @@ class MapViewAndroidTest {
     companion object {
         @Composable
         private fun <T : View> DummyMapDrawer(
-            p: IMapViewProvider<T>,
+            p: MapViewProvider<T>,
             launchEventCreation: (LatLng) -> Unit = {}
         ) {
             val e by remember { mutableStateOf(SAMPLE_EVENTS) }
@@ -40,7 +39,7 @@ class MapViewAndroidTest {
 
     @Test
     fun mapLibreMapProviderShouldShowAndroidView() {
-        val p = MapLibreMapViewProvider()
+        val p = MapViewProviderImpl()
         composeTestRule.setContent { DummyMapDrawer(p) }
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("mapAndroidView").assertIsDisplayed()

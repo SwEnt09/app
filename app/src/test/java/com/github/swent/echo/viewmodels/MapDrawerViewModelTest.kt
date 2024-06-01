@@ -2,7 +2,7 @@ package com.github.swent.echo.viewmodels
 
 import android.content.Context
 import android.view.View
-import com.github.swent.echo.compose.map.IMapViewProvider
+import com.github.swent.echo.compose.map.MapViewProvider
 import com.github.swent.echo.data.model.Event
 import com.mapbox.mapboxsdk.geometry.LatLng
 import io.mockk.mockk
@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 
 class MapDrawerViewModelTest {
-    private lateinit var provider: IMapViewProvider<View>
+    private lateinit var provider: MapViewProvider<View>
     private lateinit var viewModel: MapDrawerViewModel
 
     @Before

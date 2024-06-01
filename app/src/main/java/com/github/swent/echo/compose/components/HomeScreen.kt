@@ -16,11 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.github.swent.echo.compose.map.DEFAULT_ZOOM
 import com.github.swent.echo.compose.map.MapDrawer
 import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
 import com.github.swent.echo.viewmodels.HomeScreenViewModel
+import com.github.swent.echo.viewmodels.MapDrawerViewModel
 import com.github.swent.echo.viewmodels.MapOrListMode
 import com.github.swent.echo.viewmodels.Overlay
 import com.github.swent.echo.viewmodels.ThemeViewModel
@@ -140,6 +143,8 @@ private fun Content(
     val followedAssociations by homeScreenViewModel.followedAssociations.collectAsState()
     val selectedAssociation by homeScreenViewModel.selectedAssociation.collectAsState()
 
+    val mapDrawerViewModel: MapDrawerViewModel = hiltViewModel()
+
     Box(modifier = Modifier.padding(paddingValues)) {
         // Display the list view or the map view
         if (mode == MapOrListMode.LIST) {
@@ -158,6 +163,14 @@ private fun Content(
                     homeScreenViewModel::refreshEvents,
                     userId = homeScreenViewModel.userId,
                     modify = { navActions.navigateTo(Routes.EDIT_EVENT.build(it.eventId)) },
+                    viewOnMap = {
+                        mapDrawerViewModel.setSavedCameraPosition(
+                            it.location.toLatLng(),
+                            DEFAULT_ZOOM
+                        )
+                        homeScreenViewModel.switchMode()
+                        homeScreenViewModel.onEventSelected(event = it)
+                    }
                 )
             }
         } else {
@@ -168,7 +181,8 @@ private fun Content(
                     val encodedLocation = Json.encodeToString(Location("", it))
                     navActions.navigateTo(Routes.CREATE_EVENT.build(encodedLocation))
                 },
-                displayLocation = hasLocationPermissions
+                mapDrawerViewModel = mapDrawerViewModel,
+                displayLocation = hasLocationPermissions,
             )
             if (!searchMode) {
                 TagUI(

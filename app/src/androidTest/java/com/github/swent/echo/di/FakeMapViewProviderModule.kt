@@ -1,7 +1,7 @@
 package com.github.swent.echo.di
 
 import android.view.View
-import com.github.swent.echo.compose.map.IMapViewProvider
+import com.github.swent.echo.compose.map.MapViewProvider
 import com.github.swent.echo.compose.map.SimpleMapViewProvider
 import dagger.Module
 import dagger.Provides
@@ -18,7 +18,7 @@ object FakeMapViewProviderModule {
 
     @Singleton
     @Provides
-    fun provideMapViewProvider(): IMapViewProvider<View> {
-        return SimpleMapViewProvider() as IMapViewProvider<View>
+    fun provideMapViewProvider(): MapViewProvider<View> {
+        return SimpleMapViewProvider() as MapViewProvider<View>
     }
 }

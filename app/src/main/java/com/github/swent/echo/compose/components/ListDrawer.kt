@@ -239,9 +239,9 @@ fun EventListItem(
                 ) {
                     Row {
                         // View on map button
-                        if (viewOnMap != null) {
+                        viewOnMap?.let {
                             IconButton(
-                                onClick = { viewOnMap(event) },
+                                onClick = { it(event) },
                                 modifier = Modifier.testTag("view_on_map_${event.eventId}"),
                                 colors = iconButtonColors,
                             ) {
