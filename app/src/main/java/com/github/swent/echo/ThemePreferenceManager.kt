@@ -12,16 +12,19 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
 
+// Class that manages the theme preference.
 class ThemePreferenceManager @Inject constructor(context: Context) {
     private val dataStore = context.dataStore
     private val THEME_KEY = stringPreferencesKey("theme")
 
+    // Flow that emits the current theme
     val theme: Flow<AppTheme> =
         dataStore.data.map { preferences ->
             val themeString = preferences[THEME_KEY] ?: getSystemDefaultTheme(context).name
             AppTheme.valueOf(themeString)
         }
 
+    // Get the system default theme
     fun getSystemDefaultTheme(context: Context): AppTheme {
         return if (
             context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
@@ -32,7 +35,7 @@ class ThemePreferenceManager @Inject constructor(context: Context) {
             AppTheme.MODE_DAY
         }
     }
-
+    // Set the theme
     suspend fun setTheme(theme: AppTheme) {
         dataStore.edit { preferences -> preferences[THEME_KEY] = theme.name }
     }

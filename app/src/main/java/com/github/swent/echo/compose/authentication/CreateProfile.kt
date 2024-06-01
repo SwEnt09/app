@@ -1,10 +1,16 @@
 package com.github.swent.echo.compose.authentication
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.isPhotoPickerAvailable
@@ -264,14 +270,14 @@ fun ProfileCreationUI(
             ) {
                 Row {
                     Column {
+                        // Profile picture
+                        ProfilePictureEdit(picture, onPictureChange)
+
                         // First name and last name fields
                         OutlinedTextField(
                             value = firstName,
                             onValueChange = { onFirstNameChange(it) },
-                            modifier =
-                                modifier
-                                    // .fillMaxWidth()
-                                    .testTag("FirstName"),
+                            modifier = modifier.fillMaxWidth().testTag("FirstName"),
                             label = {
                                 Text(
                                     text = stringResource(id = R.string.profile_creation_first_name)
@@ -283,13 +289,12 @@ fun ProfileCreationUI(
 
                         Spacer(modifier = modifier.height(spacerHeight))
 
+                        // Last name field
+
                         OutlinedTextField(
                             value = lastName,
                             onValueChange = { onLastNameChange(it) },
-                            modifier =
-                                modifier
-                                    // .fillMaxWidth()
-                                    .testTag("LastName"),
+                            modifier = modifier.fillMaxWidth().testTag("LastName"),
                             label = {
                                 Text(
                                     text = stringResource(id = R.string.profile_creation_last_name)
@@ -299,25 +304,26 @@ fun ProfileCreationUI(
                             isError = lastName.isBlank()
                         )
                     }
-                    ProfilePictureEdit(picture, onPictureChange)
                 }
                 Spacer(modifier = modifier.height(spacerHeight))
 
                 // Section and semester dropdown menus
+
                 DropDownListFunctionWrapper(
                     sectionList,
                     R.string.section,
                     selectedSec ?: "",
                     onSecChange
                 )
+
                 Spacer(modifier = modifier.height(spacerHeight))
+
                 DropDownListFunctionWrapper(
                     semList,
                     R.string.select_semester,
                     selectedSem ?: "",
                     onSemChange
                 )
-
                 Spacer(modifier = modifier.height(spacerHeight.times(2)))
 
                 // Tags
@@ -335,6 +341,7 @@ fun ProfileCreationUI(
                     }
 
                     // Add tag button
+
                     SmallFloatingActionButton(
                         onClick = { onAdd() },
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -344,6 +351,7 @@ fun ProfileCreationUI(
                         Icon(Icons.Default.Add, "Add tags")
                     }
                 }
+
                 Spacer(modifier = modifier.weight(1f))
                 val errorLN = stringResource(R.string.profile_creation_empty_LN)
                 val errorFN = stringResource(R.string.profile_creation_empty_FN)
@@ -401,7 +409,7 @@ fun DropDownListFunctionWrapper(
     var selectedFieldSize by remember { mutableStateOf(Size.Zero) }
     val icon = if (showDropdown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
     Column {
-        Box() {
+        Box {
             OutlinedTextField(
                 value = selectedField,
                 onValueChange = {},
@@ -477,6 +485,7 @@ fun InputChipFun(
 @Composable
 fun ProfilePictureEdit(picture: Bitmap?, onPictureChange: (newPicture: Bitmap?) -> Unit) {
     var showPictureDialog by remember { mutableStateOf(false) }
+    var showCamera by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
     if (!isPhotoPickerAvailable(localContext)) {
         Log.e("CreateProfile", "Photo picker not available")
@@ -496,10 +505,27 @@ fun ProfilePictureEdit(picture: Bitmap?, onPictureChange: (newPicture: Bitmap?) 
                 }
             }
         }
+
     val pictureDisplaySize = 100.dp
     val pictureStartPadding = 5.dp
     val pictureAlpha = 0.5f
-    val deleteButtonOffset = 10.dp
+
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+            isGranted: Boolean ->
+            if (isGranted) {
+                showCamera = true
+            }
+        }
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
+            ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageBitmap = result.data?.extras?.get("data") as Bitmap?
+                imageBitmap?.let { handleCapturedImage(it, onPictureChange) }
+            }
+        }
+
     Column(modifier = Modifier.padding(start = pictureStartPadding)) {
         Box {
             Image(
@@ -529,17 +555,29 @@ fun ProfilePictureEdit(picture: Bitmap?, onPictureChange: (newPicture: Bitmap?) 
                 modifier = Modifier.align(Alignment.Center)
             )
         }
-        IconButton(
-            modifier =
-                Modifier.align(Alignment.End)
-                    .offset(x = deleteButtonOffset, y = -deleteButtonOffset)
-                    .testTag("profile-picture-delete"),
-            onClick = { onPictureChange(null) }
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Delete,
-                contentDescription = stringResource(R.string.profile_creation_delete_picture),
-            )
+        Row {
+            if (showCamera) {
+                dispatchTakePictureIntent(cameraLauncher)
+                showCamera = false
+            }
+            IconButton(
+                modifier = Modifier.testTag("profile-picture-camera"),
+                onClick = { requestPermissionLauncher.launch(Manifest.permission.CAMERA) },
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.camera_foreground),
+                    contentDescription = "Take a picture",
+                )
+            }
+            IconButton(
+                modifier = Modifier.testTag("profile-picture-delete"),
+                onClick = { onPictureChange(null) },
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = stringResource(R.string.profile_creation_delete_picture),
+                )
+            }
         }
     }
 
@@ -652,5 +690,30 @@ fun PictureTransformer(
                 Text(stringResource(R.string.edit_event_screen_confirm))
             }
         }
+    }
+}
+
+/**
+ * This function is used to update the profile picture with the captured image by the camera
+ *
+ * @param bitmap: the captured image bitmap
+ * @param setPicture: the callback to update the profile picture
+ */
+private fun handleCapturedImage(bitmap: Bitmap, setPicture: (Bitmap) -> Unit) {
+    // Process the captured image bitmap here
+    setPicture(bitmap)
+}
+/**
+ * This function is used to dispatch the camera intent to take a picture
+ *
+ * @param cameraLauncher: the launcher to start the camera activity
+ */
+private fun dispatchTakePictureIntent(cameraLauncher: ActivityResultLauncher<Intent>) {
+    val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+    try {
+        cameraLauncher.launch(takePictureIntent)
+    } catch (_: ActivityNotFoundException) {
+        // display error state to the user
+        Log.e("CreateProfile", "Error!")
     }
 }
