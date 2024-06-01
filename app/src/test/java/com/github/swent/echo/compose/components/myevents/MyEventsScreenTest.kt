@@ -1,8 +1,10 @@
 package com.github.swent.echo.compose.components.myevents
 
 import androidx.activity.compose.setContent
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
@@ -46,5 +48,12 @@ class MyEventsScreenTest {
     @Test
     fun pagerExists() {
         composeTestRule.onNodeWithTag("pager").assertExists()
+    }
+
+    @Test
+    fun goToCreatedEventsAndBack() {
+        composeTestRule.onNodeWithTag("pager").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("page_title_1").performClick()
+        composeTestRule.onNodeWithTag("page_title_0").performClick()
     }
 }
