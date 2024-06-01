@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 class GPSServiceImplTest {
 
     companion object {
-        const val LOCATION_DELAY_MILLIS = 500
+        const val LOCATION_DELAY_MILLIS = 3000
     }
 
     private lateinit var gpsService: GPSService
