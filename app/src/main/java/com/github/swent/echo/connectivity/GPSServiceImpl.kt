@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class GPSServiceImpl(context: Context) : GPSService {
+class GPSServiceImpl(val context: Context) : GPSService {
     private val locationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     private val locationManager: LocationManager? =
         getSystemService(context, LocationManager::class.java)
     private var _location = MutableStateFlow<LatLng?>(null)
 
-    private fun getLocation(context: Context) {
+    private fun getLocation() {
         if (
             LOCATION_PERMISSIONS.any {
                 ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
@@ -36,7 +36,7 @@ class GPSServiceImpl(context: Context) : GPSService {
                 locationManager?.apply {
                     // TODO maybe also check for NETWORK_PROVIDER
                     if (isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                        it ?: getLocation(context)
+                        it ?: getLocation()
                     }
                 }
             }
@@ -44,12 +44,12 @@ class GPSServiceImpl(context: Context) : GPSService {
     }
 
     init {
-        getLocation(context)
+        getLocation()
     }
 
     override val userLocation: StateFlow<LatLng?> = _location.asStateFlow()
 
     override fun currentUserLocation(): LatLng? = _location.value
 
-    fun refreshUserLocation(context: Context) = getLocation(context)
+    override fun refreshUserLocation() = getLocation()
 }

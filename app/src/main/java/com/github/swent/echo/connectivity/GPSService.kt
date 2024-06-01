@@ -8,4 +8,6 @@ interface GPSService {
     val userLocation: StateFlow<LatLng?>
 
     fun currentUserLocation(): LatLng?
+
+    fun refreshUserLocation()
 }
