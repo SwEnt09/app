@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.isPhotoPickerAvailable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -39,7 +40,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,7 +52,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
@@ -58,6 +60,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,8 +98,10 @@ import com.github.swent.echo.data.model.SectionEPFL
 import com.github.swent.echo.data.model.Semester
 import com.github.swent.echo.data.model.SemesterEPFL
 import com.github.swent.echo.data.model.Tag
+import com.github.swent.echo.data.repository.RepositoryStoreWhileNoInternetException
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
+import com.github.swent.echo.viewmodels.authentication.CreateProfileState
 import com.github.swent.echo.viewmodels.authentication.CreateProfileViewModel
 import com.github.swent.echo.viewmodels.tag.TagViewModel
 import kotlin.math.min
@@ -118,6 +123,7 @@ fun ProfileCreationScreen(
     tagviewModel: TagViewModel
 ) {
     var dialogVisible by remember { mutableStateOf(false) }
+    val state by viewModel.state.collectAsState()
     val firstName by viewModel.firstName.collectAsState()
     val lastName by viewModel.lastName.collectAsState()
     val semesterSelected by viewModel.selectedSemester.collectAsState()
@@ -125,6 +131,10 @@ fun ProfileCreationScreen(
     val isEditing by viewModel.isEditing.collectAsState()
     val isOnline by viewModel.isOnline.collectAsState()
     val picture by viewModel.picture.collectAsState()
+
+    if (state == CreateProfileState.SAVED) {
+        LaunchedEffect(state) { navAction.navigateTo(Routes.MAP) }
+    }
 
     ProfileCreationUI(
         modifier = modifier,
@@ -150,7 +160,7 @@ fun ProfileCreationScreen(
         onFirstNameChange = viewModel::setFirstName,
         onLastNameChange = viewModel::setLastName,
         isEditing = isEditing,
-        isOnline = isOnline,
+        isOnline = isOnline && state != CreateProfileState.SAVING,
         picture = picture,
         onPictureChange = viewModel::setPicture
     )
@@ -164,6 +174,18 @@ fun ProfileCreationScreen(
                 dialogVisible = false
             }
         )
+    }
+
+    if (state == CreateProfileState.SAVING) {
+        Box(
+            modifier =
+                Modifier.fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .testTag("saving-overlay"),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
 /**
@@ -222,7 +244,12 @@ fun ProfileCreationUI(
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.testTag("profile-creation-snackbar")
+            )
+        }
     ) { innerPadding ->
         Box(
             modifier = modifier.fillMaxSize().padding(innerPadding).testTag("profile-creation"),
@@ -320,9 +347,10 @@ fun ProfileCreationUI(
                 Spacer(modifier = modifier.weight(1f))
                 val errorLN = stringResource(R.string.profile_creation_empty_LN)
                 val errorFN = stringResource(R.string.profile_creation_empty_FN)
+                val errorNetwork = stringResource(R.string.profile_creation_error_network_failure)
 
                 // Save button
-                OutlinedButton(
+                Button(
                     onClick = {
                         if (firstName.isBlank() || lastName.isBlank()) {
                             scope.launch {
@@ -339,8 +367,17 @@ fun ProfileCreationUI(
                                 }
                             }
                         } else {
-                            onSave(firstName, lastName)
-                            navAction.navigateTo(Routes.MAP)
+                            try {
+                                onSave(firstName, lastName)
+                                navAction.navigateTo(Routes.MAP)
+                            } catch (e: RepositoryStoreWhileNoInternetException) {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        errorNetwork,
+                                        withDismissAction = true
+                                    )
+                                }
+                            }
                         }
                     },
                     modifier = modifier.fillMaxWidth().testTag("Save"),

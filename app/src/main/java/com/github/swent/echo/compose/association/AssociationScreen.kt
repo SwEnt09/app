@@ -6,11 +6,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,6 +27,7 @@ import com.github.swent.echo.compose.event.EventTitleAndBackButton
 import com.github.swent.echo.data.model.Association
 import com.github.swent.echo.ui.navigation.NavigationActions
 import com.github.swent.echo.ui.navigation.Routes
+import com.github.swent.echo.viewmodels.association.AssociationStatus
 import com.github.swent.echo.viewmodels.association.AssociationViewModel
 
 /**
@@ -33,10 +40,13 @@ fun AssociationScreen(
         AssociationViewModel, // The ViewModel that provides the data for the screen
     navActions: NavigationActions // The actions that can be performed for navigation
 ) {
-    // Collect the state of followed associations, committee associations, and all associations
+    // Collect the state of followed associations, committee associations all associations,
+    // snackbarHostState and status
     val followedAssociations by associationViewModel.followedAssociations.collectAsState()
     val committeeAssociations by associationViewModel.committeeAssociations.collectAsState()
     val showAllAssociations by associationViewModel.showAllAssociations.collectAsState()
+    val snackbarHostState by remember { mutableStateOf(SnackbarHostState()) }
+    val status by associationViewModel.status.collectAsState()
 
     // Create a list of pages for the Pager
     val pages =
@@ -59,6 +69,18 @@ fun AssociationScreen(
     // Define the space between the search bar and the pages
     val spaceBetweenSearchAndPages = 8.dp
 
+    // Display a Snackbar if we are in Error state
+    val errorMessage =
+        LocalContext.current.resources.getString(
+            R.string.association_subscription_error_network_failure
+        )
+    if (status is AssociationStatus.Error) {
+        LaunchedEffect(status) {
+            snackbarHostState.showSnackbar(errorMessage, withDismissAction = true)
+            associationViewModel.resetErrorState()
+        }
+    }
+
     // Scaffold provides a framework for material design surfaces
     Scaffold(
         topBar = {
@@ -73,7 +95,8 @@ fun AssociationScreen(
                 }
             }
         },
-        modifier = Modifier.fillMaxSize().testTag("association_screen")
+        modifier = Modifier.fillMaxSize().testTag("association_screen"),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = Modifier.padding(paddingValues),
@@ -110,7 +133,9 @@ fun AssociationScreen(
                     { associationViewModel.onFollowAssociationChanged(it) },
                     associationViewModel.associationEvents(currentAssociationPage),
                     isOnline,
-                    associationViewModel::refreshEvents
+                    associationViewModel::refreshEvents,
+                    userId = associationViewModel.userId,
+                    modify = { navActions.navigateTo(Routes.EDIT_EVENT.build(it.eventId)) },
                 )
             }
         }

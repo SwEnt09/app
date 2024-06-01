@@ -19,7 +19,16 @@ import com.mapbox.mapboxsdk.maps.Style
 
 class MapLibreMapViewProvider : IMapViewProvider<MapView> {
 
-    private var mapView: MapView? = null
+    // Stores the last camera position so we can restore it when the map is recreated (i.e. when the
+    // user switches between the list and map mode or when the user switches between the light and
+    // dark theme).
+    private var lastCameraPosition =
+        CameraPosition.Builder()
+            .target(MAP_CENTER.toLatLng())
+            .zoom(DEFAULT_ZOOM)
+            .bearing(0.0)
+            .build()
+
     private var locationComponent: LocationComponent? = null
     private var firstRecenter = true
 
@@ -79,36 +88,35 @@ class MapLibreMapViewProvider : IMapViewProvider<MapView> {
         val styleUrl =
             context.getString(R.string.maptiler_base_style_url) +
                 context.getString(R.string.maptiler_api_key)
-        val isInit = (mapView == null)
-        if (isInit) {
-            // Creating the map for the first time
-            mapView = MapView(context)
-        }
-        mapView?.onCreate(null)
-        mapView?.getMapAsync { map ->
+
+        val mapView = MapView(context)
+        mapView.onCreate(null)
+        mapView.getMapAsync { map ->
             // Set the style after mapView was loaded
             map.setStyle(styleUrl) {
                 map.uiSettings.apply {
                     setAttributionMargins(15, 0, 0, 15)
                     isRotateGesturesEnabled = true
                 }
-                // Set the map view center if we're creating the view
-                if (isInit) {
-                    map.cameraPosition =
-                        CameraPosition.Builder()
-                            .target(MAP_CENTER.toLatLng())
-                            .zoom(DEFAULT_ZOOM)
-                            .bearing(0.0)
-                            .build()
-                }
+
+                // Restore the last camera position
+                map.cameraPosition = lastCameraPosition
+
+                // Add listener to handle long press events
                 map.addOnMapLongClickListener {
                     onLongPress(it)
                     true
                 }
+
+                // Add listener to update the last camera position so we can restore it later
+                map.addOnCameraMoveListener { lastCameraPosition = map.cameraPosition }
+
+                // Call the on create callback once the map is configured
                 onCreate()
             }
         }
-        return mapView!!
+
+        return mapView
     }
 
     override fun update(

@@ -19,7 +19,12 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+
+enum class CreateProfileState {
+    EDIT,
+    SAVING,
+    SAVED,
+}
 
 @HiltViewModel
 class CreateProfileViewModel
@@ -29,6 +34,10 @@ constructor(
     private val repository: Repository,
     private val network: NetworkService
 ) : ViewModel() {
+
+    // The state of the profile creation process.
+    private val _state = MutableStateFlow(CreateProfileState.EDIT)
+    val state = _state.asStateFlow()
 
     val isOnline = network.isOnline
 
@@ -124,7 +133,8 @@ constructor(
             _errorMessage.value = "Profile creation error: Not logged in"
         } else {
             // TODO: show loading animation while saving the profile
-            runBlocking {
+            viewModelScope.launch {
+                _state.value = CreateProfileState.SAVING
                 println("User profile name: ${_firstName.value}\n")
                 println("User profile section: ${_selectedSection.value}\n")
                 println("User profile semester: ${_selectedSemester.value}\n")
@@ -146,6 +156,7 @@ constructor(
                     picture.value!!.compress(Bitmap.CompressFormat.JPEG, 100, pictureStream)
                     repository.setUserProfilePicture(userId, pictureStream.toByteArray())
                 }
+                _state.value = CreateProfileState.SAVED
             }
         }
     }

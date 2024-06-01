@@ -12,6 +12,7 @@ import com.github.swent.echo.data.model.Location
 import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.repository.Repository
+import com.github.swent.echo.data.repository.RepositoryStoreWhileNoInternetException
 import com.github.swent.echo.fakes.FakeAuthenticationService
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -120,6 +121,7 @@ class EventViewModelTest {
         eventViewModel.setEvent(TEST_EVENT)
         eventViewModel.saveEvent()
         eventViewModel.saveEvent()
+        scheduler.runCurrent()
         verify { Log.w(any(), any() as String) }
     }
 
@@ -132,6 +134,7 @@ class EventViewModelTest {
             )
         eventViewModel.setEvent(event)
         eventViewModel.saveEvent()
+        scheduler.runCurrent()
         assertTrue(eventViewModel.status.value is EventStatus.Error)
     }
 
@@ -140,6 +143,19 @@ class EventViewModelTest {
         val event = TEST_EVENT.copy(title = " ")
         eventViewModel.setEvent(event)
         eventViewModel.saveEvent()
+        scheduler.runCurrent()
+        assertTrue(eventViewModel.status.value is EventStatus.Error)
+    }
+
+    @Test
+    fun saveWhileNetworkErrorChangesStatusToError() {
+        coEvery { mockedRepository.createEvent(TEST_EVENT) } throws
+            RepositoryStoreWhileNoInternetException("test")
+        coEvery { mockedRepository.setEvent(TEST_EVENT) } throws
+            RepositoryStoreWhileNoInternetException("test")
+        eventViewModel.setEvent(TEST_EVENT)
+        eventViewModel.saveEvent()
+        scheduler.runCurrent()
         assertTrue(eventViewModel.status.value is EventStatus.Error)
     }
 

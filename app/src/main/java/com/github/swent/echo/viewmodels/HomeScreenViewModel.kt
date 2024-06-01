@@ -63,6 +63,9 @@ constructor(
     private val authenticationService: AuthenticationService,
     private val networkService: NetworkService
 ) : ViewModel() {
+    // Get the current user id
+    val userId = authenticationService.getCurrentUserID()
+
     // Flow to observe the overlay to display on top of the main screen
     private val _overlay = MutableStateFlow(Overlay.NONE)
     val overlay = _overlay.asStateFlow()

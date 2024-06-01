@@ -11,6 +11,7 @@ import com.github.swent.echo.data.model.Tag
 import com.github.swent.echo.data.model.UserProfile
 import com.github.swent.echo.data.model.toAssociationHeader
 import com.github.swent.echo.data.repository.Repository
+import com.github.swent.echo.data.repository.RepositoryStoreWhileNoInternetException
 import com.github.swent.echo.fakes.FakeAuthenticationService
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -145,6 +146,14 @@ class AssociationViewModelTest {
         assert(associationViewModel.followedAssociations.value.contains(associationList[2]))
         associationViewModel.onFollowAssociationChanged(associationList[2])
         assert(!associationViewModel.followedAssociations.value.contains(associationList[2]))
+        coEvery { mockedRepository.setUserProfile(any()) } throws
+            RepositoryStoreWhileNoInternetException("test")
+        associationViewModel.onFollowAssociationChanged(associationList[2])
+        scheduler.runCurrent()
+        assert(!associationViewModel.followedAssociations.value.contains(associationList[2]))
+        assert(associationViewModel.status.value is AssociationStatus.Error)
+        associationViewModel.resetErrorState()
+        assert(associationViewModel.status.value is AssociationStatus.Okay)
     }
 
     @Test

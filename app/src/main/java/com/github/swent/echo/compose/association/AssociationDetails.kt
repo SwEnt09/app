@@ -47,6 +47,8 @@ fun AssociationDetails(
     isOnline: Boolean, // Whether the user is online
     refreshEvents: () -> Unit, // Function to refresh the list of events
     onTagPressed: (Tag) -> Unit = {}, // Function to handle tag press events
+    userId: String? = null,
+    modify: (Event) -> Unit = {}
 ) {
     // Define layout parameters
     val paddingValues = 10.dp
@@ -101,7 +103,7 @@ fun AssociationDetails(
                     AssociationDescription(association, verticalSpace, onTagPressed)
                 },
                 Pair(stringResource(R.string.association_details_events)) {
-                    AssociationEvents(events, isOnline, refreshEvents)
+                    ListDrawer(events, isOnline, refreshEvents, userId = userId, modify = modify)
                 }
             )
         )
@@ -157,11 +159,4 @@ fun AssociationDescription(
             Hypertext(association.url)
         }
     }
-}
-
-// This Composable function displays the events of an association.
-@Composable
-fun AssociationEvents(events: List<Event>, isOnline: Boolean, refreshEvents: () -> Unit) {
-    // Use a ListDrawer to display the events
-    ListDrawer(events, isOnline, refreshEvents)
 }
