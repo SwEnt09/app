@@ -128,7 +128,14 @@ fun EventListItem(
     val association = event.organizer?.name?.let { "$it • " } ?: ""
     // Format the distance to be displayed
     val dist =
-        distance?.let { String.format(Locale.getDefault(), "%.0f", it) }?.let { "${it}km • " } ?: ""
+        distance
+            ?.let {
+                val fmt = { format: String, value: Double ->
+                    String.format(Locale.getDefault(), format, value)
+                }
+                if (it < 1000) fmt("%.0fm", it) else fmt("%.1fkm", it / 1000.0)
+            }
+            ?.let { "$it • " } ?: ""
 
     // Layout constants
     val spaceBetweenTagChips = 6.dp
