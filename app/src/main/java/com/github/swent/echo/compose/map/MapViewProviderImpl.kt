@@ -17,6 +17,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 
+/** An implementation of a [MapViewProvider] that produces [MapView]s. */
 class MapViewProviderImpl : MapViewProvider<MapView> {
 
     // Stores the last camera position so we can restore it when the map is recreated (i.e. when the
@@ -68,7 +69,7 @@ class MapViewProviderImpl : MapViewProvider<MapView> {
         locationComponent!!.activateLocationComponent(locationComponentActivationOptions)
         locationComponent!!.isLocationComponentEnabled = true
         locationComponent!!.cameraMode = CameraMode.NONE
-        locationComponent?.lastKnownLocation?.apply {
+        locationComponent!!.lastKnownLocation?.apply {
             if (firstRecenter) {
                 firstRecenter = false
                 val pos = LatLng(latitude, longitude)
