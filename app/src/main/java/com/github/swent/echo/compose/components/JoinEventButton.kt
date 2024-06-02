@@ -1,6 +1,7 @@
 package com.github.swent.echo.compose.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarHost
@@ -17,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
@@ -53,6 +56,8 @@ fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEve
         }
     }
 
+    val paddingValues = PaddingValues(2.dp)
+
     Box {
         // Create a button for joining or leaving the event.
         Button(
@@ -62,9 +67,10 @@ fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEve
             onClick = { myEventsViewModel.joinOrLeaveEvent(event, refreshEvents) },
             // Set the width of the button and a test tag for testing purposes.
             modifier =
-                androidx.compose.ui.Modifier.width(buttonWidth)
+                Modifier.width(buttonWidth)
                     .align(Alignment.Center)
-                    .testTag("list_join_event_${event.eventId}")
+                    .testTag("list_join_event_${event.eventId}"),
+            contentPadding = paddingValues
         ) {
             // The text of the button depends on whether the user has joined the event.
             Text(
@@ -73,7 +79,8 @@ fun JoinEventButton(event: Event, isOnline: Boolean, buttonWidth: Dp, refreshEve
                 stringResource(id = R.string.list_drawer_leave_event)
                 else
                 // If the user has not joined the event, the button says "Join".
-                stringResource(id = R.string.list_drawer_join_event)
+                stringResource(id = R.string.list_drawer_join_event),
+                textAlign = TextAlign.Center
             )
         }
         SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.Center))
