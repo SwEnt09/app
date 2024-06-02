@@ -16,6 +16,12 @@ import org.ramani.compose.Circle
 import org.ramani.compose.MapLibre
 import org.ramani.compose.Symbol
 
+/**
+ * A Composable to select a location on a map.
+ *
+ * @param initialLocation The location at which the map must be initialized.
+ * @param locationCallback The function to call when the selected location changes.
+ */
 @Composable
 fun LocationSelector(
     modifier: Modifier = Modifier,
@@ -52,6 +58,11 @@ fun LocationSelector(
     }
 }
 
+/**
+ * A Composable to display a location on a mpa.
+ *
+ * @param position The location to be displayed.
+ */
 @Composable
 fun LocationDisplayer(
     modifier: Modifier = Modifier,

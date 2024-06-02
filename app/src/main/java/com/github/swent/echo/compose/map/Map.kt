@@ -18,6 +18,18 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 val MAP_CENTER = Location("EPFL", 46.5191, 6.5668)
 const val DEFAULT_ZOOM = 13.0
 
+/**
+ * Wrapper around an [AndroidView] to facilitate readability.
+ *
+ * @param factory The factory that will product a [View].
+ * @param update The function to update said [View].
+ * @param events The list of events to be displayed by the map. Whenever this list changes, the
+ *   event markers in the map will be automatically updated to match the list.
+ * @param callback The function to be called when a marker on the map is clicked on. The [Event]
+ *   corresponding to the marker will be passed as an argument to this function.
+ * @param withLocation Whether the [View] should display the location of the user.
+ * @param launchEventCreation A function to enable the [View] to launch event creations.
+ */
 @Composable
 fun <T : View> EchoAndroidView(
     modifier: Modifier = Modifier,
@@ -28,6 +40,7 @@ fun <T : View> EchoAndroidView(
     withLocation: Boolean,
     launchEventCreation: (LatLng) -> Unit
 ) {
+    // Will change when the map construction is done in order to trigger an update.
     var trigger by remember { mutableStateOf(false) }
     AndroidView(
         modifier = modifier.testTag("mapAndroidView"),
