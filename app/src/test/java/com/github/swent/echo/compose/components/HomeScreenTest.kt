@@ -1,6 +1,7 @@
 package com.github.swent.echo.compose.components
 
 import androidx.activity.compose.setContent
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -10,9 +11,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.swent.echo.MainActivity
 import com.github.swent.echo.data.SAMPLE_EVENTS
 import com.github.swent.echo.ui.navigation.NavigationActions
+import com.github.swent.echo.viewmodels.HomeScreenViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +36,6 @@ class HomeScreenTest {
     @Before
     fun setUp() {
         hiltRule.inject()
-
         navActions = mockk(relaxed = true)
         composeTestRule.activity.setContent {
             HomeScreen(
@@ -149,5 +153,26 @@ class HomeScreenTest {
             composeTestRule.onNodeWithTag("navigation_item_$i").performClick()
             composeTestRule.onNodeWithTag("mapViewWrapper").assertExists()
         }
+    }
+
+    @Test
+    fun shouldShowMapWhenViewOnMapIsCalled() {
+        val event = SAMPLE_EVENTS[0]
+        composeTestRule.activity.setContent {
+            val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+            val mockedHomeScreenViewModel = spyk<HomeScreenViewModel>(homeScreenViewModel)
+            every { mockedHomeScreenViewModel.displayEventList } returns
+                MutableStateFlow(listOf(event))
+            HomeScreen(
+                homeScreenViewModel = mockedHomeScreenViewModel,
+                navActions = navActions,
+                themeViewModel = hiltViewModel()
+            )
+        }
+        composeTestRule.onNodeWithTag("list_map_mode_button").performClick()
+        composeTestRule.onNodeWithTag("list_event_item_${event.eventId}").performClick()
+        composeTestRule.onNodeWithTag("view_on_map_${event.eventId}").performClick()
+        composeTestRule.onNodeWithTag("mapViewWrapper").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("event_info_sheet").assertIsDisplayed()
     }
 }
