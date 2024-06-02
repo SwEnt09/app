@@ -3,6 +3,7 @@ package com.github.swent.echo.viewmodels
 import android.graphics.BitmapFactory
 import com.github.swent.echo.compose.map.MAP_CENTER
 import com.github.swent.echo.connectivity.NetworkService
+import com.github.swent.echo.connectivity.SimpleGPSService
 import com.github.swent.echo.data.model.AssociationHeader
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.EventCreator
@@ -34,6 +35,7 @@ class HomeScreenViewModelTest {
 
     private val fakeAuthenticationService = FakeAuthenticationService()
     private val mockedRepository = mockk<Repository>(relaxed = true)
+    private val fakeGPSService = SimpleGPSService()
     private lateinit var homeScreenViewModel: HomeScreenViewModel
     private val scheduler = TestCoroutineScheduler()
     private val eventList =
@@ -84,7 +86,8 @@ class HomeScreenViewModelTest {
                 HomeScreenViewModel(
                     mockedRepository,
                     fakeAuthenticationService,
-                    mockedNetworkService
+                    mockedNetworkService,
+                    fakeGPSService,
                 )
         }
         scheduler.runCurrent()
