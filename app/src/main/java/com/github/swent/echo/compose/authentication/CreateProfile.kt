@@ -160,7 +160,7 @@ fun ProfileCreationScreen(
         onFirstNameChange = viewModel::setFirstName,
         onLastNameChange = viewModel::setLastName,
         isEditing = isEditing,
-        isOnline = isOnline && state != CreateProfileState.SAVING,
+        isOnline = isOnline && state == CreateProfileState.EDIT,
         picture = picture,
         onPictureChange = viewModel::setPicture
     )
@@ -176,7 +176,7 @@ fun ProfileCreationScreen(
         )
     }
 
-    if (state == CreateProfileState.SAVING) {
+    if (state != CreateProfileState.EDIT) {
         Box(
             modifier =
                 Modifier.fillMaxSize()
@@ -369,7 +369,6 @@ fun ProfileCreationUI(
                         } else {
                             try {
                                 onSave(firstName, lastName)
-                                navAction.navigateTo(Routes.MAP)
                             } catch (e: RepositoryStoreWhileNoInternetException) {
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
