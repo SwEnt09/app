@@ -8,6 +8,7 @@ import com.github.swent.echo.R
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.searchmenu.FiltersContainer
 import com.github.swent.echo.compose.components.searchmenu.floatToDate
+import com.github.swent.echo.connectivity.GPSService
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
@@ -39,11 +40,11 @@ enum class MapOrListMode {
 }
 
 // Enum class for the different states of the sort by filter
-enum class SortBy(val stringKey: Int) {
-    DATE_ASC(R.string.filters_container_sort_by_date_asc),
-    DATE_DESC(R.string.filters_container_sort_by_date_desc),
-    DISTANCE_ASC(R.string.filters_container_sort_by_distance_asc),
-    DISTANCE_DESC(R.string.filters_container_sort_by_distance_desc),
+enum class SortBy(val stringKey: Int, val descending: Boolean) {
+    DATE_ASC(R.string.filters_container_sort_by_date_asc, false),
+    DATE_DESC(R.string.filters_container_sort_by_date_desc, true),
+    DISTANCE_ASC(R.string.filters_container_sort_by_distance_asc, false),
+    DISTANCE_DESC(R.string.filters_container_sort_by_distance_desc, true),
 }
 
 // Threshold for the status of an event to be considered full or pending
@@ -61,7 +62,8 @@ class HomeScreenViewModel
 constructor(
     private val repository: Repository,
     private val authenticationService: AuthenticationService,
-    private val networkService: NetworkService
+    private val networkService: NetworkService,
+    private val gpsService: GPSService,
 ) : ViewModel() {
     // Get the current user id
     val userId = authenticationService.getCurrentUserID()
@@ -87,22 +89,6 @@ constructor(
     // Flow to observe if the user can modify the event
     private val _canUserModifyEvent = MutableStateFlow(false)
     val canUserModifyEvent = _canUserModifyEvent.asStateFlow()
-    // Flow to observe the filters container
-    private val _filtersContainer =
-        MutableStateFlow(
-            FiltersContainer(
-                searchEntry = "",
-                epflChecked = false,
-                sectionChecked = false,
-                classChecked = false,
-                pendingChecked = false,
-                confirmedChecked = false,
-                fullChecked = false,
-                from = 0f,
-                to = 14f,
-                sortBy = SortBy.DATE_ASC
-            )
-        )
     private val defaultFiltersContainer =
         FiltersContainer(
             searchEntry = "",
@@ -116,6 +102,8 @@ constructor(
             to = 14f,
             sortBy = SortBy.DATE_ASC
         )
+    // Flow to observe the filters container
+    private val _filtersContainer = MutableStateFlow(defaultFiltersContainer)
     val filtersContainer = _filtersContainer.asStateFlow()
     // Flow to observe the profile name
     private val _profileName = MutableStateFlow("")
@@ -480,21 +468,25 @@ constructor(
                             event.organizer?.name ==
                                 _followedAssociations.value[_selectedAssociation.value]
                     }
-                    .sortedBy { event ->
-                        event.startDate
-                        // when we can sort by distance, update this
-                        /*when (_filtersContainer.value.sortBy) {
-                            SortBy.DATE_ASC -> event.startDate
-                            SortBy.DATE_DESC -> event.startDate
-                            else ->
-                        }*/
+                    // Always sort by date, and sort by distance afterwards only if the user
+                    // requests a sort by distance
+                    .sortedBy { it.startDate }
+                    .let {
+                        userLocationStateFlow.value?.let { location ->
+                            when (_filtersContainer.value.sortBy) {
+                                SortBy.DISTANCE_ASC,
+                                SortBy.DISTANCE_DESC ->
+                                    it.sortedBy { event ->
+                                        event.location.toLatLng().distanceTo(location)
+                                    }
+                                else -> it
+                            }
+                        } ?: it
                     }
                     .toList()
 
             // reverse the list if the sort by is descending
-            if (
-                _filtersContainer.value.sortBy == SortBy.DATE_DESC
-            ) { // when we can filter by distance, update this too
+            if (_filtersContainer.value.sortBy.descending) {
                 _displayEventList.value = _displayEventList.value.reversed()
             }
         }
@@ -540,6 +532,7 @@ constructor(
 
     /** Switch between map and list mode. */
     fun switchMode() {
+        refreshLocation()
         _mode.value =
             if (_mode.value == MapOrListMode.MAP) MapOrListMode.LIST else MapOrListMode.MAP
     }
@@ -561,5 +554,11 @@ constructor(
                 allEventsList.find { it.eventId == displayEventInfo.value?.eventId }
             filterEvents()
         }
+    }
+
+    val userLocationStateFlow = gpsService.userLocation
+
+    private fun refreshLocation() {
+        gpsService.refreshUserLocation()
     }
 }

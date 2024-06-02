@@ -144,6 +144,8 @@ private fun Content(
     val selectedAssociation by homeScreenViewModel.selectedAssociation.collectAsState()
 
     val mapDrawerViewModel: MapDrawerViewModel = hiltViewModel()
+    // user location
+    val userLocation by homeScreenViewModel.userLocationStateFlow.collectAsState()
 
     Box(modifier = Modifier.padding(paddingValues)) {
         // Display the list view or the map view
@@ -162,6 +164,7 @@ private fun Content(
                     isOnline,
                     homeScreenViewModel::refreshEvents,
                     userId = homeScreenViewModel.userId,
+                    userLocation = userLocation,
                     modify = { navActions.navigateTo(Routes.EDIT_EVENT.build(it.eventId)) },
                     viewOnMap = {
                         mapDrawerViewModel.setSavedCameraPosition(

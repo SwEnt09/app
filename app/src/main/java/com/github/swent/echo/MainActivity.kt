@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.swent.echo.authentication.AuthenticationService
 import com.github.swent.echo.compose.components.ConnectivityStatus
 import com.github.swent.echo.compose.navigation.AppNavigationHost
+import com.github.swent.echo.connectivity.GPSService
 import com.github.swent.echo.connectivity.NetworkService
 import com.github.swent.echo.data.repository.Repository
 import com.github.swent.echo.ui.theme.EchoTheme
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var authenticationService: AuthenticationService
     @Inject lateinit var repository: Repository
     @Inject lateinit var networkService: NetworkService
+    @Inject lateinit var gpsService: GPSService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -37,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import com.github.swent.echo.R
 import com.github.swent.echo.data.model.Event
 import com.github.swent.echo.data.model.Tag
+import com.mapbox.mapboxsdk.geometry.LatLng
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
  * Composable to display a list of events.
@@ -49,8 +51,8 @@ import java.time.format.DateTimeFormatter
  *   not be displayed.
  * @param modify The callback to modify the event.
  * @param onTagPressed The callback to handle tag presses.
- * @param distances The list of distances to the events. If null, the distance will not be
- *   displayed.
+ * @param userLocation The user's current location, if any. If null, the distance from events to the
+ *   user will not be displayed.
  * @param userId The user ID. If null, none of the events can be modified.
  */
 @Composable
@@ -61,7 +63,7 @@ fun ListDrawer(
     viewOnMap: ((Event) -> Unit)? = null,
     modify: ((Event) -> Unit) = {},
     onTagPressed: (Tag) -> Unit = {},
-    distances: List<Double>? = null,
+    userLocation: LatLng? = null,
     userId: String? = null,
 ) {
     val selectedEvent = remember { mutableStateOf("") }
@@ -73,22 +75,23 @@ fun ListDrawer(
                 .testTag("list_drawer")
     ) {
         // Iterate over the list of events and display them
-        items(eventsList.size) { index ->
-            val event = eventsList[index]
-            val canModifyEvent = event.creator.userId == userId
+        eventsList.forEach { event ->
+            item {
+                val canModifyEvent = event.creator.userId == userId
 
-            EventListItem(
-                event = event,
-                selectedEvent = selectedEvent,
-                isOnline = isOnline,
-                refreshEvents = refreshEvents,
-                viewOnMap = viewOnMap,
-                modify = modify,
-                onTagPressed = onTagPressed,
-                canModifyEvent = canModifyEvent,
-                distance = distances?.get(index),
-            )
-            Spacer(modifier = Modifier.height(12.dp))
+                EventListItem(
+                    event = event,
+                    selectedEvent = selectedEvent,
+                    isOnline = isOnline,
+                    refreshEvents = refreshEvents,
+                    viewOnMap = viewOnMap,
+                    modify = modify,
+                    onTagPressed = onTagPressed,
+                    canModifyEvent = canModifyEvent,
+                    distance = userLocation?.let { event.location.toLatLng().distanceTo(it) },
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
     }
 }
@@ -124,7 +127,8 @@ fun EventListItem(
     // Format the association name to be displayed
     val association = event.organizer?.name?.let { "$it • " } ?: ""
     // Format the distance to be displayed
-    val dist = distance?.let { "${it}km • " } ?: ""
+    val dist =
+        distance?.let { String.format(Locale.getDefault(), "%.0f", it) }?.let { "${it}km • " } ?: ""
 
     // Layout constants
     val spaceBetweenTagChips = 6.dp
