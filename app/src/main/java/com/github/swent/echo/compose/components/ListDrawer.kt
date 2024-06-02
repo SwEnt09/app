@@ -41,6 +41,8 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+const val KM_TO_M = 1000.0
+
 /**
  * Composable to display a list of events.
  *
@@ -78,6 +80,7 @@ fun ListDrawer(
         eventsList.forEach { event ->
             item {
                 val canModifyEvent = event.creator.userId == userId
+                val spaceBetweenItems = 12.dp
 
                 EventListItem(
                     event = event,
@@ -90,7 +93,7 @@ fun ListDrawer(
                     canModifyEvent = canModifyEvent,
                     distance = userLocation?.let { event.location.toLatLng().distanceTo(it) },
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(spaceBetweenItems))
             }
         }
     }
@@ -133,7 +136,7 @@ fun EventListItem(
                 val fmt = { format: String, value: Double ->
                     String.format(Locale.getDefault(), format, value)
                 }
-                if (it < 1000) fmt("%.0fm", it) else fmt("%.1fkm", it / 1000.0)
+                if (it < KM_TO_M) fmt("%.0fm", it) else fmt("%.1fkm", it / KM_TO_M)
             }
             ?.let { "$it • " } ?: ""
 

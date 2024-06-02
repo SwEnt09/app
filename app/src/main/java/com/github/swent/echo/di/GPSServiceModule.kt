@@ -16,7 +16,6 @@ object GPSServiceModule {
     @Singleton
     @Provides
     fun provideGPSService(application: Application): GPSService {
-        val context = application.applicationContext
-        return GPSServiceImpl(context)
+        return GPSServiceImpl(application.applicationContext)
     }
 }
