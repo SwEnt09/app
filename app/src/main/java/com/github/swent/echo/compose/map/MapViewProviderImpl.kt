@@ -26,7 +26,7 @@ class MapViewProviderImpl : MapViewProvider<MapView> {
         CameraPosition.Builder()
             .target(MAP_CENTER.toLatLng())
             .zoom(DEFAULT_ZOOM)
-            .bearing(0.0)
+            .bearing(2.0)
             .build()
 
     private var locationComponent: LocationComponent? = null
@@ -72,15 +72,13 @@ class MapViewProviderImpl : MapViewProvider<MapView> {
             if (firstRecenter) {
                 firstRecenter = false
                 val pos = LatLng(latitude, longitude)
-                map.cameraPosition =
-                    CameraPosition.Builder().target(pos).zoom(DEFAULT_ZOOM).bearing(0.0).build()
+                map.cameraPosition = CameraPosition.Builder().target(pos).zoom(DEFAULT_ZOOM).build()
             }
         }
     }
 
     override fun setSavedCameraPosition(newPosition: LatLng, zoomLevel: Double) {
-        lastCameraPosition =
-            CameraPosition.Builder().target(newPosition).zoom(zoomLevel).bearing(0.0).build()
+        lastCameraPosition = CameraPosition.Builder().target(newPosition).zoom(zoomLevel).build()
     }
 
     override fun factory(
