@@ -99,4 +99,9 @@
     <string name="followed_associations">Associations suivies</string>
     <string name="committee_associations">Associations membres</string>
     <string name="all_associations">Toutes les Associations</string>
+    <string name="profile_creation_center_picture">Régler le zoom</string>
+    <string name="profile_creation_error_network_failure">Problème de réseau lors de l\'enregistrement du profil. Veuillez réessayer.</string>
+    <string name="event_join_error_network_failure">Problème de réseau en rejoignant ou en quittant un événement. Veuillez réessayer.</string>
+    <string name="event_creation_error_network_failure">Problème de réseau lors de l\'enregistrement ou de la suppression d\'un événement. Veuillez réessayer.</string>
+    <string name="association_subscription_error_network_failure">Problème de réseau lors de l\'inscription ou de la désinscription à l\'association. Veuillez réessayer.</string>
 </resources>
