@@ -47,7 +47,6 @@
     <string name="event_creation_error_empty_title">The title is empty</string>
     <string name="event_creation_error_max_participant">The maximum number of participants is too low</string>
     <string name="event_creation_error_network_failure">Network problem while saving or deleting event. Please retry.</string>
-    <string name="search_menu_filters_section">Section</string>
     <string name="search_menu_filters_epfl" translatable="false">EPFL</string>
     <string name="section" translatable="false">Section</string>
     <string name="search_menu_filters_class">Class</string>
@@ -78,12 +77,8 @@
    <!-- <string name="profile_creation_error">Profile creation error: Not logged in</string> -->
     <string name="profile_creation_first_name">First name</string>
     <string name="profile_creation_last_name">Last name</string>
-    <string name="profile_creation_save_button">Save</string>
-    <string name="profile_creation_section">Section</string>
-    <string name="profile_creation_semester">Semester</string>
-    <string name="profile_creation_tags">Tags</string>
-    <string name="profile_creation_edit_picture">Edit picture</string>
-    <string name="profile_creation_delete_picture">Delete picture</string>
+    <string name="profile_creation_edit_picture" translatable="false">Edit picture</string>
+    <string name="profile_creation_delete_picture" translatable="false">Delete picture</string>
     <string name="profile_creation_center_picture">Adjust the zoom</string>
     <string name="profile_creation_error_network_failure">Network problem while saving profile. Please retry.</string>
     <string name="select_semester">Semester</string>
