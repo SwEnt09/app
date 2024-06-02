@@ -2,12 +2,12 @@
 <resources>
     <string name="authentication_form_email_label">Adresse e-mail</string>
     <string name="authentication_form_password_label">Mot de passe</string>
-    <string name="authentication_form_confirm_password_label">Confirmer le mot de passe</string>
+    <string name="authentication_form_confirm_password_label">Confirmez le mot de passe</string>
     <string name="authentication_screen_sign_in_with_google">Se connecter avec Google</string>
     <string name="login_screen_don_t_have_an_account">Vous n\'avez pas de compte?</string>
     <string name="login_button">Connexion</string>
     <string name="register">Créer un compte</string>
-    <string name="register_screen_confirm_your_email">Confirmer votre adresse e-mail pour continuer</string>
+    <string name="register_screen_confirm_your_email">Confirmez votre adresse e-mail pour continuer</string>
     <string name="register_screen_do_you_have_an_account">Avez-vous déjà un compte?</string>
     <string name="my_profile">Mon profil</string>
     <string name="hamburger_my_events">Mes événements</string>
@@ -31,7 +31,7 @@
     <string name="event_creation_error_not_logged_in">Vous n\'etes pas connecté</string>
     <string name="event_creation_error_end_date_before_start_date">Date de fin est avant le date de début</string>
     <string name="event_creation_error_empty_title">Le titre est vide</string>
-    <string name="event_creation_error_max_participant">"Le maximum nombre de participants est trop faible "</string>
+    <string name="event_creation_error_max_participant">"Le nombre de participants est trop faible "</string>
     <string name="search_menu_filters_class">Catégorie</string>
     <string name="search_menu_filters_pending">En attente</string>
     <string name="search_menu_filters_confirmed">Confirmé</string>
