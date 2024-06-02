@@ -4,5 +4,9 @@ import com.github.swent.echo.data.model.Tag
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// This annotated helper class is needed for the serialization of the double join queries to work
+/**
+ * Annotated helper class for the Supabase double join queries to work.
+ *
+ * @property tag Tag instance.
+ */
 @Serializable data class TagHelper(@SerialName("tags") val tag: Tag)

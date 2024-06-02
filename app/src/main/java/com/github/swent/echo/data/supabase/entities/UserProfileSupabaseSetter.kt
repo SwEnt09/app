@@ -8,6 +8,14 @@ import com.github.swent.echo.data.supabase.serializer.SemesterSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Serializable version of the UserProfile data class. Used to store user profiles in Supabase.
+ *
+ * @property userId the unique id of the user
+ * @property name the name of the user
+ * @property semester the semester of the user
+ * @property section the section of the user
+ */
 @Serializable
 data class UserProfileSupabaseSetter(
     @SerialName("user_id") val userId: String,

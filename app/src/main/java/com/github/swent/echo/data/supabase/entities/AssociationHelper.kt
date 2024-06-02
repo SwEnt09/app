@@ -4,6 +4,10 @@ import com.github.swent.echo.data.model.AssociationHeader
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// This annotated helper class is needed for the serialization of the double join queries to work
+/**
+ * Annotated helper class for the Supabase double join queries to work.
+ *
+ * @property association AssociationHeader instance.
+ */
 @Serializable
 data class AssociationHelper(@SerialName("associations") val association: AssociationHeader)
