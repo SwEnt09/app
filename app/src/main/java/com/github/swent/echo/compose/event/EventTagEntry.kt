@@ -54,10 +54,10 @@ fun EventTagEntry(
         listOf(
             Pair(stringResource(R.string.edit_event_screen_select_category), ""),
             Pair(stringResource(R.string.edit_event_screen_select_section), SECTION_ROOT_TAG_ID),
-            Pair(stringResource(R.string.edit_event_screen_select_semester), SEMESTER_ROOT_TAG_ID)
+            Pair(stringResource(R.string.select_semester), SEMESTER_ROOT_TAG_ID)
         )
     Column(modifier = Modifier.fillMaxWidth().padding(EVENT_PADDING_BETWEEN_INPUTS)) {
-        EventEntryName(stringResource(R.string.edit_event_screen_tags))
+        EventEntryName(stringResource(R.string.tags))
         Row {
             for (buttonString in tagButtonsStrings) {
                 AddTagButton(

@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import com.github.swent.echo.R
 import com.github.swent.echo.compose.components.Dropdown
@@ -70,7 +71,7 @@ fun SearchMenuFilters(
             },
             CheckBoxItems(
                 painterResource(id = R.drawable.paint),
-                stringResource(id = R.string.search_menu_filters_section),
+                stringResource(id = R.string.section),
                 filters.sectionChecked,
                 tint = colorSection
             ) {
@@ -179,7 +180,11 @@ data class CheckBoxItems(
 )
 
 @Composable
-fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
+fun CheckBoxesDisplayer(
+    title: String,
+    checkBoxItems: List<CheckBoxItems>,
+    modifier: Modifier = Modifier
+) {
     // Define the space between the title and the items, and between the items themselves
     val spaceBetweenTitleAndItems = 10.dp
     val spaceBetweenItems = 5.dp
@@ -209,11 +214,11 @@ fun CheckBoxesDisplayer(title: String, checkBoxItems: List<CheckBoxItems>) {
                     // When the checkbox is clicked, call the callback function
                     onCheckedChange = { checkBoxItem.callback() },
                     modifier =
-                        Modifier.size(checkboxSize)
+                        modifier
+                            .size(checkboxSize)
                             .testTag("${checkBoxItem.contentDescription}_checkbox")
                 )
-                // Display the description of the checkbox
-                Text(checkBoxItem.contentDescription)
+                Text(checkBoxItem.contentDescription, fontSize = 13.sp)
             }
             // Add some space after the checkbox
             Spacer(modifier = Modifier.height(spaceBetweenItems))

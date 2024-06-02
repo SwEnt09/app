@@ -57,7 +57,7 @@ fun EventScreen(
     val snackBarHostState by remember { mutableStateOf(SnackbarHostState()) }
     val eventStatus by eventViewModel.status.collectAsState()
 
-    var saveButtonText by remember { mutableIntStateOf(R.string.edit_event_screen_save) }
+    var saveButtonText by remember { mutableIntStateOf(R.string.save_button) }
     var saveButtonClicked by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
 
@@ -65,7 +65,7 @@ fun EventScreen(
 
     if (saveButtonClicked && eventStatus is EventStatus.Saved) {
         saveButtonClicked = false
-        saveButtonText = R.string.edit_event_screen_save
+        saveButtonText = R.string.save_button
         onEventSaved()
     } else if (eventStatus is EventStatus.Error) {
         LaunchedEffect(eventStatus) {
@@ -77,7 +77,7 @@ fun EventScreen(
     } else if (eventStatus is EventStatus.Saving) {
         saveButtonText = R.string.edit_event_screen_saving
     } else {
-        saveButtonText = R.string.edit_event_screen_save
+        saveButtonText = R.string.save_button
     }
 
     Scaffold(
@@ -141,10 +141,7 @@ fun EventPropertiesFields(eventViewModel: EventViewModel, isOnline: Boolean) {
         ) {
             eventViewModel.setEvent(event.copy(title = it))
         }
-        EventTextEntry(
-            name = stringResource(R.string.edit_event_screen_description),
-            value = event.description
-        ) {
+        EventTextEntry(name = stringResource(R.string.description), value = event.description) {
             eventViewModel.setEvent(event.copy(description = it))
         }
 

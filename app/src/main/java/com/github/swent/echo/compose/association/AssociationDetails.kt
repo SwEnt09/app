@@ -99,7 +99,7 @@ fun AssociationDetails(
         // Pager for association description and events
         Pager(
             listOf(
-                Pair(stringResource(R.string.association_details_description)) {
+                Pair(stringResource(R.string.description)) {
                     AssociationDescription(association, verticalSpace, onTagPressed)
                 },
                 Pair(stringResource(R.string.association_details_events)) {

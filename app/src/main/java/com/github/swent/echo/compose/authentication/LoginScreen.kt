@@ -52,12 +52,10 @@ fun LoginScreen(loginViewModel: LoginViewModel, navActions: NavigationActions) {
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         if (state.isSignedOutOrError()) {
-            AuthenticationScreenTitle(
-                subtitle = stringResource(R.string.login_screen_action_button)
-            )
+            AuthenticationScreenTitle(subtitle = stringResource(R.string.login_button))
         }
         AuthenticationScreen(
-            action = stringResource(R.string.login_screen_action_button),
+            action = stringResource(R.string.login_button),
             isOnline = isOnline,
             state = state,
             onAuthenticate = loginViewModel::login,
@@ -77,7 +75,7 @@ fun NavigateToRegisterScreen(onClick: () -> Unit) {
     ) {
         Text(stringResource(R.string.login_screen_don_t_have_an_account) + " ")
         Text(
-            text = stringResource(R.string.login_screen_register_link),
+            text = stringResource(R.string.register),
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.clickable(onClick = onClick).testTag("register-button")
         )

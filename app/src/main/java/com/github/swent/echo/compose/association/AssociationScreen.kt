@@ -51,9 +51,9 @@ fun AssociationScreen(
     // Create a list of pages for the Pager
     val pages =
         listOf(
-            Pair("Followed Associations", followedAssociations),
-            Pair("Committee Associations", committeeAssociations),
-            Pair("All Associations", showAllAssociations)
+            Pair(stringResource(R.string.followed_associations), followedAssociations),
+            Pair(stringResource(R.string.committee_associations), committeeAssociations),
+            Pair(stringResource(R.string.all_associations), showAllAssociations)
         )
 
     // Collect the state of the current association page and the initial page

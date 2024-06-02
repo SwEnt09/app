@@ -76,7 +76,7 @@ class EventScreenTest {
     private fun setCompose(eventViewModel: EventViewModel, canDelete: Boolean = false) {
         composeTestRule.activity.setContent {
             EventScreen(
-                stringResource(R.string.create_event_screen_title),
+                stringResource(R.string.create_event),
                 canDelete = canDelete,
                 onEventSaved = {},
                 onEventBackButtonPressed = {},
