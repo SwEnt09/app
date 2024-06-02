@@ -120,12 +120,12 @@ constructor(
         } else {
             associations.filter {
                 it.name.lowercase().contains(_searched.value.lowercase()) ||
-                        it.relatedTags.any{ tag -> tag.name.lowercase().contains(_searched.value.lowercase()) }
+                    it.relatedTags.any { tag ->
+                        tag.name.lowercase().contains(_searched.value.lowercase())
+                    }
             }
         }
     }
-
-
 
     // Set current association page
     fun setCurrentAssociationPage(association: Association, initialPage: Int = _initialPage.value) {
